@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS SAP-C02｜网站分层、Failover 与高可用</title>
+<style>
+:root{--bg:#f4f7fb;--paper:#fff;--ink:#172033;--muted:#627089;--line:#e3e9f2;--blue:#2457c5;--blue2:#eaf1ff;--green:#147d55;--greenbg:#e9f7f0;--orange:#a85b13;--orangebg:#fff4e7;--shadow:0 8px 28px rgba(25,45,85,.07)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+header{background:linear-gradient(120deg,#10264d,#2457c5);color:#fff;padding:54px 22px 44px}
+.hero{max-width:1120px;margin:auto}.eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.8}.hero h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}.hero p{max-width:780px;color:#e4ecff;margin:14px 0 0}
+.wrap{max-width:1120px;margin:28px auto;padding:0 18px 70px;display:grid;grid-template-columns:245px minmax(0,1fr);gap:24px}
+nav{position:sticky;top:18px;align-self:start;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}nav a{display:block;text-decoration:none;color:var(--muted);font-size:14px;padding:5px 8px;border-radius:7px}nav a:hover{background:var(--blue2);color:var(--blue)}
+main{min-width:0}.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:28px;margin-bottom:20px;box-shadow:var(--shadow)}
+h2{font-size:25px;line-height:1.35;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}h3{font-size:19px;margin:24px 0 10px}h4{font-size:16px;margin:18px 0 8px}p{margin:9px 0}ul,ol{padding-left:23px}li{margin:5px 0}.muted{color:var(--muted)}.lead{font-size:18px;color:#34425c}
+.callout{padding:14px 17px;border-radius:10px;background:var(--blue2);border-left:4px solid var(--blue);margin:16px 0}.success{background:var(--greenbg);border-left-color:var(--green)}.warn{background:var(--orangebg);border-left-color:var(--orange)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.mini{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fcfdff}.mini h3{margin:0 0 8px;font-size:17px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;display:table}th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}th{background:#f0f4fa;font-weight:650}tr:nth-child(even) td{background:#fbfcfe}
+pre{white-space:pre-wrap;background:#111c32;color:#e8efff;padding:17px;border-radius:10px;overflow:auto;font:14px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace}
+.pill{display:inline-block;background:var(--blue2);color:var(--blue);padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700;margin-right:5px}
+.key{font-weight:700;color:var(--green)}.small{font-size:13px;color:var(--muted)}
+details{border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin:10px 0;background:#fff}summary{font-weight:650;cursor:pointer}
+.quiz label{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:9px;margin:8px 0;cursor:pointer}.quiz label:hover{background:#f7f9ff}.quiz button{border:0;background:var(--blue);color:#fff;padding:11px 18px;border-radius:8px;font-size:15px;cursor:pointer;margin-top:8px}.result{display:none;margin-top:14px;padding:14px;border-radius:10px;background:var(--greenbg)}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:20px}
+@media(max-width:850px){.wrap{grid-template-columns:1fr}nav{position:relative;top:auto;max-height:none}.grid{grid-template-columns:1fr}.card{padding:21px}table{font-size:13px}th,td{padding:8px}}
+@media print{body{background:#fff}.wrap{display:block;max-width:none;margin:0}nav{display:none}.card{box-shadow:none;break-inside:avoid;border:0;padding:12px;margin:0 0 12px}header{background:#fff;color:#111;padding:20px 0}.hero p{color:#333}a{color:#111}details{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header><div class="hero">
+<div class="eyebrow">AWS Certified Solutions Architect – Professional</div>
+<h1>网站分层、Failover 与高可用</h1>
+<p>SAP-C02 考点整理｜从三层 Web 架构、单实例与 AZ 故障，到跨 Region 灾难恢复、RTO/RPO 和快速答题方法。</p>
+</div></header>
+<div class="wrap">
+<nav>
+<strong>本页目录</strong>
+<a href="#overview">一、网站分层架构</a>
+<a href="#failover">二、Failover 故障转移</a>
+<a href="#entry">三、网站入口层</a>
+<a href="#compute">四、计算层高可用</a>
+<a href="#database">五、数据库层高可用</a>
+<a href="#scope">六、Multi-AZ vs Multi-Region</a>
+<a href="#rto">七、RTO 与 RPO</a>
+<a href="#services">八、服务对照表</a>
+<a href="#questions">九、典型题型</a>
+<a href="#traps">十、常见考试陷阱</a>
+<a href="#cheatsheet">十一、考前速记卡</a>
+<a href="#method">十二、五步解题法</a>
+<a href="#quiz">十三、模拟练习题</a>
+</nav>
+<main>
+<section class="card" id="overview">
+<h2>一、首先理解网站分层架构</h2>
+<p class="lead">典型 AWS 网站通常分为 Web / Presentation、Application、Database 三层。考试重点是理解每层职责，以及每层如何避免单点故障。</p>
+<div class="grid">
+<div class="mini"><h3>Web / Presentation Layer</h3><p>接收用户请求、处理 HTTP 请求。</p><p><b>常见服务：</b>CloudFront、ALB、EC2、ECS</p></div>
+<div class="mini"><h3>Application Layer</h3><p>执行业务逻辑，处理应用请求。</p><p><b>常见服务：</b>EC2、Auto Scaling、ECS、Lambda</p></div>
+<div class="mini"><h3>Database Layer</h3><p>负责数据持久化、查询和事务。</p><p><b>常见服务：</b>RDS、Aurora、DynamoDB</p></div>
+<div class="mini"><h3>高可用的基本原则</h3><p>冗余部署、健康检查、自动替换、数据复制、避免单点故障。</p></div>
+</div>
+<h3>每一层如何实现高可用？</h3>
+<table><tr><th>层级</th><th>设计方式</th><th>关键服务 / 概念</th></tr>
+<tr><td>Web 层</td><td>多个实例接收流量，故障实例不再接收请求</td><td>ALB、Health Check、Multi-AZ</td></tr>
+<tr><td>Application 层</td><td>多实例部署，故障后自动补充；尽量无状态</td><td>Auto Scaling、Stateless</td></tr>
+<tr><td>Database 层</td><td>备用节点、复制、自动故障转移</td><td>RDS Multi-AZ、Aurora</td></tr></table>
+<div class="callout success"><b>快速记忆：</b>Web 层故障看 Load Balancer；计算实例故障看 Auto Scaling；数据库故障看 Multi-AZ / Aurora；Region 故障看跨 Region DR。</div>
+</section>
+
+<section class="card" id="failover">
+<h2>二、Failover 故障转移：考试核心</h2>
+<p>Failover 是指某个资源发生故障时，将业务自动或手动切换到健康的备用资源，使业务尽可能持续运行。</p>
+<h3>三个容易混淆的概念</h3>
+<table><tr><th>概念</th><th>含义</th><th>理解重点</th></tr>
+<tr><td>High Availability</td><td>高可用</td><td>尽量减少服务不可用时间</td></tr>
+<tr><td>Fault Tolerance</td><td>容错</td><td>故障发生时仍能持续提供服务</td></tr>
+<tr><td>Disaster Recovery</td><td>灾难恢复</td><td>大规模故障后恢复业务</td></tr></table>
+<h3>故障转移的三个范围</h3>
+<table><tr><th>故障范围</th><th>典型措施</th><th>考试关键词</th></tr>
+<tr><td>单个 Instance</td><td>ELB 停止向不健康实例发流量；ASG 替换实例</td><td>Unhealthy EC2、replace instance</td></tr>
+<tr><td>整个 AZ</td><td>跨 AZ 部署；ELB 转发到健康 AZ；数据库 Multi-AZ</td><td>Availability Zone failure</td></tr>
+<tr><td>整个 Region</td><td>备用 Region、跨区域数据复制、流量切换</td><td>Regional outage、DR</td></tr></table>
+<div class="callout warn"><b>重要：</b>Multi-AZ 不等于 Multi-Region。Multi-AZ 主要应对可用区故障；Multi-Region 才用于区域级故障恢复。</div>
+</section>
+
+<section class="card" id="entry">
+<h2>三、网站入口层：Route 53、Global Accelerator、CloudFront、ELB</h2>
+<h3>1. Amazon Route 53</h3>
+<p>Route 53 是 DNS 服务，可根据路由策略和健康检查结果，把用户引导到合适的端点。</p>
+<table><tr><th>路由策略</th><th>用途 / 题干线索</th></tr>
+<tr><td>Simple</td><td>简单路由，单一资源或简单 DNS 响应</td></tr>
+<tr><td>Weighted</td><td>按权重分配流量；灰度发布、流量比例</td></tr>
+<tr><td>Latency-based</td><td>按网络延迟选择端点；全球用户就近访问</td></tr>
+<tr><td>Failover</td><td>Primary / Secondary；主站故障后 DNS 切换</td></tr>
+<tr><td>Geolocation</td><td>按用户地理位置路由</td></tr>
+<tr><td>Geoproximity</td><td>按地理距离及偏移量调整流量</td></tr>
+<tr><td>Multivalue Answer</td><td>返回多个健康资源的 DNS 记录</td></tr></table>
+<h4>Route 53 Failover 工作机制</h4>
+<pre>用户
+  |
+Route 53 DNS + Health Check
+  |
+  +---- Primary Region（健康）----> 用户访问主站
+  |
+  +---- Primary 不健康 -----------> 返回 Secondary
+                                      |
+                                Secondary Region</pre>
+<ul><li>配置 Primary 主站点和 Secondary 备用站点。</li><li>健康检查判断主站点状态。</li><li>主站点不健康时，DNS 响应引导用户访问备用站点。</li></ul>
+<div class="callout"><b>考试关键词：</b>Primary / Secondary、Active-Passive、Health Check、Automatic DNS Failover → 优先考虑 Route 53 Failover Routing。</div>
+<p class="small">注意：DNS 切换不代表备用 Region 的数据库已自动提升为主库；应用资源、数据复制和数据库提升也必须设计好。</p>
+
+<h3>2. AWS Global Accelerator</h3>
+<p>Global Accelerator 是全球流量入口，通过 AWS 全球网络将用户流量引导至健康的应用端点。</p>
+<ul><li>标准加速器提供两个静态 Anycast IP 地址。</li><li>支持跨 Region 的端点组、健康检查和流量切换。</li><li>适合强调固定静态 IP、全球网络、低延迟和快速流量切换的场景。</li></ul>
+<table><tr><th>对比</th><th>Route 53</th><th>Global Accelerator</th></tr>
+<tr><td>主要功能</td><td>DNS 路由</td><td>全球网络流量入口</td></tr>
+<tr><td>静态 Anycast IP</td><td>不提供 GA 式静态入口 IP</td><td>提供两个静态 IP</td></tr>
+<tr><td>切换方式</td><td>DNS 响应变化</td><td>全球网络端点流量切换</td></tr>
+<tr><td>典型线索</td><td>DNS、主备记录、路由策略</td><td>静态 IP、低延迟、全球加速</td></tr></table>
+<p class="small">注意：自定义路由加速器与标准加速器能力不同；自定义路由加速器不提供标准加速器的健康检查和自动故障转移能力。</p>
+
+<h3>3. CloudFront Origin Failover</h3>
+<p>CloudFront 可以配置 Origin Group，包括 Primary Origin 和 Secondary Origin。当主源站返回配置的特定故障状态时，CloudFront 可以尝试备用源站。</p>
+<pre>User → CloudFront → Primary Origin
+                         |
+                 符合故障转移条件
+                         |
+                   Secondary Origin</pre>
+<ul><li>适用于源站级故障转移，例如主 S3 源站或主应用源站不可用。</li><li>可配置触发故障转移的 HTTP 状态码。</li><li>不是所有请求失败都会触发切换；请求方法和状态码等存在限制。</li></ul>
+<div class="callout"><b>记忆：</b>CloudFront = CDN / 缓存 / 边缘分发；Origin Failover = 主源站故障时切换备用源站。</div>
+
+<h3>4. Elastic Load Balancing（ELB）</h3>
+<table><tr><th>类型</th><th>主要用途</th></tr>
+<tr><td>ALB</td><td>HTTP / HTTPS 应用层负载均衡，支持基于路径、主机名等规则路由</td></tr>
+<tr><td>NLB</td><td>高性能网络层负载均衡，支持 TCP、UDP、TLS 等</td></tr>
+<tr><td>GWLB</td><td>将流量分发到网络虚拟设备，例如防火墙设备</td></tr></table>
+<p>ELB 健康检查可以停止向不健康目标转发流量，但 ELB 本身不会自动创建新的 EC2 实例。自动替换实例通常由 Auto Scaling 负责。</p>
+</section>
+
+<section class="card" id="compute">
+<h2>四、计算层：EC2 Auto Scaling 高可用</h2>
+<h3>1. Auto Scaling Group（ASG）</h3>
+<p>ASG 可自动增加或减少实例，并在实例不健康时进行替换。它可以跨多个 AZ 部署，并与 ELB 集成。</p>
+<table><tr><th>参数</th><th>含义</th><th>示例</th></tr>
+<tr><td>Minimum Capacity</td><td>最少实例数</td><td>2</td></tr>
+<tr><td>Desired Capacity</td><td>期望实例数</td><td>4</td></tr>
+<tr><td>Maximum Capacity</td><td>最大实例数</td><td>10</td></tr></table>
+<pre>             Users
+                |
+               ALB
+             /     \\
+           AZ-A    AZ-B
+            |        |
+          EC2-1    EC2-2
+          EC2-3    EC2-4
+              \\    /
+          Auto Scaling Group</pre>
+<p><b>题干关键词：</b>Automatically replace unhealthy EC2 instances、maintain desired capacity、scale out / scale in、multiple AZs → Auto Scaling Group。</p>
+<h3>2. Stateless vs Stateful</h3>
+<p>如果用户 Session 只保存在某台 EC2 本地，该实例故障后，用户会话可能丢失。更可靠的做法是把会话状态放到共享存储中。</p>
+<table><tr><th>问题</th><th>解决方向</th></tr>
+<tr><td>Session 存在 EC2 本地</td><td>将应用设计为 Stateless，避免单实例状态依赖</td></tr>
+<tr><td>多个 Web 实例共享 Session</td><td>ElastiCache for Redis / DynamoDB 等共享存储</td></tr>
+<tr><td>故障实例自动补充</td><td>Auto Scaling</td></tr>
+<tr><td>请求分发到多个实例</td><td>ALB</td></tr></table>
+<div class="callout warn"><b>考试陷阱：</b>Sticky Sessions（会话粘性）只是尽量把用户请求送回同一目标实例；它不能从根本上解决实例故障后的 Session 丢失问题。</div>
+</section>
+
+<section class="card" id="database">
+<h2>五、数据库层：RDS、Aurora 高可用</h2>
+<h3>1. RDS Multi-AZ</h3>
+<pre>              Application
+                   |
+              RDS Endpoint
+                   |
+           Primary Database
+                AZ-A
+                   |
+          Synchronous Replication
+                   |
+           Standby Database
+                AZ-B</pre>
+<ul><li>主数据库和备用数据库部署在不同 AZ。</li><li>传统 Multi-AZ DB Instance 部署使用同步复制维护备用副本。</li><li>主数据库故障时，RDS 自动故障转移。</li><li>应用通常通过同一个数据库端点连接，切换后端点指向新的主实例。</li><li>主要目的是高可用，不是读写扩展。</li></ul>
+<h3>RDS Multi-AZ vs Read Replica</h3>
+<table><tr><th>对比</th><th>Multi-AZ</th><th>Read Replica</th></tr>
+<tr><td>主要目的</td><td>高可用</td><td>读扩展</td></tr>
+<tr><td>复制方式</td><td>传统单备用部署为同步复制</td><td>异步复制</td></tr>
+<tr><td>自动故障转移</td><td>支持</td><td>通常需要手动提升（具体取决于部署与服务能力）</td></tr>
+<tr><td>主要用途</td><td>主库故障恢复</td><td>分担读请求、提高读取能力</td></tr></table>
+<div class="callout success"><b>高频判断：</b>Improve database availability / automatic failover → RDS Multi-AZ；offload read traffic / increase read throughput → Read Replica。</div>
+<p class="small">注意：RDS Multi-AZ DB Cluster 与传统 Multi-AZ DB Instance 的架构和读取能力不同，答题时要看题目指定的部署类型。</p>
+
+<h3>2. Amazon Aurora</h3>
+<p>Aurora 使用跨多个 AZ 冗余保存的分布式集群存储，并通过 Writer、Reader 实例提供数据库服务。Writer 故障时，可将 Reader 提升为新的 Writer。</p>
+<table><tr><th>Endpoint</th><th>用途</th></tr>
+<tr><td>Cluster Endpoint</td><td>连接当前 Writer，主要用于写入</td></tr>
+<tr><td>Reader Endpoint</td><td>将读取请求分配到 Reader 实例</td></tr>
+<tr><td>Instance Endpoint</td><td>连接指定的数据库实例</td></tr></table>
+<p><b>考试记忆：</b>Writer 故障、Reader Promotion → Aurora Failover；读写分离 → Cluster Endpoint + Reader Endpoint。</p>
+
+<h3>3. Aurora Global Database</h3>
+<pre>             Primary Region
+                   |
+              Aurora Writer
+                   |
+          Cross-Region Replication
+                   |
+             Secondary Region
+                   |
+             Aurora Read-only</pre>
+<ul><li>一个 Primary Region，可配置多个 Secondary Region。</li><li>跨 Region 复制数据。</li><li>Secondary Region 可提供低延迟全球读取。</li><li>发生区域级故障时，可以将 Secondary 提升为 Primary。</li></ul>
+<div class="callout"><b>题干关键词：</b>Cross-region database、global reads、regional disaster recovery、low RPO → 考虑 Aurora Global Database。</div>
+<p class="small">跨 Region 复制和提升涉及独立的恢复机制，不要将其理解成传统 RDS Multi-AZ 的本地自动故障转移。</p>
+</section>
+
+<section class="card" id="scope">
+<h2>六、Multi-AZ 与 Multi-Region：核心区别</h2>
+<table><tr><th>对比</th><th>Multi-AZ</th><th>Multi-Region</th></tr>
+<tr><td>部署范围</td><td>一个 Region 内多个 AZ</td><td>多个 Region</td></tr>
+<tr><td>主要解决</td><td>实例、AZ 故障</td><td>Region 级故障</td></tr>
+<tr><td>网络延迟</td><td>通常较低</td><td>跨区域通信延迟更高</td></tr>
+<tr><td>成本与复杂度</td><td>通常较低</td><td>通常更高</td></tr>
+<tr><td>典型组件</td><td>ALB、ASG、RDS Multi-AZ</td><td>Route 53、Global Accelerator、Aurora Global DB</td></tr></table>
+<div class="callout success"><b>答题口诀：</b>一个 AZ 出问题，考虑 Multi-AZ；整个 Region 出问题，考虑 Multi-Region。题目只要求 AZ 级高可用时，不要无故选择昂贵的跨 Region 架构。</div>
+</section>
+
+<section class="card" id="rto">
+<h2>七、RTO 和 RPO：灾难恢复关键指标</h2>
+<div class="grid">
+<div class="mini"><h3>RTO — Recovery Time Objective</h3><p>恢复时间目标：业务中断后，允许多长时间恢复服务。</p><p>例如 RTO = 1 小时，意味着目标是在 1 小时内恢复。</p></div>
+<div class="mini"><h3>RPO — Recovery Point Objective</h3><p>恢复点目标：可以接受丢失多长时间范围内的数据。</p><p>例如 RPO = 5 分钟，表示最多接受丢失最近约 5 分钟的数据。</p></div>
+</div>
+<h3>四种灾难恢复策略</h3>
+<table><tr><th>策略</th><th>备用资源状态</th><th>恢复速度</th><th>相对成本</th></tr>
+<tr><td>Backup and Restore</td><td>主要依赖备份，故障后重建</td><td>最慢</td><td>最低</td></tr>
+<tr><td>Pilot Light</td><td>核心数据和少量基础设施持续运行</td><td>较慢</td><td>较低</td></tr>
+<tr><td>Warm Standby</td><td>完整但缩小规模的备用环境持续运行</td><td>较快</td><td>较高</td></tr>
+<tr><td>Multi-site Active/Active</td><td>多个站点同时处理业务流量</td><td>通常最快</td><td>最高</td></tr></table>
+<h4>题干关键词速判</h4>
+<table><tr><th>关键词</th><th>优先考虑</th></tr>
+<tr><td>Lowest cost；恢复时间较宽松</td><td>Backup and Restore</td></tr>
+<tr><td>Only core infrastructure running</td><td>Pilot Light</td></tr>
+<tr><td>Reduced capacity environment running continuously</td><td>Warm Standby</td></tr>
+<tr><td>Both sites actively serving traffic</td><td>Active/Active</td></tr>
+<tr><td>Very low RTO / RPO</td><td>通常考虑 Active/Active，或满足指标的 Warm Standby</td></tr></table>
+<div class="callout warn"><b>注意：</b>Active/Active 不一定总是最佳答案。还要检查数据复制、写入冲突、业务一致性、成本和题目要求的 RTO/RPO。</div>
+</section>
+
+<section class="card" id="services">
+<h2>八、AWS 服务职责对照表</h2>
+<table><tr><th>服务</th><th>核心职责</th><th>不要混淆</th></tr>
+<tr><td>Route 53</td><td>DNS、健康检查、DNS 故障转移</td><td>不负责数据库数据复制</td></tr>
+<tr><td>Global Accelerator</td><td>全球流量入口、静态 IP、端点流量切换</td><td>不等于 DNS</td></tr>
+<tr><td>CloudFront</td><td>CDN、缓存、Origin Failover</td><td>不负责 EC2 自动扩容</td></tr>
+<tr><td>ALB</td><td>HTTP/HTTPS 负载均衡</td><td>不负责创建 EC2</td></tr>
+<tr><td>Auto Scaling</td><td>自动扩容、替换不健康实例</td><td>不负责数据库故障转移</td></tr>
+<tr><td>RDS Multi-AZ</td><td>数据库高可用</td><td>不等同于读扩展</td></tr>
+<tr><td>RDS Read Replica</td><td>数据库读扩展</td><td>不等同于自动 Multi-AZ 故障转移</td></tr>
+<tr><td>Aurora</td><td>数据库集群、高可用</td><td>与普通 RDS 架构不同</td></tr>
+<tr><td>Aurora Global DB</td><td>跨 Region 数据复制</td><td>不等于普通 RDS Multi-AZ</td></tr>
+<tr><td>ElastiCache</td><td>缓存、共享 Session</td><td>不能代替持久化数据库</td></tr>
+<tr><td>AWS ARC</td><td>应用恢复控制、区域流量切换等</td><td>不负责复制业务数据</td></tr></table>
+</section>
+
+<section class="card" id="questions">
+<h2>九、SAP-C02 高频题型与快速答题技巧</h2>
+<details open><summary>题型 1：Web 服务器发生故障</summary><p><b>场景：</b>EC2 实例失败时，网站仍要可用。</p><p><b>判断：</b>多个 EC2 实例；ALB 分发流量；ASG 自动替换不健康实例；最好跨多个 AZ。</p><p class="key">优先答案：ALB + Multi-AZ Auto Scaling Group。</p></details>
+<details><summary>题型 2：整个 AZ 发生故障</summary><p><b>场景：</b>一个 Availability Zone 不可用，应用仍需服务。</p><p><b>判断：</b>不能只在一个 AZ 部署；计算层跨 AZ；ELB 转发到健康目标；数据库也要有 AZ 级冗余。</p><p class="key">优先答案：Multi-AZ + ELB + Auto Scaling + RDS Multi-AZ。</p></details>
+<details><summary>题型 3：数据库主节点故障</summary><p><b>场景：</b>要求数据库自动故障转移并尽量减少停机。</p><p><b>判断：</b>重点是自动切换，不是读扩展，也不是从备份手工恢复。</p><p class="key">优先答案：RDS Multi-AZ 或 Aurora Failover，依数据库类型判断。</p></details>
+<details><summary>题型 4：全球用户访问网站</summary><p><b>场景：</b>全球用户希望低延迟访问并提高可用性。</p><p><b>判断：</b>需要全球流量分配及多 Region 应用部署。按延迟选 Region 可考虑 Route 53 Latency-based Routing；静态 IP、AWS 全球网络和快速流量切换可考虑 Global Accelerator。</p></details>
+<details><summary>题型 5：主 Region 故障，切换备用 Region</summary><p><b>场景：</b>主区域不可用时将用户引导到备用区域。</p><p><b>判断：</b>跨 Region 应用资源、健康检查、流量切换、数据复制和数据库提升缺一不可。</p><p class="key">选择方向：Route 53 Failover 或 Global Accelerator + 跨 Region 数据复制（例如 Aurora Global Database）。</p></details>
+<details><summary>题型 6：要求极低 RTO 和 RPO</summary><p><b>场景：</b>区域故障后要求近乎无停机、数据损失极少。</p><p><b>判断：</b>Backup and Restore 通常不符合；评估 Warm Standby 或 Active/Active；必须检查复制延迟、切换步骤与数据一致性。</p></details>
+</section>
+
+<section class="card" id="traps">
+<h2>十、最容易出现的 12 个考试陷阱</h2>
+<table><tr><th>#</th><th>错误理解</th><th>正确理解</th></tr>
+<tr><td>1</td><td>Multi-AZ 可以解决 Region 故障</td><td>Multi-AZ 主要解决 AZ 级故障</td></tr>
+<tr><td>2</td><td>Read Replica 就是 Multi-AZ</td><td>读扩展与高可用是不同目标</td></tr>
+<tr><td>3</td><td>ALB 能自动创建 EC2</td><td>ASG 负责实例替换和容量管理</td></tr>
+<tr><td>4</td><td>Route 53 能复制数据库</td><td>Route 53 负责 DNS 路由</td></tr>
+<tr><td>5</td><td>Global Accelerator 是 DNS 服务</td><td>它是全球网络流量入口</td></tr>
+<tr><td>6</td><td>CloudFront 能替换 EC2</td><td>它主要提供 CDN、缓存和源站故障转移</td></tr>
+<tr><td>7</td><td>Aurora Reader 天生就是 Writer</td><td>需要故障转移和提升角色</td></tr>
+<tr><td>8</td><td>Multi-AZ 一定能解决 Session 丢失</td><td>还要考虑 Session 外部化和应用无状态设计</td></tr>
+<tr><td>9</td><td>备份等于高可用</td><td>备份主要用于数据恢复，不等于持续可用</td></tr>
+<tr><td>10</td><td>跨 Region 复制等于自动切换</td><td>还需要流量切换和数据库恢复机制</td></tr>
+<tr><td>11</td><td>Active/Active 一定最便宜</td><td>通常成本和架构复杂度更高</td></tr>
+<tr><td>12</td><td>健康检查等于业务完全正常</td><td>需要设计能反映实际服务能力的健康检查</td></tr></table>
+</section>
+
+<section class="card" id="cheatsheet">
+<h2>十一、考前速记卡：看到关键词，立即联想到服务</h2>
+<table><tr><th>题干关键词</th><th>优先联想</th></tr>
+<tr><td>EC2 故障、自动替换</td><td><b>Auto Scaling</b></td></tr>
+<tr><td>HTTP 请求分发</td><td><b>ALB</b></td></tr>
+<tr><td>TCP / UDP 负载均衡</td><td><b>NLB</b></td></tr>
+<tr><td>跨 AZ Web 高可用</td><td><b>ALB + ASG + Multi-AZ</b></td></tr>
+<tr><td>Session 共享</td><td><b>ElastiCache / DynamoDB</b></td></tr>
+<tr><td>RDS 自动主备切换</td><td><b>RDS Multi-AZ</b></td></tr>
+<tr><td>数据库读扩展</td><td><b>Read Replica</b></td></tr>
+<tr><td>Aurora Writer 故障</td><td><b>Aurora Failover</b></td></tr>
+<tr><td>跨 Region 数据库</td><td><b>Aurora Global Database</b></td></tr>
+<tr><td>DNS 主备切换</td><td><b>Route 53 Failover</b></td></tr>
+<tr><td>全球静态 IP、低延迟</td><td><b>Global Accelerator</b></td></tr>
+<tr><td>CDN 主备源站</td><td><b>CloudFront Origin Failover</b></td></tr>
+<tr><td>最低 DR 成本</td><td><b>Backup and Restore</b></td></tr>
+<tr><td>核心基础设施持续运行</td><td><b>Pilot Light</b></td></tr>
+<tr><td>缩小规模的备用环境</td><td><b>Warm Standby</b></td></tr>
+<tr><td>多个区域同时提供服务</td><td><b>Active/Active</b></td></tr>
+<tr><td>区域恢复控制</td><td><b>AWS ARC</b></td></tr></table>
+</section>
+
+<section class="card" id="method">
+<h2>十二、真正考试时的五步解题法</h2>
+<ol>
+<li><b>故障范围是什么？</b> 单台 EC2、整个 AZ，还是整个 Region？</li>
+<li><b>故障发生在哪一层？</b> Web、Application、Database，还是 DNS / Network？</li>
+<li><b>要求自动还是手动恢复？</b> Automatic Failover、Manual Failover，还是 Automatic Scaling？</li>
+<li><b>数据能否丢失？</b> RPO 是否为 0？是否允许少量数据丢失？是否需要同步复制？</li>
+<li><b>成本与恢复速度哪个更重要？</b> 最低成本通常考虑 Backup and Restore；更快恢复考虑 Warm Standby；极低停机时间可考虑 Active/Active。</li>
+</ol>
+<div class="callout success"><b>核心解题逻辑：</b>先确定故障范围，再确定故障层级，然后根据自动化要求、RTO/RPO 和成本筛选服务组合。不要只因为题目出现某个服务名称就直接选它。</div>
+</section>
+
+<section class="card quiz" id="quiz">
+<h2>十三、模拟练习题</h2>
+<p><span class="pill">单选题</span> 一家公司在 AWS 上运行一个三层 Web 应用程序。应用部署在一个 Region 中，Web 和 Application 层使用 EC2，数据库使用 Amazon RDS。</p>
+<p>公司要求：</p>
+<ul><li>如果一个 Availability Zone 发生故障，网站仍然能够正常访问。</li><li>EC2 实例发生故障时能够自动替换。</li><li>RDS 主数据库发生故障时能够自动切换。</li><li>尽可能减少架构复杂度和额外成本。</li></ul>
+<p><b>哪种架构最符合要求？</b></p>
+<form id="question">
+<label><input type="radio" name="answer" value="A"> A. 单 AZ 部署 EC2，使用 RDS Read Replica，并通过 Route 53 实现故障转移。</label>
+<label><input type="radio" name="answer" value="B"> B. 在多个 AZ 部署 EC2 Auto Scaling Group，使用 ALB，并启用 RDS Multi-AZ。</label>
+<label><input type="radio" name="answer" value="C"> C. 在多个 Region 部署 EC2，使用 Aurora Global Database 和 Global Accelerator。</label>
+<label><input type="radio" name="answer" value="D"> D. 使用 CloudFront 和 S3 静态网站托管，并通过 Lambda 实现数据库故障转移。</label>
+<button type="submit">提交答案并查看解析</button>
+</form>
+<div class="result" id="result"><b id="resultTitle"></b><p>正确答案：B。</p><ul><li>多个 AZ 部署 EC2：应对 AZ 故障。</li><li>ALB：将请求分发到健康实例。</li><li>Auto Scaling：自动替换不健康实例。</li><li>RDS Multi-AZ：数据库自动故障转移。</li></ul><p>C 可以提供更高级别的区域灾难恢复，但题目没有要求 Region 级容灾，增加了不必要的成本和复杂度。</p></div>
+</section>
+<section class="card">
+<h2>官方资料与延伸阅读</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/fail-over-to-healthy-resources.html" target="_blank" rel="noopener">AWS Well-Architected：Fail over to healthy resources</a></li>
+<li><a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/disaster-recovery-dr.html" target="_blank" rel="noopener">AWS Well-Architected：Disaster Recovery</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.Failover.html" target="_blank" rel="noopener">Amazon RDS Multi-AZ Failover</a></li>
+<li><a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html" target="_blank" rel="noopener">Route 53 DNS Failover</a></li>
+<li><a href="https://docs.aws.amazon.com/r53recovery/latest/dg/what-is-route53-recovery.html" target="_blank" rel="noopener">Amazon Application Recovery Controller</a></li>
+</ul>
+<div class="callout"><b>最后一句话：</b>计算层用 ELB + Auto Scaling，数据库层用 Multi-AZ，区域级容灾用 Route 53 / Global Accelerator + 跨 Region 数据复制。</div>
+</section>
+<footer>为 AWS Certified Solutions Architect – Professional（SAP-C02）复习整理 · 可离线打开 · 支持浏览器打印 / 另存为 PDF</footer>
+</main>
+</div>
+<script>
+document.getElementById('question').addEventListener('submit',function(e){
+ e.preventDefault();
+ const chosen=document.querySelector('input[name="answer"]:checked');
+ if(!chosen){alert('请先选择一个答案。');return;}
+ const box=document.getElementById('result');
+ document.getElementById('resultTitle').textContent=chosen.value==='B'?'回答正确！':'再理解一下：正确答案是 B。';
+ box.style.display='block';
+ box.scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+</script>
+</body>
+</html>
