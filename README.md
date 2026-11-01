@@ -2,13 +2,13 @@
 
 ## HTML 导航页
 
-在仓库根目录运行以下命令，递归扫描文件夹并更新 `index.html`：
+在仓库根目录运行以下命令，递归扫描文件夹并更新 `index.html` 与 HTML 文件列表数据 `html-files.js`：
 
 ```powershell
 python tools\generate_index.py
 ```
 
-新增、删除或移动 HTML 文件后重新运行即可。生成器会排除 `.git` 目录和导航页自身。
+导航页会动态加载 `html-files.js` 中的数据。新增、删除或移动 HTML 文件后重新运行即可。生成器会排除 `.git` 目录和导航页自身。
 
 
 ## Getting started

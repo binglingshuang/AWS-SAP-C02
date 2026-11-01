@@ -1,0 +1,1 @@
+window.HTML_FILES = ["AWS_SAP-C02_CloudFormation_考试速查手册.html", "AWS_SAP_C02_VPN_Networking_Notes.html", "AWS_SAP_C02_Website_High_Availability.html", "Database/数据库考点.html", "NAT/AWS_SAP_C02_NAT_FlowLogs.html", "Role/AWS_SAP-C02_IAM_复习手册.html", "SQS/SQS_SNS.html"];
