@@ -13,14 +13,14 @@
 |---|---|
 | 根导航页 | 已完成；各分类卡片已标注完成进度，未创建的 `architecture-patterns.html` 入口已禁用，无断链 |
 | 分类入口页 | 12 个已完成（根导航挂了 11 个，`hybrid-edge` 未挂载） |
-| 服务正文 | **已完成 32 篇 / 导航规划 78 篇（去重）＝ 41.0%** |
-| 未创建正文 | **46 篇**（78 篇规划减去已完成 32 篇；含已禁用入口的 `architecture-patterns.html` 与 `app-runner.html`） |
+| 服务正文 | **已完成 37 篇 / 导航规划 78 篇（去重）＝ 47.4%** |
+| 未创建正文 | **41 篇**（78 篇规划减去已完成 37 篇；含已禁用入口的 `architecture-patterns.html`） |
 | 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
-| 正文内场景题 | 32 篇正文共内嵌 **184 道手写场景题**，不是 529 道 |
+| 正文内场景题 | 37 篇正文共内嵌 **214 道手写场景题**，不是 529 道 |
 | 推荐下一篇 | `analytics/glue.html`（P0；从零编写） |
 | 最大阻塞 | 剩余正文量大，且 529 题尚未按服务归类、题库化；导航/命名旧规范已清理 |
 
-**一句话：站点骨架和 32 篇高频核心服务正文已经成形，剩余 46 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
+**一句话：站点骨架和 37 篇高频核心服务正文已经成形，剩余 41 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
 
 ---
 
@@ -30,7 +30,7 @@
 |---|---|---:|---|
 | 根导航页 | `index.html` | 1 | 手工维护的 11 分类卡片入口，设计完成 |
 | 分类入口页 | `<category>/index.html` | 12 | 11 个已挂到根页，`hybrid-edge/index.html` 未挂载 |
-| 服务正文 | `<category>/*.html` | **26** | VPC、CloudFront、Direct Connect、VPN、Transit Gateway、Route 53、ELB、PrivateLink、Global Accelerator、EC2、Auto Scaling、Lambda、ECS/Fargate、RDS/Aurora、DynamoDB、S3、EBS、EFS、IAM、KMS/CloudHSM、Organizations/SCP、IAM Identity Center、CloudFormation、CloudWatch、CloudTrail、AWS Config |
+| 服务正文 | `<category>/*.html` | **37** | 当前完成正文见下表；本次补齐计算分类剩余 5 篇 |
 | 参考考题库 | `input/exam.csv` | **529 题** | 含题干、选项、答案、中文解析；只读参考，未加工成页面 |
 | 历史归档正文 | `old/**/*.html` | 10 篇（1 篇 0 字节） | **历史归档，禁止读取或作为续写素材** |
 | 历史归档架构图 | `old/Draw.io/*.drawio` | 4 张 | **历史归档，不读取、不复用** |
@@ -67,8 +67,19 @@
 | `management/cloudwatch.html` | 管理 | — | — | 6 | 18 | 有 |
 | `management/cloudtrail.html` | 管理 | — | — | 6 | 18 | 有 |
 | `management/config.html` | 管理 | — | — | 6 | 18 | 有 |
+| `application-integration/sqs-sns.html` | 应用集成 | — | — | 6 | 18 | 有 |
+| `application-integration/eventbridge.html` | 应用集成 | — | — | 6 | 16 | 有 |
+| `application-integration/step-functions.html` | 应用集成 | — | — | 6 | 16 | 有 |
+| `application-integration/api-gateway.html` | 应用集成 | — | — | 6 | 16 | 有 |
+| `application-integration/appsync.html` | 应用集成 | — | — | 6 | 16 | 有 |
+| `application-integration/mq.html` | 应用集成 | — | — | 6 | 16 | 有 |
+| `compute/eks.html` | 计算 | — | — | 6 | 18 | 有 |
+| `compute/app-runner.html` | 计算 | — | — | 6 | 18 | 有 |
+| `compute/elastic-beanstalk.html` | 计算 | — | — | 6 | 18 | 有 |
+| `compute/batch.html` | 计算 | — | — | 6 | 18 | 有 |
+| `compute/outposts-wavelength.html` | 计算 | — | — | 6 | 18 | 有 |
 
-这 26 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
+这 37 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
 
 ---
 
@@ -79,7 +90,7 @@
 | 分类 | 入口页 | 已完成 | 规划 | 缺失 | 完成率 | 优先级 |
 |---|---|---:|---:|---:|---:|---|
 | 网络与内容分发 | `networking/index.html` | 9 | 9 | 0 | 100% | P0 |
-| 计算 | `compute/index.html` | 4 | 9 | 5 | 44.4% | P0 |
+| 计算 | `compute/index.html` | 9 | 9 | 0 | 100% | P0 |
 | 存储 | `storage/index.html` | 3 | 7 | 4 | 42.9% | P0 |
 | 数据库 | `database/index.html` | 2 | 6 | 4 | 33.3% | P0 |
 | 安全、身份与合规 | `security/index.html` | 4 | 11 | 7 | 36.4% | P0 |
@@ -91,7 +102,7 @@
 | 机器学习与 AI | `ml/index.html` | 0 | 2 | 2 | 0% | P3 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 0 | 3 | 3 | 0% | P3 |
 | 综合专题 | 根页直达 | 0 | 1 | 1 | 0% | P1 |
-| **合计** |  | **26** | **78** | **52** | **33.3%** |  |
+| **合计** |  | **37** | **78** | **41** | **47.4%** |  |
 
 > 根页写的“74 个文档”是旧口径 / 合并页口径；按当前导航实际目标去重后是 78 篇。完成全部正文后再统一校准首页数字。
 
@@ -115,17 +126,17 @@
 
 备注：根页服务数已校准为 9 项，与分类页一致。
 
-### 3.2 计算（4 / 9）
+### 3.2 计算（9 / 9）
 
 - [x] `compute/ec2.html`
 - [x] `compute/auto-scaling.html` — 完成日期：2026-11-02；字数约 13,000；场景题 6 道；覆盖四种扩展策略、冷却期、生命周期钩子、混合实例策略、终止保护、暖池、健康检查
 - [x] `compute/lambda.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖调用模型、事件源映射、并发、失败处理、冷启动、VPC 与边缘函数选型
 - [x] `compute/fargate-ecs.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 ECS/Fargate 容量模式、Task Definition、Service、网络、IAM 与自动扩缩
-- [ ] P1 `compute/eks.html` — 节点类型、Fargate Profile、IRSA、与 ECS 对比
-- [ ] P1 `compute/app-runner.html` — **分类页当前把 App Runner 卡片错误指向 `ec2.html`**
-- [ ] P1 `compute/elastic-beanstalk.html` — 部署策略、环境类型、`.ebextensions`
-- [ ] P2 `compute/batch.html` — Job Queue、Compute Environment、Spot 集成
-- [ ] P2 `compute/outposts-wavelength.html` — 与 `hybrid-edge/outposts.html` 存在主题重叠，见 8.3
+- [x] P1 `compute/eks.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖托管控制平面、节点类型、Fargate Profile、IRSA / Pod Identity、网络与存储、扩缩及 ECS 选型
+- [x] P1 `compute/app-runner.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖源码/镜像部署、自动扩缩、VPC Connector、IAM 角色、网络边界及 ECS / Beanstalk / Lambda 选型
+- [x] P1 `compute/elastic-beanstalk.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Web/Worker 环境、All at once / Rolling / Immutable / Traffic Splitting、蓝绿部署、`.ebextensions` 与数据生命周期
+- [x] P2 `compute/batch.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Job Definition / Queue / Compute Environment、EC2/Fargate/Spot、数组作业、依赖、重试与幂等
+- [x] P2 `compute/outposts-wavelength.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；作为唯一正文覆盖 Outposts、Local Zones、Wavelength 的部署位置、网络边界、服务支持与场景选型；避免与 `hybrid-edge` 重复编写
 
 ### 3.3 存储（3 / 7）
 
@@ -222,11 +233,10 @@
 
 ### 3.12 混合云与边缘（0 / 3，未挂到根页）
 
-- [!] P3 `hybrid-edge/outposts.html` — 与 `compute/outposts-wavelength.html` 主题重叠
-- [ ] P3 `hybrid-edge/local-zones-wavelength.html` — Local Zones / Wavelength / Outposts 对比
+- [x] Outposts、Local Zones、Wavelength 共用唯一正文：`compute/outposts-wavelength.html`（计入计算分类，不重复计数）
 - [ ] P3 `hybrid-edge/iot.html` — IoT Core、Greengrass、Device Shadow
 
-> `hybrid-edge/index.html` 已存在，但根页没有入口；同时 `compute` 分类也规划了 Outposts/Local Zones/Wavelength。需要先决定“合并到计算”还是“保留独立分类并从根页挂出”。
+> `hybrid-edge/index.html` 仍未挂到根页。边缘计算正文统一放在 `compute/outposts-wavelength.html`，不再另建重复页面；IoT 主题仍待补充。
 
 ### 3.13 综合专题（0 / 1）
 
@@ -333,7 +343,7 @@ CSV 没有“服务 / 分类”标签。要把 529 题挂到对应服务页或�
 
 1. 先看 `git status`，确认第 7 节的工作区状态。
 2. 打开本文件第 3 节，从 P0 且 `[ ]` 的第一项开始。
-3. 不要读取 `old/` 历史归档；所有正文从零编写，只参考现有 26 篇正文的结构与写法。
+3. 不要读取 `old/` 历史归档；所有正文从零编写，只参考现有 37 篇正文的结构与写法。
 4. 新建正文后，确认分类页已有同名链接；如果链接写错（如 App Runner），顺手修正入口页。
 5. 完成后更新本文件，再继续下一篇。
 6. 每完成 3–5 篇，跑一次断链检查并提交一次 Git。
@@ -403,13 +413,12 @@ PY
 
 README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前统一使用“分类目录 + 小写短文件名”（如 `networking/vpc.html`），新增正文沿用此形式。
 
-### 8.3 P1：`hybrid-edge` 是孤儿分类
+### 8.3 已解决：Outposts / Local Zones / Wavelength 主题重叠
 
 - `hybrid-edge/index.html` 存在，但根页没有入口。
-- `compute/index.html` 又规划了 `outposts-wavelength.html`。
-- 两边都缺正文。
+- `compute/outposts-wavelength.html` 作为唯一正文，统一覆盖三项服务与选型。
 
-**待决策：** 合并到计算分类并删除 `hybrid-edge`，或保留独立分类并补根页入口。决策前不要同时写两份 Outposts 内容。
+**处理结果（2026-11-02）：** Outposts / Local Zones / Wavelength 内容归入计算分类；未创建 `hybrid-edge/outposts.html` 或 `hybrid-edge/local-zones-wavelength.html`，避免重复内容。`hybrid-edge` 是否挂到根页仍是独立导航决策。
 
 ### 8.4 P1：跨分类链接指向不存在的文件
 
@@ -424,22 +433,20 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 **已处理（2026-11-02）：** 上述卡片已标记为“待补充”并禁用跳转，`analytics` 与 `database` 卡片内嵌套的 `<a>` 已移除，不再产生 404。
 
-### 8.5 P2：App Runner 卡片指向错误
+### 8.5 已解决：App Runner 卡片与正文
 
-`compute/index.html` 中 App Runner 卡片的 `href="ec2.html"`，与 EC2 重复。应改为 `app-runner.html`，并创建对应正文。
-
-**已处理（2026-11-02）：** 卡片 `href` 已改为 `app-runner.html`，因正文未创建，卡片标记为“待补充”并禁用跳转。
+`compute/index.html` 中 App Runner 卡片已链接到 `app-runner.html`，正文已完成并开放访问。
 
 ### 8.6 P2：首页统计与事实不符
 
-- 首页写“74 个文档”，实际 26 篇正文 + 12 个分类入口 + 根页。
+- 首页写“74 个文档”，实际 37 篇正文 + 12 个分类入口 + 根页。
 - 首页写“529 道真题”，实际只有 CSV 原料，页面内约 148 道手写场景题。
 - 首页写“11 大类”，实际有 12 个分类入口页（`hybrid-edge` 未挂载）。
 - `networking` 首页服务数与分类页数量不一致。**已处理（2026-11-02）：** 根页和分类页统一为 9 项。
 
-建议：在内容未完成前改为“26 篇已上线 / 52 篇待补 / 529 道题库待整理”，或完成后再恢复宣传数字。
+建议：在内容未完成前改为“37 篇已上线 / 41 篇待补 / 529 道题库待整理”，或完成后再恢复宣传数字。
 
-**已处理（2026-11-02）：** 首页统计已改为“26 / 78 篇正文已完成”“529 道题库待整理”，页脚同步调整；网络分类进度同步为 9 / 9，根页服务数同步为 9。
+**已处理（2026-11-02）：** 首页统计已改为“37 / 78 篇正文已完成”“529 道题库待整理”，页脚同步调整；网络和计算分类进度分别为 9 / 9。
 
 ### 8.7 P2：历史归档与部署
 
@@ -479,7 +486,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 ## 10. 历史归档说明
 
-`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。新正文一律基于现有 26 篇正文的模板从零编写。
+`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。新正文一律基于现有 37 篇正文的模板从零编写。
 
 是否保留、删除或从 Pages 构建中排除，见第 8.7 节。
 
@@ -502,5 +509,6 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-02 | 新增 `networking/global-accelerator.html`：12 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖静态 Anycast IP、Standard / Custom Routing、端点组、流量拨盘、健康检查及 CloudFront 对比；网络模块完成 9 / 9，正文完成数校准为 26 / 78 | `networking/global-accelerator.html`、`networking/index.html`、`index.html`、`PROGRESS.md` | P0：`application-integration/sqs-sns.html` |
 | 2026-11-02 | 新增 `application-integration/sqs-sns.html`：9 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖 SQS Standard/FIFO、可见性超时、长轮询、DLQ、SNS Fan-out、过滤、授权与加密；应用集成进度更新至 1 / 6，正文完成数校准为 27 / 78 | `application-integration/sqs-sns.html`、`application-integration/index.html`、`index.html`、`PROGRESS.md` | P0：`application-integration/eventbridge.html` |
 | 2026-11-02 | 完成应用集成剩余 5 篇正文：EventBridge、Step Functions、API Gateway、AppSync、Amazon MQ；每篇含 6 道场景题、16 张速记卡、3 道快速自测；分类页 6 / 6、首页总数和进度统计同步更新为 32 / 78 | `application-integration/*.html`、`application-integration/index.html`、`index.html`、`PROGRESS.md` | P0：`analytics/glue.html` |
+| 2026-11-02 | 完成计算分类剩余 5 篇正文：EKS、App Runner、Elastic Beanstalk、Batch、Outposts/Local Zones/Wavelength；每篇含 6 道场景题、18 张速记卡、3 道快速自测；计算分类更新为 9 / 9，首页及进度统计更新为 37 / 78；边缘主题采用唯一计算正文避免重复 | `compute/*.html`、`compute/index.html`、`index.html`、`PROGRESS.md` | 下一分类按优先级继续 |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。

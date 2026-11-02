@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Amazon EKS 速查：控制平面、节点类型、Fargate Profile、IRSA、网络、存储、扩缩与 ECS 选型。">
+<title>AWS SAP-C02｜Amazon EKS 考试速查手册</title>
+<style>
+:root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;--green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;--red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}a{color:var(--primary);text-decoration:none}a:hover{text-decoration:underline}.container{width:min(1120px,calc(100% - 32px));margin:auto}header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:44px 0 36px}header .eyebrow{font-size:13px;letter-spacing:.12em;color:#bfdbfe}header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}header p{color:#dbeafe;max-width:780px;margin:0}.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}nav strong{display:block;margin-bottom:10px}nav a{display:block;padding:5px 8px;border-radius:7px;color:#475569;font-size:14px}nav a:hover{background:var(--primary-soft);text-decoration:none}main{min-width:0}section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:25px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}h2{font-size:24px;line-height:1.3;margin:0 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line)}h3{font-size:18px;margin:22px 0 8px}p{margin:9px 0}ul,ol{padding-left:23px}li{margin:5px 0}.lead{font-size:17px;color:#334155}.callout{padding:13px 15px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:14px 0}.callout.orange{background:var(--orange-soft);border-color:var(--orange)}.callout.green{background:var(--green-soft);border-color:var(--green)}table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f8fafc}.table-wrap{overflow-x:auto}.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:16px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}.node{padding:11px 14px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center}.quiz{border:1px solid var(--line);border-radius:12px;padding:15px;margin:13px 0}.quiz button{margin:5px 6px 5px 0}.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}.checklist{list-style:none;padding:0}.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:8px 0}.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 12px}.progress span{display:block;height:100%;width:0;background:#16a34a}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}button.secondary{background:#e2e8f0;color:#334155}.small{font-size:13px;color:var(--muted)}footer{text-align:center;color:var(--muted);padding:0 0 32px;font-size:13px}@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}@media print{body{background:#fff;font-size:12px}header{background:#fff;color:#111;padding:18px 0}header p,.eyebrow{color:#444!important}.pill{border:1px solid #aaa;color:#333}.layout{display:block;padding:8px 0}nav,.toolbar,.no-print{display:none!important}section{box-shadow:none;break-inside:avoid;padding:14px;margin-bottom:10px}a{color:#111}}
+</style>
+</head>
+<body>
+<header><div class="container">
+ <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+ <h1>Amazon EKS<br>Kubernetes 托管与集群架构</h1>
+ <p>从托管控制平面、EC2 节点与 Fargate，到 IRSA、网络、存储和弹性伸缩。先判断是否必须使用 Kubernetes API 与生态，再决定由谁管理 Pod 的计算容量。</p>
+ <div class="header-meta"><span class="pill">SAP-C02</span><span class="pill">计算 / 容器</span><span class="pill">关键词：Managed Node Group · Fargate Profile · IRSA</span></div>
+ <div class="toolbar no-print"><button onclick="window.print()">打印 / 另存为 PDF</button><button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button><button class="secondary" onclick="location.href='index.html'">返回计算分类</button></div>
+</div></header>
+<div class="container layout">
+<nav><strong>页面目录</strong>
+ <a href="#model">一、EKS 架构边界</a><a href="#nodes">二、节点与容量模式</a><a href="#fargate">三、Fargate Profile</a><a href="#identity">四、IAM、IRSA 与 Pod Identity</a><a href="#network">五、网络与入口</a><a href="#storage">六、持久化存储</a><a href="#operations">七、扩缩、升级与可靠性</a><a href="#compare">八、EKS 与 ECS 选型</a><a href="#scenarios">九、场景题解析</a><a href="#quick">十、关键词速查</a><a href="#memory">十一、考前速记卡</a><a href="#quiz">十二、快速自测</a>
+</nav>
+<main>
+<section id="model"><h2>一、EKS 架构边界</h2>
+<p class="lead">Amazon EKS 是托管 Kubernetes 控制平面，不是自动替客户管理所有工作节点和 Kubernetes 对象的“全托管应用平台”。</p>
+<div class="diagram"><div class="node"><b>AWS 管理</b><br>API Server、etcd、控制平面可用性</div><span>→</span><div class="node"><b>客户配置</b><br>集群访问、工作节点、网络、工作负载</div><span>→</span><div class="node"><b>Kubernetes API</b><br>Deployment、Service、Pod、CRD</div></div>
+<table><thead><tr><th>组件</th><th>职责</th><th>设计检查</th></tr></thead><tbody>
+<tr><td>控制平面</td><td>AWS 在多个可用区运行 Kubernetes 控制平面组件并管理其可用性。</td><td>集群 API Endpoint 可设为公网、私有或两者；用 CIDR、路由和身份策略限制访问。</td></tr>
+<tr><td>工作节点</td><td>运行 Pod 的 EC2 实例或 Fargate 容量。</td><td>节点 IAM role、子网、节点组容量与 Pod 调度约束都需正确。</td></tr>
+<tr><td>集群 IAM role</td><td>供 EKS 控制平面代表集群调用所需 AWS API。</td><td>它不同于节点角色，也不是应用 Pod 的通用身份。</td></tr>
+<tr><td>集群版本</td><td>Kubernetes 版本升级需按支持策略规划，并兼容附加组件与工作负载。</td><td>先检查版本偏差、API 弃用、CoreDNS / VPC CNI / kube-proxy 等附加组件。</td></tr>
+</tbody></table>
+<div class="callout orange"><b>关键边界：</b>控制平面托管不等于节点、容器镜像、Pod 安全策略、应用可用性和集群升级规划都由 AWS 自动完成。</div></section>
+<section id="nodes"><h2>二、节点与容量模式</h2>
+<div class="table-wrap"><table><thead><tr><th>模式</th><th>谁管理 EC2</th><th>适合场景 / 注意点</th></tr></thead><tbody>
+<tr><td>自管理节点</td><td>客户管理启动模板、Auto Scaling 与节点生命周期。</td><td>需要高度自定义 AMI、引导流程或特殊节点管理；运维责任较多。</td></tr>
+<tr><td>托管节点组</td><td>EKS 管理节点组生命周期，底层仍是客户账户中的 EC2 / ASG。</td><td>通用 EC2 工作负载的常用选择；可配多 AZ、实例类型、更新配置和容量类型。</td></tr>
+<tr><td>Fargate</td><td>AWS 管理 Pod 所使用的服务器容量。</td><td>按 Pod 运行，不管理节点；受支持的工作负载和网络/存储能力有边界。</td></tr>
+<tr><td>EKS Auto Mode</td><td>AWS 自动化更多集群计算、网络和存储管理。</td><td>按需求评估其支持范围、权限和成本；不是现有集群所有运维责任消失的保证。</td></tr>
+<tr><td>EKS Anywhere</td><td>客户在自有基础设施运行 Kubernetes 集群，并使用 EKS 工具链进行管理。</td><td>面向本地/边缘一致性，不等同于 AWS 托管云端 EKS 控制平面。</td></tr>
+</tbody></table></div>
+<p>托管节点组扩缩通常与 EC2 Auto Scaling 关联：节点级容量和 Pod 副本数是两层控制。Cluster Autoscaler 或 Karpenter 等组件可根据待调度 Pod 增加节点；节点不足时仅提高 Deployment 副本数不会创造计算容量。</p>
+<div class="callout"><b>成本线索：</b>EC2 节点适合稳定、密集或需 DaemonSet / GPU / 特殊实例的工作负载；Spot 节点可用于可中断且可重试的任务，并需配置多实例类型、冗余和优雅退出。</div></section>
+<section id="fargate"><h2>三、Fargate Profile</h2>
+<p>Fargate Profile 通过命名空间和可选 Pod 标签选择哪些 Pod 在 Fargate 上运行。匹配规则是调度入口，不是 Kubernetes Deployment 副本管理器。</p>
+<ul><li>为每个 Fargate Profile 配置 Pod 执行角色（Pod execution role），供 Fargate Agent 执行拉取镜像等任务。</li><li>匹配的 Pod 调度到 Fargate；未匹配 Pod 仍需合适的 EC2 节点或其他调度方式。</li><li>一个 Profile 可指定私有子网；为 HA 选择多个可用区子网，并确保镜像仓库、日志和依赖可达。</li><li>Fargate 不运行 DaemonSet；需要节点级 Agent、特权容器、特定设备或 GPU 时需核对支持边界，通常选 EC2 节点。</li><li>Fargate Pod 网络与安全组需按 EKS VPC 网络模型规划；无节点不等于无子网、路由或安全组责任。</li></ul>
+<div class="callout orange"><b>角色区分：</b>Pod execution role 是 Fargate 基础设施启动 Pod 所需；应用 Pod 访问 S3、DynamoDB 等 AWS 服务，应使用 IRSA 或 EKS Pod Identity 授权，不要把应用权限塞进节点角色。</div></section>
+<section id="identity"><h2>四、IAM、IRSA 与 Pod Identity</h2>
+<div class="table-wrap"><table><thead><tr><th>身份层</th><th>用途</th><th>最小权限实践</th></tr></thead><tbody>
+<tr><td>Cluster IAM role</td><td>EKS 控制平面调用 AWS 服务。</td><td>按 EKS 集群要求授予，不承载应用数据权限。</td></tr>
+<tr><td>Node IAM role</td><td>节点注册集群、拉取镜像及节点级组件所需操作。</td><td>避免让所有 Pod 继承过宽节点权限。</td></tr>
+<tr><td>IRSA</td><td>为集群配置 OIDC 身份提供者，Service Account 通过 AssumeRoleWithWebIdentity 获取 IAM 权限。</td><td>角色信任策略限制 OIDC Provider、namespace 和 service account 的 subject。</td></tr>
+<tr><td>EKS Pod Identity</td><td>通过 Pod Identity Agent 与关联，将 IAM role 授予指定 Kubernetes Service Account。</td><td>检查 Agent、关联、信任策略及区域支持；与 IRSA 是可选的 Pod 级身份机制。</td></tr>
+</tbody></table></div>
+<p>Pod 必须使用预期的 Kubernetes Service Account，应用 SDK 需支持相应凭证链。仅创建 IAM Role 或给节点附加策略，不能证明目标 Pod 已获得正确的最小权限身份。</p></section>
+<section id="network"><h2>五、网络与入口</h2>
+<ul><li>Amazon VPC CNI 为 Pod 分配 VPC 地址；子网可用 IP、实例 ENI/IP 配额及安全组规则会限制可调度 Pod 数。</li><li>控制平面 Endpoint 的公网/私有访问模式需匹配运维人员、CI/CD 与节点到 API Server 的网络路径。</li><li>集群内 Service 提供服务发现；面向 HTTP/HTTPS 流量通常通过 Ingress Controller / AWS Load Balancer Controller 管理 ALB。</li><li>需要四层负载均衡时可评估 Service type LoadBalancer 与 NLB；核对目标类型、健康检查、安全组和跨 AZ 路径。</li><li>私有子网拉取 ECR 镜像、写日志或调用 AWS API，需要 NAT 或相应 VPC Endpoint，并满足 DNS 与 IAM 策略。</li></ul>
+<div class="callout"><b>排障顺序：</b>先看 Pod Pending 原因与事件，再检查节点资源/标签/污点、子网 IP 与 CNI、IAM 拉镜像权限、路由/DNS、安全组和控制平面 Endpoint。</div></section>
+<section id="storage"><h2>六、持久化存储</h2>
+<table><thead><tr><th>需求</th><th>常见选择</th><th>关键区别</th></tr></thead><tbody>
+<tr><td>Pod 独占块存储</td><td>EBS CSI Driver + PVC</td><td>卷通常绑定可用区；Pod 迁移到其他 AZ 时需处理调度与卷可用区，不是跨 AZ 共享文件系统。</td></tr>
+<tr><td>多 Pod 共享文件</td><td>EFS CSI Driver + PVC</td><td>适合多实例共享文件系统；需规划 Mount Target、安全组和 POSIX 权限。</td></tr>
+<tr><td>对象数据与备份</td><td>S3 API</td><td>对象存储不等于可挂载 POSIX 文件系统；使用 IAM Pod 身份与网络端点控制访问。</td></tr>
+</tbody></table>
+<p>EBS CSI 持久卷适用于 EC2 节点工作负载；EKS Fargate Pod 不支持挂载 EBS 持久卷。CSI 驱动、StorageClass、PVC、IAM 和网络都可能是存储挂载故障原因。不要把容器可写层视为持久数据存储。</p></section>
+<section id="operations"><h2>七、扩缩、升级与可靠性</h2>
+<ul><li>Horizontal Pod Autoscaler 扩缩 Pod 副本；需提供有效指标并设置合理 requests / limits。</li><li>Cluster Autoscaler 或 Karpenter 处理节点容量；它们与 HPA 的作用层不同。</li><li>多 AZ 工作节点、Pod 反亲和/拓扑分布、PodDisruptionBudget 可改善故障与维护时的可用性，但 PDB 不是故障时强制冗余保证。</li><li>升级顺序需兼顾控制平面、节点组、附加组件及 API 兼容；先验证测试环境和弃用 API。</li><li>用 CloudWatch Container Insights / Prometheus 等观测节点、Pod、控制面日志和应用指标；告警应覆盖 Pending、重启、不可用副本和容量耗尽。</li></ul>
+<div class="callout orange"><b>常见误区：</b>节点 Auto Scaling 不自动保证服务副本分布；HPA 也不自动扩容节点。需验证 Pod 能否放置、节点能否按时加入、负载均衡健康检查是否通过。</div></section>
+<section id="compare"><h2>八、EKS 与 ECS 选型</h2>
+<table><thead><tr><th>优先选 EKS</th><th>优先选 ECS</th></tr></thead><tbody><tr><td>组织已有 Kubernetes 技能、工具链、Helm/Operator/CRD 或多云一致性要求。</td><td>主要运行在 AWS，倾向 AWS 原生编排、较少控制面复杂度和更直接的服务集成。</td></tr><tr><td>必须使用 Kubernetes API 兼容工作负载或生态产品。</td><td>希望用 Task Definition / Service 管理容器，且无需 Kubernetes 生态。</td></tr></tbody></table>
+<p>两者均可运行在 EC2 或 Fargate 的相应模式中。不要把“容器”本身作为选择 EKS 的理由：比较的是编排 API、团队运营能力、可移植性与总运维成本。</p></section>
+<section id="scenarios"><h2>九、场景题解析</h2>
+<div class="quiz"><h3>场景一：Pod 需独立读取 S3 权限</h3><p>多个团队共用节点，但每个应用只能访问自己的 S3 前缀。</p><p><b>方向：</b>用 IRSA 或 EKS Pod Identity 将独立 IAM role 绑定到各应用 Service Account，并限定资源和前缀。</p><p><b>排除：</b>扩大节点角色会让同节点工作负载获得过宽权限；Kubernetes RBAC 不是 AWS S3 授权。</p></div>
+<div class="quiz"><h3>场景二：公司已有 Kubernetes Operator</h3><p>应用依赖 CRD/Operator，团队要求继续使用标准 Kubernetes 工具链。</p><p><b>方向：</b>选择 EKS，验证所需 Operator、版本与 AWS 集成兼容性。</p><p><b>排除：</b>ECS 提供不同的任务与服务 API，不能直接运行依赖 Kubernetes API 的 Operator。</p></div>
+<div class="quiz"><h3>场景三：无状态服务不想管理节点</h3><p>少量 Pod 运行简单 Web 服务，无 DaemonSet、GPU 或节点级特权需求。</p><p><b>方向：</b>使用合适的 Fargate Profile，配置执行角色、私有子网、镜像访问与入口。</p><p><b>排除：</b>Fargate 不会自动替应用创建 Service/Ingress 或解决 IAM 与网络问题。</p></div>
+<div class="quiz"><h3>场景四：Pod Pending，节点 CPU 也不足</h3><p>HPA 已增加副本，但新增 Pod 长时间 Pending。</p><p><b>方向：</b>检查调度事件、节点组容量上限和节点自动扩缩配置，确认实例类型/配额/子网 IP 足够。</p><p><b>排除：</b>仅继续提高 HPA 最大副本数只会制造更多待调度 Pod。</p></div>
+<div class="quiz"><h3>场景五：多个 Pod 共享上传文件</h3><p>应用副本会在不同节点同时读取写入共享文件。</p><p><b>方向：</b>评估 EFS CSI 与适配的访问模式、POSIX 权限和 Mount Target 网络。</p><p><b>排除：</b>EBS 通常是区级块卷，并非跨 AZ 多 Pod 共享文件方案；容器临时盘不可持久。</p></div>
+<div class="quiz"><h3>场景六：升级后应用 API 不兼容</h3><p>集群准备升级，部分清单仍使用将移除的 Kubernetes API。</p><p><b>方向：</b>升级前扫描弃用 API，先迁移清单与控制器，再按兼容矩阵升级控制平面、插件和节点。</p><p><b>排除：</b>托管控制平面并不意味着可以跳过工作负载兼容验证。</p></div>
+</section>
+<section id="quick"><h2>十、关键词速查</h2><table><thead><tr><th>题干线索</th><th>优先联想</th><th>易混点</th></tr></thead><tbody>
+<tr><td>Kubernetes API / Operator / CRD</td><td>EKS</td><td>容器本身不要求 EKS</td></tr><tr><td>不想维护节点</td><td>Fargate Profile</td><td>仍需管理 Pod、Profile、IAM、子网和应用可用性</td></tr><tr><td>Pod 最小权限访问 AWS</td><td>IRSA / Pod Identity</td><td>与节点角色、集群角色不同</td></tr><tr><td>Pod 多副本</td><td>HPA + 指标</td><td>HPA 扩 Pod，不负责扩节点</td></tr><tr><td>节点不够调度</td><td>Cluster Autoscaler / Karpenter</td><td>检查节点组上限、IP、配额和调度约束</td></tr><tr><td>共享 POSIX 文件</td><td>EFS CSI</td><td>EBS 常为区级块存储</td></tr><tr><td>多云 Kubernetes</td><td>EKS Anywhere 等方案</td><td>与 AWS 托管 EKS 控制平面区分</td></tr>
+</tbody></table></section>
+<section id="memory"><h2>十一、考前速记卡</h2><p class="small">勾选已掌握项目，页面内进度自动更新。</p><div class="progress"><span id="progressBar"></span></div><p class="small" id="progressText">已掌握 0 / 18</p><ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>EKS：</b>AWS 托管 Kubernetes 控制平面</span></li><li><input type="checkbox"><span><b>控制平面：</b>不等于托管所有工作节点与应用</span></li><li><input type="checkbox"><span><b>托管节点组：</b>EKS 管理节点组生命周期，底层仍是 EC2</span></li><li><input type="checkbox"><span><b>自管理节点：</b>灵活度高、节点运维责任更多</span></li><li><input type="checkbox"><span><b>Fargate Profile：</b>按 namespace / labels 选择 Pod</span></li><li><input type="checkbox"><span><b>Fargate execution role：</b>供平台启动 Pod 使用</span></li><li><input type="checkbox"><span><b>IRSA：</b>OIDC + Service Account 映射 IAM role</span></li><li><input type="checkbox"><span><b>Pod Identity：</b>另一种 Pod 级 AWS 凭证关联方式</span></li><li><input type="checkbox"><span><b>Node role：</b>节点身份，不应成为所有应用的权限集合</span></li><li><input type="checkbox"><span><b>HPA：</b>扩缩 Pod 副本</span></li><li><input type="checkbox"><span><b>节点扩缩：</b>Cluster Autoscaler / Karpenter 管节点容量</span></li><li><input type="checkbox"><span><b>VPC CNI：</b>Pod IP 与子网/ENI 配额影响容量</span></li><li><input type="checkbox"><span><b>集群 Endpoint：</b>公网/私有访问与 CIDR 需规划</span></li><li><input type="checkbox"><span><b>EBS CSI：</b>块存储，关注可用区绑定</span></li><li><input type="checkbox"><span><b>EFS CSI：</b>多节点共享文件，关注 Mount Target</span></li><li><input type="checkbox"><span><b>升级：</b>检查 API 弃用、节点与插件版本</span></li><li><input type="checkbox"><span><b>ECS：</b>AWS 原生编排，减少 Kubernetes 控制面复杂度</span></li><li><input type="checkbox"><span><b>EKS Anywhere：</b>本地 Kubernetes 管理方案，不等于托管云控制平面</span></li>
+</ul></section>
+<section id="quiz"><h2>十二、快速自测</h2><p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz"><b>1. 同一 EKS 节点上的两个应用需要不同的 S3 权限，最合适的授权方式是什么？</b><br><button class="secondary" onclick="showAnswer('q1',false)">A. 给节点角色添加两组 S3 权限</button><button class="secondary" onclick="showAnswer('q1',true)">B. 用 IRSA / Pod Identity 为各 Service Account 绑定独立角色</button><button class="secondary" onclick="showAnswer('q1',false)">C. 使用 Kubernetes Namespace 代替 IAM</button><button class="secondary" onclick="showAnswer('q1',false)">D. 给集群控制平面角色添加权限</button><div class="answer" id="q1"><b>正确答案：B。</b>Pod 级身份可隔离应用权限；节点角色会扩大同节点工作负载的潜在权限。</div></div>
+<div class="quiz"><b>2. HPA 已增副本，但 Pod Pending，节点无可用 CPU。下一步优先检查什么？</b><br><button class="secondary" onclick="showAnswer('q2',false)">A. 继续提高 HPA 目标副本</button><button class="secondary" onclick="showAnswer('q2',true)">B. 节点组和节点自动扩缩、配额及调度约束</button><button class="secondary" onclick="showAnswer('q2',false)">C. 扩大控制平面 IAM 权限</button><button class="secondary" onclick="showAnswer('q2',false)">D. 修改 EFS 生命周期策略</button><div class="answer" id="q2"><b>正确答案：B。</b>HPA 扩 Pod，不会自动保证节点容量；检查节点供给和 Pod 放置条件。</div></div>
+<div class="quiz"><b>3. 哪种情况更支持使用 EKS 而非 ECS？</b><br><button class="secondary" onclick="showAnswer('q3',true)">A. 工作负载依赖 Kubernetes Operator 与 CRD</button><button class="secondary" onclick="showAnswer('q3',false)">B. 只想少量运行简单容器且不需要 Kubernetes API</button><button class="secondary" onclick="showAnswer('q3',false)">C. 只要求代码按事件短时执行</button><button class="secondary" onclick="showAnswer('q3',false)">D. 只需静态文件存储</button><div class="answer" id="q3"><b>正确答案：A。</b>Kubernetes API 生态需求是 EKS 的明确选型因素；纯 AWS 容器工作负载也应比较 ECS 的简洁性。</div></div>
+</section>
+<section><h2>官方资料</h2><ul><li><a href="https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html" target="_blank" rel="noopener">Amazon EKS 用户指南</a></li><li><a href="https://docs.aws.amazon.com/eks/latest/userguide/eks-compute.html" target="_blank" rel="noopener">EKS 计算与节点</a></li><li><a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html" target="_blank" rel="noopener">IAM Roles for Service Accounts</a></li><li><a href="https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html" target="_blank" rel="noopener">EKS Pod Identity</a></li><li><a href="https://docs.aws.amazon.com/eks/latest/userguide/fargate.html" target="_blank" rel="noopener">EKS on Fargate</a></li></ul><div class="callout orange"><b>备考提醒：</b>EKS 功能、版本支持矩阵与配额会变化，请以当前 AWS 文档和考试指南为准。本文为非官方复习资料。</div></section>
+</main></div>
+<footer class="container">Amazon EKS SAP-C02 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+<script>function updateProgress(){const boxes=[...document.querySelectorAll('#memoryList input')];const done=boxes.filter(x=>x.checked).length;document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`}document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));function showAnswer(id,correct){const el=document.getElementById(id);el.style.display='block';el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706'}</script>
+</body>
+</html>
