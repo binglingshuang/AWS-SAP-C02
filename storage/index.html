@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>存储 Storage — AWS SAP-C02 备考</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --paper: #fff;
+      --ink: #172033;
+      --muted: #627089;
+      --line: #e3e9f2;
+      --blue: #2457c5;
+      --blue-soft: #eaf1ff;
+      --shadow: 0 8px 28px rgba(25, 45, 85, .07);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(120deg, #10264d, #2457c5);
+      color: #fff;
+      padding: 0;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 32px 40px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255, 255, 255, .75);
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 28px;
+      transition: color .2s;
+    }
+
+    .back-link:hover {
+      color: #fff;
+    }
+
+    .back-link::before {
+      content: "←";
+      font-size: 16px;
+    }
+
+    .header-title {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+
+    .header-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, .6);
+      margin-top: 4px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .header-desc {
+      margin-top: 16px;
+      font-size: 15px;
+      color: rgba(255, 255, 255, .82);
+      max-width: 680px;
+      line-height: 1.7;
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 32px 64px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* ── Cards grid ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--paper);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+      padding: 28px 26px 24px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(25, 45, 85, .13);
+      border-color: var(--blue);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-icon-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-icon {
+      font-size: 28px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+
+    /* ── Frequency badge ── */
+    .badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .badge-high {
+      background: #fff0f0;
+      color: #b91c1c;
+    }
+
+    .badge-mid {
+      background: #fff7ed;
+      color: #c2410c;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Tags ── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .tag {
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+      line-height: 1.4;
+    }
+
+    .card-arrow {
+      font-size: 18px;
+      color: var(--blue);
+      opacity: 0;
+      transition: opacity .18s, transform .18s;
+      margin-top: auto;
+      align-self: flex-end;
+    }
+
+    .card:hover .card-arrow {
+      opacity: 1;
+      transform: translateX(4px);
+    }
+
+    /* ── Callout ── */
+    .callout {
+      margin-top: 44px;
+      background: var(--paper);
+      border: 1px solid #d1e3ff;
+      border-left: 4px solid var(--blue);
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-size: 14px;
+      color: #2c3e5d;
+      line-height: 1.75;
+      box-shadow: 0 4px 16px rgba(25, 45, 85, .05);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 6px;
+      font-size: 13px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 24px 32px;
+      font-size: 13px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 640px) {
+      .header-inner {
+        padding: 16px 20px 32px;
+      }
+
+      .header-title {
+        font-size: 30px;
+      }
+
+      main {
+        padding: 32px 20px 48px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ Header ══ -->
+  <header>
+    <div class="header-inner">
+      <a href="../index.html" class="back-link">返回首页</a>
+      <div class="header-title">存储</div>
+      <div class="header-subtitle">Storage</div>
+      <p class="header-desc">
+        SAP-C02 存储模块考察对象存储、块存储、文件存储及混合存储的合理选型，重点在于成本、性能、数据生命周期与灾难恢复的权衡。
+      </p>
+    </div>
+  </header>
+
+  <!-- ══ Main ══ -->
+  <main>
+    <p class="section-label">服务导航 · 7 项</p>
+
+    <div class="cards">
+
+      <!-- 1. Amazon S3 -->
+      <a class="card" href="s3.html">
+        <div class="card-header">
+          <div class="card-icon-title">
+            <span class="card-icon">🪣</span>
+            <span class="card-title">Amazon S3</span>
+          </div>
+          <span class="badge badge-high">🔥 高频</span>
+        </div>
+        <p class="card-desc">对象存储，几乎所有架构的核心存储层</p>
+        <div class="tags">
+          <span class="tag">存储类别</span>
+          <span class="tag">生命周期策略</span>
+          <span class="tag">跨区复制(CRR)</span>
+          <span class="tag">访问控制</span>
+          <span class="tag">Presigned URL</span>
+          <span class="tag">S3 Event</span>
+          <span class="tag">静态网站托管</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <!-- 2. Amazon EBS -->
+      <a class="card" href="ebs.html">
+        <div class="card-header">
+          <div class="card-icon-title">
+            <span class="card-icon">💽</span>
+            <span class="card-title">Amazon EBS</span>
+          </div>
+          <span class="badge badge-high">🔥 高频</span>
+        </div>
+        <p class="card-desc">EC2 附加块存储，高性能持久化卷</p>
+        <div class="tags">
+          <span class="tag">卷类型对比(gp3/io2/st1/sc1)</span>
+          <span class="tag">快照</span>
+          <span class="tag">多挂载(Multi-Attach)</span>
+          <span class="tag">加密</span>
+          <span class="tag">与实例存储对比</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <!-- 3. Amazon EFS -->
+      <a class="card" href="efs.html">
+        <div class="card-header">
+          <div class="card-icon-title">
+            <span class="card-icon">📁</span>
+            <span class="card-title">Amazon EFS</span>
+          </div>
+          <span class="badge badge-high">🔥 高频</span>
+        </div>
+        <p class="card-desc">全托管 NFS 共享文件系统，多实例并发挂载</p>
+        <div class="tags">
+          <span class="tag">性能模式</span>
+          <span class="tag">存储类别(Standard/IA)</span>
+          <span class="tag">挂载目标</span>
+          <span class="tag">跨 AZ</span>
+          <span class="tag">与 FSx 对比</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <!-- 4. Amazon FSx -->
+      <a class="card" href="fsx.html">
+        <div class="card-header">
+          <div class="card-icon-title">
+            <span class="card-icon">🗂️</span>
+            <span class="card-title">Amazon FSx</span>
+          </div>
+          <span class="badge badge-mid">⚡ 中频</span>
+        </div>
+        <p class="card-desc">托管第三方文件系统（Windows / Lustre / NetApp / OpenZFS）</p>
+        <div class="tags">
+          <span class="tag">FSx for Windows vs Lustre</span>
+          <span class="tag">与 AD 集成</span>
+          <span class="tag">高性能计算</span>
+          <span class="tag">多 AZ 部署</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <!-- 5. AWS Storage Gateway -->
+      <a class="card" href="storage-gateway.html">
+        <div class="card-header">
+          <div class="card-icon-title">
+            <span class="card-icon">🌉</span>
+            <span class="card-title">AWS Storage Gateway</span>
+          </div>
+          <span class="badge badge-high">🔥 高频</span>
+        </div>
+        <p class="card-desc">混合云存储网关，桥接本地与 AWS 存储</p>
+        <div class="tags">
+          <span class="tag">File/Volume/Tape Gateway</span>
+          <span class="tag">缓存模式 vs 存储模式</span>
+          <span class="tag">带宽优化</span>
+          <span class="tag">与 S3/Glacier 集成</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <!-- 6. AWS Snow Family -->
+      <a class="card" href="snow-family.html">
+        <div class="card-header">
+          <div class="card-icon-title">
+            <span class="card-icon">❄️</span>
+            <span class="card-title">AWS Snow Family</span>
+          </div>
+          <span class="badge badge-mid">⚡ 中频</span>
+        </div>
+        <p class="card-desc">物理设备迁移大量数据到 AWS</p>
+        <div class="tags">
+          <span class="tag">Snowcone vs Snowball vs Snowmobile</span>
+          <span class="tag">边缘计算</span>
+          <span class="tag">数据量决策门槛</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <!-- 7. AWS Backup -->
+      <a class="card" href="backup.html">
+        <div class="card-header">
+          <div class="card-icon-title">
+            <span class="card-icon">🔄</span>
+            <span class="card-title">AWS Backup</span>
+          </div>
+          <span class="badge badge-mid">⚡ 中频</span>
+        </div>
+        <p class="card-desc">统一的跨服务备份策略管理</p>
+        <div class="tags">
+          <span class="tag">备份计划</span>
+          <span class="tag">跨区/跨账户备份</span>
+          <span class="tag">合规性</span>
+          <span class="tag">支持的服务范围</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </a>
+
+    </div><!-- /.cards -->
+
+    <!-- ══ Callout ══ -->
+    <div class="callout">
+      <div class="callout-title">💡 考试提示</div>
+      S3 存储类别和生命周期策略是必考点，需熟记各类别的最短存储时间和使用场景。Storage Gateway 的三种类型在混合云迁移场景中频繁出现，注意 File Gateway 使用 NFS/SMB，Volume Gateway 用于块存储备份。
+    </div>
+
+  </main>
+
+  <!-- ══ Footer ══ -->
+  <footer>
+    AWS SAP-C02 备考笔记 · 存储 Storage
+  </footer>
+
+</body>
+</html>

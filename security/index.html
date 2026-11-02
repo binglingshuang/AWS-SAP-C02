@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>安全、身份与合规 — AWS SAP-C02</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --paper: #fff;
+      --ink: #172033;
+      --muted: #627089;
+      --line: #e3e9f2;
+      --blue: #2457c5;
+      --blue-soft: #eaf1ff;
+      --shadow: 0 8px 28px rgba(25, 45, 85, .07);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                   "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(120deg, #10264d, #2457c5);
+      color: #fff;
+      padding: 48px 32px 52px;
+      position: relative;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255, 255, 255, .78);
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 28px;
+      transition: color .2s;
+    }
+    .back-link:hover { color: #fff; }
+    .back-link::before { content: "←"; font-size: 16px; }
+
+    .header-body { max-width: 900px; }
+
+    header h1 {
+      font-size: clamp(26px, 4vw, 38px);
+      font-weight: 700;
+      letter-spacing: -.5px;
+      line-height: 1.2;
+    }
+
+    header .subtitle {
+      font-size: 16px;
+      color: rgba(255, 255, 255, .65);
+      margin-top: 4px;
+      letter-spacing: .5px;
+    }
+
+    header .intro {
+      margin-top: 18px;
+      font-size: 15px;
+      color: rgba(255, 255, 255, .82);
+      max-width: 780px;
+      line-height: 1.7;
+    }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 48px 24px 72px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* ── Grid ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 20px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: transform .18s, box-shadow .18s, border-color .18s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 40px rgba(25, 45, 85, .12);
+      border-color: #c0d2f5;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-icon-title { display: flex; align-items: center; gap: 12px; }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--blue-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    /* Frequency badge */
+    .badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .badge-high   { background: #fff0f0; color: #b91c1c; }
+    .badge-medium { background: #fff7ed; color: #c2410c; }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* Tag row */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      background: var(--blue-soft);
+      color: var(--blue);
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      line-height: 1.6;
+    }
+
+    /* ── Callout ── */
+    .callout {
+      margin-top: 44px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--blue);
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-size: 14.5px;
+      color: var(--ink);
+      line-height: 1.75;
+      box-shadow: var(--shadow);
+    }
+
+    .callout strong { color: var(--blue); }
+
+    /* ── Responsive tweaks ── */
+    @media (max-width: 600px) {
+      header { padding: 36px 20px 40px; }
+      main   { padding: 32px 16px 56px; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="../index.html">返回首页</a>
+  <div class="header-body">
+    <h1>安全、身份与合规</h1>
+    <p class="subtitle">Security, Identity &amp; Compliance</p>
+    <p class="intro">
+      安全是 SAP-C02 贯穿所有领域的核心主题，涵盖身份认证、权限控制、加密、威胁检测、合规治理等多维度，每道题几乎都有安全考量。
+    </p>
+  </div>
+</header>
+
+<main>
+  <p class="section-title">服务导航 · 11 项</p>
+
+  <div class="cards-grid">
+
+    <!-- 1. IAM -->
+    <a class="card" href="iam.html">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <div class="icon">👤</div>
+          <span class="card-title">AWS IAM</span>
+        </div>
+        <span class="badge badge-high">🔥 高频</span>
+      </div>
+      <p class="card-desc">身份与访问管理，权限控制的核心</p>
+      <div class="tags">
+        <span class="tag">Policy 类型</span>
+        <span class="tag">权限边界</span>
+        <span class="tag">信任策略</span>
+        <span class="tag">STS AssumeRole</span>
+        <span class="tag">跨账号访问</span>
+        <span class="tag">最小权限原则</span>
+      </div>
+    </a>
+
+    <!-- 2. IAM Identity Center -->
+    <a class="card" href="iam-identity-center.html">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <div class="icon">🔑</div>
+          <span class="card-title">AWS IAM Identity Center</span>
+        </div>
+        <span class="badge badge-high">🔥 高频</span>
+      </div>
+      <p class="card-desc">多账号 SSO，统一身份入口（原 AWS SSO）</p>
+      <div class="tags">
+        <span class="tag">Permission Sets</span>
+        <span class="tag">与 AD/IdP 集成</span>
+        <span class="tag">SCIM</span>
+        <span class="tag">多账号登录</span>
+        <span class="tag">与 IAM 角色对比</span>
+      </div>
+    </a>
+
+    <!-- 3. Organizations & SCP -->
+    <a class="card" href="organizations-scp.html">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <div class="icon">🏢</div>
+          <span class="card-title">AWS Organizations &amp; SCP</span>
+        </div>
+        <span class="badge badge-high">🔥 高频</span>
+      </div>
+      <p class="card-desc">多账号管理与服务控制策略</p>
+      <div class="tags">
+        <span class="tag">OU 结构</span>
+        <span class="tag">SCP 继承</span>
+        <span class="tag">允许列表 vs 拒绝列表</span>
+        <span class="tag">SCPs vs IAM Policy</span>
+        <span class="tag">Control Tower 关系</span>
+      </div>
+    </a>
+
+    <!-- 4. KMS / CloudHSM -->
+    <a class="card" href="kms-cloudhsm.html">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <div class="icon">🔐</div>
+          <span class="card-title">AWS KMS / CloudHSM</span>
+        </div>
+        <span class="badge badge-high">🔥 高频</span>
+      </div>
+      <p class="card-desc">密钥管理与硬件安全模块</p>
+      <div class="tags">
+        <span class="tag">CMK 类型</span>
+        <span class="tag">密钥轮换</span>
+        <span class="tag">信封加密</span>
+        <span class="tag">KMS vs CloudHSM</span>
+        <span class="tag">跨区密钥</span>
+        <span class="tag">Grant</span>
+      </div>
+    </a>
+
+    <!-- 5. Secrets Manager -->
+    <a class="card" href="secrets-manager.html">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <div class="icon">🗝️</div>
+          <span class="card-title">AWS Secrets Manager</span>
+        </div>
+        <span class="badge badge-high">🔥 高频</span>
+      </div>
+      <p class="card-desc">密钥/凭证的安全存储与自动轮换</p>
+      <div class="tags">
+        <span class="tag">自动轮换</span>
+        <span class="tag">与 RDS 集成</span>
+        <span class="tag">vs Parameter Store</span>
+        <span class="tag">跨账号访问</span>
+      </div>
+    </a>
+
+    <!-- 6. Cognito -->
+    <a class="card" href="cognito.html">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <div class="icon">👥</div>
+          <span class="card-title">Amazon Cognito</span>
+        </div>
+        <span class="badge badge-medium">⚡ 中频</span>
+      </div>
+      <p class="card-desc">Web/移动应用的用户身份认证</p>
+      <div class="tags">
+        <span class="tag">User Pools vs Identity Pools</span>
+        <span class="tag">联合登录</span>
+        <span class="tag">JWT</span>
+        <span class="tag">与 API Gateway 集成</span>
+      </div>
+    </a>
+
+    <!-- 7. GuardDuty / Detective -->
+    <a class="card" href="guardduty-detective.html">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <div class="icon">🕵️</div>
+          <span class="card-title">Amazon GuardDuty / Detective</span>
+        </div>
+        <span class="badge badge-medium">⚡ 中频</span>
+      </div>
+      <p class="card-desc">智能威胁检测与安全调查</p>
+      <div class="tags">
+        <span class="tag">GuardDuty 数据源</span>
+        <span class="tag">多账号聚合</span>
+        <span class="tag">Detective 调查链路</span>
+        <span class="tag">与 Security Hub 集成</span>
+      </div>
+    </a>
+
+    <!-- 8. Inspector / Macie -->
+    <a class="card" href="inspector-macie.html">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <div class="icon">🔍</div>
+          <span class="card-title">Amazon Inspector / Macie</span>
+        </div>
+        <span class="badge badge-medium">⚡ 中频</span>
+      </div>
+      <p class="card-desc">漏洞扫描与敏感数据发现</p>
+      <div class="tags">
+        <span class="tag">Inspector v2 支持</span>
+        <span class="tag">Macie 识别 PII</span>
+        <span class="tag">与 S3 集成</span>
+        <span class="tag">合规报告</span>
+      </div>
+    </a>
+
+    <!-- 9. WAF / Shield / Network Firewall -->
+    <a class="card" href="waf-shield-firewall.html">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <div class="icon">🛡️</div>
+          <span class="card-title">AWS WAF / Shield / Network Firewall</span>
+        </div>
+        <span class="badge badge-high">🔥 高频</span>
+      </div>
+      <p class="card-desc">应用层防护、DDoS 防御与网络防火墙</p>
+      <div class="tags">
+        <span class="tag">WAF Web ACL</span>
+        <span class="tag">Shield Standard vs Advanced</span>
+        <span class="tag">Network Firewall 部署</span>
+        <span class="tag">与 CloudFront/ALB 集成</span>
+      </div>
+    </a>
+
+    <!-- 10. Certificate Manager -->
+    <a class="card" href="certificate-manager.html">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <div class="icon">📜</div>
+          <span class="card-title">AWS Certificate Manager</span>
+        </div>
+        <span class="badge badge-medium">⚡ 中频</span>
+      </div>
+      <p class="card-desc">SSL/TLS 证书管理与自动续签</p>
+      <div class="tags">
+        <span class="tag">公有 vs 私有 CA</span>
+        <span class="tag">证书绑定</span>
+        <span class="tag">ACM + CloudFront</span>
+        <span class="tag">ACM Private CA</span>
+      </div>
+    </a>
+
+    <!-- 11. RAM -->
+    <a class="card" href="ram.html">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <div class="icon">🤝</div>
+          <span class="card-title">AWS Resource Access Manager (RAM)</span>
+        </div>
+        <span class="badge badge-medium">⚡ 中频</span>
+      </div>
+      <p class="card-desc">跨账号、跨 OU 资源共享</p>
+      <div class="tags">
+        <span class="tag">共享资源类型</span>
+        <span class="tag">与 Organizations 集成</span>
+        <span class="tag">VPC 子网共享</span>
+        <span class="tag">Transit Gateway 共享</span>
+      </div>
+    </a>
+
+  </div><!-- /.cards-grid -->
+
+  <!-- Callout -->
+  <div class="callout">
+    💡 <strong>考试提示：</strong>IAM Policy 的评估逻辑（<strong>显式拒绝 &gt; 显式允许 &gt; 默认拒绝</strong>）和 SCP 的继承方式是超高频考点。跨账号访问必须同时满足信任策略（Trust Policy）和权限策略，两边都要授权。KMS 的<strong>信封加密</strong>机制也需深刻理解。
+  </div>
+
+</main>
+
+</body>
+</html>

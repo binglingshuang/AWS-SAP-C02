@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>计算 Compute — AWS SAP-C02 备考</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --paper: #fff;
+      --ink: #172033;
+      --muted: #627089;
+      --line: #e3e9f2;
+      --blue: #2457c5;
+      --blue-soft: #eaf1ff;
+      --shadow: 0 8px 28px rgba(25, 45, 85, .07);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                   "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(120deg, #10264d, #2457c5);
+      color: #fff;
+      padding: 0 0 48px;
+    }
+
+    .header-nav {
+      padding: 18px 40px 0;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255, 255, 255, .75);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color .2s;
+    }
+
+    .back-link:hover {
+      color: #fff;
+    }
+
+    .back-link::before {
+      content: "←";
+      font-size: 16px;
+    }
+
+    .header-body {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 40px 0;
+    }
+
+    .header-category {
+      display: inline-block;
+      background: rgba(255, 255, 255, .15);
+      color: rgba(255, 255, 255, .9);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    .header-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      line-height: 1.1;
+    }
+
+    .header-subtitle {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, .6);
+      margin-top: 4px;
+      letter-spacing: .04em;
+    }
+
+    .header-desc {
+      margin-top: 18px;
+      max-width: 720px;
+      font-size: 15px;
+      color: rgba(255, 255, 255, .8);
+      line-height: 1.7;
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 40px 80px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    /* ── Grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 20px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 26px 26px 22px;
+      text-decoration: none;
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: transform .18s, box-shadow .18s, border-color .18s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(25, 45, 85, .13);
+      border-color: #c5d6ff;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      line-height: 1;
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      background: var(--blue-soft);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-title-group {
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* ── Frequency badge ── */
+    .freq-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+      align-self: flex-start;
+    }
+
+    .freq-high {
+      background: #fff0f0;
+      color: #b91c1c;
+    }
+
+    .freq-mid {
+      background: #fff7ed;
+      color: #c2410c;
+    }
+
+    .freq-low {
+      background: #f0fdf4;
+      color: #15803d;
+    }
+
+    /* ── Key points ── */
+    .keypoints-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 6px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      background: #eaf1ff;
+      color: #2457c5;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+      line-height: 1.4;
+    }
+
+    /* ── Callout ── */
+    .callout {
+      margin-top: 48px;
+      background: var(--paper);
+      border: 1px solid #c5d6ff;
+      border-left: 4px solid var(--blue);
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-size: 14px;
+      color: #1e3a6e;
+      line-height: 1.75;
+      box-shadow: var(--shadow);
+    }
+
+    .callout strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 6px;
+      letter-spacing: .03em;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 24px 40px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .header-nav { padding: 14px 20px 0; }
+      .header-body { padding: 28px 20px 0; }
+      main { padding: 32px 20px 60px; }
+      .card-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════ HEADER ══════════════════════ -->
+  <header>
+    <div class="header-nav">
+      <a class="back-link" href="../index.html">返回首页</a>
+    </div>
+    <div class="header-body">
+      <span class="header-category">AWS SAP-C02</span>
+      <h1 class="header-title">计算</h1>
+      <div class="header-subtitle">Compute</div>
+      <p class="header-desc">
+        SAP-C02 计算模块涵盖从传统 EC2 到无服务器 Lambda、容器化 ECS/EKS
+        等全谱系，核心考点在于根据场景选择最合适的计算服务及高可用设计。
+      </p>
+    </div>
+  </header>
+
+  <!-- ══════════════════════ MAIN ══════════════════════ -->
+  <main>
+    <p class="section-label">9 项核心服务</p>
+
+    <div class="card-grid">
+
+      <!-- 1. Amazon EC2 -->
+      <a class="card" href="ec2.html">
+        <div class="card-header">
+          <div class="card-icon">💻</div>
+          <div class="card-title-group">
+            <div class="card-title">Amazon EC2</div>
+            <div class="card-desc">可配置虚拟服务器，SAP 考试计算层基础</div>
+          </div>
+        </div>
+        <span class="freq-badge freq-high">🔥 高频</span>
+        <div>
+          <div class="keypoints-label">核心考点</div>
+          <div class="tags">
+            <span class="tag">实例类型选型</span>
+            <span class="tag">购买方式(On-Demand/Reserved/Spot)</span>
+            <span class="tag">置放群组</span>
+            <span class="tag">用户数据</span>
+            <span class="tag">实例存储 vs EBS</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 2. EC2 Auto Scaling -->
+      <a class="card" href="auto-scaling.html">
+        <div class="card-header">
+          <div class="card-icon">📈</div>
+          <div class="card-title-group">
+            <div class="card-title">EC2 Auto Scaling</div>
+            <div class="card-desc">根据负载自动伸缩 EC2 实例数量</div>
+          </div>
+        </div>
+        <span class="freq-badge freq-high">🔥 高频</span>
+        <div>
+          <div class="keypoints-label">核心考点</div>
+          <div class="tags">
+            <span class="tag">扩展策略</span>
+            <span class="tag">生命周期钩子</span>
+            <span class="tag">混合实例策略</span>
+            <span class="tag">预测性扩展</span>
+            <span class="tag">暖池</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 3. AWS Lambda -->
+      <a class="card" href="lambda.html">
+        <div class="card-header">
+          <div class="card-icon" style="font-size:1.6rem;font-weight:700;color:#2457c5;background:#eaf1ff;">λ</div>
+          <div class="card-title-group">
+            <div class="card-title">AWS Lambda</div>
+            <div class="card-desc">无服务器函数计算，事件驱动执行</div>
+          </div>
+        </div>
+        <span class="freq-badge freq-high">🔥 高频</span>
+        <div>
+          <div class="keypoints-label">核心考点</div>
+          <div class="tags">
+            <span class="tag">并发限制</span>
+            <span class="tag">触发器</span>
+            <span class="tag">Lambda@Edge vs CloudFront Functions</span>
+            <span class="tag">容器镜像</span>
+            <span class="tag">冷启动</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 4. Amazon ECS / AWS Fargate -->
+      <a class="card" href="fargate-ecs.html">
+        <div class="card-header">
+          <div class="card-icon">🐳</div>
+          <div class="card-title-group">
+            <div class="card-title">Amazon ECS / AWS Fargate</div>
+            <div class="card-desc">全托管容器编排，Fargate 免运维</div>
+          </div>
+        </div>
+        <span class="freq-badge freq-high">🔥 高频</span>
+        <div>
+          <div class="keypoints-label">核心考点</div>
+          <div class="tags">
+            <span class="tag">Launch Type 对比</span>
+            <span class="tag">Task Definition</span>
+            <span class="tag">Service Auto Scaling</span>
+            <span class="tag">网络模式</span>
+            <span class="tag">与 ALB 集成</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 5. Amazon EKS -->
+      <a class="card" href="eks.html">
+        <div class="card-header">
+          <div class="card-icon">☸️</div>
+          <div class="card-title-group">
+            <div class="card-title">Amazon EKS</div>
+            <div class="card-desc">托管 Kubernetes 服务</div>
+          </div>
+        </div>
+        <span class="freq-badge freq-mid">⚡ 中频</span>
+        <div>
+          <div class="keypoints-label">核心考点</div>
+          <div class="tags">
+            <span class="tag">节点类型</span>
+            <span class="tag">Fargate Profile</span>
+            <span class="tag">EKS Anywhere</span>
+            <span class="tag">IRSA</span>
+            <span class="tag">与 ECS 对比</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 6. AWS Elastic Beanstalk -->
+      <a class="card" href="elastic-beanstalk.html">
+        <div class="card-header">
+          <div class="card-icon">🌱</div>
+          <div class="card-title-group">
+            <div class="card-title">AWS Elastic Beanstalk</div>
+            <div class="card-desc">PaaS 平台，自动处理部署、扩展与监控</div>
+          </div>
+        </div>
+        <span class="freq-badge freq-mid">⚡ 中频</span>
+        <div>
+          <div class="keypoints-label">核心考点</div>
+          <div class="tags">
+            <span class="tag">部署策略</span>
+            <span class="tag">环境类型</span>
+            <span class="tag">.ebextensions</span>
+            <span class="tag">与 EC2 的关系</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 7. AWS Batch -->
+      <a class="card" href="batch.html">
+        <div class="card-header">
+          <div class="card-icon">⚙️</div>
+          <div class="card-title-group">
+            <div class="card-title">AWS Batch</div>
+            <div class="card-desc">大规模批处理计算作业管理</div>
+          </div>
+        </div>
+        <span class="freq-badge freq-mid">⚡ 中频</span>
+        <div>
+          <div class="keypoints-label">核心考点</div>
+          <div class="tags">
+            <span class="tag">Job Queue</span>
+            <span class="tag">Compute Environment</span>
+            <span class="tag">Spot 集成</span>
+            <span class="tag">与 Lambda 对比</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 8. AWS Outposts / Local Zones / Wavelength -->
+      <a class="card" href="outposts-wavelength.html">
+        <div class="card-header">
+          <div class="card-icon">🏭</div>
+          <div class="card-title-group">
+            <div class="card-title">AWS Outposts / Local Zones / Wavelength</div>
+            <div class="card-desc">将 AWS 延伸至本地数据中心或边缘位置</div>
+          </div>
+        </div>
+        <span class="freq-badge freq-mid">⚡ 中频</span>
+        <div>
+          <div class="keypoints-label">核心考点</div>
+          <div class="tags">
+            <span class="tag">Outposts vs Local Zones vs Wavelength</span>
+            <span class="tag">使用场景</span>
+            <span class="tag">延迟要求</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 9. AWS App Runner -->
+      <a class="card" href="ec2.html">
+        <div class="card-header">
+          <div class="card-icon">🏃</div>
+          <div class="card-title-group">
+            <div class="card-title">AWS App Runner</div>
+            <div class="card-desc">从容器镜像或源代码快速部署 Web 应用</div>
+          </div>
+        </div>
+        <span class="freq-badge freq-low">📗 低频</span>
+        <div>
+          <div class="keypoints-label">核心考点</div>
+          <div class="tags">
+            <span class="tag">与 ECS/Lambda 对比</span>
+            <span class="tag">适用场景</span>
+          </div>
+        </div>
+      </a>
+
+    </div><!-- /.card-grid -->
+
+    <!-- ── Callout ── -->
+    <div class="callout">
+      <strong>💡 考试提示</strong>
+      ECS(Fargate) vs EKS vs Lambda 的场景选型是高频考点。Fargate 适合无状态容器、Lambda
+      适合短时事件驱动、EKS 适合已有 Kubernetes 团队。EC2 Spot 实例结合 Auto Scaling
+      的成本优化方案也是常见考题。
+    </div>
+
+  </main>
+
+  <!-- ══════════════════════ FOOTER ══════════════════════ -->
+  <footer>
+    AWS SAP-C02 备考笔记 · 计算 Compute
+  </footer>
+
+</body>
+</html>

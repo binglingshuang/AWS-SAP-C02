@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>网络与内容分发 — AWS SAP-C02</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --paper: #fff;
+      --ink: #172033;
+      --muted: #627089;
+      --line: #e3e9f2;
+      --blue: #2457c5;
+      --blue-soft: #eaf1ff;
+      --shadow: 0 8px 28px rgba(25, 45, 85, .07);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(120deg, #10264d, #2457c5);
+      color: #fff;
+      padding: 0;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 32px 36px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255, 255, 255, .75);
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 24px;
+      transition: color .2s;
+    }
+
+    .back-link:hover {
+      color: #fff;
+    }
+
+    .header-icon {
+      font-size: 44px;
+      margin-bottom: 12px;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -.5px;
+      margin-bottom: 4px;
+    }
+
+    header .subtitle {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, .65);
+      font-weight: 400;
+      margin-bottom: 18px;
+    }
+
+    header .description {
+      font-size: .97rem;
+      color: rgba(255, 255, 255, .82);
+      max-width: 700px;
+      line-height: 1.75;
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 32px 60px;
+    }
+
+    .section-label {
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* ── Card Grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow);
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 36px rgba(25, 45, 85, .13);
+      border-color: var(--blue);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .card-title-block {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-freq {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: .72rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .freq-high {
+      background: #fff0f0;
+      color: #b91c1c;
+    }
+
+    .freq-mid {
+      background: #fff7ed;
+      color: #c2410c;
+    }
+
+    .card-desc {
+      font-size: .875rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .tag {
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    /* ── Callout ── */
+    .callout {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--blue);
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-size: .92rem;
+      color: #374151;
+      line-height: 1.7;
+    }
+
+    .callout strong {
+      color: var(--ink);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .header-inner {
+        padding: 22px 20px 28px;
+      }
+
+      header h1 {
+        font-size: 1.6rem;
+      }
+
+      main {
+        padding: 28px 16px 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="../index.html" class="back-link">← 返回首页</a>
+      <div class="header-icon">🌐</div>
+      <h1>网络与内容分发</h1>
+      <p class="subtitle">Networking &amp; Content Delivery</p>
+      <p class="description">
+        SAP-C02 考试中网络是最高频考点之一，涵盖混合网络、私有连接、高可用 DNS、内容分发加速等核心架构场景。
+        理解各服务的适用边界与相互协作方式，是解答复杂架构题的关键。
+        建议结合真实场景，重点掌握混合连接方案的对比与组合设计。
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <p class="section-label">服务导航 · 共 9 项</p>
+
+    <div class="card-grid">
+
+      <!-- 1. Amazon VPC -->
+      <a href="vpc.html" class="card">
+        <div class="card-header">
+          <span class="card-icon">🏗️</span>
+          <div class="card-title-block">
+            <div class="card-title">Amazon VPC</div>
+            <span class="card-freq freq-high">🔥 高频</span>
+          </div>
+        </div>
+        <p class="card-desc">虚拟私有云，网络隔离与路由控制的基础</p>
+        <div class="card-tags">
+          <span class="tag">子网设计</span>
+          <span class="tag">路由表</span>
+          <span class="tag">VPC Peering</span>
+          <span class="tag">VPC Endpoints</span>
+          <span class="tag">Flow Logs</span>
+          <span class="tag">NACL vs SG</span>
+        </div>
+      </a>
+
+      <!-- 2. AWS Direct Connect -->
+      <a href="direct-connect.html" class="card">
+        <div class="card-header">
+          <span class="card-icon">🔌</span>
+          <div class="card-title-block">
+            <div class="card-title">AWS Direct Connect</div>
+            <span class="card-freq freq-high">🔥 高频</span>
+          </div>
+        </div>
+        <p class="card-desc">专用私有线路连接本地到 AWS</p>
+        <div class="card-tags">
+          <span class="tag">VIF 类型</span>
+          <span class="tag">LAG</span>
+          <span class="tag">Direct Connect Gateway</span>
+          <span class="tag">冗余设计</span>
+          <span class="tag">BGP</span>
+        </div>
+      </a>
+
+      <!-- 3. AWS VPN -->
+      <a href="vpn.html" class="card">
+        <div class="card-header">
+          <span class="card-icon">🔐</span>
+          <div class="card-title-block">
+            <div class="card-title">AWS VPN</div>
+            <span class="card-freq freq-high">🔥 高频</span>
+          </div>
+        </div>
+        <p class="card-desc">基于 IPSec 的加密隧道连接</p>
+        <div class="card-tags">
+          <span class="tag">Site-to-Site VPN</span>
+          <span class="tag">Client VPN</span>
+          <span class="tag">VPN over Direct Connect</span>
+          <span class="tag">加速 VPN</span>
+        </div>
+      </a>
+
+      <!-- 4. AWS Transit Gateway -->
+      <a href="transit-gateway.html" class="card">
+        <div class="card-header">
+          <span class="card-icon">🔀</span>
+          <div class="card-title-block">
+            <div class="card-title">AWS Transit Gateway</div>
+            <span class="card-freq freq-high">🔥 高频</span>
+          </div>
+        </div>
+        <p class="card-desc">大规模 VPC 与混合网络的中枢路由器</p>
+        <div class="card-tags">
+          <span class="tag">TGW Attachments</span>
+          <span class="tag">路由域</span>
+          <span class="tag">Multicast</span>
+          <span class="tag">RAM 共享</span>
+          <span class="tag">跨 Region</span>
+        </div>
+      </a>
+
+      <!-- 5. Amazon Route 53 -->
+      <a href="route53.html" class="card">
+        <div class="card-header">
+          <span class="card-icon">🌍</span>
+          <div class="card-title-block">
+            <div class="card-title">Amazon Route 53</div>
+            <span class="card-freq freq-high">🔥 高频</span>
+          </div>
+        </div>
+        <p class="card-desc">托管 DNS 服务，支持智能路由与健康检查</p>
+        <div class="card-tags">
+          <span class="tag">路由策略</span>
+          <span class="tag">健康检查</span>
+          <span class="tag">Resolver</span>
+          <span class="tag">私有托管区</span>
+          <span class="tag">跨账号</span>
+        </div>
+      </a>
+
+      <!-- 6. Amazon CloudFront -->
+      <a href="cloudfront.html" class="card">
+        <div class="card-header">
+          <span class="card-icon">⚡</span>
+          <div class="card-title-block">
+            <div class="card-title">Amazon CloudFront</div>
+            <span class="card-freq freq-high">🔥 高频</span>
+          </div>
+        </div>
+        <p class="card-desc">全球 CDN，静态/动态内容加速分发</p>
+        <div class="card-tags">
+          <span class="tag">Origin 配置</span>
+          <span class="tag">缓存行为</span>
+          <span class="tag">OAC</span>
+          <span class="tag">Lambda@Edge</span>
+          <span class="tag">WAF 集成</span>
+        </div>
+      </a>
+
+      <!-- 7. AWS Global Accelerator -->
+      <a href="global-accelerator.html" class="card">
+        <div class="card-header">
+          <span class="card-icon">🚀</span>
+          <div class="card-title-block">
+            <div class="card-title">AWS Global Accelerator</div>
+            <span class="card-freq freq-mid">⚡ 中频</span>
+          </div>
+        </div>
+        <p class="card-desc">利用 AWS 骨干网加速全球 TCP/UDP 流量</p>
+        <div class="card-tags">
+          <span class="tag">静态 Anycast IP</span>
+          <span class="tag">端点组</span>
+          <span class="tag">与 CloudFront 区别</span>
+          <span class="tag">故障切换</span>
+        </div>
+      </a>
+
+      <!-- 8. Elastic Load Balancing -->
+      <a href="elb.html" class="card">
+        <div class="card-header">
+          <span class="card-icon">⚖️</span>
+          <div class="card-title-block">
+            <div class="card-title">Elastic Load Balancing</div>
+            <span class="card-freq freq-high">🔥 高频</span>
+          </div>
+        </div>
+        <p class="card-desc">应用、网络与网关层负载均衡</p>
+        <div class="card-tags">
+          <span class="tag">ALB vs NLB vs GLB</span>
+          <span class="tag">粘性会话</span>
+          <span class="tag">跨区负载</span>
+          <span class="tag">Target Groups</span>
+          <span class="tag">SSL 终止</span>
+        </div>
+      </a>
+
+      <!-- 9. AWS PrivateLink -->
+      <a href="privatelink.html" class="card">
+        <div class="card-header">
+          <span class="card-icon">🔒</span>
+          <div class="card-title-block">
+            <div class="card-title">AWS PrivateLink</div>
+            <span class="card-freq freq-high">🔥 高频</span>
+          </div>
+        </div>
+        <p class="card-desc">私有端点，不经公网访问 AWS 服务或第三方服务</p>
+        <div class="card-tags">
+          <span class="tag">Interface Endpoint</span>
+          <span class="tag">Gateway Endpoint</span>
+          <span class="tag">端点服务</span>
+          <span class="tag">PrivateLink vs Peering</span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Callout -->
+    <div class="callout">
+      💡 <strong>考试提示：</strong>Direct Connect + Transit Gateway + Route 53 Resolver 是 SAP-C02 网络题最常见的组合考点，建议重点掌握混合架构下的 DNS 解析链路。
+    </div>
+
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AWS Step Functions · SAP-C02 考点速记</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23FF9900'/%3E%3Cpath d='M9 10h14v4H9zM9 18h14v4H9z' fill='%230E1116'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#0E1116;
+    --surface:#161B22;
+    --surface-2:#1C222C;
+    --border:#2A313C;
+    --border-strong:#3A4350;
+    --text:#E6E9EE;
+    --muted:#8B95A3;
+    --accent:#FF9900;
+    --accent-soft:rgba(255,153,0,.12);
+    --std:#4FC3F7;
+    --std-soft:rgba(79,195,247,.12);
+    --exp:#B388FF;
+    --exp-soft:rgba(179,136,255,.12);
+    --ok:#66BB6A;
+    --ok-soft:rgba(102,187,106,.12);
+    --bad:#EF5350;
+    --bad-soft:rgba(239,83,80,.12);
+    --code-bg:#1E242E;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:15px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  code,kbd,.mono{
+    font-family:"SF Mono",ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
+    font-size:.92em;
+  }
+  code{
+    background:var(--code-bg);
+    color:#E8C57A;
+    padding:2px 6px;
+    border-radius:4px;
+  }
+  a{color:var(--std);text-decoration:none}
+
+  /* ===== 顶部 ===== */
+  .hero{
+    padding:48px 24px 32px;
+    border-bottom:1px solid var(--border);
+    background:
+      radial-gradient(ellipse 800px 200px at 20% 0%, rgba(255,153,0,.08), transparent 60%),
+      var(--bg);
+  }
+  .hero-inner{max-width:1080px;margin:0 auto}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:12px;letter-spacing:.12em;color:var(--accent);
+    text-transform:uppercase;
+    border:1px solid rgba(255,153,0,.35);
+    padding:4px 10px;border-radius:999px;
+    margin-bottom:20px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  h1{
+    font-size:34px;line-height:1.2;margin:0 0 12px;
+    font-weight:700;letter-spacing:-.01em;
+  }
+  h1 .accent{color:var(--accent)}
+  .lead{color:var(--muted);font-size:15px;max-width:680px;margin:0 0 20px}
+  .tags{display:flex;flex-wrap:wrap;gap:8px}
+  .tag{
+    font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:12px;color:var(--muted);
+    border:1px solid var(--border);
+    padding:3px 10px;border-radius:4px;
+    background:var(--surface);
+  }
+  .tag b{color:var(--text);font-weight:600}
+
+  /* ===== 布局 ===== */
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  section{padding:40px 0;border-bottom:1px solid var(--border)}
+  section:last-child{border-bottom:0}
+  h2{
+    font-size:22px;margin:0 0 6px;
+    display:flex;align-items:center;gap:12px;
+  }
+  h2 .num{
+    font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:13px;color:var(--accent);
+    background:var(--accent-soft);
+    padding:3px 8px;border-radius:4px;
+    font-weight:500;
+  }
+  .sub{color:var(--muted);font-size:14px;margin:0 0 24px}
+
+  /* ===== 目录 ===== */
+  .toc{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:16px 20px;
+    margin:24px 0 0;
+  }
+  .toc-title{font-size:12px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;font-family:ui-monospace,Menlo,monospace}
+  .toc ol{margin:0;padding-left:0;list-style:none;display:grid;grid-template-columns:repeat(2,1fr);gap:6px 24px;counter-reset:toc}
+  .toc li{counter-increment:toc;font-size:14px}
+  .toc li::before{content:counter(toc,decimal-leading-zero);color:var(--accent);font-family:ui-monospace,monospace;margin-right:8px;font-size:12px}
+  .toc a{color:var(--text)}
+  .toc a:hover{color:var(--accent)}
+
+  /* ===== 通用卡片 ===== */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px;
+  }
+  .card h3{margin:0 0 8px;font-size:16px;display:flex;align-items:center;gap:8px}
+  .card p{margin:0 0 8px;color:var(--text)}
+  .card .note{color:var(--muted);font-size:13px}
+
+  /* ===== Standard vs Express 双卡片 ===== */
+  .dual{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .dual .col{
+    border-radius:8px;padding:20px;
+    border:1px solid var(--border);
+  }
+  .dual .col.std{background:var(--std-soft);border-color:rgba(79,195,247,.3)}
+  .dual .col.exp{background:var(--exp-soft);border-color:rgba(179,136,255,.3)}
+  .dual .badge{
+    display:inline-block;font-family:ui-monospace,monospace;font-size:12px;
+    padding:3px 10px;border-radius:4px;margin-bottom:12px;font-weight:600;
+  }
+  .std .badge{background:var(--std);color:#0E1116}
+  .exp .badge{background:var(--exp);color:#0E1116}
+  .dual h3{margin:0 0 12px;font-size:18px}
+  .dual ul{margin:0;padding-left:18px}
+  .dual li{margin-bottom:6px;font-size:14px}
+  .dual li b{color:var(--text)}
+
+  /* ===== 表格 ===== */
+  table{
+    width:100%;border-collapse:collapse;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:8px;
+    overflow:hidden;
+    table-layout:fixed;
+    font-size:14px;
+  }
+  th,td{
+    padding:10px 14px;text-align:left;
+    border-bottom:1px solid var(--border);
+    vertical-align:top;
+    word-wrap:break-word;
+  }
+  th{
+    background:var(--surface-2);
+    font-weight:600;font-size:13px;color:var(--muted);
+    letter-spacing:.02em;
+  }
+  tr:last-child td{border-bottom:0}
+  td .mono{color:#E8C57A}
+
+  /* ===== 集成模式 ===== */
+  .mode{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-left:3px solid var(--accent);
+    border-radius:6px;
+    padding:16px 18px;margin-bottom:12px;
+  }
+  .mode .arn{
+    font-family:ui-monospace,monospace;font-size:12px;
+    background:var(--code-bg);color:#E8C57A;
+    padding:2px 8px;border-radius:4px;
+    display:inline-block;margin-bottom:8px;
+  }
+  .mode h4{margin:0 0 6px;font-size:15px}
+  .mode p{margin:0;font-size:14px;color:var(--muted)}
+  .mode p b{color:var(--text)}
+
+  /* ===== 对错块 ===== */
+  .case{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:18px 20px;margin-bottom:14px;
+  }
+  .case .scenario{
+    font-weight:600;margin-bottom:12px;font-size:15px;
+    display:flex;align-items:flex-start;gap:8px;
+  }
+  .case .scenario .q{
+    color:var(--accent);font-family:ui-monospace,monospace;font-size:12px;
+    flex-shrink:0;margin-top:3px;
+  }
+  .verdict{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    font-size:13.5px;
+  }
+  .verdict .v{
+    padding:10px 12px;border-radius:6px;
+    display:flex;gap:8px;align-items:flex-start;
+  }
+  .verdict .v.ok{background:var(--ok-soft)}
+  .verdict .v.bad{background:var(--bad-soft)}
+  .verdict .v .mark{
+    flex-shrink:0;width:18px;height:18px;margin-top:2px;
+  }
+  .verdict .v.ok .mark{color:var(--ok)}
+  .verdict .v.bad .mark{color:var(--bad)}
+  .verdict .v .body{color:var(--text)}
+  .verdict .v.bad .body{color:#D6DCE4}
+
+  /* ===== 决策树 ===== */
+  .decision{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px 24px;
+  }
+  .decision ol{margin:0;padding-left:0;list-style:none;counter-reset:d}
+  .decision li{
+    counter-increment:d;
+    padding:10px 0 10px 44px;
+    position:relative;
+    border-bottom:1px dashed var(--border);
+    font-size:14.5px;
+  }
+  .decision li:last-child{border-bottom:0}
+  .decision li::before{
+    content:counter(d);
+    position:absolute;left:0;top:10px;
+    width:28px;height:28px;border-radius:50%;
+    background:var(--accent-soft);color:var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    font-family:ui-monospace,monospace;font-size:13px;font-weight:700;
+  }
+  .decision li b{color:var(--accent)}
+
+  /* ===== 避坑清单 ===== */
+  .pitfalls{
+    background:var(--bad-soft);
+    border:1px solid rgba(239,83,80,.3);
+    border-radius:8px;
+    padding:20px 22px;
+  }
+  .pitfalls ol{margin:0;padding-left:20px}
+  .pitfalls li{margin-bottom:8px;font-size:14px}
+  .pitfalls li b.bad{color:var(--bad)}
+  .pitfalls li code{background:rgba(0,0,0,.3)}
+
+  /* ===== 口诀条 ===== */
+  .cheat-bar{
+    background:linear-gradient(90deg, rgba(255,153,0,.15), rgba(255,153,0,.05));
+    border:1px solid rgba(255,153,0,.3);
+    border-radius:8px;
+    padding:14px 18px;
+    margin:16px 0;
+    font-size:14px;
+  }
+  .cheat-bar b{color:var(--accent)}
+
+  footer{
+    padding:28px 24px;text-align:center;
+    color:var(--muted);font-size:12px;
+    font-family:ui-monospace,monospace;
+  }
+
+  /* ===== 响应式 ===== */
+  @media (max-width:768px){
+    .hero{padding:32px 18px 24px}
+    h1{font-size:26px}
+    .wrap{padding:0 18px}
+    section{padding:28px 0}
+    .grid-2,.dual,.verdict{grid-template-columns:1fr}
+    .toc ol{grid-template-columns:1fr}
+    table{font-size:13px}
+    th,td{padding:8px 10px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow"><span class="dot"></span> AWS SAP-C02 · Exam Cheat Sheet</div>
+    <h1>AWS Step Functions <span class="accent">考点速记</span> 与答题套路</h1>
+    <p class="lead">SAP-C02 中考 Step Functions 全部是场景选择题。核心决策点只有几个：选 Standard / Express、选集成模式、错误处理、状态类型、Map、权限、RPO/RTO 与编排选型。本卡按"先判断 → 再排除 → 选答案"的顺序组织。</p>
+    <div class="tags">
+      <span class="tag">重点 <b>Standard vs Express</b></span>
+      <span class="tag">高频 <b>.sync / .waitForTaskToken</b></span>
+      <span class="tag">必考 <b>Retry + Catch</b></span>
+      <span class="tag">陷阱 <b>Distributed Map</b></span>
+    </div>
+    <nav class="toc">
+      <div class="toc-title">本卡目录</div>
+      <ol>
+        <li><a href="#sec-type">Standard vs Express</a></li>
+        <li><a href="#sec-mode">三种服务集成模式</a></li>
+        <li><a href="#sec-state">状态类型速查</a></li>
+        <li><a href="#sec-error">Retry 与 Catch</a></li>
+        <li><a href="#sec-io">输入输出字段</a></li>
+        <li><a href="#sec-iam">IAM 权限要点</a></li>
+        <li><a href="#sec-trigger">触发方式与选型</a></li>
+        <li><a href="#sec-redrive">Redrive 重驱</a></li>
+        <li><a href="#sec-case">高频场景答题模板</a></li>
+        <li><a href="#sec-pitfall">避坑清单</a></li>
+        <li><a href="#sec-tree">考场决策树口诀</a></li>
+      </ol>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ===== 1. Standard vs Express ===== -->
+<section id="sec-type">
+  <h2><span class="num">01</span> Standard vs Express（最高频）</h2>
+  <p class="sub">工作流类型一旦创建不可修改。考试看到关键词先在心里分类。</p>
+  <div class="dual">
+    <div class="col std">
+      <span class="badge">STANDARD</span>
+      <h3>标准工作流</h3>
+      <ul>
+        <li><b>最长运行：</b>最多 1 年</li>
+        <li><b>执行语义：</b>Exactly-once，适合非幂等操作</li>
+        <li><b>计费：</b>按状态转换次数（state transition）</li>
+        <li><b>执行历史：</b>控制台可见，支持 GetExecutionHistory</li>
+        <li><b>支持：</b>Distributed Map、Redrive</li>
+        <li><b>典型：</b>人工审批、支付、长作业、ETL 跑数小时、需审计</li>
+      </ul>
+    </div>
+    <div class="col exp">
+      <span class="badge">EXPRESS</span>
+      <h3>快速工作流</h3>
+      <ul>
+        <li><b>最长运行：</b>最多 5 分钟</li>
+        <li><b>执行语义：</b>Async = At-least-once；Sync = At-most-once，必须幂等</li>
+        <li><b>计费：</b>按执行次数 + 时长 + 内存（GB·秒）</li>
+        <li><b>执行历史：</b>控制台无完整历史，必须开 CloudWatch Logs</li>
+        <li><b>支持：</b>高并发吞吐；<b>不支持</b> Distributed Map / Redrive</li>
+        <li><b>典型：</b>IoT ingestion、每秒上万事件、短数据转换、成本敏感</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cheat-bar">
+    口诀：流程 <b>&gt;5 分钟 / 人工审批 / 不能重复执行 → Standard</b>；高吞吐、短流程、可接受至少一次、成本优先 → Express。
+  </div>
+</section>
+
+<!-- ===== 2. 集成模式 ===== -->
+<section id="sec-mode">
+  <h2><span class="num">02</span> 三种服务集成模式（Task 调用 AWS 服务）</h2>
+  <p class="sub">Resource ARN 的后缀直接决定模式。这是 SAP-C02 最爱挖的点。</p>
+
+  <div class="mode">
+    <span class="arn">arn:aws:states:::&lt;service&gt;</span>
+    <h4>① Request Response（默认）</h4>
+    <p>调用服务拿到 HTTP 返回立刻走下一状态，<b>不等后台任务完成</b>。适合 SNS 发消息、DynamoDB PutItem、同步 API。</p>
+  </div>
+
+  <div class="mode">
+    <span class="arn">arn:aws:states:::&lt;service&gt;.sync</span>
+    <h4>② Run a Job（同步等待）</h4>
+    <p>Step Functions 内部轮询，<b>等后台 Job 跑完才往下走</b>。适合 Batch、Glue、EMR 这类异步 Job。<b>注意：仅优化集成服务支持 .sync，不是所有 API 都行。</b></p>
+  </div>
+
+  <div class="mode">
+    <span class="arn">arn:aws:states:::&lt;service&gt;.waitForTaskToken</span>
+    <h4>③ Wait for Callback（Task Token）</h4>
+    <p>把 <b>Task Token</b> 传给下游，工作流暂停卡住；外部系统（人工审批、第三方服务）拿到 Token 后调用 <code>SendTaskSuccess</code> / <code>SendTaskFailure</code> 才继续。</p>
+  </div>
+
+  <div class="cheat-bar">
+    考题陷阱：不要自己写 Lambda 循环轮询。等 Job 完成优先用 <b>.sync</b>；外部系统没法被轮询 → 用 <b>Task Token Callback</b>。
+  </div>
+</section>
+
+<!-- ===== 3. 状态类型 ===== -->
+<section id="sec-state">
+  <h2><span class="num">03</span> 状态类型速查（只考功能区分，不默写 ASL）</h2>
+  <p class="sub">不用背语法，看到关键词能对应到状态名即可。</p>
+  <table>
+    <colgroup>
+      <col style="width:22%"><col style="width:48%"><col style="width:30%">
+    </colgroup>
+    <thead><tr><th>状态类型</th><th>作用</th><th>考试关键词</th></tr></thead>
+    <tbody>
+      <tr><td><code>Task</code></td><td>调用 AWS 服务、Lambda、API；支持 Retry / Catch</td><td>执行某一步操作</td></tr>
+      <tr><td><code>Choice</code></td><td>分支判断（if / else）</td><td>根据字段走不同分支</td></tr>
+      <tr><td><code>Wait</code></td><td>休眠固定时长，或等到某个时间戳</td><td>等待 N 秒 / 等到某时刻</td></tr>
+      <tr><td><code>Parallel</code></td><td>并行多分支，全部完成才继续；任一分支失败整体失败</td><td>同时跑 N 件事</td></tr>
+      <tr><td><code>Map</code>（Inline）</td><td>遍历数组并行执行子项，并发有限</td><td>少量数组遍历</td></tr>
+      <tr><td><code>Map</code>（Distributed）</td><td>超大批量，S3 作为数据源，独立子执行；<b>仅 Standard 支持</b></td><td>遍历 S3 几十万对象</td></tr>
+      <tr><td><code>Pass</code></td><td>不调任何服务，做输入输出投影 / 数据转换</td><td>裁剪、重命名字段</td></tr>
+      <tr><td><code>Fail / Succeed</code></td><td>显式终止流程，标记失败 / 成功</td><td>提前结束</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 4. Retry / Catch ===== -->
+<section id="sec-error">
+  <h2><span class="num">04</span> 错误处理：Retry + Catch</h2>
+  <p class="sub">执行顺序：出错 → 先 Retry（重试）→ 重试耗尽 → 再 Catch（跳转）。</p>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Retry（指数退避重试）</h3>
+      <p class="note">匹配瞬时错误：网络抖动、限流、5xx。参数：</p>
+      <ul style="margin:8px 0 0;padding-left:18px;font-size:14px">
+        <li><code>ErrorEquals</code> 错误码，内置 <code>States.Timeout</code>、<code>States.ALL</code></li>
+        <li><code>IntervalSeconds</code> 首次间隔</li>
+        <li><code>MaxAttempts</code> 最大次数（默认 3）</li>
+        <li><code>BackoffRate</code> 退避倍率（默认 2.0）</li>
+        <li><code>TimeoutSeconds</code> Task 整体超时 → 触发 <code>States.Timeout</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Catch（捕获后跳转）</h3>
+      <p class="note">匹配业务不可恢复错误，跳到补偿 / 回滚 / 告警状态。</p>
+      <ul style="margin:8px 0 0;padding-left:18px;font-size:14px">
+        <li>只有 <b>Task / Parallel / Map</b> 支持 Retry 和 Catch</li>
+        <li>Wait / Choice 不支持</li>
+        <li>非幂等操作（如支付）慎用 Retry</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 5. 输入输出 ===== -->
+<section id="sec-io">
+  <h2><span class="num">05</span> 输入输出处理（ASL 路径字段）</h2>
+  <p class="sub">常作为干扰项出现，记住每个字段的作用即可。</p>
+  <table>
+    <colgroup><col style="width:25%"><col style="width:75%"></colgroup>
+    <thead><tr><th>字段</th><th>作用</th></tr></thead>
+    <tbody>
+      <tr><td><code>InputPath</code></td><td>截取输入中哪一部分进入状态</td></tr>
+      <tr><td><code>Parameters</code></td><td>构造传给服务的参数</td></tr>
+      <tr><td><code>ResultPath</code></td><td>把服务返回结果塞回输入 JSON；<code>ResultPath: null</code> 表示丢弃本次返回，只传原始输入</td></tr>
+      <tr><td><code>OutputPath</code></td><td>本状态最终输出给下一状态的内容</td></tr>
+      <tr><td><code>ResultSelector</code></td><td>对返回结果做字段重命名、裁剪（最常用）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== 6. IAM ===== -->
+<section id="sec-iam">
+  <h2><span class="num">06</span> IAM 权限（高频挖坑点）</h2>
+  <div class="card">
+    <p>状态机有一个 <b>执行角色（Execution Role）</b>，是 <b>状态机自己</b> 去调用 Lambda、Batch、S3、DynamoDB 等服务时用的角色。</p>
+    <p class="note" style="margin-top:10px">
+      它和"发起 StartExecution 的用户角色"是两回事。策略里要显式允许对应服务 API：<code>lambda:InvokeFunction</code>、<code>batch:SubmitJob</code> 等。<br>
+      回调模式下，<b>下游服务</b>（人工审批系统）需要 <code>states:SendTaskSuccess</code> / <code>states:SendTaskFailure</code> 权限。
+    </p>
+  </div>
+  <div class="cheat-bar" style="margin-top:14px">
+    典型错项："给调用 Step Functions 的用户加 Lambda 权限" —— <b>错</b>。是状态机执行角色有权限，不是调用者。
+  </div>
+</section>
+
+<!-- ===== 7. 触发方式 ===== -->
+<section id="sec-trigger">
+  <h2><span class="num">07</span> 触发方式与编排选型</h2>
+  <table>
+    <colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+    <thead><tr><th>触发源</th><th>适用场景</th></tr></thead>
+    <tbody>
+      <tr><td><b>EventBridge</b></td><td>定时触发、事件触发（S3 上传、自定义事件）。SAP-C02 最爱考的编排入口</td></tr>
+      <tr><td><b>API Gateway</b></td><td>同步对外 API；搭配 Express 工作流</td></tr>
+      <tr><td><b>Lambda</b></td><td>调 <code>StartExecution</code> API 启动工作流</td></tr>
+      <tr><td><b>SQS → EventBridge Pipes</b></td><td>消息解耦、削峰后进入编排</td></tr>
+    </tbody>
+  </table>
+  <div class="cheat-bar" style="margin-top:14px">
+    选型：简单消息触发、不需要分支编排 → <b>SQS + Lambda</b>；多步骤、分支、重试、人工审批、长流程 → <b>Step Functions</b>。Step Functions 本身不是队列，不负责削峰。
+  </div>
+</section>
+
+<!-- ===== 8. Redrive ===== -->
+<section id="sec-redrive">
+  <h2><span class="num">08</span> Redrive（失败重驱，新版考点）</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>支持 Redrive</h3>
+      <p>Standard 工作流。失败的执行可重新启动，重试计数器重置，上游临时故障修复后批量重跑。</p>
+    </div>
+    <div class="card">
+      <h3>不支持 Redrive</h3>
+      <p>Express 工作流。失败执行只能重新发起新执行。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 9. 高频场景答题模板 ===== -->
+<section id="sec-case">
+  <h2><span class="num">09</span> 高频场景答题模板（直接套）</h2>
+  <p class="sub">看到下面这类题干，按"正确答案 / 常见错项"直接对号入座。</p>
+
+  <div class="case">
+    <div class="scenario"><span class="q">Q1</span>需要人工审批环节，审批时长不固定。</div>
+    <div class="verdict">
+      <div class="v ok"><svg class="mark" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="body">Standard + <code>.waitForTaskToken</code>；人工系统拿 Task Token，审批后 SendTaskSuccess。</span></div>
+      <div class="v bad"><svg class="mark" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="body">Express；Lambda 循环轮询；SQS 轮询。</span></div>
+    </div>
+  </div>
+
+  <div class="case">
+    <div class="scenario"><span class="q">Q2</span>提交 Batch / Glue Job，要等 Job 完成再走下一步。</div>
+    <div class="verdict">
+      <div class="v ok"><svg class="mark" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="body">Standard + <code>.sync</code> 集成模式。</span></div>
+      <div class="v bad"><svg class="mark" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="body">Request Response + Lambda 自己写轮询循环。</span></div>
+    </div>
+  </div>
+
+  <div class="case">
+    <div class="scenario"><span class="q">Q3</span>每秒上万条 IoT 事件，每条做简单转换，5 分钟内跑完，成本优先。</div>
+    <div class="verdict">
+      <div class="v ok"><svg class="mark" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="body">Express Workflow。</span></div>
+      <div class="v bad"><svg class="mark" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="body">Standard；按 state transition 计费成本高。</span></div>
+    </div>
+  </div>
+
+  <div class="case">
+    <div class="scenario"><span class="q">Q4</span>遍历 S3 里几十万个对象，并行处理。</div>
+    <div class="verdict">
+      <div class="v ok"><svg class="mark" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="body">Standard + Distributed Map（S3 清单作为数据源）。</span></div>
+      <div class="v bad"><svg class="mark" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="body">Inline Map（并发有限）；Express（不支持 Distributed Map）。</span></div>
+    </div>
+  </div>
+
+  <div class="case">
+    <div class="scenario"><span class="q">Q5</span>支付流程，不允许重复扣款。</div>
+    <div class="verdict">
+      <div class="v ok"><svg class="mark" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="body">Standard Exactly-once；Retry 慎用，业务必须幂等。</span></div>
+      <div class="v bad"><svg class="mark" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="body">Express（At-least-once，可能重复扣款）。</span></div>
+    </div>
+  </div>
+
+  <div class="case">
+    <div class="scenario"><span class="q">Q6</span>某一步经常超时，希望重试 3 次，仍失败就进告警补偿分支。</div>
+    <div class="verdict">
+      <div class="v ok"><svg class="mark" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="body">Task 配 Retry 匹配 <code>States.Timeout</code> + Catch 跳到告警状态。</span></div>
+      <div class="v bad"><svg class="mark" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="body">Wait 状态里做重试；Choice 里判断错误。</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 10. 避坑清单 ===== -->
+<section id="sec-pitfall">
+  <h2><span class="num">10</span> 避坑清单（最容易选错的干扰项）</h2>
+  <div class="pitfalls">
+    <ol>
+      <li><span class="bad">Express</span> 不能跑超过 5 分钟，不能做 Distributed Map，控制台无标准执行历史。</li>
+      <li><span class="bad">.sync</span> 不是所有服务都支持，仅限优化集成的服务。</li>
+      <li><span class="bad">Task Token</span> 不是轮询，是<b>暂停等待外部回调</b>。</li>
+      <li>Step Functions 本身<b>不是队列</b>，是编排器；削峰靠 SQS，不是 Step Functions。</li>
+      <li>Distributed Map 只有 <b>Standard</b>；Inline Map 并发有限。</li>
+      <li>计费：<b>Standard 按状态转换</b>，不是按时长；<b>Express 按执行 + 时长 + 内存</b>。</li>
+      <li>状态机类型一旦创建<b>不能切换</b>，只能重建。</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===== 11. 决策树 ===== -->
+<section id="sec-tree">
+  <h2><span class="num">11</span> 考场决策树口诀</h2>
+  <p class="sub">题目读完后，按这 7 步依次自问，答案基本自动浮现。</p>
+  <div class="decision">
+    <ol>
+      <li>流程 &gt;5 分钟 / 人工审批 / 非幂等需要 Exactly-once → <b>Standard</b></li>
+      <li>高吞吐、短流程、允许至少一次、成本优先 → <b>Express</b></li>
+      <li>调用异步 Job，需要等 Job 结束 → <b>.sync</b></li>
+      <li>外部系统 / 人工审批，不知道多久返回 → <b>.waitForTaskToken</b></li>
+      <li>只发请求，不等后台任务完成 → <b>Request Response</b></li>
+      <li>大批量遍历 S3 对象 → <b>Distributed Map（Standard）</b></li>
+      <li>瞬时失败 → <b>Retry</b>；业务失败 → <b>Catch</b> 补偿</li>
+    </ol>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  AWS Certified Solutions Architect – Professional (SAP-C02) · Step Functions 速记卡
+</footer>
+
+</body>
+</html>

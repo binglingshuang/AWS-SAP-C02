@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>数据库 — AWS SAP-C02 备考</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --paper: #fff;
+      --ink: #172033;
+      --muted: #627089;
+      --line: #e3e9f2;
+      --blue: #2457c5;
+      --blue-soft: #eaf1ff;
+      --shadow: 0 8px 28px rgba(25, 45, 85, .07);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(120deg, #10264d, #2457c5);
+      color: #fff;
+      padding: 0;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 24px 36px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255, 255, 255, .75);
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 28px;
+      transition: color .2s;
+    }
+
+    .back-link:hover {
+      color: #fff;
+    }
+
+    .back-link::before {
+      content: "←";
+      font-size: 16px;
+    }
+
+    .header-title {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 700;
+      letter-spacing: -.5px;
+      line-height: 1.15;
+    }
+
+    .header-subtitle {
+      font-size: 16px;
+      color: rgba(255, 255, 255, .6);
+      margin-top: 4px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .header-desc {
+      margin-top: 14px;
+      font-size: 15px;
+      color: rgba(255, 255, 255, .82);
+      max-width: 720px;
+      line-height: 1.7;
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* ── Grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 22px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 26px 24px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .18s, box-shadow .18s, border-color .18s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(25, 45, 85, .13);
+      border-color: #c0d0f0;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-icon {
+      font-size: 32px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .freq-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .freq-high {
+      background: #fff0f0;
+      color: #b91c1c;
+    }
+
+    .freq-mid {
+      background: #fff7ed;
+      color: #c2410c;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Tag list ── */
+    .tag-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .tag-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+      line-height: 1.5;
+    }
+
+    /* ── Cross-ref ── */
+    .cross-ref {
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      margin-top: 2px;
+    }
+
+    .cross-ref a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .cross-ref a:hover {
+      text-decoration: underline;
+    }
+
+    /* ── Callout ── */
+    .callout {
+      margin-top: 36px;
+      background: var(--blue-soft);
+      border-left: 4px solid var(--blue);
+      border-radius: 10px;
+      padding: 18px 22px;
+      font-size: 14px;
+      color: #1a3060;
+      line-height: 1.75;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 6px;
+      color: var(--blue);
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 13px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 600px) {
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="../index.html" class="back-link">返回首页</a>
+      <div class="header-title">数据库</div>
+      <div class="header-subtitle">Database</div>
+      <p class="header-desc">
+        SAP-C02 数据库模块重点考察 SQL vs NoSQL 选型、高可用与灾难恢复配置、读写扩展策略，以及数据库迁移方案设计。
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <p class="section-label">服务导航 · 6 个主题</p>
+
+    <div class="card-grid">
+
+      <!-- 1. Amazon RDS / Aurora -->
+      <a class="card" href="rds-aurora.html">
+        <div class="card-header">
+          <span class="card-icon">🐘</span>
+          <span class="freq-badge freq-high">🔥 高频</span>
+        </div>
+        <div class="card-title">Amazon RDS / Aurora</div>
+        <p class="card-desc">托管关系型数据库，Aurora 提供云原生高性能</p>
+        <div class="tag-section">
+          <span class="tag-label">核心考点</span>
+          <div class="tags">
+            <span class="tag">Multi-AZ vs Read Replica</span>
+            <span class="tag">Aurora Serverless</span>
+            <span class="tag">Aurora Global Database</span>
+            <span class="tag">故障切换</span>
+            <span class="tag">参数组</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 2. Amazon DynamoDB -->
+      <a class="card" href="dynamodb.html">
+        <div class="card-header">
+          <span class="card-icon">⚡</span>
+          <span class="freq-badge freq-high">🔥 高频</span>
+        </div>
+        <div class="card-title">Amazon DynamoDB</div>
+        <p class="card-desc">全托管 NoSQL 键值/文档数据库，毫秒级延迟</p>
+        <div class="tag-section">
+          <span class="tag-label">核心考点</span>
+          <div class="tags">
+            <span class="tag">分区键设计</span>
+            <span class="tag">DynamoDB Streams</span>
+            <span class="tag">Global Tables</span>
+            <span class="tag">DAX</span>
+            <span class="tag">容量模式</span>
+            <span class="tag">TTL</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 3. Amazon ElastiCache -->
+      <a class="card" href="elasticache.html">
+        <div class="card-header">
+          <span class="card-icon">🏎️</span>
+          <span class="freq-badge freq-high">🔥 高频</span>
+        </div>
+        <div class="card-title">Amazon ElastiCache</div>
+        <p class="card-desc">内存缓存服务（Redis / Memcached）</p>
+        <div class="tag-section">
+          <span class="tag-label">核心考点</span>
+          <div class="tags">
+            <span class="tag">Redis vs Memcached</span>
+            <span class="tag">集群模式</span>
+            <span class="tag">复制组</span>
+            <span class="tag">Lazy Loading</span>
+            <span class="tag">Write-Through</span>
+            <span class="tag">与 RDS 配合</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 4. Amazon Redshift -->
+      <a class="card" href="redshift.html">
+        <div class="card-header">
+          <span class="card-icon">📊</span>
+          <span class="freq-badge freq-mid">⚡ 中频</span>
+        </div>
+        <div class="card-title">Amazon Redshift</div>
+        <p class="card-desc">云原生数据仓库，PB 级分析查询</p>
+        <div class="tag-section">
+          <span class="tag-label">核心考点</span>
+          <div class="tags">
+            <span class="tag">节点类型</span>
+            <span class="tag">Redshift Spectrum</span>
+            <span class="tag">RA3</span>
+            <span class="tag">与 S3 集成</span>
+            <span class="tag">Concurrency Scaling</span>
+            <span class="tag">Cross-Region Snapshot</span>
+          </div>
+        </div>
+        <div class="cross-ref">
+          🔗 另见：<a href="redshift.html">分析模块 → analytics/redshift.html</a>
+        </div>
+      </a>
+
+      <!-- 5. Amazon DocumentDB / Neptune -->
+      <a class="card" href="documentdb-neptune.html">
+        <div class="card-header">
+          <span class="card-icon">📄</span>
+          <span class="freq-badge freq-mid">⚡ 中频</span>
+        </div>
+        <div class="card-title">Amazon DocumentDB / Neptune</div>
+        <p class="card-desc">MongoDB 兼容文档数据库 &amp; 图数据库</p>
+        <div class="tag-section">
+          <span class="tag-label">核心考点</span>
+          <div class="tags">
+            <span class="tag">DocumentDB vs MongoDB 迁移</span>
+            <span class="tag">Neptune 使用场景</span>
+            <span class="tag">与 DynamoDB 对比</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 6. AWS DMS / SCT -->
+      <a class="card" href="dms-sct.html">
+        <div class="card-header">
+          <span class="card-icon">🔄</span>
+          <span class="freq-badge freq-high">🔥 高频</span>
+        </div>
+        <div class="card-title">AWS DMS / SCT</div>
+        <p class="card-desc">数据库迁移服务与 Schema 转换工具</p>
+        <div class="tag-section">
+          <span class="tag-label">核心考点</span>
+          <div class="tags">
+            <span class="tag">同构 vs 异构迁移</span>
+            <span class="tag">CDC 持续复制</span>
+            <span class="tag">迁移任务类型</span>
+            <span class="tag">SCT 使用时机</span>
+          </div>
+        </div>
+        <div class="cross-ref">
+          🔗 另见：<a href="dms-sct.html">迁移模块 → migration/dms-sct.html</a>
+        </div>
+      </a>
+
+    </div><!-- /.card-grid -->
+
+    <!-- Callout -->
+    <div class="callout">
+      <div class="callout-title">💡 考试提示</div>
+      RDS Multi-AZ 与 Read Replica 的区别是必考点（Multi-AZ 用于高可用/故障切换，Read Replica 用于读扩展）。
+      DynamoDB Global Tables 和 Aurora Global Database 在跨区灾难恢复场景中频繁出现。
+      ElastiCache 的缓存模式选型（Lazy Loading vs Write-Through）也常考。
+    </div>
+
+  </main>
+
+  <footer>
+    AWS SAP-C02 备考 · 数据库模块
+  </footer>
+
+</body>
+</html>
