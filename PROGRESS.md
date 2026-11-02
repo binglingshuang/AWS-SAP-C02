@@ -148,16 +148,16 @@
 - [x] P2 `storage/fsx.html` — 完成日期：2026-11-02；场景题 3 道；速记卡 8 条；覆盖 Windows / Lustre / NetApp / OpenZFS 选型
 - [x] P2 `storage/snow-family.html` — 完成日期：2026-11-02；场景题 3 道；速记卡 7 条；覆盖 Snowcone / Snowball / Snowmobile、边缘计算与数据量决策
 
-### 3.4 数据库（2 / 6）
+### 3.4 数据库（6 / 6）
 
 - [x] `database/rds-aurora.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Multi-AZ / Read Replica、Aurora 端点、Serverless v2、RDS Proxy、Global Database 与备份恢复
 - [x] `database/dynamodb.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖主键与分区设计、GSI/LSI、容量模式、一致性、Streams、TTL、Global Tables、DAX 与恢复
-- [ ] P1 `database/elasticache.html` — Redis vs Memcached、集群模式、复制组
-- [ ] P1 `database/redshift.html` — 节点类型、Spectrum、RA3、Concurrency Scaling
-- [ ] P2 `database/documentdb-neptune.html` — 文档库 / 图数据库、迁移差异
-- [ ] P2 `database/dms-sct.html` — 同构/异构迁移、CDC、SCT 使用时机
+- [x] P1 `database/elasticache.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Redis OSS / Memcached、集群模式、复制组、缓存模式、高可用与跨区灾备
+- [x] P1 `database/redshift.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 RA3 / DC2、Spectrum、Concurrency Scaling、WLM、快照与分析服务选型
+- [x] P2 `database/documentdb-neptune.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 DocumentDB API 兼容边界、Neptune 图模型/查询语言、数据建模与迁移验证
+- [x] P2 `database/dms-sct.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖同构/异构迁移、SCT 转换评估、DMS Full Load/CDC、网络、验证与切换
 
-> 跨分类链接：`analytics/index.html` 和 `migration/index.html` 都指向 `database/redshift.html`、`database/dms-sct.html`。这两篇应作为数据库模块的正式页面创建，再保留跨模块“另见”。
+> 跨分类链接：`analytics/index.html` 的 Redshift 卡片链接到 `database/redshift.html`；`migration/index.html` 的 DMS/SCT 卡片链接到 `database/dms-sct.html`。两篇已作为数据库模块正式页面创建，并保留跨模块入口。
 
 ### 3.5 安全、身份与合规（4 / 11）
 
@@ -206,7 +206,7 @@
 - [ ] P2 `analytics/msk.html` — 托管 Kafka、与 Kinesis 对比
 - [ ] P2 `analytics/quicksight-lake-formation.html` — SPICE、列级权限、跨账号共享
 
-> 分类页第 7 张卡片指向 `database/redshift.html`，不计入本分类的 7 篇；该页需要在数据库模块完成。
+> 分类页第 7 张卡片链接到 `database/redshift.html`，不计入本分类的 7 篇；正文位于数据库模块。
 
 ### 3.9 迁移与传输（0 / 4，另有 1 篇跨模块 DMS/SCT）
 
@@ -215,7 +215,7 @@
 - [ ] P0 `migration/datasync-transfer.html` — DataSync、Transfer Family、带宽管理
 - [ ] P1 `migration/migration-hub.html` — 项目跟踪、ADS、与 DMS/MGN 集成
 
-> 分类页第 4 张卡片指向 `database/dms-sct.html`；该页需要在数据库模块完成。
+> 分类页第 4 张卡片链接到 `database/dms-sct.html`；正文位于数据库模块。
 
 ### 3.10 DevOps（0 / 4）
 
@@ -420,18 +420,15 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 **处理结果（2026-11-02）：** Outposts / Local Zones / Wavelength 内容归入计算分类；未创建 `hybrid-edge/outposts.html` 或 `hybrid-edge/local-zones-wavelength.html`，避免重复内容。`hybrid-edge` 是否挂到根页仍是独立导航决策。
 
-### 8.4 P1：跨分类链接指向不存在的文件
+### 8.4 已解决：跨分类链接与数据库专题页
 
 | 位置 | 当前链接 | 问题 |
 |---|---|---|
-| `analytics/index.html` | `../database/redshift.html` | 目标未创建；卡片内还嵌套了第二个 `<a>`，属于无效 HTML |
-| `migration/index.html` | `../database/dms-sct.html` | 目标未创建 |
-| `database/index.html`（Redshift 卡片） | `redshift.html` | `href` 实际指向本模块待创建页，但文案写成“另见：分析模块 → analytics/redshift.html”，方向写反 |
-| `database/index.html`（DMS 卡片） | `dms-sct.html` | `href` 指向本模块待创建页，但文案写成“另见：迁移模块 → migration/dms-sct.html”，方向写反 |
+| `analytics/index.html` | `../database/redshift.html` | 已链接到数据库模块 Redshift 正文 |
+| `migration/index.html` | `../database/dms-sct.html` | 已链接到数据库模块 DMS/SCT 正文 |
+| `database/index.html` | 本地 Redshift 与 DMS/SCT 页面 | 两篇正文已创建，分类卡片已开放 |
 
-建议：Redshift 与 DMS/SCT 在 `database/` 创建主页面；分析、迁移入口保留“另见数据库模块”；`database/index.html` 的两条“另见”文案改为指向本模块页面，或直接删除。
-
-**已处理（2026-11-02）：** 上述卡片已标记为“待补充”并禁用跳转，`analytics` 与 `database` 卡片内嵌套的 `<a>` 已移除，不再产生 404。
+**处理结果（2026-11-02）：** 已创建数据库专题正文并恢复跨分类可用入口；分析/迁移卡片保留“见数据库模块”提示，不再显示待补充状态。
 
 ### 8.5 已解决：App Runner 卡片与正文
 
@@ -506,6 +503,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-02 | 新增 `storage/ebs.html`：8 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖卷型、性能、快照、加密、扩容、Multi-Attach、备份与灾备；`storage/index.html` 卡片改为已完成 | `storage/ebs.html`、`storage/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `storage/efs.html` |
 | 2026-11-02 | 新增 `management/config.html`：12 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖配置记录、Rules、修复、Conformance Pack、Aggregator；管理分类卡片及首页统计更新，正文完成数校准为 24 / 78 | `management/config.html`、`management/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `application-integration/sqs-sns.html`（P0） |
 | 2026-11-02 | 新增 `networking/privatelink.html`：11 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖 Interface Endpoint、Endpoint Service、DNS、连接治理及 PrivateLink / Peering 选型；网络模块进度更新至 8 / 9，正文完成数校准为 25 / 78 | `networking/privatelink.html`、`networking/index.html`、`PROGRESS.md` | 按用户要求继续 P1：`networking/global-accelerator.html` |
+| 2026-11-02 | 完成数据库模块剩余 4 篇：ElastiCache、Redshift、DocumentDB/Neptune、DMS/SCT；各含 6 道场景题和 18 张速记卡，模块进度更新至 6 / 6；恢复分析与迁移分类的跨模块入口 | 4 篇 `database/*.html`、`database/index.html`、`analytics/index.html`、`migration/index.html`、`PROGRESS.md` | 继续其他未完成分类 |
 | 2026-11-02 | 新增 `networking/global-accelerator.html`：12 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖静态 Anycast IP、Standard / Custom Routing、端点组、流量拨盘、健康检查及 CloudFront 对比；网络模块完成 9 / 9，正文完成数校准为 26 / 78 | `networking/global-accelerator.html`、`networking/index.html`、`index.html`、`PROGRESS.md` | P0：`application-integration/sqs-sns.html` |
 | 2026-11-02 | 新增 `application-integration/sqs-sns.html`：9 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖 SQS Standard/FIFO、可见性超时、长轮询、DLQ、SNS Fan-out、过滤、授权与加密；应用集成进度更新至 1 / 6，正文完成数校准为 27 / 78 | `application-integration/sqs-sns.html`、`application-integration/index.html`、`index.html`、`PROGRESS.md` | P0：`application-integration/eventbridge.html` |
 | 2026-11-02 | 完成应用集成剩余 5 篇正文：EventBridge、Step Functions、API Gateway、AppSync、Amazon MQ；每篇含 6 道场景题、16 张速记卡、3 道快速自测；分类页 6 / 6、首页总数和进度统计同步更新为 32 / 78 | `application-integration/*.html`、`application-integration/index.html`、`index.html`、`PROGRESS.md` | P0：`analytics/glue.html` |

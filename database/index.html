@@ -332,7 +332,7 @@
   </header>
 
   <main>
-    <p class="section-label">服务导航 · 6 个主题 · 已完成 2 / 6</p>
+    <p class="section-label">服务导航 · 6 个主题 · 已完成 6 / 6</p>
 
     <div class="card-grid">
 
@@ -380,8 +380,8 @@
       </a>
 
       <!-- 3. Amazon ElastiCache -->
-      <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
-        <span class="status-badge status-todo">待补充</span>
+      <a class="card" href="elasticache.html">
+        <span class="status-badge status-done">已完成</span>
         <div class="card-header">
           <span class="card-icon">🏎️</span>
           <span class="freq-badge freq-high">🔥 高频</span>
@@ -402,8 +402,8 @@
       </a>
 
       <!-- 4. Amazon Redshift -->
-      <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
-        <span class="status-badge status-todo">待补充</span>
+      <a class="card" href="redshift.html">
+        <span class="status-badge status-done">已完成</span>
         <div class="card-header">
           <span class="card-icon">📊</span>
           <span class="freq-badge freq-mid">⚡ 中频</span>
@@ -421,14 +421,11 @@
             <span class="tag">Cross-Region Snapshot</span>
           </div>
         </div>
-        <div class="cross-ref">
-          该页面待补充，完成后归入数据库模块
-        </div>
       </a>
 
       <!-- 5. Amazon DocumentDB / Neptune -->
-      <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
-        <span class="status-badge status-todo">待补充</span>
+      <a class="card" href="documentdb-neptune.html">
+        <span class="status-badge status-done">已完成</span>
         <div class="card-header">
           <span class="card-icon">📄</span>
           <span class="freq-badge freq-mid">⚡ 中频</span>
@@ -446,8 +443,8 @@
       </a>
 
       <!-- 6. AWS DMS / SCT -->
-      <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
-        <span class="status-badge status-todo">待补充</span>
+      <a class="card" href="dms-sct.html">
+        <span class="status-badge status-done">已完成</span>
         <div class="card-header">
           <span class="card-icon">🔄</span>
           <span class="freq-badge freq-high">🔥 高频</span>
@@ -463,9 +460,6 @@
             <span class="tag">SCT 使用时机</span>
           </div>
         </div>
-        <div class="cross-ref">
-          该页面待补充，完成后归入数据库模块
-        </div>
       </a>
 
     </div><!-- /.card-grid -->
@@ -475,7 +469,7 @@
       <div class="callout-title">💡 考试提示</div>
       RDS Multi-AZ 与 Read Replica 的区别是必考点（Multi-AZ 用于高可用/故障切换，Read Replica 用于读扩展）。
       DynamoDB Global Tables 和 Aurora Global Database 在跨区灾难恢复场景中频繁出现。
-      ElastiCache 的缓存模式选型（Lazy Loading vs Write-Through）也常考。
+      ElastiCache 缓存模式与 Redis/Memcached 选型、Redshift 的 RA3/Spectrum/并发扩展、以及 DMS + SCT 的异构迁移分工也是重点。
     </div>
 
   </main>
