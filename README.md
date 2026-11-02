@@ -4,6 +4,8 @@
 
 本仓库整理 AWS Certified Solutions Architect – Professional（SAP-C02）备考资料，包括服务考点、架构笔记、复习手册和 Draw.io 架构图。
 
+当前完成进度、未完成页面清单、内容规范与中断后续写步骤见 [PROGRESS.md](PROGRESS.md)。
+
 在仓库根目录运行以下命令，递归扫描 HTML 学习资料并更新导航数据：
 
 ```powershell
