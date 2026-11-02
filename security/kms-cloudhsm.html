@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 AWS KMS 与 CloudHSM 考点速查：密钥类型、密钥策略、轮换、信封加密、Grant、跨区域密钥与硬件安全模块。">
+<title>AWS SAP-C02｜AWS KMS 与 CloudHSM 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>AWS KMS / CloudHSM<br>密钥管理与硬件安全模块</h1>
+  <p>从密钥所有权与控制粒度选择 KMS 或 CloudHSM，再掌握密钥策略、轮换、信封加密、授权 Grant 和跨区域密钥。重点不是只看“是否使用 HSM”，而是明确谁管理密钥材料、谁授权加解密以及服务故障会影响什么。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">安全 / 加密</span>
+   <span class="pill">关键词：Key Policy · Envelope Encryption · Rotation</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回安全分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#overview">一、KMS 与 CloudHSM 选型</a>
+ <a href="#key-types">二、KMS Key 类型与材料</a>
+ <a href="#policy">三、密钥策略、IAM 与 Grant</a>
+ <a href="#envelope">四、信封加密</a>
+ <a href="#rotation">五、密钥轮换与生命周期</a>
+ <a href="#regional">六、跨区域密钥与服务集成</a>
+ <a href="#cloudhsm">七、CloudHSM 架构与责任</a>
+ <a href="#scenarios">八、场景题解析</a>
+ <a href="#quick">九、关键词速查</a>
+ <a href="#memory">十、考前速记卡</a>
+ <a href="#quiz">十一、快速自测</a>
+</nav>
+
+<main>
+<section id="overview">
+<h2>一、KMS 与 CloudHSM 选型</h2>
+<p class="lead">AWS KMS 提供托管密钥管理 API、授权控制与服务集成；CloudHSM 提供客户控制的单租户 HSM 集群。需要更细的 HSM 管理权并不自动意味着必须放弃 KMS：KMS Custom Key Store 可让 KMS 使用客户 CloudHSM 集群中的密钥材料。</p>
+<div class="diagram">
+ <div class="node"><b>应用 / AWS 服务</b><br><small>加密数据 / 请求授权</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>AWS KMS</b><br><small>API · Policy · Audit</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>KMS HSM</b><br><small>托管密钥材料</small></div>
+ <span class="arrow">或</span>
+ <div class="node"><b>CloudHSM</b><br><small>客户管理 HSM 集群</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>维度</th><th>AWS KMS</th><th>AWS CloudHSM</th></tr></thead>
+<tbody>
+<tr><td>运维模型</td><td>AWS 托管服务、密钥策略和 API；与大量 AWS 服务直接集成。</td><td>客户控制专用 HSM 集群与 HSM 用户，需要规划集群、网络、可用性和客户端。</td></tr>
+<tr><td>密钥访问</td><td>通过 KMS API 执行受授权的密码操作；原始 KMS 密钥材料不可导出（除受支持的导入/外部密钥场景）。</td><td>通过 HSM 客户端及受支持的加密接口访问；客户管理 HSM 用户凭证和密钥操作。</td></tr>
+<tr><td>访问控制</td><td>KMS Key Policy、IAM Policy、Grant、授权上下文。</td><td>CloudHSM 用户/密码学管理员及应用层访问控制。</td></tr>
+<tr><td>服务集成</td><td>S3、EBS、RDS 等 AWS 服务可直接集成 KMS。</td><td>应用或支持的集成需使用 CloudHSM 客户端；不是 KMS API 的通用替代品。</td></tr>
+<tr><td>常见选择</td><td>集中管理密钥、审计、AWS 服务加密和可扩展授权。</td><td>需专用 HSM、客户自行控制 HSM 用户/加密操作或特定合规要求。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>快速判断：</b>“AWS 托管密钥服务 + 服务集成 + IAM/审计” → KMS；“客户必须管理专用 HSM 用户与密钥操作” → CloudHSM；“需要 KMS API 但密钥材料保存在自有 CloudHSM” → 评估 KMS Custom Key Store。</div>
+</section>
+
+<section id="key-types">
+<h2>二、KMS Key 类型与材料</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>类型 / 来源</th><th>管理方式</th><th>可见性与用途</th></tr></thead>
+<tbody>
+<tr><td>AWS owned key</td><td>由 AWS 服务拥有和管理，客户通常不能查看或直接管理其密钥策略。</td><td>服务默认加密等场景；没有客户密钥管理与审计控制粒度。</td></tr>
+<tr><td>AWS managed key</td><td>由 AWS 服务在客户账户中管理的 KMS Key，策略和轮换由 AWS 管理。</td><td>免额外创建客户密钥的服务集成；客户可在 KMS 中查看相关密钥，但控制面有限。</td></tr>
+<tr><td>Customer managed key</td><td>客户创建并管理策略、标签、启用/禁用、轮换和生命周期。</td><td>适合自定义授权、跨账户共享、审计和精细化密钥管理。</td></tr>
+<tr><td>AWS KMS generated material</td><td>密钥材料由 KMS 生成并保存在 KMS HSM。</td><td>常见默认；KMS 控制密钥材料生命周期。</td></tr>
+<tr><td>Imported key material</td><td>客户生成密钥材料并导入 KMS。</td><td>客户控制材料来源；需自行管理过期/重新导入流程，密钥材料不等于可导出 KMS Key。</td></tr>
+<tr><td>External key store</td><td>KMS 通过外部密钥管理系统使用外部材料。</td><td>客户保留材料所在系统的控制权，同时引入外部系统可用性、延迟和运维依赖。</td></tr>
+</tbody></table></div>
+<h3>对称、非对称与数据密钥</h3>
+<ul>
+<li>对称 KMS Key 用于加解密或生成数据密钥；AWS 服务的服务器端加密集成通常使用对称客户密钥。</li>
+<li>非对称 KMS Key 提供公钥与私钥配对，可用于加密/解密或签名/验签；公钥可公开分发，私钥操作留在 KMS。</li>
+<li>HMAC KMS Key 用于消息认证码计算与验证；算法和操作类型由密钥规格决定。</li>
+<li>KMS 对单次 Encrypt 输入大小有限制；加密大文件或大数据集应使用 GenerateDataKey 的信封加密模式，而非把整份数据直接提交 KMS。</li>
+</ul>
+<div class="callout orange"><b>成本与控制：</b>AWS managed/owned key 适合简化运维；需要自定义密钥策略、跨账户授权、密钥停用或审计边界时，通常使用 customer managed key，并核对 KMS API 调用费用与配额。</div>
+</section>
+
+<section id="policy">
+<h2>三、密钥策略、IAM 与 Grant</h2>
+<ul>
+<li>每个 KMS Key 都有 Key Policy，是控制该密钥访问的核心资源策略；若 Key Policy 未授权账户或委托 IAM Policy，单独授予 IAM 权限可能仍不能使用密钥。</li>
+<li>典型账户内授权模式：Key Policy 允许账户使用 IAM 策略控制访问；IAM Policy 再授予具体用户/角色的 KMS 操作。</li>
+<li>跨账户访问通常需要密钥所在账户的 Key Policy 允许外部账户/角色，同时调用方账户的 IAM Policy 也允许对应 KMS 操作。</li>
+<li>Grant 是向 AWS 服务或委托方授予有限 KMS 操作的机制，常用于服务集成或短期授权；Grant 约束可限定被授权操作与加密上下文。</li>
+<li>Encryption Context 是非机密的键值对，作为额外认证数据与密文绑定；解密时需提供匹配上下文。不要把密码或敏感信息放入上下文，因为它可能出现在审计日志中。</li>
+<li>Key Policy、IAM Policy、Grant 和服务资源策略共同决定请求是否最终获准；还需检查 SCP、权限边界、会话策略、VPC Endpoint Policy 与显式 Deny。</li>
+</ul>
+<div class="table-wrap"><table>
+<thead><tr><th>请求被拒绝</th><th>检查方向</th><th>典型缺口</th></tr></thead>
+<tbody>
+<tr><td>同账户角色无权 Encrypt</td><td>Key Policy 是否启用 IAM delegation；角色 IAM Policy 是否授予具体 Key ARN/操作。</td><td>只给了 IAM Policy，但 Key Policy 没允许账户委托 IAM。</td></tr>
+<tr><td>跨账户服务无法解密</td><td>密钥账户 Key Policy 与调用方 IAM Policy 是否双向授权；检查服务集成支持。</td><td>只修改了调用方策略；密钥所属账户未授权外部 Principal。</td></tr>
+<tr><td>服务可写入密文但读取失败</td><td>Encrypt/Decrypt 权限、Encryption Context、Grant 与密钥状态。</td><td>上下文不匹配、密钥已禁用或服务角色缺少 Decrypt。</td></tr>
+<tr><td>策略看似允许仍被拒绝</td><td>显式 Deny、SCP、权限边界、Endpoint Policy、条件键与区域。</td><td>更高层级策略或条件限制覆盖了 Allow。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>最小权限实践：</b>限定 Key ARN、必要操作、可信 Principal 和 Encryption Context 条件；避免向 <code>*</code> 授予宽泛加解密权限。密钥管理员和密钥使用者可分离。</div>
+</section>
+
+<section id="envelope">
+<h2>四、信封加密（Envelope Encryption）</h2>
+<p>信封加密用 KMS 管理高价值密钥加密数据密钥（Data Key），由数据密钥在应用侧加密大数据。这样无需将大文件内容发送给 KMS，也不必让应用长期保存明文主密钥。</p>
+<div class="diagram">
+ <div class="node"><b>1. GenerateDataKey</b><br><small>KMS 返回明文与加密数据密钥</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>2. 本地加密数据</b><br><small>明文数据密钥只在内存短暂使用</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>3. 保存密文</b><br><small>业务密文 + 加密数据密钥</small></div>
+</div>
+<ol>
+<li>调用 KMS <code>GenerateDataKey</code>，指定 KMS Key 和必要的 Encryption Context；获得明文 Data Key 与被 KMS 加密的 Data Key。</li>
+<li>应用使用明文 Data Key 在本地加密数据，随后尽快从内存清除明文密钥。</li>
+<li>将业务密文和加密后的 Data Key 一起保存；加密 Data Key 可与密文一起存储，不是明文密钥。</li>
+<li>解密时调用 KMS <code>Decrypt</code> 解开 Data Key，再在应用侧解密业务数据；KMS 权限、上下文与密钥可用性必须满足。</li>
+</ol>
+<div class="table-wrap"><table>
+<thead><tr><th>名词</th><th>作用</th><th>存储 / 传递原则</th></tr></thead>
+<tbody>
+<tr><td>KMS Key（Wrapping Key）</td><td>保护 Data Key，提供授权、审计与密钥生命周期管理。</td><td>不离开 KMS 的安全边界执行密码操作；不直接用于大数据加密。</td></tr>
+<tr><td>Plaintext Data Key</td><td>对业务数据执行对称加密。</td><td>只短暂保留在应用内存，完成后清除；不可写日志或持久化。</td></tr>
+<tr><td>Encrypted Data Key</td><td>加密形式保存的 Data Key，供后续经 KMS 解密。</td><td>可随密文一起保存；不能在没有 KMS 授权与正确上下文时恢复明文。</td></tr>
+<tr><td>Encryption Context</td><td>绑定密文的非机密认证信息，可用于策略条件与审计。</td><td>解密时必须提供相同上下文；不得放秘密。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>一句话记忆：</b>KMS 加密 Data Key，Data Key 加密数据；存储“数据密文 + 加密 Data Key”，不是存储明文 Data Key。</div>
+</section>
+
+<section id="rotation">
+<h2>五、密钥轮换与生命周期</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>密钥材料类型</th><th>轮换方式</th><th>注意事项</th></tr></thead>
+<tbody>
+<tr><td>AWS KMS 生成的对称 customer managed key</td><td>可按支持的策略启用自动轮换，或手动按需轮换。</td><td>自动轮换保留同一逻辑 Key ID/ARN；KMS 会保留旧材料以解密旧密文。</td></tr>
+<tr><td>AWS managed key</td><td>由 AWS 管理自动轮换。</td><td>客户无法像客户管理密钥那样控制轮换周期与策略。</td></tr>
+<tr><td>Imported key material</td><td>由客户生成新材料并按支持流程重新导入，或创建新 KMS Key 并迁移。</td><td>旧密文仍需相应旧密钥材料可用；材料过期可能导致无法解密。</td></tr>
+<tr><td>非对称 / HMAC Key</td><td>不适用常见的 KMS 自动轮换方式；按需创建新 Key 并更新应用。</td><td>迁移签名验证、公钥分发和密文兼容需要版本化设计。</td></tr>
+<tr><td>Multi-Region Key</td><td>主密钥轮换会在相关副本间同步相同密钥材料。</td><td>密钥策略、别名、启用状态等配置仍需按区域管理。</td></tr>
+</tbody></table></div>
+<ul>
+<li>轮换不会自动重新加密所有历史密文；KMS 使用密钥材料版本识别并解密既有密文。</li>
+<li>手动创建新 KMS Key 会得到新的 Key ID；别名可帮助应用切换，但旧密文仍需保留旧 Key 可用。</li>
+<li>禁用或计划删除密钥会影响所有依赖该密钥的解密流程；计划删除有等待期，关键密钥应设置审批与监控。</li>
+<li>轮换周期、密钥规格和跨区域同步能力以当前 KMS 支持矩阵为准；不要将所有 key type 都假设为可自动轮换。</li>
+</ul>
+</section>
+
+<section id="regional">
+<h2>六、跨区域密钥与服务集成</h2>
+<h3>Multi-Region KMS Keys</h3>
+<ul>
+<li>Multi-Region Key 的主键与副本分布在不同 Region，并共享相同密钥材料与 Key ID；适合跨区域应用需要本地区域执行加解密并保持相同密文互操作的场景。</li>
+<li>主键与副本仍是各自 Region 的 KMS 资源，需要调用本地区域 KMS Endpoint；副本上的策略、别名与启用状态要分别管理。</li>
+<li>Multi-Region Keys 不是自动跨区复制应用数据的服务，也不会取代数据复制、灾备切换或 IAM/资源策略授权。</li>
+<li>若只需跨区域加密备份，不一定需要 Multi-Region Key；可按服务的快照复制/重新加密能力与灾备要求设计。</li>
+</ul>
+<h3>AWS 服务加密集成</h3>
+<ul>
+<li>S3 SSE-KMS 由 S3 调用 KMS；检查 S3 Bucket Policy、KMS Key Policy、调用身份及加密上下文。高请求量可评估 S3 Bucket Keys 以减少 KMS 请求。</li>
+<li>EBS、RDS 等服务通常在创建资源或复制快照时指定 KMS Key；已有未加密资源可能需快照/复制/恢复方式迁移。</li>
+<li>服务代客户调用 KMS 时需确认 Grant 或服务角色授权正确；“服务已启用加密”不表示任意身份都能解密数据。</li>
+<li>KMS 是区域性服务；密钥一般需在使用资源所在区域创建或按支持方式配置 Multi-Region / 跨区域复制密钥。</li>
+</ul>
+<div class="callout orange"><b>故障域：</b>KMS Key 被禁用、计划删除、策略变更或配额节流时，依赖它的新加密/解密请求可能失败。密钥治理需包含监控、审批、恢复与服务依赖清单。</div>
+</section>
+
+<section id="cloudhsm">
+<h2>七、CloudHSM 架构与责任</h2>
+<ul>
+<li>CloudHSM 在客户 VPC 内提供专用、单租户 HSM 集群；客户管理密码学用户、客户端连接、应用集成和密钥操作权限。</li>
+<li>为可用性部署集群时考虑多个 AZ、HSM 节点、客户端自动发现与集群恢复；HSM 集群不可达会影响依赖它执行的加密操作。</li>
+<li>CloudHSM 不自动提供 KMS 的通用 AWS 服务集成、Key Policy 或同一套 KMS API；需要应用使用兼容客户端/接口。</li>
+<li>KMS Custom Key Store 可把 KMS Key 的密钥材料放在客户 CloudHSM 集群中，并继续通过 KMS API 管理授权和服务集成；要接受 HSM 集群故障会影响相关 KMS 操作。</li>
+<li>CloudHSM 与 KMS 都使用 HSM 保护密钥材料，但服务责任、API、授权、集成和客户运维控制粒度不同。</li>
+</ul>
+<div class="table-wrap"><table>
+<thead><tr><th>要求</th><th>建议方向</th><th>权衡</th></tr></thead>
+<tbody>
+<tr><td>AWS 服务原生加密、审计、细粒度授权</td><td>KMS Customer Managed Key</td><td>AWS 托管 HSM；需管理 Key Policy、轮换与费用。</td></tr>
+<tr><td>专用单租户 HSM 且自管 HSM 用户</td><td>CloudHSM</td><td>更直接控制，但承担集群可用性、客户端、用户凭据与应用集成。</td></tr>
+<tr><td>KMS API/集成，同时密钥材料留在 CloudHSM</td><td>KMS Custom Key Store</td><td>兼得 KMS 控制面与客户 HSM 材料控制；额外依赖 HSM 集群正常。</td></tr>
+<tr><td>应用需要任意操作系统级加密软件</td><td>EC2 自管方案或 CloudHSM 集成</td><td>评估 OS/应用控制需求、合规边界与运维成本。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="scenarios">
+<h2>八、场景题解析</h2>
+<div class="quiz">
+ <h3>场景一：跨账户 S3 SSE-KMS 解密失败</h3>
+ <p>外部账号应用可读取加密对象，但 S3 返回 KMS AccessDenied。调用角色 IAM 策略已允许解密。</p>
+ <p><b>正确方向：</b>检查密钥所属账号的 Key Policy 是否允许外部角色/账号，并确认调用方 IAM Policy、S3 权限和 Encryption Context 同时满足。</p>
+ <p><b>分析思路：</b>跨账户 KMS 请求通常需要密钥资源策略与调用方身份策略共同授权。</p>
+ <p><b>排除：</b>只修改 S3 Bucket Policy 或只添加调用方 IAM Allow 不能越过 Key Policy 的拒绝。</p>
+</div>
+<div class="quiz">
+ <h3>场景二：加密大型对象但避免把内容交给 KMS</h3>
+ <p>应用需要使用 KMS 管理主密钥，并在客户端加密大型文件，文件可能远大于 KMS 单次 Encrypt 输入限制。</p>
+ <p><b>正确方向：</b>使用 KMS GenerateDataKey 执行信封加密，应用用明文 Data Key 加密文件，并保存加密 Data Key 与数据密文。</p>
+ <p><b>分析思路：</b>KMS 只加密小型数据密钥；大对象由应用侧数据密钥加密。</p>
+ <p><b>排除：</b>将整个文件直接调用 KMS Encrypt；或将明文 Data Key 写入存储/日志。</p>
+</div>
+<div class="quiz">
+ <h3>场景三：每年自动轮换客户对称密钥</h3>
+ <p>团队使用 KMS 生成的对称 customer managed key，希望降低手工轮换负担，同时继续解密历史密文。</p>
+ <p><b>正确方向：</b>对支持的客户管理对称 KMS Key 启用自动轮换，并保留 Key 不被禁用/删除。</p>
+ <p><b>分析思路：</b>KMS 保留旧密钥材料版本以解密历史密文；轮换不会自动重加密所有数据。</p>
+ <p><b>排除：</b>删除并新建 key 会产生不同 Key ID，若丢失旧 key 则旧密文可能无法解密；所有非对称/导入密钥也不能假设可自动轮换。</p>
+</div>
+<div class="quiz">
+ <h3>场景四：合规要求客户控制专用 HSM 用户</h3>
+ <p>应用需使用专用单租户 HSM，并要求客户直接管理 HSM 密码学用户和密钥操作，不满足于仅管理 KMS IAM 策略。</p>
+ <p><b>正确方向：</b>评估 CloudHSM 集群，设计多 AZ 节点、客户端连接、用户/凭证生命周期与应用集成。</p>
+ <p><b>分析思路：</b>CloudHSM 提供客户对专用 HSM 集群与用户的更直接控制。</p>
+ <p><b>排除：</b>仅创建 KMS Customer Managed Key 不会把 HSM 用户管理权交给客户。</p>
+</div>
+<div class="quiz">
+ <h3>场景五：AWS 服务需集成 KMS API，但材料必须在 CloudHSM</h3>
+ <p>团队要保留 KMS 的授权和服务集成，同时要求 KMS Key 的材料由自有 CloudHSM 集群保护。</p>
+ <p><b>正确方向：</b>使用 KMS Custom Key Store 并关联 CloudHSM 集群，验证服务支持、网络、HSM 可用性和恢复流程。</p>
+ <p><b>分析思路：</b>Custom Key Store 将 KMS 控制面与 CloudHSM 密钥材料后端连接。</p>
+ <p><b>排除：</b>直接使用 CloudHSM API 不会自动获得 KMS 的全部服务集成和策略语义。</p>
+</div>
+<div class="quiz">
+ <h3>场景六：跨区域应用需本地 KMS 操作相同密文</h3>
+ <p>应用在多个 Region 运行，要求各区域使用对应的本地区域密钥执行加解密，并保持密文可在区域间互操作。</p>
+ <p><b>正确方向：</b>评估 KMS Multi-Region Key，配置主键和副本，并分别管理各区域策略与别名。</p>
+ <p><b>分析思路：</b>Multi-Region Keys 在区域间共享密钥材料，但每个区域仍是独立资源与 API 端点。</p>
+ <p><b>排除：</b>单区域 KMS Key ARN 不能被视为全球可用；Multi-Region Key 也不会自动复制业务数据。</p>
+</div>
+</section>
+
+<section id="quick">
+<h2>九、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>AWS 服务集成、IAM 策略、CloudTrail 审计</td><td>KMS Customer Managed Key</td><td>Key Policy 仍是授权根基</td></tr>
+<tr><td>专用 HSM、客户管理 HSM 用户</td><td>CloudHSM</td><td>客户承担集群与客户端运维</td></tr>
+<tr><td>KMS API + 客户 HSM 材料</td><td>KMS Custom Key Store</td><td>HSM 不可用会影响相关 KMS 操作</td></tr>
+<tr><td>大文件由 KMS 管密钥</td><td>信封加密 / GenerateDataKey</td><td>KMS 加密 Data Key，而非大文件本身</td></tr>
+<tr><td>跨账户 KMS AccessDenied</td><td>Key Policy + 调用方 IAM Policy</td><td>还需检查 SCP、Grant 和上下文</td></tr>
+<tr><td>密文绑定业务属性</td><td>Encryption Context</td><td>上下文非机密，解密需匹配</td></tr>
+<tr><td>密钥轮换仍能解旧数据</td><td>KMS 自动轮换</td><td>保留旧材料；轮换不重加密数据</td></tr>
+<tr><td>自带材料到期 / 重新导入</td><td>Imported key material</td><td>材料生命周期由客户负责</td></tr>
+<tr><td>跨 Region 相同密文加解密</td><td>Multi-Region KMS Key</td><td>策略、别名与资源仍按区域管理</td></tr>
+<tr><td>S3 高请求 SSE-KMS 成本/限流</td><td>S3 Bucket Keys / KMS 配额</td><td>仍要有正确 KMS 授权</td></tr>
+<tr><td>密钥禁用或计划删除</td><td>依赖服务可能无法解密</td><td>做好审批、告警与恢复计划</td></tr>
+<tr><td>key material 来源在外部</td><td>External key store / imported material</td><td>外部可用性与客户责任增加</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>十、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>KMS：</b>托管密钥控制面、API、策略与服务集成</span></li>
+<li><input type="checkbox"><span><b>CloudHSM：</b>客户管理专用 HSM 集群与密码学用户</span></li>
+<li><input type="checkbox"><span><b>Custom Key Store：</b>KMS API + CloudHSM 材料后端</span></li>
+<li><input type="checkbox"><span><b>Customer Managed Key：</b>客户控制策略、轮换和生命周期</span></li>
+<li><input type="checkbox"><span><b>Key Policy：</b>每个 KMS Key 的核心资源策略</span></li>
+<li><input type="checkbox"><span><b>跨账户：</b>密钥账户 Key Policy + 调用方 IAM Policy</span></li>
+<li><input type="checkbox"><span><b>Grant：</b>有限 KMS 操作的委托授权机制</span></li>
+<li><input type="checkbox"><span><b>Encryption Context：</b>非机密认证上下文，解密需一致</span></li>
+<li><input type="checkbox"><span><b>信封加密：</b>KMS Key 加密 Data Key，Data Key 加密数据</span></li>
+<li><input type="checkbox"><span><b>明文 Data Key：</b>仅短暂留内存，完成后清除</span></li>
+<li><input type="checkbox"><span><b>加密 Data Key：</b>可与数据密文一起保存</span></li>
+<li><input type="checkbox"><span><b>自动轮换：</b>仅适用支持的 KMS 密钥类型</span></li>
+<li><input type="checkbox"><span><b>轮换 ≠ 重加密：</b>KMS 保留旧材料以解历史密文</span></li>
+<li><input type="checkbox"><span><b>导入材料：</b>客户负责材料到期与重新导入</span></li>
+<li><input type="checkbox"><span><b>Multi-Region Key：</b>区域副本共享材料但各自管理策略</span></li>
+<li><input type="checkbox"><span><b>KMS 区域性：</b>服务集成按区域配置密钥</span></li>
+<li><input type="checkbox"><span><b>禁用密钥：</b>依赖它的解密与服务操作可能失败</span></li>
+<li><input type="checkbox"><span><b>CloudHSM 可用性：</b>多 AZ 与客户端恢复需客户设计</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十一、快速自测</h2>
+<p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz">
+ <b>1. 应用需要加密大型文件，主密钥由 KMS 管理，但文件内容不应发送给 KMS。应使用什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',true)">A. GenerateDataKey 信封加密</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">B. 将整个文件调用 KMS Encrypt</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. 将明文 Data Key 存入 S3</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. 关闭密钥策略</button>
+ <div class="answer" id="q1"><b>正确答案：A。</b>KMS 加密数据密钥，应用用明文 Data Key 本地加密文件，并只保存加密后的 Data Key。</div>
+</div>
+<div class="quiz">
+ <b>2. 跨账户角色有 IAM Decrypt 权限，但无法解密另一个账户拥有的 KMS 密文，先检查什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. Route 53 解析</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. 密钥账户的 Key Policy 是否允许该调用方</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. EC2 用户数据</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. S3 生命周期转换</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>跨账户授权需要密钥资源策略与调用方身份策略共同允许，并核对 Encryption Context 和显式拒绝。</div>
+</div>
+<div class="quiz">
+ <b>3. 合规要求客户管理专用 HSM 用户，同时保留 KMS API 及服务集成。应评估什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',false)">A. AWS managed key</button>
+ <button class="secondary" onclick="showAnswer('q3',true)">B. KMS Custom Key Store backed by CloudHSM</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. S3 SSE-S3</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. 仅 IAM Policy</button>
+ <div class="answer" id="q3"><b>正确答案：B。</b>Custom Key Store 通过 KMS API 管理使用 CloudHSM 集群中的密钥材料；需接受对集群可用性的依赖。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/kms/latest/developerguide/overview.html" target="_blank" rel="noopener">AWS Key Management Service 开发人员指南</a></li>
+<li><a href="https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html" target="_blank" rel="noopener">KMS 密钥概念</a></li>
+<li><a href="https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#enveloping" target="_blank" rel="noopener">信封加密</a></li>
+<li><a href="https://docs.aws.amazon.com/kms/latest/developerguide/key-policy.html" target="_blank" rel="noopener">KMS Key Policy</a></li>
+<li><a href="https://docs.aws.amazon.com/cloudhsm/latest/userguide/introduction.html" target="_blank" rel="noopener">AWS CloudHSM 用户指南</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>密钥规格、轮换周期、Custom Key Store 与多区域功能支持会演进；以 AWS 最新文档、所用区域和具体服务集成矩阵为准。</div>
+</section>
+</main>
+</div>
+<footer class="container">AWS SAP-C02 KMS / CloudHSM 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

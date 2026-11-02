@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 CloudTrail 考点速查：管理事件、Data Events、组织级多区域 Trail、CloudTrail Lake、完整性验证与审计分析。">
+<title>AWS SAP-C02｜AWS CloudTrail 考试速查手册</title>
+<style>
+:root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;--primary:#2563eb;--soft:#eff6ff;--green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;--shadow:0 8px 28px rgba(15,23,42,.06)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}a{color:var(--primary);text-decoration:none}a:hover{text-decoration:underline}.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}header p{color:#dbeafe;max-width:760px;margin:0}.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}nav strong{display:block;margin-bottom:10px}nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}nav a:hover{background:var(--soft);color:var(--primary);text-decoration:none}main{min-width:0}section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}h3{font-size:19px;margin:26px 0 10px}p{margin:9px 0}ul,ol{padding-left:23px}li{margin:5px 0}.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--soft);border-left:4px solid var(--primary);margin:15px 0}.callout.green{background:var(--green-soft);border-color:var(--green)}.callout.orange{background:var(--orange-soft);border-color:var(--orange)}table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f8fafc;color:#334155;font-weight:700}tr:last-child td{border-bottom:0}.table-wrap{overflow-x:auto}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}.diagram .arrow{color:#64748b;font-weight:700}
+.checklist{list-style:none;padding:0}.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}button.secondary{background:#e2e8f0;color:#334155}.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}.quiz button{margin:5px 6px 5px 0}.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}.small{font-size:13px;color:var(--muted)}footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}@media print{body{background:#fff;font-size:12px}header{background:#fff;color:#111;padding:20px 0}header p,.eyebrow{color:#444!important}.pill{border:1px solid #aaa;color:#333}.layout{display:block;padding:10px 0}nav,.toolbar,.no-print{display:none!important}section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}a{color:#111;text-decoration:none}}
+</style>
+</head>
+<body>
+<header><div class="container">
+ <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+ <h1>AWS CloudTrail<br>API 审计与治理</h1>
+ <p>CloudTrail 记录 AWS 环境中的活动与 API 操作，支持调查“谁在何时对哪个资源做了什么”。使用 Trail / Event Data Store 收集所需事件，再用 S3、CloudWatch Logs、Athena 或 CloudTrail Lake 满足留存、告警与分析需求。</p>
+ <div class="header-meta"><span class="pill">🔥 高频考点</span><span class="pill">SAP-C02</span><span class="pill">管理 / 治理</span><span class="pill">关键词：Management · Data Events · Organization Trail</span></div>
+ <div class="toolbar no-print"><button onclick="window.print()">打印 / 另存为 PDF</button><button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button><button class="secondary" onclick="location.href='index.html'">返回管理分类</button></div>
+</div></header>
+<div class="container layout">
+<nav><strong>页面目录</strong>
+ <a href="#overview">一、CloudTrail 能力地图</a><a href="#events">二、事件类型与 Event History</a><a href="#trails">三、Trail、区域与组织</a><a href="#delivery">四、日志交付与完整性</a><a href="#lake">五、CloudTrail Lake 与 Insights</a><a href="#security">六、安全、权限与成本</a><a href="#comparison">七、服务边界</a><a href="#scenarios">八、场景题解析</a><a href="#quick">九、关键词速查</a><a href="#memory">十、考前速记卡</a><a href="#quiz">十一、快速自测</a>
+</nav>
+<main>
+<section id="overview">
+<h2>一、CloudTrail 能力地图</h2>
+<p class="lead">CloudTrail 是 AWS 账户活动审计服务。CloudTrail Event History 提供近期管理事件的查看入口；Trail 可持续交付所选事件到 S3，并可集成 CloudWatch Logs；CloudTrail Lake 将事件集中到 Event Data Store 以供查询分析。</p>
+<div class="diagram"><div class="node"><b>AWS API 活动</b><br><small>管理 / 数据 / Insights</small></div><span class="arrow">→</span><div class="node"><b>CloudTrail</b><br><small>Event History / Trail / Lake</small></div><span class="arrow">→</span><div class="node"><b>调查与告警</b><br><small>S3 · Logs · Athena · Lake</small></div></div>
+<div class="table-wrap"><table><thead><tr><th>组件</th><th>作用</th><th>适合的问题</th></tr></thead><tbody>
+<tr><td>Event History</td><td>控制台/API 查看近期管理事件。</td><td>快速调查近期控制面操作。</td></tr>
+<tr><td>Trail</td><td>配置事件选择器与交付目的地，将事件持续送至 S3；可集成 CloudWatch Logs。</td><td>长期留存、集中审计、外部分析与告警。</td></tr>
+<tr><td>Organization Trail</td><td>由管理账号为 AWS Organization 创建覆盖组织账号的 Trail。</td><td>统一采集成员账号活动，防止各账号分别管理。</td></tr>
+<tr><td>CloudTrail Lake</td><td>Event Data Store 集中收集并使用 SQL 查询事件。</td><td>交互式审计分析、多来源事件查询。</td></tr>
+<tr><td>CloudTrail Insights</td><td>识别支持事件类别中的异常 API 活动模式。</td><td>发现异常调用速率；不是一般用途的完整威胁检测系统。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>设计顺序：</b>先明确审计范围（账号、区域、事件类别、资源），再选择 Trail 或 Lake、存储和查询方式，最后设置加密、不可篡改控制、告警与访问权限。</div>
+</section>
+<section id="events">
+<h2>二、事件类型与 Event History</h2>
+<div class="table-wrap"><table><thead><tr><th>事件类别</th><th>记录内容</th><th>默认与成本要点</th></tr></thead><tbody>
+<tr><td>Management Events</td><td>控制面操作，如创建、修改、删除 AWS 资源及只读 API。</td><td>Event History 展示近期管理事件；Trail 通常默认记录管理事件，可进一步选择读/写事件。</td></tr>
+<tr><td>Data Events</td><td>对资源数据面的操作，如 S3 对象级操作、Lambda 函数调用等。</td><td>通常需显式启用选择器；可能产生额外费用，需按资源类型和范围筛选。</td></tr>
+<tr><td>Network Activity Events</td><td>特定网络活动事件类别，依服务与配置而定。</td><td>评估支持范围、选择器和费用；不是所有网络数据包流量日志。</td></tr>
+<tr><td>Insights Events</td><td>符合支持范围的异常 API 调用速率或错误率等模式。</td><td>需显式启用并可能收费；用于异常审计线索，不替代 CloudWatch 告警或 GuardDuty。</td></tr>
+</tbody></table></div>
+<ul>
+<li>Event History 面向快速查看近期的管理事件，不等于可配置的长期归档。长期审计应建立 Trail 或 CloudTrail Lake Event Data Store。</li>
+<li>Event History 的事件范围与保留能力有限；不要依赖控制台历史视图满足多年合规留存。</li>
+<li>Data Events 常因高调用量产生大量记录；选择具体 S3 Bucket/前缀或资源，避免无差别启用造成不必要费用。</li>
+<li>事件通常包含调用身份、时间、来源 IP、API 名称、区域、请求/响应字段等；按事件字段调查主体和操作结果。</li>
+<li>CloudTrail 记录“发生了什么 API 操作”，不必然说明资源当前状态符合策略；需要与 Config 配置历史和规则结果结合。</li>
+</ul>
+<div class="callout orange"><b>常见陷阱：</b>Event History 不是所有数据面事件的默认审计方案；需要 S3 对象级或 Lambda 调用审计时，显式配置适用的 Data Event Selector。</div>
+</section>
+<section id="trails">
+<h2>三、Trail、区域与组织</h2>
+<ul>
+<li><b>单区域 Trail：</b>只记录创建区域的事件，适用于明确仅需覆盖单区域的要求。</li>
+<li><b>多区域 Trail：</b>覆盖当前启用区域，并可覆盖之后启用的区域；减少逐区域配置遗漏。</li>
+<li><b>Organization Trail：</b>由 Organization 管理账号配置，在组织范围集中记录成员账号事件；成员账号可见性与管理权限应按 AWS 组织模型设计。</li>
+<li><b>Trail Bucket：</b>通常将事件交付到 S3，集中账号应有正确 Bucket Policy、对象前缀和加密配置；避免日志写入权限被不当修改。</li>
+<li><b>CloudWatch Logs：</b>Trail 可将事件交付到 Logs Log Group，再用 Metric Filter / Alarm / Subscription 配置监控告警或下游处理。</li>
+<li><b>多 Trail：</b>同账号可因用途建立不同 Trail，但要防止事件重复交付、选择器范围冲突以及重复计费。</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>要求</th><th>常见架构</th><th>复核项</th></tr></thead><tbody>
+<tr><td>所有区域统一审计</td><td>Multi-region Trail</td><td>Trail 状态、组织区域策略、目标桶和区域覆盖。</td></tr>
+<tr><td>组织成员账号集中留存</td><td>Organization Trail → 中央 S3 Bucket</td><td>管理账号创建权限、组织信任、Bucket Policy、加密密钥权限。</td></tr>
+<tr><td>API 事件近实时告警</td><td>Trail → CloudWatch Logs → Metric Filter / Alarm 或 Logs Subscription</td><td>Log Group 权限、过滤模式、告警目标和交付失败监控。</td></tr>
+<tr><td>多年低成本审计归档</td><td>Trail → S3 + 生命周期策略</td><td>保留、加密、访问控制、Object Lock/完整性和恢复流程。</td></tr>
+</tbody></table></div>
+</section>
+<section id="delivery">
+<h2>四、日志交付与完整性</h2>
+<ul>
+<li>Trail 日志交付到 S3 后，可以通过 Athena 查询，也可导出到其他数据湖或安全分析平台。</li>
+<li>CloudTrail Log File Integrity Validation 使用摘要文件和数字签名帮助验证日志文件在交付后是否被修改或删除；需要启用完整性验证并定期运行验证流程。</li>
+<li>完整性验证提供篡改检测证据，不等同于阻止有权限主体删除对象；对抗删除应结合 S3 Object Lock、严格 Bucket Policy、独立日志账号与权限分离。</li>
+<li>使用 SSE-KMS 加密时，Trail 交付服务、分析用户和审计角色都必须拥有正确的 KMS Key Policy/IAM 权限。</li>
+<li>S3 生命周期可将日志转移到更低成本存储层或按合规期限过期；删除/归档策略必须与法律保留和审计要求一致。</li>
+<li>CloudWatch Logs 集成便于建立告警与实时订阅，但长期留存与低成本归档通常仍要规划 S3。</li>
+</ul>
+<div class="callout green"><b>防篡改组合：</b>组织级多区域采集 + 独立日志归档账号 + 最小权限 Bucket Policy + S3 Object Lock/保留策略 + CloudTrail Digest 验证 + 定期审计。</div>
+</section>
+<section id="lake">
+<h2>五、CloudTrail Lake 与 Insights</h2>
+<div class="table-wrap"><table><thead><tr><th>选项</th><th>特点</th><th>选择依据</th></tr></thead><tbody>
+<tr><td>S3 Trail + Athena</td><td>Trail 事件落 S3，可按需使用 Athena 分析；便于与数据湖/生命周期管理整合。</td><td>已有 S3 数据平台、希望控制存储和按扫描查询。</td></tr>
+<tr><td>CloudTrail Lake</td><td>将事件收集到 Event Data Store，支持 SQL 查询和跨来源分析；按配置的数据存储与查询计费。</td><td>需要托管事件分析体验与集中审计查询，评估留存/摄取/查询费用。</td></tr>
+<tr><td>CloudTrail Insights</td><td>根据基线识别部分异常管理活动模式，生成 Insights 事件。</td><td>需要识别异常 API 活动量；不能代替完整安全监控策略。</td></tr>
+<tr><td>CloudWatch Logs Insights</td><td>对写入 CloudWatch Logs 的日志进行查询分析。</td><td>日志已在 CloudWatch Logs，需查询并结合 Alarm/Logs 管道。</td></tr>
+</tbody></table></div>
+<ul>
+<li>Event Data Store 的事件选择器、保留期、区域与数据来源会决定可查询范围和成本；先做需求建模和预算评估。</li>
+<li>CloudTrail Lake 查询事件数据时，避免宽范围、大扫描量查询；根据审计调查时间段和事件字段设计查询。</li>
+<li>Insights 识别的是支持范围内的行为异常信号，仍需调查调用身份、变更内容和业务上下文。</li>
+</ul>
+</section>
+<section id="security">
+<h2>六、安全、权限与成本</h2>
+<ul>
+<li>Trail 创建/更新权限、S3 写入权限、KMS 加密密钥权限、CloudWatch Logs 资源权限和组织级授权互相独立，逐层排查。</li>
+<li>集中日志 Bucket 应限制删除与策略变更权限；审计读取角色和平台管理角色分离，防止被审计的管理员自行擦除证据。</li>
+<li>避免把敏感凭证或个人数据写入 API 请求字段和应用日志；限制 CloudTrail 事件读取权限并遵循数据保留政策。</li>
+<li>数据事件、额外 Trail 副本、Insights、Lake 数据摄取/存储/查询与 CloudWatch Logs 都可能增加费用。</li>
+<li>配置事件选择器时明确管理读/写事件、Data Event 资源、排除规则以及组织成员覆盖范围；“已创建 Trail”不代表收集到了所有需要的事件。</li>
+<li>建立监控检查 Trail 是否启用、最近交付时间、S3 对象是否持续写入、目标策略是否变化，并告警交付失败或配置漂移。</li>
+</ul>
+<div class="callout orange"><b>故障排除顺序：</b>事件是否被选择 → Trail/Event Data Store 是否启用 → 账号/区域范围 → 目标桶/Log Group 策略 → KMS 权限 → 投递状态与配额 → 查询时间范围/事件字段。</div>
+</section>
+<section id="comparison">
+<h2>七、服务边界</h2>
+<div class="table-wrap"><table><thead><tr><th>服务</th><th>核心问题</th><th>示例</th></tr></thead><tbody>
+<tr><td>CloudTrail</td><td>谁在何时调用什么 AWS API？</td><td>记录 ModifySecurityGroupRules 操作主体和时间。</td></tr>
+<tr><td>AWS Config</td><td>资源配置是什么、是否符合规则、何时漂移？</td><td>检测安全组开放端口并查看配置时间线。</td></tr>
+<tr><td>CloudWatch</td><td>服务指标/日志是否异常，是否要通知或自动响应？</td><td>CPU 超阈值告警或应用错误日志计数。</td></tr>
+<tr><td>GuardDuty</td><td>是否存在恶意或可疑威胁活动？</td><td>基于威胁检测生成安全发现。</td></tr>
+<tr><td>EventBridge</td><td>事件发生后如何匹配并路由工作流？</td><td>对 CloudTrail API 事件匹配规则并调用目标。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>一句话记忆：</b>审计 API 身份与动作 → CloudTrail；资源配置合规 → Config；运行时指标/日志告警 → CloudWatch；威胁发现 → GuardDuty；事件驱动路由 → EventBridge。</div>
+</section>
+<section id="scenarios">
+<h2>八、场景题解析</h2>
+<div class="quiz"><h3>场景一：审计所有成员账号的 API 活动</h3><p>组织需要统一留存所有成员账号和区域的管理事件，避免成员账号管理员各自关闭审计。</p><p><b>正确方向：</b>由管理账号配置 Organization Trail，并使用多区域覆盖与中央日志 S3 Bucket。</p><p><b>分析思路：</b>组织级 Trail 集中覆盖成员账号，集中 Bucket 可统一保留和权限管理。</p><p><b>排除：</b>每个账号手工配置单区域 Trail 容易遗漏账号与区域。</p></div>
+<div class="quiz"><h3>场景二：调查谁读取或删除了 S3 对象</h3><p>审计要求包括 Bucket 内对象级 API 活动，而不只是创建 Bucket 等控制面变更。</p><p><b>正确方向：</b>为目标 Bucket 配置 CloudTrail S3 Data Events Selector，再将事件交付至 Trail/Lake。</p><p><b>分析思路：</b>对象级读写属于 Data Events，需显式选择资源范围并评估数据事件费用。</p><p><b>排除：</b>仅查看 Event History 或默认管理事件不会提供完整对象级审计。</p></div>
+<div class="quiz"><h3>场景三：API 操作后需自动触发响应</h3><p>特定 API 操作发生时，应尽快启动 Lambda 处置流程，无需等待指标达到阈值。</p><p><b>正确方向：</b>使用 EventBridge 匹配 CloudTrail 事件并路由到 Lambda 或工作流。</p><p><b>分析思路：</b>这是事件条件驱动，EventBridge 更合适；CloudWatch Alarm 面向指标评估。</p><p><b>排除：</b>建立 Dashboard 只能展示数据，不会因 API 事件自动执行响应。</p></div>
+<div class="quiz"><h3>场景四：证明审计日志交付后未被修改</h3><p>合规要求检测 CloudTrail S3 日志文件是否被篡改或删除。</p><p><b>正确方向：</b>启用 CloudTrail Log File Integrity Validation 并定期验证摘要链；同时使用 S3 Object Lock、限制删除权限和独立日志账号增强防护。</p><p><b>分析思路：</b>Digest 验证提供完整性证据，Object Lock/权限控制降低删除或修改风险。</p><p><b>排除：</b>只启用 SSE-KMS 加密无法证明日志对象未被替换或删除。</p></div>
+<div class="quiz"><h3>场景五：查询多个来源的长期审计事件</h3><p>审计团队需要通过 SQL 查询集中存储的 CloudTrail 事件，并对事件进行跨来源分析。</p><p><b>正确方向：</b>评估 CloudTrail Lake Event Data Store；若组织已有数据湖且偏好 S3/Athena，也可使用 Trail 交付到 S3 的架构。</p><p><b>分析思路：</b>根据查询体验、来源、保留、规模和成本来选 Lake 或 S3/Athena。</p><p><b>排除：</b>Event History 不是长期集中数据湖或任意 SQL 审计仓库。</p></div>
+<div class="quiz"><h3>场景六：管理事件已记录，但 Lambda 调用未出现在审计报告</h3><p>Trail 正常投递且能看到函数创建事件，但审计方还需要记录函数调用。</p><p><b>正确方向：</b>确认并配置相应 Lambda Data Events 选择器，检查资源范围与交付费用。</p><p><b>分析思路：</b>函数调用属于数据面事件，管理事件可见不代表 Data Events 已启用。</p><p><b>排除：</b>增加 CloudTrail Event History 的查看天数不能补齐未采集的数据事件。</p></div>
+</section>
+<section id="quick">
+<h2>九、关键词速查</h2>
+<div class="table-wrap"><table><thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead><tbody>
+<tr><td>谁调用了修改 API</td><td>CloudTrail Management Events</td><td>不是资源当前配置合规结果</td></tr>
+<tr><td>S3 对象读写审计</td><td>Data Events Selector</td><td>常需显式启用，注意成本</td></tr>
+<tr><td>Lambda 函数调用审计</td><td>Lambda Data Events</td><td>函数创建属于管理事件，调用属于数据事件</td></tr>
+<tr><td>所有账号和区域</td><td>Organization + Multi-region Trail</td><td>核实组织权限、区域及目的地</td></tr>
+<tr><td>近期快速查看管理活动</td><td>CloudTrail Event History</td><td>不是多年归档，不涵盖所有 Data Events</td></tr>
+<tr><td>完整性验证摘要</td><td>CloudTrail Log File Integrity Validation</td><td>配合 Object Lock 与访问控制防删除</td></tr>
+<tr><td>异常 API 调用模式</td><td>CloudTrail Insights</td><td>不是通用威胁检测，需调查线索</td></tr>
+<tr><td>SQL 查询集中事件</td><td>CloudTrail Lake 或 S3 + Athena</td><td>根据使用方式/成本/数据湖集成选择</td></tr>
+<tr><td>API 事件触发自动响应</td><td>EventBridge 规则</td><td>指标阈值自动动作则用 CloudWatch Alarm</td></tr>
+<tr><td>Bucket 配置是否合规</td><td>AWS Config</td><td>CloudTrail 记录变更行为</td></tr>
+<tr><td>日志未写入中央桶</td><td>Selector、Trail 状态、Bucket/KMS Policy</td><td>检查账号、区域与交付错误</td></tr>
+<tr><td>保存审计多年</td><td>Trail → S3 + Lifecycle / Object Lock</td><td>匹配保留和不可变要求</td></tr>
+</tbody></table></div>
+</section>
+<section id="memory">
+<h2>十、考前速记卡</h2><p class="small">勾选已掌握项目，页面内进度自动更新。</p><div class="progress"><span id="progressBar"></span></div><p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>CloudTrail：</b>记录 AWS 账户活动与 API 调用</span></li>
+<li><input type="checkbox"><span><b>Event History：</b>近期管理事件查看入口</span></li>
+<li><input type="checkbox"><span><b>Management Events：</b>控制面操作</span></li>
+<li><input type="checkbox"><span><b>Data Events：</b>S3 对象、Lambda 调用等数据面</span></li>
+<li><input type="checkbox"><span><b>Data Selector：</b>按资源/事件范围启用与控制费用</span></li>
+<li><input type="checkbox"><span><b>Multi-region Trail：</b>跨区域采集</span></li>
+<li><input type="checkbox"><span><b>Organization Trail：</b>集中覆盖组织成员账号</span></li>
+<li><input type="checkbox"><span><b>Trail → S3：</b>持续交付和长期归档</span></li>
+<li><input type="checkbox"><span><b>Trail → CloudWatch Logs：</b>查询、过滤与告警管道</span></li>
+<li><input type="checkbox"><span><b>Digest：</b>完整性验证，不能单独阻止删除</span></li>
+<li><input type="checkbox"><span><b>Object Lock：</b>按保留模式防止对象删除/覆盖</span></li>
+<li><input type="checkbox"><span><b>CloudTrail Lake：</b>Event Data Store + SQL 查询</span></li>
+<li><input type="checkbox"><span><b>CloudTrail Insights：</b>识别部分异常 API 活动模式</span></li>
+<li><input type="checkbox"><span><b>CloudWatch：</b>指标/日志/阈值告警</span></li>
+<li><input type="checkbox"><span><b>Config：</b>资源配置历史与合规规则</span></li>
+<li><input type="checkbox"><span><b>EventBridge：</b>事件匹配并路由目标</span></li>
+<li><input type="checkbox"><span><b>权限链：</b>Trail、S3、KMS、Logs Policy 都要匹配</span></li>
+<li><input type="checkbox"><span><b>费用：</b>Data Events、Insights、Lake 摄取/查询需预算</span></li>
+</ul></section>
+<section id="quiz">
+<h2>十一、快速自测</h2><p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz"><b>1. 需要记录组织内所有账号和区域的 API 管理事件，最合适的起点是什么？</b><br>
+<button class="secondary" onclick="showAnswer('q1',false)">A. 每个账号仅查看 Event History</button><button class="secondary" onclick="showAnswer('q1',true)">B. 管理账号建立 Organization Multi-region Trail</button><button class="secondary" onclick="showAnswer('q1',false)">C. 在每个 Region 创建 Config Rule</button><button class="secondary" onclick="showAnswer('q1',false)">D. 只创建一个 CloudWatch Dashboard</button>
+<div class="answer" id="q1"><b>正确答案：B。</b>组织级多区域 Trail 可集中覆盖成员账号和区域，需配置好中央目的地权限。</div></div>
+<div class="quiz"><b>2. CloudTrail 已记录 S3 Bucket 创建，但未看到对象 GetObject/DeleteObject。首先应检查什么？</b><br>
+<button class="secondary" onclick="showAnswer('q2',false)">A. Event History 日期范围</button><button class="secondary" onclick="showAnswer('q2',true)">B. S3 Data Events Selector 是否覆盖目标 Bucket</button><button class="secondary" onclick="showAnswer('q2',false)">C. CloudWatch CPU Alarm</button><button class="secondary" onclick="showAnswer('q2',false)">D. Config Aggregator 是否启用</button>
+<div class="answer" id="q2"><b>正确答案：B。</b>对象级操作属于 Data Events，需要配置适用的选择器。</div></div>
+<div class="quiz"><b>3. 需要检测交付后的 CloudTrail 日志对象是否被修改，同时降低删除风险，组合是什么？</b><br>
+<button class="secondary" onclick="showAnswer('q3',true)">A. 完整性验证 Digest + S3 Object Lock/严格权限</button><button class="secondary" onclick="showAnswer('q3',false)">B. 仅启用 SSE-KMS</button><button class="secondary" onclick="showAnswer('q3',false)">C. 只创建 CloudWatch Dashboard</button><button class="secondary" onclick="showAnswer('q3',false)">D. 启用 AWS Config 规则代替审计日志</button>
+<div class="answer" id="q3"><b>正确答案：A。</b>Digest 用于检测完整性，Object Lock 和权限隔离帮助防止删除/覆盖。</div></div>
+</section>
+<section><h2>官方资料</h2><ul>
+<li><a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html" target="_blank" rel="noopener">AWS CloudTrail 用户指南</a></li>
+<li><a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-events.html" target="_blank" rel="noopener">CloudTrail 事件类型</a></li>
+<li><a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-create-and-update-a-trail.html" target="_blank" rel="noopener">创建和更新 Trail</a></li>
+<li><a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-validation-intro.html" target="_blank" rel="noopener">CloudTrail 日志文件完整性验证</a></li>
+<li><a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-lake.html" target="_blank" rel="noopener">CloudTrail Lake</a></li>
+</ul><div class="callout orange"><b>备考提醒：</b>事件类别、区域覆盖与计费可能变化；按当前 CloudTrail 文档和所选 Region 确认选择器及费用。</div></section>
+</main></div>
+<footer class="container">AWS SAP-C02 CloudTrail 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+<script>
+function updateProgress(){const boxes=[...document.querySelectorAll('#memoryList input')];const done=boxes.filter(x=>x.checked).length;document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){const el=document.getElementById(id);el.style.display='block';el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';}
+</script>
+</body>
+</html>

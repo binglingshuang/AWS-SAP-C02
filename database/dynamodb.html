@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 DynamoDB 考点速查：分区键、容量模式、索引、Streams、Global Tables、DAX、TTL 与备份恢复。">
+<title>AWS SAP-C02｜Amazon DynamoDB 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>Amazon DynamoDB<br>无服务器键值与文档数据库</h1>
+  <p>从访问模式反推分区键与索引，再选择容量模式、缓存、流处理和跨区域复制。DynamoDB 的核心是按主键高效访问；避免热点分区、扫描式查询和不必要的强一致性开销。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">数据库 / NoSQL</span>
+   <span class="pill">关键词：Partition Key · Streams · Global Tables</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回数据库分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#model">一、数据模型与主键</a>
+ <a href="#keys">二、分区设计与访问模式</a>
+ <a href="#indexes">三、Query、Scan 与索引</a>
+ <a href="#capacity">四、容量模式与自动扩展</a>
+ <a href="#consistency">五、一致性、事务与幂等</a>
+ <a href="#streams">六、Streams、TTL 与变更处理</a>
+ <a href="#global">七、Global Tables 与 DAX</a>
+ <a href="#protection">八、备份、安全与监控</a>
+ <a href="#scenarios">九、场景题解析</a>
+ <a href="#quick">十、关键词速查</a>
+ <a href="#memory">十一、考前速记卡</a>
+ <a href="#quiz">十二、快速自测</a>
+</nav>
+
+<main>
+<section id="model">
+<h2>一、数据模型与主键</h2>
+<p class="lead">DynamoDB 是全托管、无服务器的键值与文档数据库。表中每个 Item 由主键唯一标识，属性可灵活变化；设计先从应用的读写模式出发，而不是先照搬关系型表结构。</p>
+<div class="diagram">
+ <div class="node"><b>Table</b><br><small>项目 / 订单 / 会话</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Partition Key</b><br><small>数据分布与定位</small></div>
+ <span class="arrow">+</span>
+ <div class="node"><b>Sort Key（可选）</b><br><small>同分区内排序与范围查询</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Item</b><br><small>属性值与业务数据</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>主键类型</th><th>组成</th><th>查询行为</th></tr></thead>
+<tbody>
+<tr><td>Partition key only</td><td>单一分区键，值唯一标识 Item。</td><td>按分区键精确查找；一个键值不能对应多条表项。</td></tr>
+<tr><td>Partition key + sort key</td><td>复合主键；分区键可重复，组合必须唯一。</td><td>按分区键定位集合，再对排序键做等值、范围或前缀查询。</td></tr>
+<tr><td>Secondary index</td><td>为替代访问模式建立另一组键。</td><td>不必为每种字段组合执行全表 Scan；需考虑写入、存储和一致性成本。</td></tr>
+</tbody></table></div>
+<ul>
+<li>单个 Item 最大 400 KB；大对象通常将元数据放 DynamoDB、对象内容放 S3，并保存对象键。</li>
+<li>分区键值应有足够基数并均匀分布；时间戳、固定状态或少量租户 ID 作为唯一分区键可能造成热点。</li>
+<li>Sort Key 可编码实体类型、时间或层级，使一个 Item Collection 支持多种范围访问模式。</li>
+<li>复合主键让同一分区键下的多个 Item 按 Sort Key 排序，但主键设计应能回答已知查询，不能指望任意 SQL 式查询。</li>
+</ul>
+<div class="callout"><b>设计顺序：</b>列出关键访问模式 → 确定每次请求的定位键 → 选择分区键基数/分布 → 设计 Sort Key 范围 → 再决定 GSI/LSI。避免将 Scan 当成日常查询基础。</div>
+</section>
+
+<section id="keys">
+<h2>二、分区设计与访问模式</h2>
+<h3>分区键：吞吐与热点</h3>
+<ul>
+<li>DynamoDB 根据分区键将数据分布到内部物理分区；应用无需管理底层服务器，但仍需设计均匀的访问分布。</li>
+<li>高基数键通常更容易均匀分布；如果大量请求集中到单一键，单个热点会限制该键可获得的吞吐。</li>
+<li>一个热门活动 ID、当前日期或单一状态字段可产生热点。可考虑复合键、写分片（sharding）、随机后缀或重新组织访问模式。</li>
+<li>写分片能分散热键写入，但读取时需查询多个 shard 并合并结果，增加复杂度。</li>
+</ul>
+<h3>Sort Key：时间序列与层级查询</h3>
+<ul>
+<li>将用户 ID 作为分区键、时间戳作为排序键，可按用户读取其事件或订单，并通过时间范围限制数据。</li>
+<li>Sort Key 前缀可表示实体类型或层级，例如 <code>ORDER#...</code>、<code>PROFILE</code>，在单表设计中容纳相关实体。</li>
+<li>Query 要求分区键等值；Sort Key 可用范围条件、<code>begins_with</code> 等支持的条件限定结果。</li>
+<li>不同访问模式需要另一种分区键/排序键组合时，评估 GSI，而不是在主表做无界扫描。</li>
+</ul>
+<div class="table-wrap"><table>
+<thead><tr><th>设计问题</th><th>危险信号</th><th>改进方向</th></tr></thead>
+<tbody>
+<tr><td>分区键分布</td><td>所有写入指向当前日期、单租户或固定枚举值。</td><td>提高键基数、加入分片键、改用复合键并验证热点。</td></tr>
+<tr><td>查询约束</td><td>常用 API 只能通过 Scan 再过滤。</td><td>增加合适的索引或重塑 Item，使查询键可直接定位。</td></tr>
+<tr><td>大对象</td><td>接近 400 KB Item 限制或重复存储二进制内容。</td><td>大对象放 S3，DynamoDB 保存元数据、索引和引用。</td></tr>
+<tr><td>跨实体读</td><td>单表中所有 Item 缺少统一访问约定。</td><td>规划复合主键、实体前缀与每个查询的键条件。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="indexes">
+<h2>三、Query、Scan 与索引</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>操作 / 索引</th><th>行为</th><th>重要限制</th></tr></thead>
+<tbody>
+<tr><td>GetItem / BatchGetItem</td><td>通过完整主键读取 Item。</td><td>Batch 操作仍受大小、未处理键与容量限制，应用需处理重试。</td></tr>
+<tr><td>Query</td><td>使用分区键等值条件，可再限制排序键并分页。</td><td>FilterExpression 在读取后过滤，不减少已读取数据的容量消耗。</td></tr>
+<tr><td>Scan</td><td>遍历表或索引后返回项目，可并行扫描。</td><td>大表扫描会消耗吞吐并产生延迟；通常不适合高频在线请求。</td></tr>
+<tr><td>GSI</td><td>可使用不同分区键/排序键，创建后可增加；维护独立索引结构。</td><td>GSI 查询仅支持最终一致性读取；需规划索引容量/投影与写放大。</td></tr>
+<tr><td>LSI</td><td>与基表共用分区键，采用不同排序键；需在创建表时定义。</td><td>仅适用于复合主键表；Item Collection 大小有约束；可支持强一致性读取。</td></tr>
+</tbody></table></div>
+<ul>
+<li>GSI 可投影全部属性、仅键属性或指定属性；只投影查询需要的字段可降低索引存储和写入成本，但投影不足时需回表取数据。</li>
+<li>Provisioned 模式下，GSI 需要独立配置读写容量；GSI 写入容量不足可能导致基表写入节流。</li>
+<li>Query 的 FilterExpression 可过滤返回结果，但不是替代索引设计的捷径；读容量按读取的数据量而非过滤后数量计算。</li>
+<li>强一致性读取可用于表和 LSI 的适用读取，GSI 与 Global Tables 的读取不提供强一致性保证。</li>
+<li>通过 LastEvaluatedKey 分页；单次 Query/Scan 返回大小有限，应用需要正确处理分页与空结果但仍有后续页的情况。</li>
+</ul>
+<div class="callout orange"><b>常见陷阱：</b>“FilterExpression 只返回一条”不表示只消耗一条的读取容量；先读取再过滤。在线高频查询应让 KeyConditionExpression 能直接选中目标集合。</div>
+</section>
+
+<section id="capacity">
+<h2>四、容量模式与自动扩展</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>模式</th><th>容量管理</th><th>适合负载</th><th>注意点</th></tr></thead>
+<tbody>
+<tr><td>On-Demand</td><td>按请求量自动扩展，不预先指定 RCU/WCU。</td><td>流量难预测、间歇性或新建应用，优先降低容量规划运维。</td><td>按请求计费；仍需考虑账户/表配额、突发特性与成本预算。</td></tr>
+<tr><td>Provisioned</td><td>配置读写容量单位，可启用 Application Auto Scaling。</td><td>流量可预测且稳定，希望优化单位吞吐成本。</td><td>容量不足会节流；对主表和 GSI 分别监控并设置合理目标。</td></tr>
+<tr><td>Reserved Capacity</td><td>对符合条件的预置容量承诺付费优惠。</td><td>长期稳定的预置容量。</td><td>不改变扩缩功能；核对当前购买资格与承诺范围。</td></tr>
+</tbody></table></div>
+<ul>
+<li>RCU/WCU 消耗受 Item 大小、读写类型、一致性、事务和索引影响；单次写入的容量估算需按数据大小和操作类型计算。</li>
+<li>最终一致性读取通常比强一致性读取的容量消耗低；事务读写需要更多容量，且有事务大小和项目数限制。</li>
+<li>Provisioned Auto Scaling 根据目标利用率调整容量，但扩容有传播时间；对突发负载仍需合理余量与重试。</li>
+<li>On-Demand 免除手动配置容量并非“无限且无成本风险”；热点键、限额和高请求成本依然存在。</li>
+<li>使用 CloudWatch 监控 Consumed/Provisioned Capacity、Throttled Requests、成功请求延迟、GSI 指标与限额。</li>
+</ul>
+<div class="callout green"><b>模式选择：</b>未知或波动流量 → On-Demand；稳定且可预测、需要精细成本优化 → Provisioned + Auto Scaling；无论模式都要处理重试、热点与限额。</div>
+</section>
+
+<section id="consistency">
+<h2>五、一致性、事务与幂等</h2>
+<ul>
+<li>表和 LSI 的读取可按需求选择最终一致性或强一致性；GSI 读取为最终一致性。强一致性不是跨 Region 全局读写的保证。</li>
+<li>Conditional Write 可在满足条件时创建/更新项目，适合防止覆盖并发更新、实现去重或幂等状态转换。</li>
+<li>TransactWriteItems / TransactGetItems 提供多个 Item 操作的 ACID 事务，但受事务容量、项目数、冲突和跨账户/区域限制。</li>
+<li>使用幂等键或条件表达式处理客户端重试，避免网络超时后重复扣款、重复创建订单等业务副作用。</li>
+<li>TTL 删除由服务异步完成，不保证在过期时刻立即删除；不能把 TTL 当作精确计时器或授权到期控制的唯一机制。</li>
+</ul>
+<div class="callout"><b>一致性判断：</b>读后立即要看到刚写的数据 → 对支持的表/LSI 请求使用强一致性，或读写同一路径；GSI、DAX 与 Global Tables 需接受其一致性边界并进行应用设计。</div>
+</section>
+
+<section id="streams">
+<h2>六、Streams、TTL 与变更处理</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>能力</th><th>用途</th><th>关键限制</th></tr></thead>
+<tbody>
+<tr><td>DynamoDB Streams</td><td>按 Item 变更产生近实时记录，可触发 Lambda、审计或派生处理。</td><td>记录保留时间有限（通常 24 小时）；消费者应幂等并处理重复/重试。</td></tr>
+<tr><td>StreamViewType</td><td>选择仅键、变更前、变更后或前后图像。</td><td>按消费者需要选字段，避免不必要暴露或传输数据。</td></tr>
+<tr><td>TTL</td><td>为项目设置过期时间戳，服务异步清理已过期项目。</td><td>删除有延迟；过期项目在删除前仍可能被读取和计费。</td></tr>
+<tr><td>Export to S3</td><td>将表数据导出至 S3，用于分析、归档或离线处理。</td><td>按支持的备份时间点导出，无需对在线表执行全量 Scan。</td></tr>
+</tbody></table></div>
+<ul>
+<li>Streams 与 Lambda 集成时监控 IteratorAge、失败重试与批次行为；毒记录需有隔离或失败处理设计。</li>
+<li>若处理要求按分区键顺序，采用适合的事件源映射并避免多消费者造成顺序假设失效。</li>
+<li>TTL 常用于会话或临时数据清理，不应用作精确到期授权，需在读取路径也校验业务有效期。</li>
+<li>全量或增量分析可用导出到 S3、AWS Glue / Athena 等数据分析链路，避免在线 Scan 影响应用吞吐。</li>
+</ul>
+</section>
+
+<section id="global">
+<h2>七、Global Tables 与 DAX</h2>
+<h3>Global Tables：多区域读写</h3>
+<ul>
+<li>Global Tables 在多个 Region 复制表数据，适合地理分散用户低延迟读写和区域级韧性需求。</li>
+<li>复制为异步；不同区域并发更新可能产生冲突，应用必须理解冲突解决和最终一致性。</li>
+<li>Global Tables 不等于跨区域强一致性。明确主数据归属、冲突策略、区域故障时写入行为与恢复流程。</li>
+<li>部署前验证表配置、容量模式、加密密钥、Streams / 备份要求与目标 Region 的服务支持。</li>
+</ul>
+<h3>DAX：内存缓存</h3>
+<ul>
+<li>DynamoDB Accelerator 是全托管、与 DynamoDB API 兼容的内存缓存，适合高读、重复访问且可接受最终一致性缓存语义的场景。</li>
+<li>DAX 可缓存项目与查询结果，降低应用读取延迟和底层读取请求；写入可经 DAX 传递到 DynamoDB 并更新缓存。</li>
+<li>DAX 不适合需要强一致性读取的场景；若只需简单应用级缓存或多数据源聚合，评估 ElastiCache 等替代方案。</li>
+<li>应用需位于可访问 DAX 集群的 VPC 网络中，并配置 IAM、加密、节点规模与故障恢复。</li>
+</ul>
+<div class="callout orange"><b>区分题眼：</b>跨区域多活 → Global Tables（接受异步复制）；微秒级重复读、接受最终一致性 → DAX；跨区强一致性不能简单靠 Global Tables 实现。</div>
+</section>
+
+<section id="protection">
+<h2>八、备份、安全与监控</h2>
+<ul>
+<li><b>Point-in-time recovery：</b>连续备份窗口内可恢复到某个时间点；恢复会创建新表，再由应用切换数据路径。</li>
+<li><b>On-demand Backup：</b>按需创建备份，按保留策略管理；适合长期保护和变更前检查点。</li>
+<li><b>恢复测试：</b>定期恢复到隔离表，验证索引、容量、IAM、Streams 与下游消费者配置。</li>
+<li><b>静态加密：</b>默认使用 KMS 管理加密，也可按需求使用客户管理密钥；保护表数据、备份与相关导出路径时分别核对配置。</li>
+<li><b>IAM：</b>按表、索引和操作授权最小权限；可结合条件限制 LeadingKeys 或属性级访问，避免只依赖应用端过滤。</li>
+<li><b>网络：</b>DynamoDB 是区域级服务；私有子网访问可使用 Gateway VPC Endpoint，配合路由表与 Endpoint Policy 限定流量。</li>
+<li><b>监控：</b>观察节流、消耗容量、延迟、系统错误、GSI 写入容量、Streams IteratorAge 和 Global Table 复制延迟。</li>
+</ul>
+<div class="callout red"><b>恢复陷阱：</b>备份还原不会覆盖原表，而是产生新表。切换前要同步 IAM、应用配置、索引、TTL、Streams、备份与监控等表级设置。</div>
+</section>
+
+<section id="scenarios">
+<h2>九、场景题解析</h2>
+<div class="quiz">
+ <h3>场景一：按用户读取最近一段时间的事件</h3>
+ <p>系统需按用户查询其事件，并快速返回最近 24 小时数据；写入量大，查询通常限定单一用户。</p>
+ <p><b>正确方向：</b>以用户标识作为分区键，以时间戳作为排序键，使用 Query 并指定时间范围。</p>
+ <p><b>分析思路：</b>访问模式有稳定分区键与时间范围；Query 可避免扫描整表。</p>
+ <p><b>排除：</b>只按日期做分区键可能造成热点；每次 Scan 再过滤用户会消耗大量读取容量。</p>
+</div>
+<div class="quiz">
+ <h3>场景二：热门商品分区键导致写入节流</h3>
+ <p>大量写入集中到单个热门商品 ID，表整体利用率不高但该键请求节流。</p>
+ <p><b>正确方向：</b>重新设计写入键以分散热点，例如使用写分片或复合键，再在读取时合并结果。</p>
+ <p><b>分析思路：</b>问题是单个热键/分区的访问集中，不是总表容量不足。</p>
+ <p><b>排除：</b>简单提高总表预置容量不能消除固定分区键的热点；提高全局读容量更无关。</p>
+</div>
+<div class="quiz">
+ <h3>场景三：需要按邮箱查询用户且不改变主键</h3>
+ <p>用户主表以 UserId 为主键，新增 API 需要按 Email 查找用户，并要求可在表创建后增加查询能力。</p>
+ <p><b>正确方向：</b>创建以 Email 为索引键的 GSI，按查询需求投影必要属性。</p>
+ <p><b>分析思路：</b>访问模式需要不同分区键；GSI 可在表创建后添加，查询为最终一致性。</p>
+ <p><b>排除：</b>Scan + FilterExpression 会读取大量数据；LSI 不能在表创建后追加且需沿用主分区键。</p>
+</div>
+<div class="quiz">
+ <h3>场景四：流量可预测且希望成本优化</h3>
+ <p>生产表日常读写稳定，团队愿意设置容量告警，并希望按目标利用率自动扩缩。</p>
+ <p><b>正确方向：</b>使用 Provisioned Capacity 配合 Application Auto Scaling，为主表和 GSI 分别规划读写容量与告警。</p>
+ <p><b>分析思路：</b>稳定可预测流量适合预置容量，自动扩展降低手动运维。</p>
+ <p><b>排除：</b>On-Demand 更适合未知或波动流量，但不一定是长期稳定负载的最低成本模式。</p>
+</div>
+<div class="quiz">
+ <h3>场景五：高读重复数据要求极低延迟</h3>
+ <p>同一批 DynamoDB 项目被大量重复读取，业务允许最终一致性；希望降低读延迟和底层读取请求量。</p>
+ <p><b>正确方向：</b>评估 DAX 缓存层，验证缓存命中率、失效策略、VPC 访问和故障行为。</p>
+ <p><b>分析思路：</b>DAX 面向 DynamoDB 读取缓存；使用前确认应用不依赖强一致性读取。</p>
+ <p><b>排除：</b>Global Tables 面向跨区域复制，不是单区域的内存缓存；提高写容量也不会加速重复读。</p>
+</div>
+<div class="quiz">
+ <h3>场景六：多区域用户都需本地读写</h3>
+ <p>应用在多个 Region 部署，用户应连接本地数据库端点，区域故障时仍可使用其他区域，团队接受异步复制。</p>
+ <p><b>正确方向：</b>使用 DynamoDB Global Tables，并明确冲突解决、区域故障写入和恢复流程。</p>
+ <p><b>分析思路：</b>Global Tables 提供多区域复制与本地访问，但复制异步且不是强一致性事务数据库。</p>
+ <p><b>排除：</b>单 Region Read Replica 不提供多区域多活；跨区备份也不是本地低延迟读写架构。</p>
+</div>
+</section>
+
+<section id="quick">
+<h2>十、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>按主键精确取一条</td><td>GetItem</td><td>需提供完整主键</td></tr>
+<tr><td>单一用户的时间范围记录</td><td>Query + Sort Key 范围</td><td>Query 需分区键等值条件</td></tr>
+<tr><td>按新属性查找，表已建成</td><td>GSI</td><td>GSI 读取最终一致，写入消耗额外容量</td></tr>
+<tr><td>主分区键不变、增加排序访问</td><td>LSI（创建表时定义）</td><td>不可在表创建后新增</td></tr>
+<tr><td>Filter 后只返回少数记录</td><td>检查是否误用 Scan / Query Filter</td><td>过滤不减少已读取数据的容量消耗</td></tr>
+<tr><td>流量不可预测</td><td>On-Demand</td><td>仍受热点、配额与成本影响</td></tr>
+<tr><td>稳定容量自动扩缩</td><td>Provisioned + Auto Scaling</td><td>主表和 GSI 需分别监控</td></tr>
+<tr><td>高读、重复读取、最终一致可接受</td><td>DAX</td><td>不满足强一致性读取需求</td></tr>
+<tr><td>跨 Region 本地读写</td><td>Global Tables</td><td>异步复制与冲突处理</td></tr>
+<tr><td>项目自动过期</td><td>TTL</td><td>清理异步，不是准时删除</td></tr>
+<tr><td>近实时 Item 变更事件</td><td>DynamoDB Streams</td><td>消费者需幂等并处理重试</td></tr>
+<tr><td>时间点恢复</td><td>PITR</td><td>恢复到新表，需切换应用配置</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>十一、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>数据模型：</b>先从访问模式设计主键和索引</span></li>
+<li><input type="checkbox"><span><b>Partition Key：</b>唯一键定位与数据分布</span></li>
+<li><input type="checkbox"><span><b>Sort Key：</b>同分区内排序与范围查询</span></li>
+<li><input type="checkbox"><span><b>Item 限制：</b>最大 400 KB，大对象放 S3</span></li>
+<li><input type="checkbox"><span><b>热点：</b>避免请求集中到少量分区键</span></li>
+<li><input type="checkbox"><span><b>Query：</b>分区键等值，可限定排序键</span></li>
+<li><input type="checkbox"><span><b>Scan：</b>遍历数据，在线高频场景通常避免</span></li>
+<li><input type="checkbox"><span><b>FilterExpression：</b>读取后过滤，不省读取容量</span></li>
+<li><input type="checkbox"><span><b>GSI：</b>可后建、新分区键、读取最终一致</span></li>
+<li><input type="checkbox"><span><b>LSI：</b>表创建时定义，共用分区键</span></li>
+<li><input type="checkbox"><span><b>On-Demand：</b>未知/波动流量自动容量</span></li>
+<li><input type="checkbox"><span><b>Provisioned：</b>稳定流量 + Auto Scaling</span></li>
+<li><input type="checkbox"><span><b>强一致性：</b>表/LSI 适用；GSI 不支持</span></li>
+<li><input type="checkbox"><span><b>条件写入：</b>并发控制与幂等状态转换</span></li>
+<li><input type="checkbox"><span><b>Streams：</b>变更捕获，记录保留有限，消费者需幂等</span></li>
+<li><input type="checkbox"><span><b>TTL：</b>异步删除，不保证准时清理</span></li>
+<li><input type="checkbox"><span><b>DAX：</b>读缓存，不能满足强一致性读</span></li>
+<li><input type="checkbox"><span><b>Global Tables：</b>异步多区域复制与冲突处理</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十二、快速自测</h2>
+<p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz">
+ <b>1. 表已存在，现需通过不同于主键的新属性快速查找项目，且可接受最终一致性。应使用什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',false)">A. LSI</button>
+ <button class="secondary" onclick="showAnswer('q1',true)">B. GSI</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. Scan + 强一致性</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. TTL</button>
+ <div class="answer" id="q1"><b>正确答案：B。</b>GSI 可定义新的分区键并在建表后添加；查询为最终一致性，需规划索引成本。</div>
+</div>
+<div class="quiz">
+ <b>2. FilterExpression 后只剩少量项目，但请求仍大量消耗读取容量，应该怎样改进？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 增加 TTL</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. 设计可由 Query KeyCondition 直接定位的键或索引</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 每次读取都启用 DAX 强一致性</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. 只提高 Filter 条件数量</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>Filter 在读取之后执行，不降低已读取数据的容量；要让键条件选中所需数据集合。</div>
+</div>
+<div class="quiz">
+ <b>3. 多区域应用需要本地读写，业务可以接受最终一致性，应选择什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',true)">A. DynamoDB Global Tables</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">B. 单区域 PITR</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. DAX 集群</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. Multi-AZ standby</button>
+ <div class="answer" id="q3"><b>正确答案：A。</b>Global Tables 提供多区域复制和本地访问，但复制异步，仍需规划冲突与故障恢复。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html" target="_blank" rel="noopener">Amazon DynamoDB 开发人员指南</a></li>
+<li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-design.html" target="_blank" rel="noopener">分区键设计最佳实践</a></li>
+<li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html" target="_blank" rel="noopener">Global Secondary Indexes</a></li>
+<li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html" target="_blank" rel="noopener">DynamoDB Streams</a></li>
+<li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/globaltables.html" target="_blank" rel="noopener">Global Tables</a></li>
+<li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DAX.html" target="_blank" rel="noopener">DynamoDB Accelerator (DAX)</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>索引限制、容量计费、Global Tables 一致性模式和配额可能更新；以 AWS 最新文档与目标区域支持情况为准。</div>
+</section>
+</main>
+</div>
+<footer class="container">AWS SAP-C02 DynamoDB 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 CloudWatch 考点速查：Metrics、Alarms、Logs Insights、Agent、自定义指标、跨账号可观测性与告警自动化。">
+<title>AWS SAP-C02｜Amazon CloudWatch 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>Amazon CloudWatch<br>指标、日志与告警</h1>
+  <p>统一收集 AWS 资源和应用的指标、日志与事件，并用 Alarm、Dashboard 和自动化目标响应异常。区分 Metrics、Logs、Events 与审计服务，再根据症状选择 Agent、Insights、跨账号观测或告警联动。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">管理 / 可观测性</span>
+   <span class="pill">关键词：Metrics · Logs Insights · Alarms</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回管理分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#overview">一、CloudWatch 能力地图</a>
+ <a href="#metrics">二、Metrics 与维度</a>
+ <a href="#alarms">三、Alarms 与自动响应</a>
+ <a href="#logs">四、Logs、Agent 与 Insights</a>
+ <a href="#events">五、事件、仪表板与跨账号</a>
+ <a href="#monitoring">六、应用与容器可观测性</a>
+ <a href="#comparison">七、CloudWatch / CloudTrail / Config</a>
+ <a href="#scenarios">八、场景题解析</a>
+ <a href="#quick">九、关键词速查</a>
+ <a href="#memory">十、考前速记卡</a>
+ <a href="#quiz">十一、快速自测</a>
+</nav>
+
+<main>
+<section id="overview">
+<h2>一、CloudWatch 能力地图</h2>
+<p class="lead">Amazon CloudWatch 收集指标、日志和部分服务事件，支持查询、可视化、告警与自动化响应。不同遥测类型面向不同问题：Metrics 看数值趋势，Logs 记录文本/结构化事件，Alarms 判断阈值状态并触发动作。</p>
+<div class="diagram">
+ <div class="node"><b>AWS / 应用</b><br><small>Metrics · Logs · Events</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>CloudWatch</b><br><small>查询 · 可视化 · Alarm</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>响应目标</b><br><small>SNS · ASG · Lambda · Ops</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>组件</th><th>核心作用</th><th>题目线索</th></tr></thead>
+<tbody>
+<tr><td>Metrics</td><td>按时间序列保存数值数据点，可创建自定义指标与数学表达式。</td><td>CPU、延迟、队列长度、业务吞吐和自定义 SLA。</td></tr>
+<tr><td>Alarms</td><td>评估指标或表达式，在 OK / ALARM / INSUFFICIENT_DATA 等状态间变化。</td><td>超过阈值后通知、扩缩容或触发自动化。</td></tr>
+<tr><td>Logs</td><td>收集并存储日志组/日志流，执行 Insights 查询、指标过滤和订阅转发。</td><td>应用日志、系统日志、排障分析和日志管道。</td></tr>
+<tr><td>Dashboards</td><td>跨服务/账号/区域可视化指标与告警。</td><td>集中运维视图，不等同于自动告警。</td></tr>
+<tr><td>Events / EventBridge</td><td>按服务事件或自定义事件匹配规则并路由目标。</td><td>资源状态变化、计划事件、事件驱动工作流。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>告警闭环：</b>产生遥测 → 选择指标/日志/事件 → 设置阈值或规则 → 确认状态变化 → 配置通知/动作 → 验证响应、权限和告警恢复。</div>
+</section>
+
+<section id="metrics">
+<h2>二、Metrics 与维度</h2>
+<ul>
+<li>Metric 由 Namespace、Metric Name、零个或多个 Dimensions、时间戳、数值和 Unit 等构成；Dimension 组合会形成不同的指标序列。</li>
+<li>AWS 服务自动发布许多基础指标；客户可发布 Custom Metrics，应用与 CloudWatch Agent 可发送自定义业务/主机指标。</li>
+<li>EC2 默认监控指标不等于 OS 内部指标；内存、文件系统使用率、进程等通常需要安装并配置 CloudWatch Agent。</li>
+<li>高分辨率自定义指标可提供更细粒度数据与告警评估，但会增加数据点数量和成本；选择满足响应目标的最低分辨率。</li>
+<li>指标保留期会随数据聚合粒度变化；细粒度原始数据保留时间较短，长期趋势会被聚合，成本与保留期需纳入设计。</li>
+<li>Dimensions 用于区分指标维度，但每个唯一组合都会形成单独时间序列；动态 ID 作为维度可能造成高基数和成本增长。</li>
+</ul>
+<div class="table-wrap"><table>
+<thead><tr><th>需求</th><th>指标来源 / 方案</th><th>注意点</th></tr></thead>
+<tbody>
+<tr><td>EC2 CPU / 网络</td><td>EC2 默认 CloudWatch Metrics</td><td>基础指标粒度通常为分钟级；详细监控可提高报告频率。</td></tr>
+<tr><td>EC2 内存与磁盘使用率</td><td>CloudWatch Agent 收集并发布</td><td>先配置 Agent、权限和命名空间；默认 EC2 指标不会提供 OS 内部使用率。</td></tr>
+<tr><td>应用业务指标</td><td>PutMetricData / Agent / OpenTelemetry 集成等</td><td>控制 Dimensions 数量，统一命名、单位和发布间隔。</td></tr>
+<tr><td>日志匹配次数告警</td><td>CloudWatch Logs Metric Filter 生成指标</td><td>过滤器只处理新写入的日志事件，不是历史日志回算工具。</td></tr>
+<tr><td>多个指标组合判定</td><td>Metric Math / Composite Alarm</td><td>组合表达式支持范围与告警能力需按当前配置验证。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>维度陷阱：</b>把用户 ID、请求 ID 等高基数值作为指标维度，会迅速增加指标时间序列和费用；逐条明细通常适合日志/追踪系统。</div>
+</section>
+
+<section id="alarms">
+<h2>三、Alarms 与自动响应</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Alarm 配置</th><th>含义</th><th>常见误区</th></tr></thead>
+<tbody>
+<tr><td>Threshold</td><td>指标统计值在评估窗口内与阈值比较。</td><td>必须选择正确 Statistic、Period、Unit 和比较方向。</td></tr>
+<tr><td>Evaluation Periods / Datapoints to Alarm</td><td>定义多个评估数据点中需要多少个越界才进入 ALARM（M out of N）。</td><td>可平滑抖动，但也会增加响应延迟。</td></tr>
+<tr><td>Missing data treatment</td><td>将缺失数据视为 missing、not breaching、breaching 或 ignore。</td><td>缺数据可能表示服务无流量、监控中断或应用故障，需按语义选择。</td></tr>
+<tr><td>Alarm action</td><td>向 SNS 发布、触发 Auto Scaling、EC2 动作或其他支持的自动化。</td><td>告警状态本身不会自动修复业务；目标权限、Region 和动作类型须匹配。</td></tr>
+<tr><td>Composite Alarm</td><td>使用多个 Alarm 的状态逻辑组合，减少告警风暴。</td><td>组合告警依赖基础告警；不要只监控 Composite 而丢掉底层诊断信息。</td></tr>
+</tbody></table></div>
+<ul>
+<li>EC2 Alarm Actions 可在支持配置中执行停止、终止、重启或恢复实例等动作；选择动作前确认实例恢复语义和数据持久性。</li>
+<li>Auto Scaling policy 可由 CloudWatch Alarm 触发，但扩缩容量仍受 ASG Min/Max、冷却/暖机、配额和启动失败影响。</li>
+<li>高可用告警应区分症状与原因；例如延迟、错误率与资源利用率分层监控，避免单一 CPU 阈值漏报业务故障。</li>
+<li>配置 SNS 通知时，确认 Topic Policy、订阅确认、加密密钥权限和下游通知渠道可达。</li>
+<li>对告警做定期演练：模拟阈值、验证通知/动作，再恢复测试资源；防止长期“ALARM 但无人响应”。</li>
+</ul>
+<div class="callout green"><b>阈值判断：</b>短暂毛刺 → M-of-N 或 Composite；需要快速检测 → 缩短 Period/增加分辨率并接受费用；不应把缺失数据一律当作正常。</div>
+</section>
+
+<section id="logs">
+<h2>四、Logs、Agent 与 Insights</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>能力</th><th>作用</th><th>设计点</th></tr></thead>
+<tbody>
+<tr><td>Log Group / Log Stream</td><td>按应用/服务组织日志组，在组内按来源组织日志流。</td><td>设置保留期、加密、资源策略和命名标准；未设保留期的日志可能持续保存并产生成本。</td></tr>
+<tr><td>CloudWatch Agent</td><td>收集 EC2/本地服务器的日志、内存、磁盘等 OS 指标。</td><td>配置 Agent、执行角色/凭证、日志路径与指标集合；监控 Agent 健康。</td></tr>
+<tr><td>Logs Insights</td><td>交互式查询和分析结构化/非结构化日志。</td><td>按时间范围与 Log Group 缩小扫描；查询费用与扫描数据量相关。</td></tr>
+<tr><td>Metric Filter</td><td>从进入日志组的新日志匹配模式并生成指标。</td><td>适合错误计数告警；过滤模式和单位需正确，无法回算历史数据。</td></tr>
+<tr><td>Subscription Filter</td><td>实时将匹配日志转发至 Lambda、Kinesis 或 Firehose 等目标。</td><td>设计目标权限、重试、背压与跨账号目的地策略。</td></tr>
+</tbody></table></div>
+<ul>
+<li>日志存储、查询和传输均可能产生成本；设置合理保留期、过滤不必要的高频日志并在需要时导出到 S3 长期归档。</li>
+<li>Logs Insights 使用类似查询语言分析日志字段；先选对账号/区域/日志组与时间范围，再进行聚合、过滤和排序。</li>
+<li>跨账号日志集中可以通过 CloudWatch Logs 的目标/资源策略、订阅与集中日志架构实现；确保源/目标策略、KMS 密钥与区域配置正确。</li>
+<li>日志内容可能包含凭证、个人信息或业务机密；在应用侧脱敏并严格控制 Log Group 读取权限。</li>
+<li>需要对所有 API 调用进行审计时用 CloudTrail；CloudWatch Logs 可接收/查询日志，但不是 CloudTrail 的替代品。</li>
+</ul>
+</section>
+
+<section id="events">
+<h2>五、事件、仪表板与跨账号</h2>
+<ul>
+<li><b>Dashboards：</b>汇总图表、指标、文本和告警状态，可用于跨服务/账号/区域的运维视图；Dashboard 本身不触发扩缩或修复。</li>
+<li><b>EventBridge：</b>基于服务事件与自定义事件匹配规则，路由到 Lambda、SNS、Step Functions 等；适合事件状态驱动工作流。</li>
+<li><b>CloudWatch Alarm：</b>基于指标阈值/统计结果的状态评估，适合阈值告警与扩缩动作。</li>
+<li><b>Cross-account observability：</b>通过 CloudWatch Observability Access Manager（OAM）等机制让监控账号查看来源账号的指标、日志和追踪数据；配置 Sink/Link 与组织信任策略。</li>
+<li><b>跨账号 IAM：</b>旧式跨账号 Dashboard/Alarm 设计可使用角色委派；应采用当前推荐的观测配置并明确数据可见范围。</li>
+<li><b>跨区域：</b>CloudWatch 数据按区域组织；Dashboard 可引用受支持的跨区域数据，但 Alarm 和源指标区域要配置正确。</li>
+</ul>
+<div class="table-wrap"><table>
+<thead><tr><th>场景</th><th>优先使用</th><th>关键区别</th></tr></thead>
+<tbody>
+<tr><td>CPU 持续高于阈值时扩容</td><td>Metric Alarm + Auto Scaling Policy</td><td>数值评估驱动动作。</td></tr>
+<tr><td>EC2 状态变化时触发运维流程</td><td>EventBridge rule</td><td>事件匹配，不要求指标越界。</td></tr>
+<tr><td>多账号统一运维看板</td><td>CloudWatch Dashboard / OAM</td><td>配置账号间数据共享和观测权限。</td></tr>
+<tr><td>跨账号日志实时转发</td><td>Logs Subscription Filter + 目标策略</td><td>重点是日志数据管道与权限。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="monitoring">
+<h2>六、应用与容器可观测性</h2>
+<ul>
+<li><b>Container Insights：</b>收集 ECS/EKS 等容器环境的集群、服务、任务/Pod 和节点指标；启用后会产生指标与日志费用。</li>
+<li><b>Application Signals / ServiceLens：</b>关联应用服务、依赖、指标与追踪，定位端到端延迟和错误；按应用支持和配置启用。</li>
+<li><b>Synthetics：</b>Canary 定期模拟用户请求，检测公网或内部端点的可用性、延迟和功能路径。</li>
+<li><b>CloudWatch RUM：</b>从真实用户浏览器收集前端体验数据，补足合成探测无法代表实际用户网络的部分。</li>
+<li><b>Trace / X-Ray：</b>分布式追踪用于跨服务请求链路；和指标、日志关联可缩短根因定位时间。</li>
+<li><b>异常检测：</b>CloudWatch Anomaly Detection 可基于历史模式生成动态阈值；季节性变化、冷启动或异常历史需评估模型效果。</li>
+</ul>
+<div class="callout orange"><b>指标闭环：</b>基础设施可用性、应用 SLI、日志错误和分布式追踪应互相补充。启用容器或高基数细粒度遥测前，先评估采集量、保留期、查询费用与告警责任人。</div>
+</section>
+
+<section id="comparison">
+<h2>七、CloudWatch / CloudTrail / Config</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>服务</th><th>回答的问题</th><th>典型数据</th></tr></thead>
+<tbody>
+<tr><td>CloudWatch</td><td>系统/应用运行得怎样？指标或日志是否异常？</td><td>Metrics、Logs、Alarms、Dashboards、事件联动。</td></tr>
+<tr><td>CloudTrail</td><td>谁在何时对 AWS 资源/API 做了什么操作？</td><td>管理事件、Data Events、Trail 审计日志。</td></tr>
+<tr><td>AWS Config</td><td>资源配置现在/过去是否符合规则？何时发生变化？</td><td>配置项、合规评估、配置时间线、规则。</td></tr>
+<tr><td>EventBridge</td><td>某事件发生时如何匹配并路由工作流？</td><td>服务事件、自定义事件与事件总线规则。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>一眼区分：</b>指标/日志/阈值 → CloudWatch；API 审计 → CloudTrail；资源配置合规 → Config；事件匹配与路由 → EventBridge。</div>
+</section>
+
+<section id="scenarios">
+<h2>八、场景题解析</h2>
+<div class="quiz">
+ <h3>场景一：EC2 内存不足导致应用错误</h3>
+ <p>CloudWatch 已有 EC2 CPU 指标，但团队看不到内存和磁盘利用率，希望配置告警。</p>
+ <p><b>正确方向：</b>安装并配置 CloudWatch Agent 收集 OS 内存/磁盘指标，再创建 Metric Alarm 与通知/动作。</p>
+ <p><b>分析思路：</b>EC2 默认指标不含所有 OS 内部数据；Agent 需有日志/指标发布权限。</p>
+ <p><b>排除：</b>仅开启 EC2 Detailed Monitoring 不会自动产生内存使用率。</p>
+</div>
+<div class="quiz">
+ <h3>场景二：错误日志出现时立即触发通知</h3>
+ <p>应用日志写入 CloudWatch Logs，希望根据新日志中的特定错误关键字统计并告警。</p>
+ <p><b>正确方向：</b>创建 Logs Metric Filter 生成错误计数指标，再为该指标创建 Alarm 并通知 SNS。</p>
+ <p><b>分析思路：</b>Metric Filter 把新日志匹配结果转换为数值指标，Alarm 负责阈值评估与响应。</p>
+ <p><b>排除：</b>Logs Insights 是交互式查询，不会自动替代 Alarm；过滤器也不会回算历史日志。</p>
+</div>
+<div class="quiz">
+ <h3>场景三：多账号运维团队集中查看指标和日志</h3>
+ <p>多个成员账号分别运行应用，运维团队需要在监控账号查看来源账号的指标、日志与追踪数据。</p>
+ <p><b>正确方向：</b>评估 CloudWatch Cross-account observability / OAM，建立 Sink 与 Source Links 并限制可共享数据。</p>
+ <p><b>分析思路：</b>OAM 提供跨账号观测数据共享，减少逐账号手工复制指标的维护。</p>
+ <p><b>排除：</b>单纯创建一个 Dashboard 不会自动授权访问其他账号数据。</p>
+</div>
+<div class="quiz">
+ <h3>场景四：CPU 告警触发 ASG 扩容但没有新实例</h3>
+ <p>Alarm 进入 ALARM 状态，但 ASG 没有启动实例。</p>
+ <p><b>正确方向：</b>检查 Alarm Action 与扩缩策略绑定、ASG Min/Max、扩缩活动记录、实例启动模板、配额及 IAM/服务角色。</p>
+ <p><b>分析思路：</b>Alarm 状态只是触发条件；ASG 扩缩策略和底层启动必须都成功。</p>
+ <p><b>排除：</b>反复调低阈值不会解决 MaxSize 已满、启动模板无效或配额不足。</p>
+</div>
+<div class="quiz">
+ <h3>场景五：定位请求跨多个服务的延迟根因</h3>
+ <p>用户请求经 API、Lambda、队列和数据库，需观察每个服务的耗时与失败位置。</p>
+ <p><b>正确方向：</b>结合分布式追踪（X-Ray/受支持的追踪集成）、CloudWatch Metrics、Logs 和 Application Signals/ServiceLens。</p>
+ <p><b>分析思路：</b>追踪串联请求路径，指标显示整体趋势，日志提供错误上下文。</p>
+ <p><b>排除：</b>单一 CPU Dashboard 无法显示跨服务调用链路与具体慢操作。</p>
+</div>
+<div class="quiz">
+ <h3>场景六：区分 API 审计和资源配置漂移</h3>
+ <p>合规人员既要知道谁修改了安全组，又要判断现有安全组是否符合规则。</p>
+ <p><b>正确方向：</b>CloudTrail 记录 API 操作主体与事件；AWS Config 记录资源配置并评估规则；CloudWatch 可监控指标/日志告警。</p>
+ <p><b>分析思路：</b>三个服务的数据用途不同，应关联而非互相替代。</p>
+ <p><b>排除：</b>仅依赖 CloudWatch CPU 或应用日志无法构成完整的配置变更审计。</p>
+</div>
+</section>
+
+<section id="quick">
+<h2>九、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>EC2 内存 / 磁盘利用率</td><td>CloudWatch Agent</td><td>不是默认 EC2 基础指标</td></tr>
+<tr><td>超过阈值触发扩缩</td><td>CloudWatch Alarm + ASG Policy</td><td>检查扩缩活动与 ASG 上下限</td></tr>
+<tr><td>日志关键字数量告警</td><td>Logs Metric Filter + Alarm</td><td>过滤器处理新日志，不回扫历史</td></tr>
+<tr><td>查询大量应用日志</td><td>CloudWatch Logs Insights</td><td>限制时间范围/日志组降低扫描量</td></tr>
+<tr><td>所有账号集中看指标和日志</td><td>CloudWatch OAM 跨账号可观测性</td><td>需要显式 Sink/Link 和数据授权</td></tr>
+<tr><td>状态事件触发工作流</td><td>EventBridge</td><td>事件匹配不同于指标阈值 Alarm</td></tr>
+<tr><td>多服务请求调用链路</td><td>X-Ray / ServiceLens / Application Signals</td><td>和日志、指标互补</td></tr>
+<tr><td>资源配置合规时间线</td><td>AWS Config</td><td>不是 CloudWatch Metrics</td></tr>
+<tr><td>谁调用了修改 API</td><td>CloudTrail</td><td>CloudWatch 不是 API 审计日志来源</td></tr>
+<tr><td>高基数业务 ID</td><td>Logs / Traces 存明细</td><td>避免无限增长 Metric Dimensions</td></tr>
+<tr><td>监控缺失数据</td><td>Alarm missing data treatment</td><td>按业务语义选择 breaching / notBreaching / ignore</td></tr>
+<tr><td>人工看板</td><td>CloudWatch Dashboard</td><td>仪表板本身不执行告警动作</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>十、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>Metrics：</b>时间序列数值指标</span></li>
+<li><input type="checkbox"><span><b>Dimensions：</b>区分指标序列，过多会高基数</span></li>
+<li><input type="checkbox"><span><b>EC2 CPU：</b>基础 CloudWatch 指标</span></li>
+<li><input type="checkbox"><span><b>内存/磁盘：</b>CloudWatch Agent 收集</span></li>
+<li><input type="checkbox"><span><b>Alarm：</b>阈值、统计量、窗口、缺失数据策略</span></li>
+<li><input type="checkbox"><span><b>M of N：</b>多个评估点满足条件才告警</span></li>
+<li><input type="checkbox"><span><b>Alarm Action：</b>SNS、ASG 或支持的 EC2 动作</span></li>
+<li><input type="checkbox"><span><b>Logs：</b>Log Group、Stream、保留期与访问权限</span></li>
+<li><input type="checkbox"><span><b>Logs Insights：</b>交互式日志查询分析</span></li>
+<li><input type="checkbox"><span><b>Metric Filter：</b>新日志匹配转数值指标</span></li>
+<li><input type="checkbox"><span><b>Subscription Filter：</b>实时转发日志到下游</span></li>
+<li><input type="checkbox"><span><b>EventBridge：</b>事件匹配和路由，不是指标阈值</span></li>
+<li><input type="checkbox"><span><b>Dashboard：</b>可视化，不会自动响应</span></li>
+<li><input type="checkbox"><span><b>OAM：</b>跨账号观测共享 Sink/Link</span></li>
+<li><input type="checkbox"><span><b>CloudTrail：</b>API 操作审计</span></li>
+<li><input type="checkbox"><span><b>AWS Config：</b>资源状态与规则合规</span></li>
+<li><input type="checkbox"><span><b>Container Insights：</b>容器集群/服务监控，留意成本</span></li>
+<li><input type="checkbox"><span><b>告警闭环：</b>监测、通知、动作、验证与演练</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十一、快速自测</h2>
+<p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz">
+ <b>1. 需要监控 EC2 主机的内存使用率，默认 CloudWatch 指标中没有该数据。应怎么做？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',false)">A. 只启用 EC2 Detailed Monitoring</button>
+ <button class="secondary" onclick="showAnswer('q1',true)">B. 安装并配置 CloudWatch Agent 发布内存指标</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. 开启 CloudTrail Insights</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. 创建 AWS Config Rule</button>
+ <div class="answer" id="q1"><b>正确答案：B。</b>内存等 OS 内部数据需要 Agent 或相应采集集成。</div>
+</div>
+<div class="quiz">
+ <b>2. 新日志中出现特定 ERROR 时，需要统计并通过阈值通知运维。应采用什么组合？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. CloudTrail + Config Aggregator</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. Logs Metric Filter + CloudWatch Alarm + SNS</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. Dashboard + S3 Lifecycle</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. EventBridge Archive + SCP</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>Metric Filter 将新日志匹配转为指标，Alarm 评估阈值并可通知 SNS。</div>
+</div>
+<div class="quiz">
+ <b>3. 管理员需要知道谁修改安全组及其配置是否合规，如何分工？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',true)">A. CloudTrail 审计 API，AWS Config 追踪配置并评估规则</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">B. CloudWatch Dashboard 同时替代二者</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. CloudFormation Alarm 记录所有 API</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. EventBridge 替代资源配置历史</button>
+ <div class="answer" id="q3"><b>正确答案：A。</b>CloudTrail 记录 API 主体和操作；Config 跟踪资源配置并评估合规。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html" target="_blank" rel="noopener">Amazon CloudWatch 用户指南</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Metrics-Insights.html" target="_blank" rel="noopener">CloudWatch Metrics 与查询</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html" target="_blank" rel="noopener">CloudWatch Alarms</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html" target="_blank" rel="noopener">CloudWatch Logs Insights</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html" target="_blank" rel="noopener">CloudWatch Agent</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>指标粒度、保留期、跨账号能力与告警动作可能更新；以所用 Region 的最新服务文档和计费说明为准。</div>
+</section>
+</main>
+</div>
+<footer class="container">AWS SAP-C02 CloudWatch 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

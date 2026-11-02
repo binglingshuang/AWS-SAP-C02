@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Amazon EFS 考点速查：性能与吞吐模式、存储类别、挂载目标、跨 AZ 访问、访问点、加密与灾备。">
+<title>AWS SAP-C02｜Amazon EFS 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>Amazon EFS<br>弹性共享文件存储</h1>
+  <p>围绕共享 NFS 文件系统的可用性、吞吐与延迟、存储类别、挂载目标和访问控制。先判断是否需要多实例共享 POSIX 文件，再选区域/单区、性能与吞吐配置，并确保每个客户端到挂载目标的网络路径正确。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">存储 / 文件系统</span>
+   <span class="pill">关键词：NFS · Mount Target · Lifecycle · Throughput</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回存储分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#overview">一、EFS 核心模型</a>
+ <a href="#availability">二、区域文件系统与挂载目标</a>
+ <a href="#performance">三、性能模式与吞吐模式</a>
+ <a href="#classes">四、存储类别与生命周期</a>
+ <a href="#network">五、挂载与网络排障</a>
+ <a href="#security">六、权限、加密与访问点</a>
+ <a href="#protection">七、备份、复制与灾备</a>
+ <a href="#selection">八、与 EBS、FSx、S3 选型</a>
+ <a href="#scenarios">九、场景题解析</a>
+ <a href="#quick">十、关键词速查</a>
+ <a href="#memory">十一、考前速记卡</a>
+ <a href="#quiz">十二、快速自测</a>
+</nav>
+
+<main>
+<section id="overview">
+<h2>一、EFS 核心模型</h2>
+<p class="lead">Amazon EFS 是托管的弹性 NFS 文件系统，可由多个 Linux 实例或支持 EFS 的计算服务并发挂载，适合需要共享文件命名空间的应用。容量会随写入增长而扩展，通常无需预先配置文件系统容量。</p>
+<div class="diagram">
+ <div class="node"><b>Linux 客户端</b><br><small>EC2 / ECS / EKS / Lambda 等</small></div>
+ <span class="arrow">→ NFSv4.1</span>
+ <div class="node"><b>Mount Target</b><br><small>VPC 中的 ENI 与安全组</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>EFS File System</b><br><small>区域或 One Zone</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>特性</th><th>EFS 能力</th><th>场景提示</th></tr></thead>
+<tbody>
+<tr><td>协议与语义</td><td>托管 NFS 文件系统，支持 Linux/POSIX 文件访问语义。</td><td>应用期望目录、文件锁或多个主机共享同一文件树。</td></tr>
+<tr><td>弹性容量</td><td>文件系统可随数据增长扩展；按存储类别与访问模式计费。</td><td>容量不可预测、希望免管理文件服务器与卷扩容。</td></tr>
+<tr><td>并发访问</td><td>多个客户端可同时访问同一文件系统。</td><td>共享 Web 内容、用户目录、内容管理或应用共享文件。</td></tr>
+<tr><td>客户端网络</td><td>客户端通过 VPC 内的 EFS Mount Target ENI 访问文件系统。</td><td>检查 NFS 2049、安全组、路由、DNS 与子网 IP。</td></tr>
+<tr><td>计算适配</td><td>Linux EC2、ECS/EKS，以及支持 EFS 的 Lambda 等服务可挂载。</td><td>Windows SMB 工作负载通常考虑 FSx for Windows File Server。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>服务边界：</b>EFS 是文件存储，不是块设备或对象存储。需要单主机低延迟块卷通常选 EBS；HTTP/API 对象访问及海量对象生命周期通常选 S3；Windows SMB 或特定高性能文件协议需求应比较 FSx。</div>
+</section>
+
+<section id="availability">
+<h2>二、区域文件系统与挂载目标</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>部署类型</th><th>数据持久性与可用性范围</th><th>典型用途</th><th>注意事项</th></tr></thead>
+<tbody>
+<tr><td>Regional</td><td>数据跨多个可用区冗余存储；可在同一区域多个 AZ 的客户端访问。</td><td>生产工作负载、需要 AZ 故障韧性的共享文件系统。</td><td>为每个需要本地访问的 AZ 建 Mount Target；跨 AZ 挂载在没有本地目标时仍可能可达，但需评估延迟与数据传输费用。</td></tr>
+<tr><td>One Zone</td><td>数据位于单个 AZ，成本通常更低，但不具备跨 AZ 数据冗余。</td><td>可重建数据、开发测试或已另行设计跨 AZ 保护的工作负载。</td><td>AZ 故障会影响可用性；客户端应位于同一 AZ 以避免跨 AZ 路径和额外成本。</td></tr>
+</tbody></table></div>
+<h3>Mount Target 设计</h3>
+<ul>
+<li>Mount Target 是文件系统在 VPC 子网中的网络入口，具有 ENI、私有 IP 和关联安全组；它不是数据卷，也不是单独文件系统。</li>
+<li>Regional 文件系统可在每个 AZ 创建一个 Mount Target；客户端通常通过区域 DNS 名称连接到本 AZ 的目标。</li>
+<li>同一 AZ 同一个文件系统一般只能有一个 Mount Target。规划 VPC / 子网和可用区时，确保客户端所在 AZ 有目标且有足够 ENI 地址空间。</li>
+<li>Mount Target 属于特定 VPC；跨 VPC / 本地访问需先建立网络连通性与 DNS 解析方案，并核对挂载目标安全组。</li>
+<li>EFS 文件系统与挂载目标位于同一区域。跨区域灾备使用 EFS Replication 将数据复制到目标区域的另一个文件系统。</li>
+</ul>
+<div class="callout orange"><b>跨 AZ 关键点：</b>Regional EFS 的数据跨 AZ 冗余不等于任意客户端的网络路径、延迟或费用都相同。生产上通常让每个客户端 AZ 有本地 Mount Target；One Zone 则没有跨 AZ 的同等可用性保证。</div>
+</section>
+
+<section id="performance">
+<h2>三、性能模式与吞吐模式</h2>
+<p>性能模式描述文件系统的延迟与扩展特征；吞吐模式决定可提供的吞吐能力与费用方式。两者是不同维度，选型需结合文件操作特征、并发客户端和数据量。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>性能模式</th><th>特征</th><th>选型提示</th></tr></thead>
+<tbody>
+<tr><td>General Purpose</td><td>面向低延迟文件操作和通用工作负载，是新文件系统的推荐默认模式。</td><td>大多数业务应用、内容管理、用户目录与容器共享文件。</td></tr>
+<tr><td>Max I/O</td><td>为高度并行化、大规模客户端访问的聚合吞吐场景设计，单次文件操作延迟相对更高；新建文件系统通常优先评估 General Purpose。</td><td>只有工作负载确实需要极高并行规模且可接受延迟权衡时才考虑，并核对当前区域与文件系统配置支持情况。</td></tr>
+</tbody></table></div>
+<div class="table-wrap"><table>
+<thead><tr><th>吞吐模式</th><th>能力与计费思路</th><th>适合负载</th></tr></thead>
+<tbody>
+<tr><td>Bursting</td><td>吞吐能力与文件系统存储量相关，累积的突发额度允许短时超过基准吞吐；持续突发会消耗额度。</td><td>平均吞吐较低、偶尔出现短时峰值的文件系统。</td></tr>
+<tr><td>Provisioned</td><td>显式配置高于存储量自动提供水平的吞吐容量，并为配置的吞吐付费。</td><td>文件系统较小但持续高吞吐，或吞吐需求与存储量不成比例。</td></tr>
+<tr><td>Elastic</td><td>按实际文件工作负载自动扩展吞吐，按使用量付费，不依赖预设固定吞吐容量。</td><td>负载波动大、难以预测或有突发吞吐且希望减少容量规划。</td></tr>
+</tbody></table></div>
+<ul>
+<li>选吞吐模式前用 CloudWatch 观察吞吐、IOPS、延迟及突发额度相关指标，并进行代表性负载测试。</li>
+<li>吞吐模式与性能模式不可混为一谈：低延迟需求关注性能模式；吞吐峰值/基准与计费关注吞吐模式。</li>
+<li>吞吐模式可用性和调整约束可能随文件系统类型、区域及服务更新而变化，部署前核对最新文档。</li>
+</ul>
+<div class="callout green"><b>记忆：</b>性能模式回答“文件操作延迟与并行规模如何权衡”；吞吐模式回答“吞吐容量如何提供、如何计费”。不确定负载峰值时优先评估 Elastic；稳定且高于存储量基准时评估 Provisioned。</div>
+</section>
+
+<section id="classes">
+<h2>四、存储类别与生命周期</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>存储类别</th><th>特征</th><th>典型数据</th></tr></thead>
+<tbody>
+<tr><td>Standard</td><td>面向频繁访问的数据，提供低延迟访问。</td><td>活跃项目、近期内容和频繁读取的共享文件。</td></tr>
+<tr><td>Infrequent Access (IA)</td><td>降低存储单价；访问时会产生读取费用，访问延迟仍为毫秒级。</td><td>不常访问但需要快速取回的旧文件。</td></tr>
+<tr><td>Archive</td><td>面向极少访问的数据，存储成本更低；访问前需先恢复，通常有更长的取回等待时间。</td><td>长期保留、偶尔审计或恢复的冷数据。</td></tr>
+<tr><td>One Zone 变体</td><td>One Zone 文件系统有其对应存储类别，成本更低但数据可用性限于单 AZ。</td><td>可接受单 AZ 风险、具备其他恢复方式的非关键数据。</td></tr>
+</tbody></table></div>
+<h3>生命周期管理与访问策略</h3>
+<ul>
+<li>EFS Lifecycle Management 可按访问时间将文件从 Standard 转入 IA / Archive；支持的转换路径、最短天数和区域可用性应以当前文档为准。</li>
+<li>可配置在重新访问时将文件回迁至 Standard，或让文件留在低成本类别并按需读取；策略应与应用访问模式匹配。</li>
+<li>转换会影响存储费用结构：低频类别可能有访问费用、最小存储期限或元数据/计费差异，不能只比较每 GB 月存储价格。</li>
+<li>生命周期策略是异步管理过程，不应把“修改策略”理解为数据立即完成迁移。</li>
+<li>使用 IA / Archive 前，分析最近访问模式；长期不变但必须即时访问的数据不一定适合需要恢复流程的 Archive。</li>
+</ul>
+<div class="callout"><b>常见错误：</b>把 EFS IA 当成离线归档，或认为任意 EFS 文件都可无等待读取。IA 面向低频在线访问；Archive 通常需要显式恢复。若要求对象级别归档和极低长期成本，同时能调整应用访问方式，可比较 S3 生命周期。</div>
+</section>
+
+<section id="network">
+<h2>五、挂载与网络排障</h2>
+<h3>典型挂载路径</h3>
+<ol>
+<li>客户端位于可路由到 Mount Target 的 VPC / 网络环境中，并能解析 EFS 文件系统 DNS 名称。</li>
+<li>客户端安全组出站与 Mount Target 安全组入站允许 NFS TCP 2049；不要向整个互联网开放 NFS。</li>
+<li>客户端安装并使用适配的 NFS 工具或 EFS mount helper，按要求使用 TLS、IAM 授权或访问点选项。</li>
+<li>将文件系统挂载到操作系统目录；再检查 POSIX UID/GID、目录权限、访问点根目录和应用用户身份。</li>
+</ol>
+<div class="table-wrap"><table>
+<thead><tr><th>现象</th><th>优先检查</th><th>常见原因</th></tr></thead>
+<tbody>
+<tr><td>挂载超时 / 无法连接</td><td>TCP 2049 双向规则、路由、NACL、Mount Target 状态、目标 AZ 与 DNS。</td><td>SG 未允许客户端；VPC 间没有路由；AZ 中无可用 Mount Target。</td></tr>
+<tr><td>DNS 名称解析失败</td><td>VPC DNS 支持、DNS 主机名、解析器配置与客户端网络。</td><td>跨 VPC / 本地环境未配置 Route 53 Resolver 或自定义 DNS 转发。</td></tr>
+<tr><td>访问被拒绝</td><td>IAM 文件系统策略、客户端 IAM 身份、Access Point、POSIX 权限。</td><td>IAM 授权成功不代表 POSIX 文件权限也通过，反之亦然。</td></tr>
+<tr><td>单 AZ 客户端延迟 / 费用异常</td><td>文件系统类型、客户端 AZ、Mount Target 所在 AZ 与实际 DNS 解析。</td><td>客户端跨 AZ 连接；One Zone 客户端与文件系统 AZ 不匹配。</td></tr>
+<tr><td>性能下降</td><td>吞吐模式、延迟和吞吐指标、客户端并行度、网络与应用元数据操作模式。</td><td>小文件元数据调用过多、吞吐容量不足或客户端连接配置不当。</td></tr>
+</tbody></table></div>
+<div class="callout red"><b>最小网络开放：</b>Mount Target 安全组的入站来源应限定为客户端安全组或可信客户端网段，端口为 TCP 2049。NFS 通常不应暴露到公有互联网。</div>
+</section>
+
+<section id="security">
+<h2>六、权限、加密与访问点</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>控制</th><th>保护范围</th><th>设计要点</th></tr></thead>
+<tbody>
+<tr><td>网络安全组</td><td>限制客户端到 Mount Target 的 NFS 连接。</td><td>放行可信客户端到 TCP 2049；客户端与 Mount Target 两侧规则都要检查。</td></tr>
+<tr><td>POSIX 权限</td><td>按 UID/GID、目录与文件权限控制读写。</td><td>统一不同计算服务的身份映射；目录所有者与模式不匹配会导致挂载成功但应用无法读写。</td></tr>
+<tr><td>EFS 文件系统策略</td><td>控制哪些 IAM 身份可通过 NFS 客户端访问，以及是否要求 TLS / Access Point。</td><td>启用 IAM 授权时核对客户端角色、策略条件与挂载参数。</td></tr>
+<tr><td>Access Point</td><td>为应用提供指定根目录，并可强制 POSIX 用户/组身份。</td><td>适合多租户或容器化应用隔离目录；文件系统需允许该客户端通过访问点挂载。</td></tr>
+<tr><td>静态加密</td><td>文件系统数据静态加密，可使用 AWS 管理或客户管理的 KMS 密钥。</td><td>加密选项通常在创建文件系统时确定；客户管理密钥需管理授权、轮换与可用性。</td></tr>
+<tr><td>传输加密</td><td>客户端到 EFS 的 NFS 连接使用 TLS 保护。</td><td>使用 EFS mount helper 的 TLS 选项；加密静态数据不等于传输链路已加密。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>身份边界：</b>安全组决定“能否建立 NFS 网络连接”；IAM/文件系统策略决定“此身份是否允许挂载与访问”；POSIX 决定“该 UID/GID 能否读写文件”。三层需同时满足。</div>
+</section>
+
+<section id="protection">
+<h2>七、备份、复制与灾备</h2>
+<ul>
+<li><b>AWS Backup：</b>为 EFS 建立计划、保留周期和恢复点；支持跨区域/跨账号复制的能力依赖具体配置、服务支持与组织权限。</li>
+<li><b>EFS Replication：</b>将源文件系统异步复制到另一个 EFS 文件系统，适合跨区域或跨账号的灾备副本；复制有延迟，不能视为同步写入或零 RPO。</li>
+<li><b>恢复与切换：</b>备份恢复通常产生新的文件系统；复制目标提升/切换后，需更新客户端挂载目标、DNS 或应用配置，并验证权限与挂载点。</li>
+<li><b>One Zone：</b>若业务不可接受单 AZ 故障风险，应选择 Regional 或设计明确的备份/复制恢复流程。</li>
+<li><b>文件系统策略：</b>备份和复制并不自动验证应用一致性；需要时在应用侧协调写入、快照/备份窗口和恢复演练。</li>
+<li><b>混合云访问：</b>本地客户端可通过 Direct Connect / VPN 与 VPC 建立网络路径，但仍需 DNS、路由、NFS 安全组、身份和延迟设计。</li>
+</ul>
+<div class="callout green"><b>灾备区分：</b>高可用靠 Regional EFS 的多 AZ 设计；时间点恢复靠备份；跨区域副本靠复制。复制目标不是自动故障切换机制，必须规划 RPO、RTO、应用切换与演练。</div>
+</section>
+
+<section id="selection">
+<h2>八、与 EBS、FSx、S3 选型</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>需求</th><th>优先评估</th><th>理由 / 边界</th></tr></thead>
+<tbody>
+<tr><td>多台 Linux 主机同时共享 POSIX 目录</td><td>EFS</td><td>托管 NFS 文件系统，多个客户端并发挂载。</td></tr>
+<tr><td>单 EC2 的低延迟持久块设备、数据库数据盘</td><td>EBS</td><td>块存储卷通常挂载给 EC2；Multi-Attach 仅在受支持卷和集群文件系统场景使用。</td></tr>
+<tr><td>Windows SMB、Active Directory 集成</td><td>FSx for Windows File Server</td><td>针对 Windows 文件共享协议和企业 AD 工作负载。</td></tr>
+<tr><td>高性能并行计算文件系统</td><td>FSx for Lustre</td><td>适配 HPC / ML 等并行文件访问；可与 S3 数据存储集成。</td></tr>
+<tr><td>对象 API、静态内容、大规模归档</td><td>S3</td><td>对象存储，不提供通用 NFS/POSIX 共享挂载语义。</td></tr>
+<tr><td>只需应用实例本地临时文件</td><td>本地临时盘或任务临时空间</td><td>成本与延迟合适，但数据生命周期跟随计算资源，需能重建。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>答题顺序：</b>先看协议与共享方式（POSIX/NFS、SMB、块、对象），再看多 AZ、延迟和容量弹性，最后比较吞吐计费、数据访问频率、备份与灾备要求。</div>
+</section>
+
+<section id="scenarios">
+<h2>九、场景题解析</h2>
+<div class="quiz">
+ <h3>场景一：多个 AZ 的 Linux 应用共享上传文件</h3>
+ <p>一组 Linux EC2 和容器跨多个 AZ 运行，需要共享同一目录下的用户上传内容，应用使用 POSIX 文件路径且容量持续增长。</p>
+ <p><b>正确方向：</b>使用 Regional EFS，并在客户端所在 AZ 创建 Mount Target；按访问频率选择存储类别。</p>
+ <p><b>分析思路：</b>需求是多实例并发共享文件，EFS 提供托管 NFS 与区域级多 AZ 数据冗余。</p>
+ <p><b>排除：</b>EBS 通常不是跨多主机的通用共享文件系统；S3 不是 POSIX 文件挂载语义。</p>
+</div>
+<div class="quiz">
+ <h3>场景二：挂载目标存在但 EC2 挂载超时</h3>
+ <p>应用实例与 EFS 在同一 VPC，挂载命令等待后超时。文件系统状态正常。</p>
+ <p><b>正确方向：</b>核对客户端到 Mount Target 的 TCP 2049 路径、双方安全组、路由/NACL、DNS 和客户端 AZ 的目标状态。</p>
+ <p><b>分析思路：</b>文件系统正常并不能证明 ENI 网络可达；安全组默认不会自动允许 NFS。</p>
+ <p><b>排除：</b>扩大文件系统吞吐或修改 POSIX 权限不能修复 TCP 连接超时。</p>
+</div>
+<div class="quiz">
+ <h3>场景三：低频文件需快速在线取回</h3>
+ <p>项目文件多数在创建后很少访问，但若重新打开必须立即读取，不需要预先恢复归档。</p>
+ <p><b>正确方向：</b>启用生命周期管理，将低频数据转到 EFS IA；明确选择访问后是否自动回迁 Standard。</p>
+ <p><b>分析思路：</b>IA 面向低频但仍在线访问的数据；归档类适合更冷的数据，并可能要求先恢复。</p>
+ <p><b>排除：</b>只看每 GB 存储价格而忽略访问费用及取回延迟，可能造成成本或体验问题。</p>
+</div>
+<div class="quiz">
+ <h3>场景四：小型文件系统持续需要高吞吐</h3>
+ <p>文件系统数据量不大，但长期吞吐要求明显高于按存储量提供的基准水平。</p>
+ <p><b>正确方向：</b>评估 Provisioned Throughput；若负载波动且难以预测，也比较 Elastic Throughput 与实测费用。</p>
+ <p><b>分析思路：</b>吞吐需求与存储量不成比例，Provisioned 可显式配置高于自动基准的容量。</p>
+ <p><b>排除：</b>改变 General Purpose / Max I/O 性能模式不是为小型文件系统配置固定高吞吐的直接替代。</p>
+</div>
+<div class="quiz">
+ <h3>场景五：容器任务需限制在各自目录</h3>
+ <p>多个租户的容器挂载同一个 EFS 文件系统，但每个任务应从预设目录开始，并使用固定 POSIX 身份。</p>
+ <p><b>正确方向：</b>为租户配置 EFS Access Point，指定根目录和 POSIX 用户/组，并通过 Task Role 与文件系统策略授权。</p>
+ <p><b>分析思路：</b>访问点可简化目录入口并强制客户端身份；网络、IAM 与目录权限仍要正确配置。</p>
+ <p><b>排除：</b>仅为每个容器设置不同环境变量不构成文件系统访问隔离。</p>
+</div>
+<div class="quiz">
+ <h3>场景六：跨区域副本用于灾难恢复</h3>
+ <p>关键共享文件需复制到另一 AWS 区域以应对区域故障，团队接受短暂复制延迟，并要求制定恢复步骤。</p>
+ <p><b>正确方向：</b>配置 EFS Replication 到目标区域，并定义监控复制延迟、提升目标文件系统、客户端重挂载和回切流程；同时评估 AWS Backup 的恢复点需求。</p>
+ <p><b>分析思路：</b>复制提供异步副本，不是同步复制，也不会替应用自动完成故障转移。</p>
+ <p><b>排除：</b>仅在一个区域增加 Mount Target 不能覆盖区域级故障；把复制误认为零 RPO 会造成恢复目标失配。</p>
+</div>
+</section>
+
+<section id="quick">
+<h2>十、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>多个 Linux 实例共享目录</td><td>Regional EFS + NFS</td><td>EBS 是块存储，S3 是对象存储</td></tr>
+<tr><td>生产跨 AZ 文件共享</td><td>Regional 文件系统 + 每 AZ Mount Target</td><td>数据跨 AZ 冗余不代表无需设计客户端网络路径</td></tr>
+<tr><td>只在一个 AZ、可重建数据、降低成本</td><td>EFS One Zone</td><td>不具备 Regional 的跨 AZ 可用性</td></tr>
+<tr><td>文件操作低延迟</td><td>General Purpose 性能模式</td><td>性能模式和吞吐模式是两种不同配置</td></tr>
+<tr><td>吞吐自动随负载变化</td><td>Elastic Throughput</td><td>按实际使用方式计费，需评估工作负载</td></tr>
+<tr><td>小容量但持续高吞吐</td><td>Provisioned Throughput</td><td>需为配置的吞吐容量付费</td></tr>
+<tr><td>低频但要求在线快速读取</td><td>EFS IA</td><td>Archive 通常需先恢复</td></tr>
+<tr><td>跨区域灾备副本</td><td>EFS Replication</td><td>异步复制，不等于自动故障切换或零 RPO</td></tr>
+<tr><td>NFS 挂载超时</td><td>安全组 / 路由 / TCP 2049 / DNS</td><td>POSIX 拒绝通常发生在网络建立之后</td></tr>
+<tr><td>容器固定目录与身份</td><td>EFS Access Point</td><td>仍需网络、IAM 策略和 POSIX 授权</td></tr>
+<tr><td>静态加密 + 客户控制密钥</td><td>EFS KMS 客户管理密钥</td><td>另需配置 TLS 才能保护传输链路</td></tr>
+<tr><td>Windows SMB 文件共享</td><td>FSx for Windows File Server</td><td>EFS 面向 NFS/Linux 文件访问</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>十一、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>EFS：</b>托管弹性 NFS 文件系统，多客户端共享 POSIX 文件</span></li>
+<li><input type="checkbox"><span><b>Regional：</b>跨 AZ 冗余，适合高可用生产共享</span></li>
+<li><input type="checkbox"><span><b>One Zone：</b>单 AZ 成本优化，接受 AZ 可用性风险</span></li>
+<li><input type="checkbox"><span><b>Mount Target：</b>VPC ENI 网络入口，不是文件系统数据本身</span></li>
+<li><input type="checkbox"><span><b>跨 AZ 访问：</b>每个客户端 AZ 规划本地挂载目标</span></li>
+<li><input type="checkbox"><span><b>General Purpose：</b>通用低延迟默认选择</span></li>
+<li><input type="checkbox"><span><b>Max I/O：</b>高并行吞吐取舍，先确认场景与当前支持</span></li>
+<li><input type="checkbox"><span><b>Bursting：</b>吞吐与文件系统存储量相关，可短时突发</span></li>
+<li><input type="checkbox"><span><b>Provisioned：</b>显式配置持续吞吐，按配置付费</span></li>
+<li><input type="checkbox"><span><b>Elastic：</b>吞吐自动按工作负载扩展</span></li>
+<li><input type="checkbox"><span><b>Standard：</b>频繁访问数据</span></li>
+<li><input type="checkbox"><span><b>IA：</b>低频但仍在线访问，读取有费用影响</span></li>
+<li><input type="checkbox"><span><b>Archive：</b>冷数据，读取前可能需要恢复</span></li>
+<li><input type="checkbox"><span><b>NFS 网络：</b>客户端至 Mount Target TCP 2049</span></li>
+<li><input type="checkbox"><span><b>权限三层：</b>安全组 + IAM/文件系统策略 + POSIX</span></li>
+<li><input type="checkbox"><span><b>Access Point：</b>固定根目录与 POSIX 身份</span></li>
+<li><input type="checkbox"><span><b>复制：</b>异步跨区域副本，不是自动切换或零 RPO</span></li>
+<li><input type="checkbox"><span><b>备份：</b>AWS Backup 管理恢复点，需演练恢复</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十二、快速自测</h2>
+<p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz">
+ <b>1. 多个 Linux EC2 分布在三个 AZ，需要同时读写同一 POSIX 目录。应优先采用什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',true)">A. Regional EFS，并在客户端 AZ 配置 Mount Target</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">B. 每台实例各挂载一块独立 EBS</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. S3 Glacier Flexible Retrieval</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. EFS One Zone 且不规划网络</button>
+ <div class="answer" id="q1"><b>正确答案：A。</b>Regional EFS 提供区域级共享 NFS 文件系统；Mount Target、安全组和路由仍需按客户端 AZ 设计。</div>
+</div>
+<div class="quiz">
+ <b>2. 客户端挂载 EFS 超时，最先排查哪项？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 文件是否在 IA 类别</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. Mount Target 的网络路径及 TCP 2049 安全组规则</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. EFS 生命周期转换周期</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. AWS Backup 保留天数</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>挂载超时优先检查连通性、路由、DNS、Mount Target 和 NFS 端口；POSIX 权限通常是网络连通之后的访问控制问题。</div>
+</div>
+<div class="quiz">
+ <b>3. 文件系统不大，但需要持续高于自动基准的吞吐；应优先评估哪种吞吐模式？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',false)">A. One Zone</button>
+ <button class="secondary" onclick="showAnswer('q3',true)">B. Provisioned Throughput</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. IA 生命周期管理</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. Access Point</button>
+ <div class="answer" id="q3"><b>正确答案：B。</b>Provisioned Throughput 可为小容量但吞吐需求较高的文件系统显式配置吞吐。还可基于实测与负载变化比较 Elastic Throughput 的费用。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html" target="_blank" rel="noopener">Amazon EFS 是什么</a></li>
+<li><a href="https://docs.aws.amazon.com/efs/latest/ug/performance.html" target="_blank" rel="noopener">EFS 性能</a></li>
+<li><a href="https://docs.aws.amazon.com/efs/latest/ug/throughput-modes.html" target="_blank" rel="noopener">EFS 吞吐模式</a></li>
+<li><a href="https://docs.aws.amazon.com/efs/latest/ug/storage-classes.html" target="_blank" rel="noopener">EFS 存储类别</a></li>
+<li><a href="https://docs.aws.amazon.com/efs/latest/ug/accessing-fs.html" target="_blank" rel="noopener">EFS 网络访问与挂载</a></li>
+<li><a href="https://docs.aws.amazon.com/efs/latest/ug/efs-access-points.html" target="_blank" rel="noopener">EFS Access Points</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>EFS 性能、吞吐、存储类别和生命周期支持会演进；具体配额、最短存储期限与区域可用性以 AWS 最新文档为准。</div>
+</section>
+</main>
+</div>
+<footer class="container">AWS SAP-C02 EFS 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

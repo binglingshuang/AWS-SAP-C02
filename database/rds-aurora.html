@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Amazon RDS 与 Aurora 考点速查：Multi-AZ、Read Replica、Aurora Serverless、Global Database、备份与连接池。">
+<title>AWS SAP-C02｜Amazon RDS 与 Aurora 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>Amazon RDS / Aurora<br>托管关系型数据库</h1>
+  <p>从 Multi-AZ 高可用、Read Replica 读扩展，到 Aurora 存储架构、Serverless 与 Global Database。先区分可用性、读扩展和跨区域灾备，再决定数据库引擎、连接策略与恢复机制。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">数据库 / 关系型</span>
+   <span class="pill">关键词：Multi-AZ · Read Replica · Aurora Global</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回数据库分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#overview">一、托管边界与引擎选择</a>
+ <a href="#high-availability">二、Multi-AZ 与故障切换</a>
+ <a href="#read-scaling">三、Read Replica 与读扩展</a>
+ <a href="#aurora">四、Aurora 架构与端点</a>
+ <a href="#serverless">五、Aurora Serverless 与 RDS Proxy</a>
+ <a href="#global">六、跨区域灾备</a>
+ <a href="#operations">七、备份、安全与运维</a>
+ <a href="#scenarios">八、场景题解析</a>
+ <a href="#quick">九、关键词速查</a>
+ <a href="#memory">十、考前速记卡</a>
+ <a href="#quiz">十一、快速自测</a>
+</nav>
+
+<main>
+<section id="overview">
+<h2>一、托管边界与引擎选择</h2>
+<p class="lead">Amazon RDS 管理关系型数据库的底层基础设施、备份、维护与部分高可用操作；客户仍负责数据模型、SQL、权限、连接池、应用重试和容量规划。Aurora 是 AWS 设计、兼容 MySQL / PostgreSQL 的关系数据库引擎。</p>
+<div class="diagram">
+ <div class="node"><b>应用 / 客户端</b><br><small>连接池 · SQL · 重试</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>RDS Endpoint</b><br><small>写入 / 读取入口</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>数据库引擎</b><br><small>RDS 或 Aurora</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>存储 / 副本</b><br><small>Multi-AZ · Replica · Backup</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>选型线索</th><th>优先评估</th><th>关键边界</th></tr></thead>
+<tbody>
+<tr><td>需要熟悉 SQL、事务与传统关系模型</td><td>RDS 兼容引擎或 Aurora</td><td>引擎兼容性、版本、功能和迁移复杂度需验证。</td></tr>
+<tr><td>需要专有 Oracle / SQL Server 功能</td><td>相应 RDS 引擎或自管 EC2</td><td>许可、版本与引擎功能支持差异可能影响迁移。</td></tr>
+<tr><td>希望 MySQL/PostgreSQL 兼容并提升云端可用性/扩展</td><td>Aurora</td><td>兼容不等于与原引擎完全相同；连接、SQL 与运维行为要测试。</td></tr>
+<tr><td>不想维护操作系统与数据库主机</td><td>RDS / Aurora</td><td>仍需管理逻辑数据、查询性能、凭据和应用故障处理。</td></tr>
+<tr><td>需要极大规模键值访问或无模式数据</td><td>比较 DynamoDB</td><td>关系事务与复杂查询模型不同，不能只比较吞吐数字。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>托管服务边界：</b>RDS 让 AWS 管理数据库主机与常见维护操作，但不允许客户像自管数据库那样访问底层主机；操作系统级代理、特定扩展或完全自定义引擎需求可能需要 EC2。</div>
+</section>
+
+<section id="high-availability">
+<h2>二、Multi-AZ 与故障切换</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>部署方式</th><th>主要目的</th><th>可读副本 / 关键特点</th></tr></thead>
+<tbody>
+<tr><td>RDS Multi-AZ DB instance deployment</td><td>为单个 DB instance 配置同步备用实例，提升 AZ 故障下可用性。</td><td>备用实例主要用于故障切换，不作为常规只读扩展终端。</td></tr>
+<tr><td>RDS Multi-AZ DB cluster</td><td>Writer 加多个备用实例的集群部署，支持快速故障切换。</td><td>部署类型与引擎支持的备用实例可提供只读能力；需使用对应读写端点并检查具体引擎支持。</td></tr>
+<tr><td>Aurora DB cluster</td><td>共享集群存储，跨多个 AZ 保留多份数据副本；Writer 故障时可提升 Aurora Replica。</td><td>Aurora Replica 可承担读取与故障切换；集群端点在故障后指向新的 Writer。</td></tr>
+<tr><td>Read Replica</td><td>异步复制主库变化，用于读扩展或特定灾备/迁移设计。</td><td>存在复制延迟；与同步备用实例的 Multi-AZ 不是同一目标。</td></tr>
+</tbody></table></div>
+<h3>故障切换的应用侧要求</h3>
+<ul>
+<li>RDS 故障切换通常会改变服务端点背后的地址，应用应使用 DNS Endpoint 而不是缓存/硬编码 IP。</li>
+<li>切换会中断现有连接；客户端应重建连接、采用有界重试和指数退避，并确保事务操作幂等或能安全恢复。</li>
+<li>Multi-AZ 提高可用性，但不提供跨区域灾难恢复，也不替代备份与时间点恢复。</li>
+<li>维护、实例故障和 AZ 问题都可能导致切换；需通过演练验证应用重连、DNS TTL 与连接池行为。</li>
+</ul>
+<div class="callout orange"><b>必考区分：</b>Multi-AZ 面向高可用与故障切换；Read Replica 面向读扩展，通常异步复制。不要因看到“副本”二字就把 Replica 当同步备用库。</div>
+</section>
+
+<section id="read-scaling">
+<h2>三、Read Replica 与读扩展</h2>
+<ul>
+<li>Read Replica 使用异步复制，将主库写入变化传播到副本；可将只读查询路由到副本端点，降低主库读压力。</li>
+<li>副本可能落后于主库。需要 read-after-write 一致性的请求应读写主库，或在应用中检测复制延迟并设计回退。</li>
+<li>在支持的引擎与配置下，Read Replica 可跨 AZ 或跨区域创建；跨区域复制可作为 DR 组成，但需规划提升、应用切换与 DNS。</li>
+<li>副本通常可独立提升为可写实例，但提升后复制关系会改变；提升不是无损、自动、零 RPO 的故障切换承诺。</li>
+<li>使用 Aurora 时，优先使用 Reader Endpoint 将读取分散到 Aurora Replicas；若只有一个实例，该端点行为与多副本集群不同。</li>
+</ul>
+<div class="table-wrap"><table>
+<thead><tr><th>需求</th><th>解决机制</th><th>不应误解为</th></tr></thead>
+<tbody>
+<tr><td>自动 AZ 故障切换</td><td>Multi-AZ deployment / Aurora cluster</td><td>只读扩展副本</td></tr>
+<tr><td>大量只读查询</td><td>Read Replica 或 Aurora Replicas + Reader Endpoint</td><td>同步写入副本</td></tr>
+<tr><td>跨区域低 RPO 读取与 DR</td><td>跨 Region Read Replica 或 Aurora Global Database 等</td><td>Multi-AZ 的自然延伸</td></tr>
+<tr><td>将只读副本变成独立写库</td><td>Promote Read Replica</td><td>切换后仍自动跟随旧主库</td></tr>
+</tbody></table></div>
+<div class="callout"><b>扩展之前先诊断：</b>确认瓶颈是读查询、写吞吐、连接数、锁还是慢 SQL。Read Replica 不能提升写能力；热点写、低效查询或应用过量连接需要相应的架构与查询优化。</div>
+</section>
+
+<section id="aurora">
+<h2>四、Aurora 架构与端点</h2>
+<p>Aurora 将数据库计算节点与分布式集群存储解耦。集群存储跨多个 AZ 冗余，Writer 和 Replicas 共享同一存储层，减少传统主从存储复制的运维负担。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>端点</th><th>路由对象</th><th>常见用途</th></tr></thead>
+<tbody>
+<tr><td>Cluster / Writer Endpoint</td><td>当前集群 Writer。</td><td>读写事务；故障切换后端点跟随新的 Writer。</td></tr>
+<tr><td>Reader Endpoint</td><td>集群中的只读 Aurora Replicas，分散新的读取连接。</td><td>可扩展读查询；连接池需正确解析与重连。</td></tr>
+<tr><td>Instance Endpoint</td><td>指定 DB instance。</td><td>对特定实例做管理、诊断或定向请求；应用通常优先用集群端点。</td></tr>
+<tr><td>Custom Endpoint</td><td>按用户定义的实例子集路由。</td><td>将特定报表或工作负载限制到指定副本组。</td></tr>
+</tbody></table></div>
+<ul>
+<li>Aurora Replicas 共享集群存储，创建副本不需要像传统数据库那样另行复制整份存储卷。</li>
+<li>Writer Endpoint 用于写入，Reader Endpoint 仅用于读取路由；应用仍需明确区分读写事务与一致性要求。</li>
+<li>Aurora 自动增长集群存储；计算节点规格、连接数、IO/查询模式仍需要监控与容量规划。</li>
+<li>Aurora Global Database 可将只读集群放到其他区域，跨区域数据复制为异步；切换到另一区域需要执行相应 failover/switchover 流程。</li>
+<li>Aurora 与标准 RDS 的引擎功能、可用版本、扩展和计费方式不同；迁移前验证兼容性和性能，而不是只按“兼容 MySQL/PostgreSQL”判断。</li>
+</ul>
+<div class="callout green"><b>端点速记：</b>写入 → Writer/Cluster Endpoint；读扩展 → Reader Endpoint；定向到某一实例 → Instance Endpoint；跨 Region → Global Database 及区域级切换计划。</div>
+</section>
+
+<section id="serverless">
+<h2>五、Aurora Serverless 与 RDS Proxy</h2>
+<h3>Aurora Serverless v2</h3>
+<ul>
+<li>根据数据库负载在配置的容量范围内自动调整 Aurora Capacity Units（ACU），适合负载波动或难以预先规划实例容量的工作负载。</li>
+<li>应用仍通过 Aurora 端点连接关系数据库；Serverless 不会自动重写 SQL、管理业务连接或解决冷查询。</li>
+<li>设置最小/最大容量边界并观察扩缩行为、延迟和费用；需要稳定容量或特定功能时比较预置实例。</li>
+<li>Serverless 是计算容量模型，不等于跨区域灾备、高可用策略或无限容量。</li>
+</ul>
+<h3>RDS Proxy：数据库连接池与故障恢复</h3>
+<ul>
+<li>RDS Proxy 在应用与数据库间管理连接池，可复用后端数据库连接，缓解 Lambda、微服务或突发短连接对数据库连接上限的压力。</li>
+<li>Proxy 可与支持的 RDS/Aurora 引擎和部署类型配合；核对区域、引擎版本、网络、IAM/Secrets Manager 授权及 TLS 要求。</li>
+<li>Proxy 不会提升数据库的 CPU、存储吞吐或慢查询能力；若数据库本身已饱和，还需优化 SQL、扩展读副本或扩展计算。</li>
+<li>连接复用可能受到会话状态、临时表或特定 SQL 行为影响；评估 pinning 与连接池指标。</li>
+</ul>
+<div class="callout orange"><b>区分题眼：</b>负载变化导致容量规划困难 → Aurora Serverless；短连接/连接数暴增 → RDS Proxy；两者可在适配场景中配合，但解决的问题不同。</div>
+</section>
+
+<section id="global">
+<h2>六、跨区域灾备</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>方案</th><th>复制 / 切换特点</th><th>适合线索</th></tr></thead>
+<tbody>
+<tr><td>RDS Cross-Region Read Replica</td><td>异步复制到另一 Region；可在灾难时提升为独立可写实例。</td><td>需要跨区域只读副本，或接受异步复制延迟的 DR 设计。</td></tr>
+<tr><td>Aurora Global Database</td><td>一个主区域和一个或多个次级区域；跨区域复制延迟通常较低但仍是异步，区域级切换需执行操作。</td><td>关键应用需要跨区域读扩展和更低 RPO/RTO 的 Aurora DR 架构。</td></tr>
+<tr><td>跨区域快照复制</td><td>将备份/快照复制到另一 Region，恢复时从快照创建数据库。</td><td>恢复时间可以较长，且能接受按计划快照间隔对应的数据丢失窗口。</td></tr>
+</tbody></table></div>
+<ul>
+<li>先明确业务的 RPO / RTO，再选择复制频率、备份策略和故障切换方式。</li>
+<li>异步复制可能有延迟；突发故障时，目标区域可能缺少尚未复制的最新事务。</li>
+<li>跨区域故障切换需要应用端点、DNS、凭据、KMS 密钥、网络与依赖服务一起准备。</li>
+<li>演练时测量检测时间、提升时间、DNS 缓存、应用重连和数据一致性，不能仅以“副本已创建”作为灾备通过。</li>
+</ul>
+</section>
+
+<section id="operations">
+<h2>七、备份、安全与运维</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>能力</th><th>作用</th><th>考试注意</th></tr></thead>
+<tbody>
+<tr><td>Automated Backups</td><td>提供配置保留期内的自动备份与时间点恢复能力。</td><td>恢复通常创建新的 DB instance/cluster；故障切换与恢复是不同操作。</td></tr>
+<tr><td>Manual Snapshot</td><td>由用户主动创建并保留，直到显式删除。</td><td>适合长期保留或迁移前保护；需自行管理生命周期和跨区复制。</td></tr>
+<tr><td>Storage Autoscaling</td><td>在达到阈值及配置上限时自动增加存储容量。</td><td>只扩存储，不解决 CPU、连接、锁等待或查询效率问题。</td></tr>
+<tr><td>Encryption at rest</td><td>使用 KMS 对数据库存储、备份和快照加密。</td><td>现有未加密数据库通常需经快照复制等流程迁移到加密配置。</td></tr>
+<tr><td>Parameter / Option Groups</td><td>控制引擎参数或特定引擎功能选项。</td><td>参数可能要求重启；修改前检查静态/动态属性和维护窗口。</td></tr>
+<tr><td>CloudWatch / Events</td><td>监控 CPU、存储、连接、复制延迟和数据库事件。</td><td>为复制延迟、备份失败、空间不足和故障切换配置告警与响应。</td></tr>
+</tbody></table></div>
+<ul>
+<li>部署到私有子网，限制数据库安全组只允许应用层安全组访问数据库端口。</li>
+<li>使用 Secrets Manager 或 IAM 数据库认证等受支持方案管理凭据；配置轮换时验证应用连接池能刷新凭据。</li>
+<li>定期恢复备份到隔离环境，确认备份可用并测量恢复时间。</li>
+<li>计划维护窗口和引擎升级；高可用部署能降低部分中断影响，但不能保证所有维护都零中断。</li>
+</ul>
+<div class="callout red"><b>恢复不要混淆：</b>Multi-AZ 是自动可用性/故障切换能力；自动备份提供时间点恢复；Read Replica 是异步读取副本。它们不能彼此替代。</div>
+</section>
+
+<section id="scenarios">
+<h2>八、场景题解析</h2>
+<div class="quiz">
+ <h3>场景一：数据库故障时自动切换，不能承担读扩展</h3>
+ <p>应用需要数据库在单个 AZ 故障时快速恢复服务；当前读流量很低，不需要副本分担读请求。</p>
+ <p><b>正确方向：</b>配置 RDS Multi-AZ DB instance deployment，应用通过数据库 Endpoint 连接并实现重试。</p>
+ <p><b>分析思路：</b>题目核心是高可用和自动故障切换，而非读扩展。</p>
+ <p><b>排除：</b>单独创建 Read Replica 是异步读扩展方案，不应被当作同步备用实例。</p>
+</div>
+<div class="quiz">
+ <h3>场景二：只读报表拖慢主库</h3>
+ <p>事务写入正常，但长时间分析查询造成主库 CPU 和延迟上升；报表允许读取稍旧数据。</p>
+ <p><b>正确方向：</b>创建 Read Replica 并将可容忍延迟的只读报表路由到副本。</p>
+ <p><b>分析思路：</b>读取可接受异步延迟，符合读扩展场景；继续监控复制延迟。</p>
+ <p><b>排除：</b>增加 Multi-AZ standby 通常不是通用读扩展方案；扩存储不会降低慢查询 CPU。</p>
+</div>
+<div class="quiz">
+ <h3>场景三：Aurora 应用需分离读写连接</h3>
+ <p>一个 Aurora 集群有 Writer 和多个 Replicas，应用要将事务写到主实例并把读取分散到只读实例。</p>
+ <p><b>正确方向：</b>写请求连接 Writer/Cluster Endpoint，读请求连接 Reader Endpoint；并实现连接重试与一致性路由。</p>
+ <p><b>分析思路：</b>集群端点随 Writer 变化，Reader Endpoint 将读取连接分配到可用 Replicas。</p>
+ <p><b>排除：</b>将所有流量硬编码到单个 Instance Endpoint 会降低故障切换与负载均衡能力。</p>
+</div>
+<div class="quiz">
+ <h3>场景四：无规律的 Aurora 负载与短连接尖峰</h3>
+ <p>开发测试数据库长时间低负载、间歇性突发；调用函数产生大量短连接，数据库连接数容易达到上限。</p>
+ <p><b>正确方向：</b>评估 Aurora Serverless v2 的弹性计算容量，并使用 RDS Proxy 复用连接；分别设置容量边界和连接池监控。</p>
+ <p><b>分析思路：</b>Serverless 应对计算容量变化，Proxy 应对连接管理；两个措施解决不同瓶颈。</p>
+ <p><b>排除：</b>单独扩存储或增加 Read Replica 不会自动修复写端连接数尖峰。</p>
+</div>
+<div class="quiz">
+ <h3>场景五：跨区域 Aurora 灾备与快速恢复</h3>
+ <p>关键应用需要在另一区域保留低延迟副本，区域级故障时可以执行受控提升，并接受非零复制延迟。</p>
+ <p><b>正确方向：</b>评估 Aurora Global Database，定义区域切换流程、复制延迟告警、端点/DNS 更新与恢复演练。</p>
+ <p><b>分析思路：</b>Global Database 面向跨区域读取与灾备；复制仍是异步，需对齐 RPO/RTO。</p>
+ <p><b>排除：</b>Multi-AZ 仅覆盖区域内部 AZ 级高可用；不能替代跨 Region 方案。</p>
+</div>
+<div class="quiz">
+ <h3>场景六：连接数耗尽但数据库 CPU 很低</h3>
+ <p>Lambda 并发高时打开大量短连接，数据库 CPU 未饱和，但连接上限触发错误。</p>
+ <p><b>正确方向：</b>使用 RDS Proxy、限制函数并发并复用数据库连接；必要时优化数据库连接参数和应用生命周期。</p>
+ <p><b>分析思路：</b>瓶颈是连接管理，不是查询吞吐；Proxy 可复用后端连接。</p>
+ <p><b>排除：</b>只增加 Read Replica 或提高存储大小并不会减少写端连接建立数量。</p>
+</div>
+</section>
+
+<section id="quick">
+<h2>九、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>自动 AZ 故障切换</td><td>RDS Multi-AZ</td><td>不是常规 Read Replica 读扩展</td></tr>
+<tr><td>读查询导致主库压力</td><td>Read Replica / Aurora Reader</td><td>异步复制存在延迟，不提升写能力</td></tr>
+<tr><td>Aurora 写连接</td><td>Writer / Cluster Endpoint</td><td>端点会跟随集群 Writer 切换</td></tr>
+<tr><td>Aurora 读扩展</td><td>Reader Endpoint + Replicas</td><td>应用仍应区分读写与一致性要求</td></tr>
+<tr><td>负载波动大、难以规划实例</td><td>Aurora Serverless v2</td><td>自动调整计算容量，不是 DR</td></tr>
+<tr><td>Lambda 短连接风暴</td><td>RDS Proxy + 限制并发</td><td>Proxy 不提升慢查询性能</td></tr>
+<tr><td>跨区域 Aurora 灾备</td><td>Aurora Global Database</td><td>异步复制，切换需设计与演练</td></tr>
+<tr><td>时间点恢复</td><td>Automated Backups</td><td>恢复通常创建新实例/集群</td></tr>
+<tr><td>长期保留某次状态</td><td>Manual Snapshot</td><td>需自行删除并管理跨区复制</td></tr>
+<tr><td>应用切换后连接仍旧失败</td><td>DNS Endpoint + 客户端重连</td><td>不能硬编码数据库 IP</td></tr>
+<tr><td>主库高 CPU</td><td>慢 SQL / 读扩展 / 计算规格</td><td>存储自动扩展不修复 CPU 瓶颈</td></tr>
+<tr><td>区域内高可用 + 区域外 DR</td><td>Multi-AZ + 跨区复制/Global DB</td><td>两个故障域层级需分别设计</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>十、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>RDS：</b>托管数据库基础设施，客户仍负责应用与查询设计</span></li>
+<li><input type="checkbox"><span><b>Multi-AZ：</b>主要解决可用性与自动故障切换</span></li>
+<li><input type="checkbox"><span><b>Read Replica：</b>异步复制，主要用于读扩展</span></li>
+<li><input type="checkbox"><span><b>复制延迟：</b>读副本可能暂时落后于主库</span></li>
+<li><input type="checkbox"><span><b>RDS Endpoint：</b>用 DNS 名称连接，不硬编码 IP</span></li>
+<li><input type="checkbox"><span><b>Aurora：</b>计算节点与多 AZ 集群存储解耦</span></li>
+<li><input type="checkbox"><span><b>Writer Endpoint：</b>写入当前 Writer</span></li>
+<li><input type="checkbox"><span><b>Reader Endpoint：</b>将读取连接分散到 Replicas</span></li>
+<li><input type="checkbox"><span><b>Serverless v2：</b>在配置范围内自动调整 ACU</span></li>
+<li><input type="checkbox"><span><b>RDS Proxy：</b>连接池与复用，不是查询加速引擎</span></li>
+<li><input type="checkbox"><span><b>Global Database：</b>跨 Region 异步副本与区域级切换流程</span></li>
+<li><input type="checkbox"><span><b>Automated Backup：</b>时间点恢复能力</span></li>
+<li><input type="checkbox"><span><b>Manual Snapshot：</b>用户管理并长期保留</span></li>
+<li><input type="checkbox"><span><b>备份 ≠ Multi-AZ：</b>恢复与故障切换是不同目标</span></li>
+<li><input type="checkbox"><span><b>加密：</b>KMS at rest；应用连接另用 TLS</span></li>
+<li><input type="checkbox"><span><b>扩存储：</b>不等于扩 CPU 或修复慢查询</span></li>
+<li><input type="checkbox"><span><b>连接切换：</b>有界重试、退避、重建连接并保障幂等</span></li>
+<li><input type="checkbox"><span><b>灾备：</b>明确 RPO / RTO 并定期演练</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十一、快速自测</h2>
+<p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz">
+ <b>1. 主要目标是 AZ 故障后自动切换，不需要横向读扩展。应优先采用什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',true)">A. RDS Multi-AZ deployment</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">B. 单独 Read Replica</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. 手动快照</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. Storage Autoscaling</button>
+ <div class="answer" id="q1"><b>正确答案：A。</b>Multi-AZ 以可用性和故障切换为主要目标；Read Replica 主要用于读扩展且存在异步延迟。</div>
+</div>
+<div class="quiz">
+ <b>2. Aurora 集群有一个 Writer 和多个 Replicas。应用应如何分离读写？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 所有查询固定到单个 Instance Endpoint</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. 写入使用 Writer Endpoint，读取使用 Reader Endpoint</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 读取使用 Multi-AZ standby IP</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. 写入使用快照 ARN</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>集群端点分别针对 Writer 和 Replicas；应用需考虑读写一致性和连接重试。</div>
+</div>
+<div class="quiz">
+ <b>3. Lambda 突发时数据库 CPU 不高但连接数达到上限，首先评估什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',false)">A. 提高 EBS 卷吞吐</button>
+ <button class="secondary" onclick="showAnswer('q3',true)">B. RDS Proxy 与限制调用并发</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. Aurora Global Database</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. 增大备份保留期</button>
+ <div class="answer" id="q3"><b>正确答案：B。</b>瓶颈在连接数量和短连接管理，Proxy 可复用连接；仍需检查数据库引擎支持与连接行为。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html" target="_blank" rel="noopener">Amazon RDS 用户指南</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html" target="_blank" rel="noopener">Amazon Aurora 概览</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html" target="_blank" rel="noopener">RDS Multi-AZ 部署</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html" target="_blank" rel="noopener">RDS Read Replica</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html" target="_blank" rel="noopener">Aurora Global Database</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy.html" target="_blank" rel="noopener">Amazon RDS Proxy</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>Multi-AZ 部署类型、Aurora 功能、引擎版本和可用区域会随服务演进；设计前核对所选引擎与区域的最新支持矩阵。</div>
+</section>
+</main>
+</div>
+<footer class="container">AWS SAP-C02 RDS / Aurora 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

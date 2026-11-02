@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 AWS Organizations 与 SCP 考点速查：组织与 OU、策略继承、允许/拒绝列表、权限边界、Control Tower 与多账号治理。">
+<title>AWS SAP-C02｜AWS Organizations 与 SCP 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>AWS Organizations / SCP<br>多账号治理与权限边界</h1>
+  <p>通过 Organizations 组织、OU 和账号建立治理层级，再用 Service Control Policy 限定成员账号内身份可获得的最大权限。牢记 SCP 不授予权限、管理账号不受 SCP 限制，并用显式 Deny / Allow 列表管理策略继承。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">安全 / 多账号治理</span>
+   <span class="pill">关键词：OU · SCP · Control Tower</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回安全分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#organization">一、组织层级与账号</a>
+ <a href="#scp">二、SCP 能力边界</a>
+ <a href="#inheritance">三、策略继承与有效权限</a>
+ <a href="#strategies">四、允许列表与拒绝列表</a>
+ <a href="#management">五、管理账号、委派与 Control Tower</a>
+ <a href="#scenarios">六、场景题解析</a>
+ <a href="#quick">七、关键词速查</a>
+ <a href="#memory">八、考前速记卡</a>
+ <a href="#quiz">九、快速自测</a>
+</nav>
+
+<main>
+<section id="organization">
+<h2>一、组织层级与账号</h2>
+<p class="lead">AWS Organizations 将多个 AWS 账号纳入统一组织。通过 Root、OU 和账号层级组织工作负载、隔离账单与权限治理，并集中管理成员账号的策略。</p>
+<div class="diagram">
+ <div class="node"><b>Organization Root</b><br><small>组织级策略边界</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>OU</b><br><small>按环境/业务分组</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Member Account</b><br><small>独立资源与身份域</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>IAM Principal</b><br><small>User / Role</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>组件</th><th>作用</th><th>治理提示</th></tr></thead>
+<tbody>
+<tr><td>Management Account</td><td>创建组织并管理账单、组织策略和成员账号。</td><td>使用专用管理账号；限制登录与日常工作负载，避免用于应用部署。</td></tr>
+<tr><td>Root</td><td>组织中包含 OU 与账号的根容器。</td><td>挂载到 Root 的策略会沿层级继承至成员账号；管理账号本身不受 SCP 限制。</td></tr>
+<tr><td>Organizational Unit (OU)</td><td>将账号按环境、业务、合规边界分组，OU 可嵌套。</td><td>保持层级清晰；相同治理要求可通过 OU 集中应用。</td></tr>
+<tr><td>Member Account</td><td>资源和 IAM 身份的隔离边界，账单可集中管理。</td><td>可使用独立账号分隔生产、开发、安全、日志和共享网络工作负载。</td></tr>
+<tr><td>Delegated Administrator</td><td>将特定组织集成服务的管理任务委派给成员账号。</td><td>委派管理不会使该账号成为组织管理账号，也不会绕过 SCP。</td></tr>
+</tbody></table></div>
+<p>组织功能集决定可用治理能力。SCP 等组织策略需要启用 Organizations 的 All features；仅 Consolidated Billing 的组织模式不能使用完整的 SCP 管理能力。</p>
+</section>
+
+<section id="scp">
+<h2>二、SCP 能力边界</h2>
+<p>SCP 定义组织成员账号中 IAM 身份可获得的最大权限边界。最终允许的操作还要经过 IAM Policy、资源策略、权限边界、会话策略、Endpoint Policy 等适用策略评估。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>SCP 会做什么</th><th>SCP 不会做什么</th><th>记忆点</th></tr></thead>
+<tbody>
+<tr><td>限制成员账号内 IAM User、IAM Role（含 member account root user）可使用的 AWS 服务和操作。</td><td>不会向 IAM 身份授予权限；仍需 IAM Policy 等身份授权。</td><td>“最大权限天花板”，不是 Allow 授权书。</td></tr>
+<tr><td>通过 Root/OU/账号层级策略形成组织级边界。</td><td>不限制 Organizations 管理账号中的身份。</td><td>管理账号是重要例外，应使用其他控制保护。</td></tr>
+<tr><td>限制受支持服务操作，防止成员账号移除必要治理控制。</td><td>通常不影响服务关联角色执行的操作。</td><td>服务关联角色是 SCP 的重要例外；另行检查服务权限与资源策略。</td></tr>
+<tr><td>结合条件、资源与操作限制多账号环境。</td><td>不直接配置资源、设置网络或检查合规状态。</td><td>预防性权限控制，不替代 AWS Config / Security Hub 等检测控制。</td></tr>
+</tbody></table></div>
+<ul>
+<li>只有管理账号有权管理组织级 SCP；成员账号管理员不能自行解除上层 OU 或 Root 施加的限制。</li>
+<li>SCP 对账号内身份权限设上限；IAM Policy 仍需显式授予动作，二者的有效权限是交集，并受显式 Deny 等其他策略限制。</li>
+<li>SCP 不是资源共享策略。跨账号访问还需要资源策略、调用方身份策略和组织策略共同允许。</li>
+<li>使用 SCP 控制根用户操作时，确认组织功能、策略范围和服务关联角色例外；不能把它当作唯一安全控制。</li>
+</ul>
+<div class="callout red"><b>核心陷阱：</b>在 SCP 中添加 <code>Allow</code> 不会使成员账号用户自动获得该权限；IAM Policy 仍要授权。SCP 中的显式 <code>Deny</code> 则会限制成员账号内身份，即使 IAM Policy 允许。</div>
+</section>
+
+<section id="inheritance">
+<h2>三、策略继承与有效权限</h2>
+<div class="diagram">
+ <div class="node"><b>Root SCP</b><br><small>祖先上限</small></div>
+ <span class="arrow">∩</span>
+ <div class="node"><b>OU SCP</b><br><small>父级上限</small></div>
+ <span class="arrow">∩</span>
+ <div class="node"><b>Account SCP</b><br><small>账号上限</small></div>
+ <span class="arrow">∩</span>
+ <div class="node"><b>IAM / Resource Policy</b><br><small>实际授权</small></div>
+</div>
+<ul>
+<li>账号的有效 SCP 边界由从 Root 到其所在 OU、再到账号层级适用的策略共同决定。</li>
+<li>在 Allow-list 模式下，祖先和子级层级都必须允许某操作；某一层不允许时，成员账号就无法获得该权限。</li>
+<li>在 Deny-list 模式下，通常保留默认全面允许，仅在各层添加需要禁止的操作；显式 Deny 沿层级约束成员账号。</li>
+<li>移动账号到另一个 OU 会改变继承的 SCP，变更前需检查目标 OU 的有效策略，避免锁死管理员、日志或安全服务。</li>
+<li>OU 嵌套可表达逐层收紧的控制：组织基础限制 → 环境限制 → 具体账号特殊限制。</li>
+</ul>
+<div class="callout orange"><b>安全变更：</b>修改 Root / 核心 OU 的 SCP 前，先在测试 OU 验证；保留紧急恢复路径，并检查管理角色、日志、加密、备份和安全监控所需 API 是否仍允许。</div>
+</section>
+
+<section id="strategies">
+<h2>四、允许列表与拒绝列表</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>策略模型</th><th>配置方式</th><th>适合场景 / 风险</th></tr></thead>
+<tbody>
+<tr><td>Deny list</td><td>保留组织默认的广泛 Allow，在 Root/OU/账号层添加显式 Deny 限制特定服务/操作。</td><td>逐步治理现有组织；需防止新服务默认开放，及时补充禁用策略。</td></tr>
+<tr><td>Allow list</td><td>在 Root、OU 和账号路径上明确允许所需服务/操作；通常移除或调整默认 FullAWSAccess 策略。</td><td>高控制、受监管环境；新工作负载必须明确申请权限，治理配置更严格。</td></tr>
+</tbody></table></div>
+<h3>实施注意事项</h3>
+<ul>
+<li>Allow list 要在每个祖先策略层级都保留必要 Allow；只在账号层添加 Allow 无法突破 Root/OU 的上限。</li>
+<li>显式 Deny 优先于 Allow；使用 <code>NotAction</code> 构建允许列表前，需仔细检查例外和新增服务的影响。</li>
+<li>不要在组织根层直接部署未经验证的 Deny；一个宽泛的 Deny 可能同时阻止成员账号治理、加密、备份与应急响应操作。</li>
+<li>用 IAM Access Analyzer、CloudTrail、策略模拟/测试账号和组织变更流程验证影响；SCP 不支持所有 IAM Policy 功能，需核对策略语法和限制。</li>
+<li>管理账号不受 SCP 约束，不能依赖成员账号策略保护管理账号里的凭证与资源。</li>
+</ul>
+</section>
+
+<section id="management">
+<h2>五、管理账号、委派与 Control Tower</h2>
+<ul>
+<li><b>Management Account：</b>创建组织、管理 Organizations 与集中账单；权限极高，应使用硬件 MFA、最小化人员访问并避免部署普通业务。</li>
+<li><b>Delegated Administrator：</b>让指定成员账号管理支持委派的安全/治理服务；按服务注册委派管理员，不等于转移组织所有者权限。</li>
+<li><b>Control Tower：</b>基于 Organizations 建立多账号 landing zone，提供 Account Factory、预防性/检测性控制和集中治理工作流。</li>
+<li><b>Preventive controls：</b>通常由 SCP 等机制阻止不允许的操作；<b>Detective controls：</b>通常通过 AWS Config 规则等发现偏离。</li>
+<li><b>Account Factory：</b>按组织治理要求创建/注册账号并放入指定 OU；账号配置仍需遵从目标 OU 的策略和控制。</li>
+<li><b>治理修复：</b>由 Control Tower 管理的策略或资源应优先通过 Control Tower 工作流修改，避免手工变更导致 drift。</li>
+</ul>
+<div class="callout"><b>区分角色：</b>Organizations 负责账号与策略层级；SCP 是权限上限；Control Tower 在其上提供 landing zone、账号供应及预防/检测控制工作流。三者不是互相替代的服务。</div>
+</section>
+
+<section id="scenarios">
+<h2>六、场景题解析</h2>
+<div class="quiz">
+ <h3>场景一：禁止所有开发账号创建特定昂贵资源</h3>
+ <p>多个开发账号位于同一 OU，组织管理员希望统一阻止创建一类资源，同时仍由账号管理员决定其他具体权限。</p>
+ <p><b>正确方向：</b>在开发 OU 附加 SCP 显式 Deny 对应服务操作；账号 IAM Policy 继续负责授予其他允许操作。</p>
+ <p><b>分析思路：</b>SCP 可在 OU 层形成成员账号权限上限，适合组织级预防控制。</p>
+ <p><b>排除：</b>仅为每个账号添加 IAM Deny 难以集中治理；SCP Allow 也不会自动授予其他权限。</p>
+</div>
+<div class="quiz">
+ <h3>场景二：成员账号策略允许但 API 仍被拒绝</h3>
+ <p>某 IAM Role 的身份策略允许调用操作，但该账号所属 OU 的 SCP 没有允许该操作。</p>
+ <p><b>正确方向：</b>由管理账号调整适用 SCP，在 Root 到账号的策略路径上允许该操作，同时保留 IAM 策略授权。</p>
+ <p><b>分析思路：</b>SCP 是权限边界，成员账号管理员不能通过 IAM Allow 绕过上层限制。</p>
+ <p><b>排除：</b>扩大该 Role 的 IAM 权限或重新创建角色不会突破组织 SCP。</p>
+</div>
+<div class="quiz">
+ <h3>场景三：构建严格的服务允许列表</h3>
+ <p>新组织只允许每个工作负载使用明确批准的服务，并要求子 OU 不能自行放宽根层限制。</p>
+ <p><b>正确方向：</b>启用组织 All features，按 Root/OU/账号路径设计 Allow-list SCP，并在每层显式保留所需服务权限。</p>
+ <p><b>分析思路：</b>Allow-list 通过祖先与子级策略共同限定可用服务，账号仍需要 IAM 授权。</p>
+ <p><b>排除：</b>只在账号层添加允许项不能越过 Root/OU 未允许的边界；删除默认策略前应验证管理员和治理工具访问。</p>
+</div>
+<div class="quiz">
+ <h3>场景四：组织管理员想限制管理账号所有操作</h3>
+ <p>团队在 Root 上附加 SCP，希望该策略也限制 Organizations 管理账号的超级用户。</p>
+ <p><b>正确方向：</b>SCP 不会限制管理账号；应通过 MFA、身份中心/受控角色、严格 IAM、CloudTrail 告警和独立审批保护管理账号。</p>
+ <p><b>分析思路：</b>组织管理账号是 SCP 的明确作用范围例外。</p>
+ <p><b>排除：</b>把管理账号移动到成员 OU 或重复附加 Root SCP 不能让 SCP 限制管理账号。</p>
+</div>
+<div class="quiz">
+ <h3>场景五：创建账号时自动应用治理基线</h3>
+ <p>企业希望以标准化方式创建多账号 landing zone，自动安排 OU，并实施预防性和检测性控制。</p>
+ <p><b>正确方向：</b>采用 AWS Control Tower 的 landing zone 与 Account Factory 工作流，并结合 Organizations/SCP 及检测控制。</p>
+ <p><b>分析思路：</b>Control Tower 提供多账号治理工作流，底层组织结构和权限策略依赖 Organizations。</p>
+ <p><b>排除：</b>只写一条 SCP 不会供应账号、部署 landing zone 或检测资源配置偏差。</p>
+</div>
+<div class="quiz">
+ <h3>场景六：安全服务需要跨账号集中管理</h3>
+ <p>组织希望让安全账号管理成员账号中的某项受支持服务，但不想把管理账号凭证共享给安全团队。</p>
+ <p><b>正确方向：</b>对支持的服务注册安全账号为 Delegated Administrator，并按服务文档设置 Organizations 集成与成员账号权限。</p>
+ <p><b>分析思路：</b>委派管理员将特定组织级管理工作交给成员账号，不转移管理账号身份。</p>
+ <p><b>排除：</b>共享 management account root 凭证或将安全账号提升为组织管理账号都不符合最小权限原则。</p>
+</div>
+</section>
+
+<section id="quick">
+<h2>七、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>多个账号统一账单/治理</td><td>AWS Organizations</td><td>账号仍是资源与身份隔离边界</td></tr>
+<tr><td>OU 中限制成员账号最大权限</td><td>SCP</td><td>SCP 不直接授予权限</td></tr>
+<tr><td>IAM Allow 但 API 被拒绝</td><td>检查 Root/OU/account SCP</td><td>高层策略限制无法由成员账号突破</td></tr>
+<tr><td>禁止成员账号内所有角色某操作</td><td>SCP 显式 Deny</td><td>管理账号不受 SCP 限制</td></tr>
+<tr><td>新组织仅开放批准服务</td><td>Allow-list 策略 + 层级继承</td><td>每个祖先层级都需允许必要动作</td></tr>
+<tr><td>快速创建受治理的多账号环境</td><td>Control Tower + Account Factory</td><td>Control Tower 构建在 Organizations 之上</td></tr>
+<tr><td>将安全服务管理委派给成员账号</td><td>Delegated Administrator</td><td>不是 management account 转让</td></tr>
+<tr><td>阻止离开组织的账号做某事</td><td>成员账号的 SCP 边界</td><td>离开组织后不再受组织策略管理</td></tr>
+<tr><td>资源配置符合性检测</td><td>AWS Config / Control Tower detective control</td><td>SCP 是预防性权限边界，不检查资源状态</td></tr>
+<tr><td>SCP 覆盖服务关联角色</td><td>核对服务关联角色例外</td><td>不能假设普通 IAM Role 行为适用于所有服务角色</td></tr>
+<tr><td>集中限制账号内根用户</td><td>成员账号 root 受 SCP 限制</td><td>Organizations management account root 不受 SCP 限制</td></tr>
+<tr><td>策略变更可能锁死管理操作</td><td>测试 OU、验证有效策略、保留恢复路径</td><td>Root 层误配影响面最大</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>八、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>Organizations：</b>多账号组织、账单与策略治理</span></li>
+<li><input type="checkbox"><span><b>层级：</b>Root → OU → Account → IAM Principal</span></li>
+<li><input type="checkbox"><span><b>SCP：</b>定义成员账号权限上限，不授予权限</span></li>
+<li><input type="checkbox"><span><b>有效权限：</b>SCP 边界与 IAM/资源授权共同评估</span></li>
+<li><input type="checkbox"><span><b>SCP Deny：</b>显式拒绝会限制成员账号身份</span></li>
+<li><input type="checkbox"><span><b>管理账号：</b>不受 SCP 限制，需独立保护</span></li>
+<li><input type="checkbox"><span><b>成员账号 root：</b>受适用 SCP 约束</span></li>
+<li><input type="checkbox"><span><b>服务关联角色：</b>通常不受 SCP 影响</span></li>
+<li><input type="checkbox"><span><b>策略继承：</b>Root、父 OU、子 OU 与账号共同形成边界</span></li>
+<li><input type="checkbox"><span><b>Allow list：</b>每一层都需允许必要操作</span></li>
+<li><input type="checkbox"><span><b>Deny list：</b>保留广泛 Allow，再显式拒绝禁止项</span></li>
+<li><input type="checkbox"><span><b>Organizations SCP：</b>需要 All features</span></li>
+<li><input type="checkbox"><span><b>Control Tower：</b>landing zone、账号供应与治理控制</span></li>
+<li><input type="checkbox"><span><b>Preventive：</b>SCP 等预防不允许的操作</span></li>
+<li><input type="checkbox"><span><b>Detective：</b>Config 等发现偏离</span></li>
+<li><input type="checkbox"><span><b>Delegated Admin：</b>委派支持服务管理，不转移管理账号</span></li>
+<li><input type="checkbox"><span><b>策略模拟：</b>测试 OU 与变更影响再上线</span></li>
+<li><input type="checkbox"><span><b>管理账号安全：</b>MFA、最小权限、审计和审批</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>九、快速自测</h2>
+<p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz">
+ <b>1. 成员账号中的 IAM Role 已有 Allow，但调用仍被组织策略拒绝。应由谁检查什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',true)">A. 组织管理账号检查 Root/OU/account SCP 继承</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">B. 成员账号用户扩大 IAM Allow</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. 在成员账号创建新 OU</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. 关闭 CloudTrail</button>
+ <div class="answer" id="q1"><b>正确答案：A。</b>成员账号 IAM Allow 不能越过 SCP 上限；组织管理员检查从 Root 到账号的有效策略。</div>
+</div>
+<div class="quiz">
+ <b>2. 一个组织 SCP 允许成员账号执行某服务操作。是否足以让所有用户执行？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 是，SCP Allow 会授予账号全部用户</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. 否，IAM Policy 等仍需向身份授予权限</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 是，只要账号在 OU 内</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. 是，但只需更新账单</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>SCP 是最大权限边界，不授予 IAM 身份权限。</div>
+</div>
+<div class="quiz">
+ <b>3. 管理账号管理员试图用 Root SCP 限制管理账号 root 用户。结果会怎样？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',true)">A. SCP 不限制 Organizations 管理账号</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">B. 管理账号 root 会被自动锁定</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. SCP 只限制管理账号账单服务</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. 需要把管理账号移动到 OU</button>
+ <div class="answer" id="q3"><b>正确答案：A。</b>管理账号不受 SCP 限制，应通过独立身份与审计控制保护。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html" target="_blank" rel="noopener">AWS Organizations 用户指南</a></li>
+<li><a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html" target="_blank" rel="noopener">Service Control Policies</a></li>
+<li><a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_syntax.html" target="_blank" rel="noopener">SCP 语法与示例</a></li>
+<li><a href="https://docs.aws.amazon.com/controltower/latest/userguide/what-is-control-tower.html" target="_blank" rel="noopener">AWS Control Tower</a></li>
+<li><a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_integrate_delegated_admin.html" target="_blank" rel="noopener">委派管理员</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>Organizations 策略类型、SCP 例外和 Control Tower 控制实现可能更新；修改组织根策略前务必在测试 OU 验证有效权限。</div>
+</section>
+</main>
+</div>
+<footer class="container">AWS SAP-C02 Organizations / SCP 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

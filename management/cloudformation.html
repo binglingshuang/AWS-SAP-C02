@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 CloudFormation 考点速查：Stacks、StackSets、Change Sets、Nested Stacks、Drift、回滚与资源保留。">
+<title>AWS SAP-C02｜AWS CloudFormation 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>AWS CloudFormation<br>模板化基础设施编排</h1>
+  <p>通过声明式模板创建、更新和治理 AWS 资源。掌握普通 Stack、跨账号/区域 StackSets、Change Set、Nested Stack、Drift 检测与资源保留，并为更新失败、替换和回滚制定安全策略。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">管理 / IaC</span>
+   <span class="pill">关键词：StackSets · Change Set · Drift</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回管理分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#model">一、模板与 Stack 生命周期</a>
+ <a href="#templates">二、模板结构与复用</a>
+ <a href="#changes">三、Change Set 与更新保护</a>
+ <a href="#resources">四、资源保留、替换与 Drift</a>
+ <a href="#composition">五、Nested Stacks 与跨栈引用</a>
+ <a href="#stacksets">六、StackSets 跨账号/区域</a>
+ <a href="#security">七、执行角色与安全治理</a>
+ <a href="#scenarios">八、场景题解析</a>
+ <a href="#quick">九、关键词速查</a>
+ <a href="#memory">十、考前速记卡</a>
+ <a href="#quiz">十一、快速自测</a>
+</nav>
+
+<main>
+<section id="model">
+<h2>一、模板与 Stack 生命周期</h2>
+<p class="lead">AWS CloudFormation 使用模板声明资源、参数和依赖关系，并将模板实例化为 Stack。它持续记录由 Stack 管理的资源与配置，但不会自动发现并修复所有手工漂移。</p>
+<div class="diagram">
+ <div class="node"><b>Template</b><br><small>资源与参数定义</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Stack</b><br><small>单次模板部署实例</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>AWS Resources</b><br><small>创建 / 更新 / 删除</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>操作</th><th>CloudFormation 行为</th><th>风险控制</th></tr></thead>
+<tbody>
+<tr><td>Create Stack</td><td>按模板创建资源并跟踪 Stack 状态。</td><td>检查参数、配额、权限、依赖与名称唯一性。</td></tr>
+<tr><td>Update Stack</td><td>比较新模板/参数与当前 Stack，按资源属性执行变更。</td><td>先创建 Change Set，理解替换、删除和不可变属性影响。</td></tr>
+<tr><td>Delete Stack</td><td>删除 Stack 管理的资源，除非资源配置保留或有其他保护机制。</td><td>配置 Retain/Snapshot、Termination Protection，并在生产环境走审批。</td></tr>
+<tr><td>Rollback</td><td>创建/更新失败时按配置回退资源到先前状态。</td><td>回滚可能受权限、不可恢复资源或外部变更影响；需查看事件与失败原因。</td></tr>
+</tbody></table></div>
+<p>模板可以存放在本地、S3 或通过 CI/CD 管理；将模板审查、参数验证、Change Set 审批和 Stack 执行串成可审计发布流程。</p>
+</section>
+
+<section id="templates">
+<h2>二、模板结构与复用</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>模板部分</th><th>用途</th><th>常见考点</th></tr></thead>
+<tbody>
+<tr><td>Parameters</td><td>将环境、AMI、实例规格等部署输入外置。</td><td>配置默认值、允许值、约束和 NoEcho；NoEcho 不是秘密管理服务。</td></tr>
+<tr><td>Mappings / Conditions</td><td>按区域/环境映射值，或条件化创建资源。</td><td>适合静态映射与有限环境差异；复杂秘密不要写在模板。</td></tr>
+<tr><td>Resources</td><td>声明要创建或管理的 AWS 资源。</td><td>资源类型及属性要与服务支持矩阵匹配；可用 DependsOn 明确依赖。</td></tr>
+<tr><td>Outputs</td><td>暴露 Stack 输出，或向其他 Stack 导出值。</td><td>Export/ImportValue 通常受账号、区域范围限制，删除导出前需解除引用。</td></tr>
+<tr><td>Metadata / Rules</td><td>提供模板元数据、参数校验规则或控制台体验配置。</td><td>参数 Rules 可在部署前验证组合约束。</td></tr>
+<tr><td>Transforms / Macros</td><td>转换模板语法或执行宏展开；SAM 使用 Transform。</td><td>宏可执行自定义逻辑，部署前审查宏来源和权限。</td></tr>
+</tbody></table></div>
+<ul>
+<li>Intrinsic Functions（如 <code>Ref</code>、<code>Fn::GetAtt</code>、<code>Fn::Sub</code>、<code>Fn::Join</code>、<code>Fn::ImportValue</code>）在模板中引用参数、属性和跨栈输出。</li>
+<li>用 Outputs 分享稳定标识符；跨 Stack 强耦合会限制更新和删除顺序，复杂层级优先考虑 Nested Stack 或更松耦合的发现机制。</li>
+<li>避免把密码、API Key 写入模板、参数默认值或 Outputs；使用 Secrets Manager/Parameter Store 动态引用并限制访问。</li>
+<li>模板描述目标状态，实际部署还受执行身份、IAM 权限、服务配额和区域可用性限制。</li>
+</ul>
+<div class="callout orange"><b>参数注意：</b>CloudFormation Parameters 便于复用，但参数值可能出现在 Stack 配置或审计路径中；敏感值应使用受支持的秘密引用与 KMS 保护。</div>
+</section>
+
+<section id="changes">
+<h2>三、Change Set 与更新保护</h2>
+<ul>
+<li>Change Set 在执行更新前展示 CloudFormation 预期新增、修改、替换或删除的资源，有助于评审更新影响。</li>
+<li>Change Set 是变更预览，不是部署成功保证；运行时条件、动态引用、服务配额、资源状态和执行权限仍可能导致失败。</li>
+<li>生产发布可创建 Change Set、保存变更记录、审批后执行；监控 Stack Events 并验证应用级健康。</li>
+<li>更新可能触发资源替换（Replacement），造成新建资源、数据迁移或中断；检查属性的 Update requires replacement 语义。</li>
+<li>Stack Policy 可阻止更新对特定资源执行不允许的更新操作；它不是 IAM 权限策略，也不用于阻止所有手工资源更改。</li>
+<li>Termination Protection 可阻止删除 Stack；删除保护需要先解除，仍不能替代备份、IAM 和资源级保护。</li>
+</ul>
+<div class="table-wrap"><table>
+<thead><tr><th>保护机制</th><th>控制对象</th><th>不能替代</th></tr></thead>
+<tbody>
+<tr><td>Change Set</td><td>执行前审查模板更新的预期资源变更。</td><td>部署验证、回滚、备份或权限控制。</td></tr>
+<tr><td>Stack Policy</td><td>限制 Stack 更新时可对指定资源执行的操作。</td><td>IAM Policy；它不授予/撤销用户的 AWS API 权限。</td></tr>
+<tr><td>Termination Protection</td><td>阻止 Stack 被删除。</td><td>资源数据保护；也不防止所有资源属性更新或手工变更。</td></tr>
+<tr><td>Rollback Triggers</td><td>在部署期监测 CloudWatch Alarm，异常时触发回滚。</td><td>应用级回归测试；只监控选定指标与时间范围。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="resources">
+<h2>四、资源保留、替换与 Drift</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>属性 / 能力</th><th>作用</th><th>典型用途</th></tr></thead>
+<tbody>
+<tr><td>DeletionPolicy: Retain</td><td>Stack 删除时保留该资源，而不是删除底层资源。</td><td>保留数据库、S3 Bucket 或需人工处理的资源；需另行管理残留资源。</td></tr>
+<tr><td>DeletionPolicy: Snapshot</td><td>删除 Stack 时对支持的资源创建快照后删除资源。</td><td>需要在删除前保留可恢复的数据副本；检查资源类型支持。</td></tr>
+<tr><td>UpdateReplacePolicy</td><td>更新导致资源替换时，决定旧资源的处置方式。</td><td>数据库或有状态资源更新，避免替换后旧数据立即销毁。</td></tr>
+<tr><td>Drift Detection</td><td>比较支持资源的实际配置与 Stack 模板期望配置，报告差异。</td><td>检测控制台手工改动或配置漂移。</td></tr>
+<tr><td>Resource Import</td><td>将已存在资源纳入 Stack 管理，前提是资源类型与属性支持导入。</td><td>逐步采用 IaC 管理现存资源，先清点依赖并验证模板。</td></tr>
+</tbody></table></div>
+<ul>
+<li>DeletionPolicy 和 UpdateReplacePolicy 是不同生命周期事件的策略：前者针对删除 Stack/资源，后者针对更新替换。</li>
+<li>Drift Detection 只报告支持资源的配置差异，不会自动回写模板、修复资源或阻止手工变更。</li>
+<li>Drift 结果可能是 IN_SYNC、MODIFIED、DELETED 或 NOT_CHECKED；并非每种属性/资源都能被检测。</li>
+<li>修复漂移应先判断将实际状态纳入模板，还是重新部署模板期望状态；盲目更新可能覆盖合法的生产修复。</li>
+<li>对于有状态资源，明确保留策略、备份、资源导入和删除后的所有权；Stack 删除后 Retain 的资源不会自动再次受该 Stack 管理。</li>
+</ul>
+<div class="callout red"><b>数据保护：</b>模板删除一个数据库资源前，评估 DeletionPolicy、UpdateReplacePolicy、快照和恢复演练；不要假设 CloudFormation 自动判断数据价值。</div>
+</section>
+
+<section id="composition">
+<h2>五、Nested Stacks 与跨栈引用</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>模式</th><th>组织方式</th><th>优势 / 注意事项</th></tr></thead>
+<tbody>
+<tr><td>Nested Stack</td><td>父模板将子模板作为 AWS::CloudFormation::Stack 资源调用。</td><td>模块化复用；父 Stack 负责协调子 Stack 生命周期，参数/输出形成接口。</td></tr>
+<tr><td>Export / ImportValue</td><td>在同一账号和区域的不同 Stacks 间导入导出值。</td><td>适合共享 VPC ID 等标识；强引用会阻止被引用 Export 删除/修改。</td></tr>
+<tr><td>StackSets</td><td>将同一模板部署到多个账号和/或区域。</td><td>组织级基线、审计和网络资源部署；使用服务管理或自管理权限模型。</td></tr>
+</tbody></table></div>
+<ul>
+<li>Nested Stacks 将同一应用或平台划分为可复用模块；对子 Stack 的模板变更需通过父 Stack 更新，注意部署依赖和失败回滚。</li>
+<li>Outputs/Exports 适合跨 Stack 显式共享少量稳定值；ImportValue 存在引用约束，不适合随意拆除的动态服务发现。</li>
+<li>StackSets 解决的是多个账号/区域一致部署，Nested Stack 解决的是一个 Stack 内模板模块化，二者目标不同。</li>
+</ul>
+</section>
+
+<section id="stacksets">
+<h2>六、StackSets 跨账号 / 区域</h2>
+<ul>
+<li>StackSet 保存模板和部署配置；Stack Instance 表示在目标账号与区域中实例化的 Stack。</li>
+<li><b>Service-managed permissions：</b>与 Organizations 集成，可按组织、OU 或账号部署；适合新账号自动纳入基线。需启用组织所需功能并配置可信访问。</li>
+<li><b>Self-managed permissions：</b>由客户在管理账号和目标账号准备相应 IAM 执行角色；适用于非 Organizations 或自定义跨账号权限路径。</li>
+<li>可配置区域顺序、最大并发、失败容忍和部署目标；对大量账号分批滚动部署，避免一次性错误影响全组织。</li>
+<li>StackSet 与组织 OU 绑定可在成员账号加入/移动时自动部署或移除实例；需要确认自动部署行为不会删除关键资源。</li>
+<li>跨区域部署需考虑区域资源支持、配额、名称唯一性、KMS 密钥区域性和资源依赖差异。</li>
+</ul>
+<div class="callout green"><b>选择提示：</b>“Organizations 中所有/指定 OU 的账号自动部署同一基线” → Service-managed StackSets；“手动管理跨账号信任角色或不使用 Organizations” → Self-managed StackSets。</div>
+</section>
+
+<section id="security">
+<h2>七、执行角色与安全治理</h2>
+<ul>
+<li>CloudFormation 执行角色允许服务代表部署者创建模板声明的资源；限制其资源类型、操作、账号和区域，避免模板成为权限提升通道。</li>
+<li>Stack 创建者权限与执行角色权限需要分别审查；允许某人传递高权限 Role（<code>iam:PassRole</code>）可能让其通过模板间接获得该角色能力。</li>
+<li>为模板使用代码审查、静态检查、预生产部署、Change Set 审批和 CloudTrail 审计。</li>
+<li>用 Secrets Manager / Parameter Store 动态引用秘密，避免明文进入模板、Outputs、源代码或 Stack Events。</li>
+<li>使用 StackSets 维护组织基线时，保护委派管理员、执行角色、可信访问和策略变更流程。</li>
+</ul>
+<div class="callout orange"><b>最小权限：</b>CloudFormation 不是权限隔离边界。执行角色的权限可能被模板部署调用；委派创建 Stack 的能力时，需要同时评估执行角色、PassRole 和模板可修改范围。</div>
+</section>
+
+<section id="scenarios">
+<h2>八、场景题解析</h2>
+<div class="quiz">
+ <h3>场景一：更新前查看是否会替换数据库实例</h3>
+ <p>团队修改生产数据库参数，希望在执行前审查 CloudFormation 将新增、修改、替换或删除的资源。</p>
+ <p><b>正确方向：</b>先创建 Change Set，检查数据库资源是否 Replacement，再审批执行。</p>
+ <p><b>分析思路：</b>Change Set 提供部署前的资源变更预览，适合生产风险评估。</p>
+ <p><b>排除：</b>只运行 drift detection 只能比较当前漂移，不能预览新模板更新；Change Set 也不是成功保证。</p>
+</div>
+<div class="quiz">
+ <h3>场景二：统一向多个 Organizations 账号和 Region 部署基线</h3>
+ <p>新账号加入指定 OU 后应自动部署相同的日志与安全资源，覆盖多个区域。</p>
+ <p><b>正确方向：</b>使用 Organizations 集成的 Service-managed StackSets，指定 OU/区域并启用相应自动部署能力。</p>
+ <p><b>分析思路：</b>StackSets 用于跨账号/区域一致部署；服务管理权限可与 Organizations 目标集成。</p>
+ <p><b>排除：</b>Nested Stack 只做模板模块化，不负责组织账号级部署。</p>
+</div>
+<div class="quiz">
+ <h3>场景三：控制台手工改了模板管理的安全组</h3>
+ <p>需要识别资源实际配置与 Stack 模板的差异，但暂时不能自动覆盖生产中的手工修复。</p>
+ <p><b>正确方向：</b>运行 Drift Detection，评估 MODIFIED 结果，再决定更新模板或重新部署期望状态。</p>
+ <p><b>分析思路：</b>Drift 检测报告差异，不会自动修复。</p>
+ <p><b>排除：</b>直接更新 Stack 可能覆盖手工修改；删除/重建安全组可能造成业务中断。</p>
+</div>
+<div class="quiz">
+ <h3>场景四：删除应用 Stack 但保留数据库</h3>
+ <p>应用基础设施可删除重建，数据库需要在 Stack 删除后继续保留并由数据团队单独管理。</p>
+ <p><b>正确方向：</b>为数据库配置 DeletionPolicy: Retain，并规划 Stack 删除后的资源移交、备份与后续管理。</p>
+ <p><b>分析思路：</b>Retain 使底层资源在 Stack 删除时保留；它不会自动转交给另一个 Stack。</p>
+ <p><b>排除：</b>Termination Protection 会阻止整个 Stack 删除，不是“只保留数据库”的精细配置。</p>
+</div>
+<div class="quiz">
+ <h3>场景五：模板按环境拆成可重用模块</h3>
+ <p>一个应用由网络、数据库和应用层组成，多个环境需要复用相同模块，并希望父部署统一管理子模块。</p>
+ <p><b>正确方向：</b>使用 Nested Stacks，将模块拆为子模板，由父 Stack 传入参数并导出必要输出。</p>
+ <p><b>分析思路：</b>嵌套堆栈用于模板模块化和复用，父 Stack 协调生命周期。</p>
+ <p><b>排除：</b>StackSets 面向跨账号/区域部署，而不是单应用模块拆分。</p>
+</div>
+<div class="quiz">
+ <h3>场景六：部署失败需自动回滚</h3>
+ <p>生产环境希望当 CloudWatch 业务告警在部署期间触发时，Stack 更新自动回退到先前状态。</p>
+ <p><b>正确方向：</b>为 Stack 配置 CloudWatch Rollback Triggers，并监控相关 Alarm；同时确保资源可回滚且备份可用。</p>
+ <p><b>分析思路：</b>Rollback Triggers 根据部署期指标告警触发回滚，减少错误版本持续运行时间。</p>
+ <p><b>排除：</b>仅开启 drift detection 不会监控部署指标或执行回滚；回滚也不替代应用验证。</p>
+</div>
+</section>
+
+<section id="quick">
+<h2>九、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>执行前查看资源替换/删除</td><td>Change Set</td><td>预览不保证更新成功</td></tr>
+<tr><td>同一模板部署多个账号/区域</td><td>StackSets</td><td>Nested Stack 是单 Stack 模块化</td></tr>
+<tr><td>Organizations 新 OU/账号自动部署</td><td>Service-managed StackSets</td><td>核对组织可信访问和目标范围</td></tr>
+<tr><td>控制台手工改动后查差异</td><td>Drift Detection</td><td>只报告，不自动修复</td></tr>
+<tr><td>Stack 删除后保留数据库</td><td>DeletionPolicy: Retain</td><td>资源保留后不再由原 Stack 管理</td></tr>
+<tr><td>资源更新替换时留住旧资源</td><td>UpdateReplacePolicy</td><td>和 DeletionPolicy 针对不同事件</td></tr>
+<tr><td>堆栈内可复用模块</td><td>Nested Stacks</td><td>父 Stack 管理子 Stack 生命周期</td></tr>
+<tr><td>限制更新资源属性</td><td>Stack Policy</td><td>不是 IAM 权限策略</td></tr>
+<tr><td>防止整个 Stack 被删除</td><td>Termination Protection</td><td>不阻止资源属性更新或手工更改</td></tr>
+<tr><td>部署期间 Alarm 触发回滚</td><td>Rollback Triggers</td><td>监控范围由配置的告警决定</td></tr>
+<tr><td>跨栈共享同区域输出</td><td>Export / ImportValue</td><td>依赖会阻止 Export 删除/更改</td></tr>
+<tr><td>模板创建资源时权限过大</td><td>限制执行角色与 iam:PassRole</td><td>CloudFormation 执行身份是安全边界</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>十、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>Template：</b>声明期望资源与配置</span></li>
+<li><input type="checkbox"><span><b>Stack：</b>模板的一次部署实例</span></li>
+<li><input type="checkbox"><span><b>Change Set：</b>执行前审查增删改替换</span></li>
+<li><input type="checkbox"><span><b>Change Set：</b>不是部署成功保证</span></li>
+<li><input type="checkbox"><span><b>StackSet：</b>跨账号/区域部署模板</span></li>
+<li><input type="checkbox"><span><b>Service-managed：</b>Organizations 目标与自动部署</span></li>
+<li><input type="checkbox"><span><b>Nested Stack：</b>父 Stack 组织可复用子模块</span></li>
+<li><input type="checkbox"><span><b>Drift Detection：</b>检测支持属性差异，不自动修复</span></li>
+<li><input type="checkbox"><span><b>DeletionPolicy：</b>Stack 删除时保留/快照资源</span></li>
+<li><input type="checkbox"><span><b>UpdateReplacePolicy：</b>更新替换时处置旧资源</span></li>
+<li><input type="checkbox"><span><b>Termination Protection：</b>防止删除整个 Stack</span></li>
+<li><input type="checkbox"><span><b>Stack Policy：</b>限制更新操作，不是 IAM Policy</span></li>
+<li><input type="checkbox"><span><b>Export/ImportValue：</b>跨 Stack 引用有删除约束</span></li>
+<li><input type="checkbox"><span><b>Rollback Trigger：</b>CloudWatch Alarm 触发更新回滚</span></li>
+<li><input type="checkbox"><span><b>Parameters：</b>复用输入，敏感值不要明文存模板</span></li>
+<li><input type="checkbox"><span><b>执行角色：</b>最小权限并限制 iam:PassRole</span></li>
+<li><input type="checkbox"><span><b>资源替换：</b>Change Set 检查中断、迁移与数据风险</span></li>
+<li><input type="checkbox"><span><b>资源漂移：</b>判断采纳手工状态还是恢复模板状态</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十一、快速自测</h2>
+<p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz">
+ <b>1. 更新生产 Stack 前，需要查看数据库资源是否会被替换。应使用什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',true)">A. Change Set</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">B. Drift Detection</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. Stack Policy</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. CloudTrail Lake</button>
+ <div class="answer" id="q1"><b>正确答案：A。</b>Change Set 可审查更新计划中的资源替换；漂移检测比较的是模板与当前实际状态。</div>
+</div>
+<div class="quiz">
+ <b>2. 一个组织要向多个 OU 中的账号和区域自动部署安全基线，应选择什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. Nested Stack</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. Service-managed StackSets</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 单个普通 Stack</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. Outputs</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>StackSets 可跨账号/区域部署，Service-managed 权限可与 Organizations 目标集成。</div>
+</div>
+<div class="quiz">
+ <b>3. 手工修改了 CloudFormation 管理的资源，现在需要报告差异但不自动覆盖它。应使用什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',true)">A. Drift Detection</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">B. Termination Protection</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. StackSet</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. Export</button>
+ <div class="answer" id="q3"><b>正确答案：A。</b>Drift Detection 报告支持资源的配置差异，不会自动修复或修改模板。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html" target="_blank" rel="noopener">AWS CloudFormation 用户指南</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html" target="_blank" rel="noopener">Change Sets</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html" target="_blank" rel="noopener">CloudFormation StackSets</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-stack-drift.html" target="_blank" rel="noopener">Drift Detection</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html" target="_blank" rel="noopener">DeletionPolicy</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>资源属性更新行为、StackSets 权限模型与支持范围会变化；部署前查看对应资源类型文档、变更集和区域支持情况。</div>
+</section>
+</main>
+</div>
+<footer class="container">AWS SAP-C02 CloudFormation 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

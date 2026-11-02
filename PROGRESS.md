@@ -13,14 +13,14 @@
 |---|---|
 | 根导航页 | 已完成；各分类卡片已标注完成进度，未创建的 `architecture-patterns.html` 入口已禁用，无断链 |
 | 分类入口页 | 12 个已完成（根导航挂了 11 个，`hybrid-edge` 未挂载） |
-| 服务正文 | **已完成 13 篇 / 导航规划 78 篇（去重）＝ 16.7%** |
-| 未创建正文 | **65 篇**（78 篇规划减去已完成 13 篇；含已禁用入口的 `architecture-patterns.html` 与 `app-runner.html`） |
+| 服务正文 | **已完成 23 篇 / 导航规划 78 篇（去重）＝ 29.5%** |
+| 未创建正文 | **55 篇**（78 篇规划减去已完成 23 篇；含已禁用入口的 `architecture-patterns.html` 与 `app-runner.html`） |
 | 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
-| 正文内场景题 | 13 篇正文共内嵌 **70 道手写场景题**，不是 529 道 |
-| 推荐下一篇 | `storage/efs.html`（从零编写；`old/` 归档不读取） |
+| 正文内场景题 | 23 篇正文共内嵌 **130 道手写场景题**，不是 529 道 |
+| 推荐下一篇 | `management/config.html`（从零编写；`old/` 归档不读取） |
 | 最大阻塞 | 剩余正文量大，且 529 题尚未按服务归类、题库化；导航/命名旧规范已清理 |
 
-**一句话：站点骨架和 13 篇高频核心服务正文已经成形，剩余 65 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
+**一句话：站点骨架和 23 篇高频核心服务正文已经成形，剩余 55 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
 
 ---
 
@@ -30,7 +30,7 @@
 |---|---|---:|---|
 | 根导航页 | `index.html` | 1 | 手工维护的 11 分类卡片入口，设计完成 |
 | 分类入口页 | `<category>/index.html` | 12 | 11 个已挂到根页，`hybrid-edge/index.html` 未挂载 |
-| 服务正文 | `<category>/*.html` | **12** | VPC、CloudFront、Direct Connect、VPN、Transit Gateway、Route 53、EC2、Auto Scaling、Lambda、S3、EBS、IAM |
+| 服务正文 | `<category>/*.html` | **23** | VPC、CloudFront、Direct Connect、VPN、Transit Gateway、Route 53、ELB、EC2、Auto Scaling、Lambda、ECS/Fargate、RDS/Aurora、DynamoDB、S3、EBS、EFS、IAM、KMS/CloudHSM、Organizations/SCP、IAM Identity Center、CloudFormation、CloudWatch、CloudTrail |
 | 参考考题库 | `input/exam.csv` | **529 题** | 含题干、选项、答案、中文解析；只读参考，未加工成页面 |
 | 历史归档正文 | `old/**/*.html` | 10 篇（1 篇 0 字节） | **历史归档，禁止读取或作为续写素材** |
 | 历史归档架构图 | `old/Draw.io/*.drawio` | 4 张 | **历史归档，不读取、不复用** |
@@ -53,9 +53,19 @@
 | `compute/auto-scaling.html` | 计算 | ~50 KB | ~13,000 | 6 | 18 | 有 |
 | `compute/lambda.html` | 计算 | — | — | 6 | 18 | 有 |
 | `compute/fargate-ecs.html` | 计算 | — | — | 6 | 18 | 有 |
+| `storage/efs.html` | 存储 | — | — | 6 | 18 | 有 |
 | `storage/ebs.html` | 存储 | — | — | 6 | 18 | 有 |
+| `networking/elb.html` | 网络 | — | — | 6 | 18 | 有 |
+| `database/rds-aurora.html` | 数据库 | — | — | 6 | 18 | 有 |
+| `database/dynamodb.html` | 数据库 | — | — | 6 | 18 | 有 |
+| `security/kms-cloudhsm.html` | 安全 | — | — | 6 | 18 | 有 |
+| `security/organizations-scp.html` | 安全 | — | — | 6 | 18 | 有 |
+| `security/iam-identity-center.html` | 安全 | — | — | 6 | 18 | 有 |
+| `management/cloudformation.html` | 管理 | — | — | 6 | 18 | 有 |
+| `management/cloudwatch.html` | 管理 | — | — | 6 | 18 | 有 |
+| `management/cloudtrail.html` | 管理 | — | — | 6 | 18 | 有 |
 
-这 13 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
+这 23 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
 
 ---
 
@@ -65,12 +75,12 @@
 
 | 分类 | 入口页 | 已完成 | 规划 | 缺失 | 完成率 | 优先级 |
 |---|---|---:|---:|---:|---:|---|
-| 网络与内容分发 | `networking/index.html` | 6 | 9 | 3 | 66.7% | P0 |
+| 网络与内容分发 | `networking/index.html` | 7 | 9 | 2 | 77.8% | P0 |
 | 计算 | `compute/index.html` | 4 | 9 | 5 | 44.4% | P0 |
-| 存储 | `storage/index.html` | 2 | 7 | 5 | 28.6% | P0 |
-| 数据库 | `database/index.html` | 0 | 6 | 6 | 0% | P0 |
-| 安全、身份与合规 | `security/index.html` | 1 | 11 | 10 | 9.1% | P1 |
-| 管理与治理 | `management/index.html` | 0 | 9 | 9 | 0% | P1 |
+| 存储 | `storage/index.html` | 3 | 7 | 4 | 42.9% | P0 |
+| 数据库 | `database/index.html` | 2 | 6 | 4 | 33.3% | P0 |
+| 安全、身份与合规 | `security/index.html` | 4 | 11 | 7 | 36.4% | P0 |
+| 管理与治理 | `management/index.html` | 2 | 9 | 7 | 22.2% | P0 |
 | 应用集成 | `application-integration/index.html` | 0 | 6 | 6 | 0% | P1 |
 | 分析 | `analytics/index.html` | 0 | 7 | 7 | 0% | P2 |
 | 迁移与传输 | `migration/index.html` | 0 | 4 | 4 | 0% | P2 |
@@ -88,7 +98,7 @@
 
 图例：`[x]` 已完成，`[ ]` 未开始，`[!]` 需先做决策，`[~]` 草稿 / 待补完。
 
-### 3.1 网络与内容分发（6 / 9）
+### 3.1 网络与内容分发（7 / 9）
 
 - [x] `networking/vpc.html`
 - [x] `networking/direct-connect.html`
@@ -96,7 +106,7 @@
 - [x] `networking/vpn.html` — 完成日期：2026-11-02；字数约 11,500；场景题 6 道；覆盖 S2S / Client VPN / VPN over DX / CloudHub / 加速 VPN
 - [x] `networking/transit-gateway.html` — 完成日期：2026-11-02；字数约 11,100；场景题 6 道；覆盖附件、路由域、RAM、Peering、Multicast、集中出口
 - [x] `networking/route53.html` — 完成日期：2026-11-02；字数约 14,000；场景题 6 道；覆盖七种路由策略、健康检查、Public/Private 托管区、Resolver 混合云 DNS、Traffic Flow 与 AWS 服务集成
-- [ ] P0 `networking/elb.html` — ALB / NLB / GLB、跨区、SSL 终止
+- [x] `networking/elb.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 ALB/NLB/GWLB、Listener/Target Group、健康检查、跨区负载与 TLS 终止
 - [ ] P1 `networking/privatelink.html` — Interface Endpoint、端点服务、与 Peering 对比
 - [ ] P1 `networking/global-accelerator.html` — Anycast IP、端点组、与 CloudFront 对比
 
@@ -114,20 +124,20 @@
 - [ ] P2 `compute/batch.html` — Job Queue、Compute Environment、Spot 集成
 - [ ] P2 `compute/outposts-wavelength.html` — 与 `hybrid-edge/outposts.html` 存在主题重叠，见 8.3
 
-### 3.3 存储（2 / 7）
+### 3.3 存储（3 / 7）
 
 - [x] `storage/s3.html`
 - [x] `storage/ebs.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖卷型、性能、快照、加密、扩容、Multi-Attach 与灾备
-- [ ] P0 `storage/efs.html` — 性能模式、存储类别、挂载目标、跨 AZ
+- [x] `storage/efs.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Regional / One Zone、性能与吞吐模式、生命周期、Mount Target、NFS 网络、Access Point、加密与灾备
 - [ ] P1 `storage/storage-gateway.html` — File / Volume / Tape Gateway、缓存模式
 - [ ] P1 `storage/backup.html` — 备份计划、跨区/跨账号、合规
 - [ ] P2 `storage/fsx.html` — Windows / Lustre / NetApp / OpenZFS
 - [ ] P2 `storage/snow-family.html` — Snowcone / Snowball / Snowmobile、数据量决策
 
-### 3.4 数据库（0 / 6）
+### 3.4 数据库（2 / 6）
 
-- [ ] P0 `database/rds-aurora.html` — 从零编写：Multi-AZ vs Read Replica、Aurora Serverless、Global Database
-- [ ] P0 `database/dynamodb.html` — 分区键、Streams、Global Tables、DAX、容量模式
+- [x] `database/rds-aurora.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Multi-AZ / Read Replica、Aurora 端点、Serverless v2、RDS Proxy、Global Database 与备份恢复
+- [x] `database/dynamodb.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖主键与分区设计、GSI/LSI、容量模式、一致性、Streams、TTL、Global Tables、DAX 与恢复
 - [ ] P1 `database/elasticache.html` — Redis vs Memcached、集群模式、复制组
 - [ ] P1 `database/redshift.html` — 节点类型、Spectrum、RA3、Concurrency Scaling
 - [ ] P2 `database/documentdb-neptune.html` — 文档库 / 图数据库、迁移差异
@@ -135,12 +145,12 @@
 
 > 跨分类链接：`analytics/index.html` 和 `migration/index.html` 都指向 `database/redshift.html`、`database/dms-sct.html`。这两篇应作为数据库模块的正式页面创建，再保留跨模块“另见”。
 
-### 3.5 安全、身份与合规（1 / 11）
+### 3.5 安全、身份与合规（4 / 11）
 
 - [x] `security/iam.html`
-- [ ] P0 `security/kms-cloudhsm.html` — CMK 类型、轮换、信封加密、KMS vs CloudHSM
-- [ ] P0 `security/organizations-scp.html` — OU、SCP 继承、允许/拒绝列表、Control Tower
-- [ ] P0 `security/iam-identity-center.html` — Permission Sets、AD/IdP、SCIM、多账号 SSO
+- [x] `security/kms-cloudhsm.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 KMS Key 类型、Key Policy、Grant、信封加密、轮换、多区域密钥与 CloudHSM
+- [x] `security/organizations-scp.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Organizations 层级、SCP 边界与继承、Allow/Deny、管理账号例外、委派管理员与 Control Tower
+- [x] `security/iam-identity-center.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖身份来源、SAML/SCIM、Permission Set、账号分配与 provision、应用 SSO、生命周期与审计
 - [ ] P1 `security/secrets-manager.html` — 自动轮换、RDS 集成、vs Parameter Store
 - [ ] P1 `security/waf-shield-firewall.html` — Web ACL、Shield、Network Firewall
 - [ ] P1 `security/ram.html` — 共享资源类型、与 Organizations 集成
@@ -149,11 +159,11 @@
 - [ ] P2 `security/inspector-macie.html` — 漏洞 / 敏感数据发现
 - [ ] P2 `security/certificate-manager.html` — 公有/私有 CA、CloudFront 证书区域
 
-### 3.6 管理与治理（0 / 9）
+### 3.6 管理与治理（3 / 9）
 
-- [ ] P0 `management/cloudformation.html` — 从零编写：Stack vs StackSets、Change Set、Nested Stack、Drift
-- [ ] P0 `management/cloudwatch.html` — 指标、Log Insights、Alarms、跨账号
-- [ ] P0 `management/cloudtrail.html` — Trail 类型、日志完整性、组织级 Trail
+- [x] `management/cloudformation.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖模板与 Stack 生命周期、Change Set、Stack Policy、Drift、Nested Stack、StackSets、资源保留与执行角色
+- [x] `management/cloudwatch.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Metrics、Agent、Alarms、Logs Insights、Metric Filters、OAM 跨账号观测、容器监控与服务边界
+- [x] `management/cloudtrail.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖事件类别、组织/多区域 Trail、S3 与 Logs 交付、完整性验证、Lake/Insights 与费用边界
 - [ ] P0 `management/config.html` — Rules、合规时间线、自动修复、Aggregator
 - [ ] P1 `management/systems-manager.html` — Session Manager、Patch Manager、Parameter Store
 - [ ] P1 `management/cost-management.html` — Savings Plans、Budgets、Cost Allocation Tags
@@ -256,9 +266,19 @@
 | `compute/lambda.html` | 6 |
 | `compute/fargate-ecs.html` | 6 |
 | `storage/ebs.html` | 6 |
-| **合计** | **约 70** |
+| `storage/efs.html` | 6 |
+| `networking/elb.html` | 6 |
+| `database/rds-aurora.html` | 6 |
+| `database/dynamodb.html` | 6 |
+| `security/kms-cloudhsm.html` | 6 |
+| `security/organizations-scp.html` | 6 |
+| `security/iam-identity-center.html` | 6 |
+| `management/cloudformation.html` | 6 |
+| `management/cloudwatch.html` | 6 |
+| `management/cloudtrail.html` | 6 |
+| **合计** | **约 130** |
 
-> “70 道”是根据页面内场景题标题统计的手写场景题，不是 CSV 中的 529 道。首页“529 道题库待整理”目前只是数据储备，不是已完成状态。
+> “130 道”是根据页面内场景题标题统计的手写场景题，不是 CSV 中的 529 道。首页“529 道题库待整理”目前只是数据储备，不是已完成状态。
 
 ### 题库化前需要补的元数据
 
@@ -307,7 +327,7 @@ CSV 没有“服务 / 分类”标签。要把 529 题挂到对应服务页或�
 
 1. 先看 `git status`，确认第 7 节的工作区状态。
 2. 打开本文件第 3 节，从 P0 且 `[ ]` 的第一项开始。
-3. 不要读取 `old/` 历史归档；所有正文从零编写，只参考现有 13 篇正文的结构与写法。
+3. 不要读取 `old/` 历史归档；所有正文从零编写，只参考现有 23 篇正文的结构与写法。
 4. 新建正文后，确认分类页已有同名链接；如果链接写错（如 App Runner），顺手修正入口页。
 5. 完成后更新本文件，再继续下一篇。
 6. 每完成 3–5 篇，跑一次断链检查并提交一次 Git。
@@ -405,12 +425,12 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 ### 8.6 P2：首页统计与事实不符
 
-- 首页写“74 个文档”，实际 12 篇正文 + 12 个分类入口 + 根页。
-- 首页写“529 道真题”，实际只有 CSV 原料，页面内约 64 道手写场景题。
+- 首页写“74 个文档”，实际 23 篇正文 + 12 个分类入口 + 根页。
+- 首页写“529 道真题”，实际只有 CSV 原料，页面内约 130 道手写场景题。
 - 首页写“11 大类”，实际有 12 个分类入口页（`hybrid-edge` 未挂载）。
 - `networking` 首页写“10 个服务”，分类页实际 9 项。
 
-建议：在内容未完成前改为“12 篇已上线 / 66 篇待补 / 529 道题库待整理”，或完成后再恢复宣传数字。
+建议：在内容未完成前改为“23 篇已上线 / 55 篇待补 / 529 道题库待整理”，或完成后再恢复宣传数字。
 
 **已处理（2026-11-02）：** 首页统计已改为“12 / 78 篇正文已完成”“529 道题库待整理”，页脚同步调整。
 
@@ -441,10 +461,10 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | ~~4~~ | ~~`compute/auto-scaling.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
 | ~~5~~ | ~~`compute/lambda.html`~~ | ✅ 已完成（2026-11-02） | 从零编写；与 CloudFront/Edge 交叉引用 |
 | ~~6~~ | ~~`storage/ebs.html`~~ | ✅ 已完成（2026-11-02） | 从零编写；引用 EC2 实例存储对比 |
-| 7 | `storage/efs.html` | 共享文件存储核心 | 从零编写；引用 EBS 块存储对比 |
-| 8 | `database/rds-aurora.html` | 数据库最高频 | 从零编写 |
-| 9 | `database/dynamodb.html` | 数据库最高频 | 从零编写 |
-| 10 | `security/kms-cloudhsm.html` | 安全高频，与 IAM/S3 交叉 | 从零编写；引用 S3 加密章节 |
+| ~~7~~ | ~~`storage/efs.html`~~ | ✅ 已完成（2026-11-02） | 从零编写；引用 EBS 块存储对比 |
+| ~~8~~ | ~~`database/rds-aurora.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
+| ~~9~~ | ~~`database/dynamodb.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
+| ~~10~~ | ~~`security/kms-cloudhsm.html`~~ | ✅ 已完成（2026-11-02） | 从零编写；引用 S3 加密章节 |
 
 完成这批后，再补 `architecture-patterns.html`，最后处理题库化与全站校准。
 
@@ -452,7 +472,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 ## 10. 历史归档说明
 
-`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。新正文一律基于现有 13 篇正文的模板从零编写。
+`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。新正文一律基于现有 23 篇正文的模板从零编写。
 
 是否保留、删除或从 Pages 构建中排除，见第 8.7 节。
 
