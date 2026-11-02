@@ -1,6 +1,6 @@
 # AWS SAP-C02 备考站 · 项目进度与续写指南
 
-> 快照时间：2026-11-02
+> 快照时间：2026-11-03
 > 当前 HEAD：`29642d4 改为使用Trae版本`
 > 扫描范围：根目录与 12 个分类目录下的 HTML、`input/exam.csv`；`old/` 仅登记为历史归档，不读取其内容
 > 用途：中断后直接从第 3、4、9 节继续，不需要重新盘点仓库。
@@ -13,14 +13,14 @@
 |---|---|
 | 根导航页 | 已完成；各分类卡片已标注完成进度，未创建的 `architecture-patterns.html` 入口已禁用，无断链 |
 | 分类入口页 | 12 个已完成（根导航挂了 11 个，`hybrid-edge` 未挂载） |
-| 服务正文 | **已完成 52 篇 / 导航规划 78 篇（去重）＝ 66.7%** |
-| 未创建正文 | **26 篇**（78 篇规划减去已完成 52 篇；含已禁用入口的 `architecture-patterns.html`） |
+| 服务正文 | **已完成 64 篇 / 导航规划 78 篇（去重）＝ 82.1%** |
+| 未创建正文 | **14 篇**（78 篇规划减去已完成 64 篇；含已禁用入口的 `architecture-patterns.html`） |
 | 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
 | 正文内场景题 | 各正文内嵌手写场景题，另有 529 道参考考题尚未题库化 |
-| 推荐下一篇 | `analytics/glue.html`（P0；从零编写） |
+| 推荐下一篇 | `migration/migration-strategy.html`（P0） |
 | 最大阻塞 | 剩余正文量大，且 529 题尚未按服务归类、题库化；导航/命名旧规范已清理 |
 
-**一句话：站点骨架和 52 篇服务正文已经成形，剩余 26 篇正文、529 道参考题的归类与题库化、全站断链修复尚未完成。**
+**一句话：站点骨架和 64 篇服务正文已经成形，剩余 14 篇正文、529 道参考题的归类与题库化、全站断链修复尚未完成。**
 
 ---
 
@@ -30,7 +30,7 @@
 |---|---|---:|---|
 | 根导航页 | `index.html` | 1 | 手工维护的 11 分类卡片入口，设计完成 |
 | 分类入口页 | `<category>/index.html` | 12 | 11 个已挂到根页，`hybrid-edge/index.html` 未挂载 |
-| 服务正文 | `<category>/*.html` | **52** | 当前完成正文见下表；本次补齐安全分类剩余 7 篇 |
+| 服务正文 | `<category>/*.html` | **64** | 当前完成正文见下表；本次补齐分析分类 7 篇 |
 | 参考考题库 | `input/exam.csv` | **529 题** | 含题干、选项、答案、中文解析；只读参考，未加工成页面 |
 | 历史归档正文 | `old/**/*.html` | 10 篇（1 篇 0 字节） | **历史归档，禁止读取或作为续写素材** |
 | 历史归档架构图 | `old/Draw.io/*.drawio` | 4 张 | **历史归档，不读取、不复用** |
@@ -109,7 +109,7 @@
 | 存储 | `storage/index.html` | 7 | 7 | 0 | 100% | P0 |
 | 数据库 | `database/index.html` | 6 | 6 | 0 | 100% | P0 |
 | 安全、身份与合规 | `security/index.html` | 11 | 11 | 0 | 100% | P0 |
-| 管理与治理 | `management/index.html` | 4 | 9 | 5 | 44.4% | P0 |
+| 管理与治理 | `management/index.html` | 9 | 9 | 0 | 100% | P0 |
 | 应用集成 | `application-integration/index.html` | 6 | 6 | 0 | 100% | P1 |
 | 分析 | `analytics/index.html` | 0 | 7 | 7 | 0% | P2 |
 | 迁移与传输 | `migration/index.html` | 0 | 4 | 4 | 0% | P2 |
@@ -117,7 +117,7 @@
 | 机器学习与 AI | `ml/index.html` | 0 | 2 | 2 | 0% | P3 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 0 | 3 | 3 | 0% | P3 |
 | 综合专题 | 根页直达 | 0 | 1 | 1 | 0% | P1 |
-| **合计** |  | **52** | **78** | **26** | **66.7%** |  |
+| **合计** |  | **57** | **78** | **21** | **73.1%** |  |
 
 > 根页写的“74 个文档”是旧口径 / 合并页口径；按当前导航实际目标去重后是 78 篇。完成全部正文后再统一校准首页数字。
 
@@ -188,17 +188,17 @@
 - [x] P2 `security/inspector-macie.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖 EC2/ECR/Lambda 漏洞发现、Macie S3 敏感数据发现与多账号治理
 - [x] P2 `security/certificate-manager.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖公有/私有证书、CloudFront us-east-1、续订与 ACM Private CA
 
-### 3.6 管理与治理（4 / 9）
+### 3.6 管理与治理（9 / 9）
 
 - [x] `management/cloudformation.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖模板与 Stack 生命周期、Change Set、Stack Policy、Drift、Nested Stack、StackSets、资源保留与执行角色
 - [x] `management/cloudwatch.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Metrics、Agent、Alarms、Logs Insights、Metric Filters、OAM 跨账号观测、容器监控与服务边界
 - [x] `management/cloudtrail.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖事件类别、组织/多区域 Trail、S3 与 Logs 交付、完整性验证、Lake/Insights 与费用边界
 - [x] `management/config.html` — 完成日期：2026-11-02；12 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖 Recorder、配置历史、Rules、自动修复、Conformance Pack、Aggregator 与组织治理
-- [ ] P1 `management/systems-manager.html` — Session Manager、Patch Manager、Parameter Store
-- [ ] P1 `management/cost-management.html` — Savings Plans、Budgets、Cost Allocation Tags
-- [ ] P2 `management/control-tower.html` — Landing Zone、Guardrails、Account Factory
-- [ ] P2 `management/service-catalog.html` — Portfolio、Product、合规自助服务
-- [ ] P2 `management/trusted-advisor.html` — 5 类检查、支持计划、与 Config 对比
+- [x] P1 `management/systems-manager.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Session Manager、Patch Manager、Parameter Store、Run Command、Automation 与受管节点权限/网络
+- [x] P1 `management/cost-management.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Savings Plans、RI/Spot、Budgets、成本分配标签、Cost Explorer 与 CUR
+- [x] P2 `management/control-tower.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Landing Zone、预防/检测/主动控制、Account Factory、既有账号注册与治理漂移
+- [x] P2 `management/service-catalog.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Portfolio/Product、Launch/Template/StackSet 约束、共享与产品生命周期
+- [x] P2 `management/trusted-advisor.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖五类检查、支持计划差异、组织视图、Service Quotas 与 Config 边界
 
 > Systems Manager 页面从零编写；不要从历史归档补内容。
 
@@ -211,15 +211,15 @@
 - [x] P2 `application-integration/appsync.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖 GraphQL Schema、Resolver、数据源、授权模式、GraphQL Subscription / AppSync Events、缓存、N+1 与离线冲突处理
 - [x] P2 `application-integration/mq.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖 ActiveMQ/RabbitMQ、协议兼容、部署高可用、VPC 安全、迁移规划、运维监控及 SQS/SNS 选型
 
-### 3.8 分析（0 / 7，另有 1 篇跨模块 Redshift）
+### 3.8 分析（7 / 7，另有 1 篇跨模块 Redshift）
 
-- [ ] P0 `analytics/glue.html` — Data Catalog、Crawler、ETL Job、Bookmark
-- [ ] P0 `analytics/athena.html` — 分区优化、压缩、Federated Query、成本
-- [ ] P0 `analytics/kinesis.html` — KDS vs Firehose vs Analytics、分片、EFO
-- [ ] P1 `analytics/opensearch.html` — 日志分析、跨集群搜索、访问控制
-- [ ] P1 `analytics/emr.html` — 集群类型、Spot、与 S3 数据湖
-- [ ] P2 `analytics/msk.html` — 托管 Kafka、与 Kinesis 对比
-- [ ] P2 `analytics/quicksight-lake-formation.html` — SPICE、列级权限、跨账号共享
+- [x] P0 `analytics/glue.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Data Catalog、Crawler、ETL Job、Bookmark、权限与数据湖架构
+- [x] P0 `analytics/athena.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖分区/列式格式优化、Federated Query、Workgroup 与扫描成本
+- [x] P0 `analytics/kinesis.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Data Streams、Data Firehose、Managed Flink、分片、EFO 与可靠性
+- [x] P1 `analytics/opensearch.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖日志摄取、分片、VPC/FGAC、跨集群搜索与快照
+- [x] P1 `analytics/emr.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 EC2/Serverless/EKS、节点角色、Spot、S3 数据湖与安全
+- [x] P2 `analytics/msk.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Provisioned/Serverless、Kafka 分区/消费者、MSK Connect、安全与 Kinesis 选型
+- [x] P2 `analytics/quicksight-lake-formation.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 SPICE/Direct Query、RLS/CLS、Lake Formation 与跨账号共享
 
 > 分类页第 7 张卡片链接到 `database/redshift.html`，不计入本分类的 7 篇；正文位于数据库模块。
 
@@ -523,5 +523,6 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-02 | 新增 `application-integration/sqs-sns.html`：9 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖 SQS Standard/FIFO、可见性超时、长轮询、DLQ、SNS Fan-out、过滤、授权与加密；应用集成进度更新至 1 / 6，正文完成数校准为 27 / 78 | `application-integration/sqs-sns.html`、`application-integration/index.html`、`index.html`、`PROGRESS.md` | P0：`application-integration/eventbridge.html` |
 | 2026-11-02 | 完成应用集成剩余 5 篇正文：EventBridge、Step Functions、API Gateway、AppSync、Amazon MQ；每篇含 6 道场景题、16 张速记卡、3 道快速自测；分类页 6 / 6、首页总数和进度统计同步更新为 32 / 78 | `application-integration/*.html`、`application-integration/index.html`、`index.html`、`PROGRESS.md` | P0：`analytics/glue.html` |
 | 2026-11-02 | 完成计算分类剩余 5 篇正文：EKS、App Runner、Elastic Beanstalk、Batch、Outposts/Local Zones/Wavelength；每篇含 6 道场景题、18 张速记卡、3 道快速自测；计算分类更新为 9 / 9，首页及进度统计更新为 37 / 78；边缘主题采用唯一计算正文避免重复 | `compute/*.html`、`compute/index.html`、`index.html`、`PROGRESS.md` | 下一分类按优先级继续 |
+| 2026-11-03 | 完成管理与治理分类剩余 5 篇正文：Systems Manager、成本管理、Control Tower、Service Catalog、Trusted Advisor；每篇含 6 道场景题、18 张速记卡和快速自测；分类入口开放，管理模块更新至 9 / 9，全站正文统计更新为 57 / 78 | `management/*.html`、`management/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `analytics/glue.html`（P0） |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Systems Manager 考点速查：Session Manager、Patch Manager、Parameter Store、Run Command、Automation 与混合节点运维。">
+<title>AWS SAP-C02｜Systems Manager 考试速查手册</title>
+<style>
+:root{--bg:#f4f7fb;--paper:#fff;--ink:#172033;--muted:#64748b;--line:#e2e8f0;--blue:#2563eb;--soft:#eff6ff;--green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;--shadow:0 8px 28px rgba(15,23,42,.06)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:44px 0 36px}header h1{font-size:clamp(28px,5vw,42px);line-height:1.2;margin:12px 0}header p{color:#dbeafe;max-width:820px}.eyebrow{font-size:13px;letter-spacing:.12em;color:#bfdbfe}.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.pill{border:1px solid #ffffff50;background:#ffffff18;padding:4px 11px;border-radius:999px;font-size:13px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}button{border:0;border-radius:8px;padding:8px 12px;background:var(--blue);color:#fff;font-weight:600;cursor:pointer}button.secondary{background:#e2e8f0;color:#334155}
+.layout{display:grid;grid-template-columns:235px minmax(0,1fr);gap:24px;padding:26px 0 56px}nav,section{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}nav{position:sticky;top:16px;align-self:start;padding:16px;max-height:calc(100vh - 32px);overflow:auto}nav strong{display:block;margin-bottom:8px}nav a{display:block;padding:5px 7px;color:#475569;font-size:14px;border-radius:6px}nav a:hover{background:var(--soft);text-decoration:none}main{min-width:0}section{padding:24px;margin-bottom:18px;scroll-margin-top:16px}h2{font-size:23px;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}h3{font-size:18px;margin:20px 0 8px}p{margin:8px 0}ul,ol{padding-left:23px}li{margin:4px 0}.lead{font-size:17px;color:#334155}.callout{padding:13px 15px;border-left:4px solid var(--blue);background:var(--soft);border-radius:8px;margin:13px 0}.callout.green{border-color:var(--green);background:var(--green-soft)}.callout.orange{border-color:var(--orange);background:var(--orange-soft)}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f8fafc}.scenario{border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:11px 0}.scenario summary{cursor:pointer;font-weight:700}.scenario p{margin-bottom:0}.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0}.progress span{display:block;width:0;height:100%;background:#16a34a}.checklist{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}.checklist li{display:flex;gap:9px;border-bottom:1px solid #eef2f7;padding:7px 0}.checklist input{margin-top:7px;accent-color:var(--green);flex:none}.small,footer{font-size:13px;color:var(--muted)}code{background:#f1f5f9;padding:2px 5px;border-radius:4px}@media(max-width:820px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}.checklist{grid-template-columns:1fr}}@media print{body{background:white;font-size:12px}header{background:white;color:#111;padding:15px 0}header p,.eyebrow{color:#444}.layout{display:block}nav,.toolbar{display:none}section{box-shadow:none;break-inside:avoid;padding:14px}a{color:#111}}
+</style>
+</head>
+<body>
+<header><div class="container">
+ <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+ <h1>AWS Systems Manager<br>混合环境运维与参数管理</h1>
+ <p>Systems Manager 将 AWS 与混合环境中的受管节点纳入统一运维。题目常把它拆成远程访问、批量命令、补丁编排、参数/密钥存储与自动化工作流；先确认节点是否受管、权限是否到位，再选择对应能力。</p>
+ <div class="meta"><span class="pill">SAP-C02 · 管理 / 运维</span><span class="pill">Session Manager</span><span class="pill">Patch Manager</span><span class="pill">Parameter Store</span></div>
+ <div class="toolbar"><button onclick="window.print()">打印 / 另存为 PDF</button><button class="secondary" onclick="location.href='index.html'">返回管理分类</button></div>
+</div></header>
+<div class="container layout">
+<nav><strong>页面目录</strong><a href="#map">能力地图</a><a href="#managed">受管节点与权限</a><a href="#session">Session Manager</a><a href="#patch">Patch Manager</a><a href="#parameters">Parameter Store</a><a href="#automation">Run Command 与 Automation</a><a href="#selection">服务选型</a><a href="#scenarios">场景题解析</a><a href="#memory">考前速记卡</a><a href="#quiz">快速自测</a></nav>
+<main>
+<section id="map"><h2>一、Systems Manager 能力地图</h2>
+<p class="lead">Systems Manager 是运维控制面，不是单一的远程登录工具。核心流程是让节点成为 managed node，再由 IAM 身份和文档（SSM Documents）限定可执行的操作。</p>
+<div class="table-wrap"><table><thead><tr><th>需求</th><th>能力</th><th>常见考点</th></tr></thead><tbody>
+<tr><td>交互式运维访问</td><td>Session Manager</td><td>无需开放 SSH/RDP 入站端口；会话可记录到 S3 / CloudWatch Logs。</td></tr>
+<tr><td>跨节点执行命令</td><td>Run Command</td><td>按标签/资源组选择节点，异步执行、查看状态与输出。</td></tr>
+<tr><td>补丁合规</td><td>Patch Manager</td><td>Patch baseline、patch group、扫描/安装与维护窗口。</td></tr>
+<tr><td>集中配置值</td><td>Parameter Store</td><td>层级参数、版本、SecureString、IAM 与 KMS 权限。</td></tr>
+<tr><td>自动化运维流程</td><td>Automation</td><td>Runbook 将多步骤操作和 AWS API 串成可重复流程。</td></tr>
+</tbody></table></div>
+<div class="callout">服务能否管理节点取决于 SSM Agent、节点身份凭证、网络连通性和目标操作权限；安装 Agent 本身不等于已具备访问权限。</div></section>
+<section id="managed"><h2>二、受管节点、Agent 与权限边界</h2>
+<ul><li><b>节点：</b>EC2 实例、混合云服务器和边缘节点可注册为 managed node。SSM Agent 负责与 Systems Manager 服务通信；受支持的多数 Amazon Linux / Windows AMI 已预装，但仍需确认版本和运行状态。</li>
+<li><b>身份：</b>EC2 通常使用实例配置文件中的 SSM 权限；也可配置组织级默认主机管理。混合节点需按 Hybrid Activations 流程注册。人类操作者通过 IAM / Identity Center 获得 API 权限。</li>
+<li><b>网络：</b>节点需能向 SSM 等服务端点发起出站 HTTPS 通信。私有子网可使用 NAT，或为所需服务配置 Interface VPC Endpoints；不需要为 Session Manager 开放公网 SSH 入站。</li>
+<li><b>分层授权：</b>操作者权限控制谁能启动命令/会话；节点角色控制 Agent 能访问哪些服务；文档与资源策略进一步限制具体目标。记录会话还需对应的 S3、CloudWatch Logs 或 KMS 权限。</li></ul>
+<div class="callout orange">排障顺序：节点是否显示为 Online → Agent 状态/版本 → IAM 凭证和策略 → DNS、路由、端点安全组与出站网络 → 文档执行权限。</div></section>
+<section id="session"><h2>三、Session Manager：免入站端口的交互式会话</h2>
+<p>Session Manager 通过 SSM Agent 建立受控会话，避免维护堡垒机、SSH 私钥和开放管理端口。它支持 Linux shell、Windows PowerShell，以及对部分场景的端口转发；端口转发不是完整的 SSH 会话记录替代品。</p>
+<ul><li><b>前置条件：</b>目标为在线受管节点，Agent 能连接服务；调用者有启动会话权限，节点角色有必要的 Systems Manager 通信权限。</li><li><b>审计：</b>可将会话日志送到 CloudWatch Logs 或 S3，并可使用 KMS 加密。需事先配置目标日志组/存储桶、加密密钥权限和相应设置。</li><li><b>安全边界：</b>限制可连接的实例、文档、会话类型和端口；采用最小权限并审计启动者。不要把“无需入站端口”误解为“无需 IAM / 网络配置”。</li></ul>
+<div class="callout green">题目说“私有子网 EC2 不可开放 22/3389，希望集中授权、留存会话审计”时，优先考虑 Session Manager，并补齐 Agent、IAM、端点/出站和日志配置。</div></section>
+<section id="patch"><h2>四、Patch Manager：补丁基线与维护窗口</h2>
+<p>Patch Manager 可对受管节点进行补丁合规扫描和安装。补丁基线定义批准/拒绝规则及自动批准延迟；标签可将节点映射到 patch group（补丁组），维护窗口安排扫描或安装任务。补丁不会仅因启用服务就自动在任意时间安装。</p>
+<div class="table-wrap"><table><thead><tr><th>组件</th><th>作用</th><th>易错点</th></tr></thead><tbody>
+<tr><td>Patch baseline</td><td>定义操作系统补丁的批准规则、分类/严重性和延迟。</td><td>默认基线不一定满足组织的审批与例外要求。</td></tr>
+<tr><td>Patch group</td><td>通过指定标签值，将节点关联到适用基线。</td><td>标签键需按 Patch Manager 约定配置；确认节点实际命中预期组。</td></tr>
+<tr><td>Maintenance Window</td><td>在维护时段执行注册的任务，支持目标、任务和调度。</td><td>检查窗口持续时间、截止行为、并发/错误阈值及权限。</td></tr>
+<tr><td>Compliance</td><td>查看扫描/安装后的补丁合规状态，并可配合报表治理。</td><td>扫描、批准和安装是不同阶段；补丁基线不负责应用发布回滚。</td></tr>
+</tbody></table></div>
+<p>生产环境通常先扫描并分组，再在维护窗口安装；用分批目标、维护时段、重启策略、应用健康检查和回滚方案控制变更风险。</p></section>
+<section id="parameters"><h2>五、Parameter Store：配置参数与 SecureString</h2>
+<ul><li><b>层级路径：</b>使用如 <code>/prod/payments/endpoint</code> 组织环境/应用参数；支持版本、描述和按路径读取。不要将参数路径结构误当成 IAM 隔离的唯一手段。</li>
+<li><b>类型：</b>String、StringList 保存一般配置；SecureString 使用 AWS KMS 加密，读取解密值需要相应的 Parameter Store 与 KMS 权限。</li>
+<li><b>标准/高级参数：</b>高级参数支持更大的值容量、参数策略等增强功能，但有不同配额/计费；具体配额随服务文档更新。参数策略可用于到期、过期通知或变更通知等治理。</li>
+<li><b>选型边界：</b>Parameter Store 适合配置和简单密文参数；Secrets Manager 针对机密生命周期、自动轮换、数据库凭据集成等能力更完整。SecureString 不会自动轮换凭据。</li></ul>
+<div class="callout orange">SecureString 加密不代表有权解密：调用者的 IAM 权限、KMS key policy/grant、密钥状态和跨账号授权必须共同允许。</div></section>
+<section id="automation"><h2>六、Run Command、Automation 与其他运维能力</h2>
+<div class="table-wrap"><table><thead><tr><th>工具</th><th>适合任务</th><th>与其他能力的区别</th></tr></thead><tbody>
+<tr><td>Run Command</td><td>对一个或多个节点远程执行脚本/命令。</td><td>适合批量执行，不提供交互式 shell；可按标签选择目标。</td></tr>
+<tr><td>Automation</td><td>通过 Automation Runbook 执行多步骤、可追踪的 AWS 运维流程。</td><td>可作用于 AWS 资源并编排 Systems Manager/其他服务动作；支持审批与执行控制。</td></tr>
+<tr><td>State Manager</td><td>按关联和计划保持节点达到声明状态，如安装代理或应用配置。</td><td>持续维护期望配置；不同于一次性 Run Command。</td></tr>
+<tr><td>Inventory</td><td>收集节点软件、配置等清单信息。</td><td>用于资产可见性，不等同补丁安装或漏洞扫描。</td></tr>
+</tbody></table></div>
+<p>常见组合：Config 检出不合规 → EventBridge / Config remediation 调用 Automation Runbook → Run Command 或 Automation 修复 → 再由 Config 评估验证。</p></section>
+<section id="selection"><h2>七、服务边界与选型</h2>
+<div class="table-wrap"><table><thead><tr><th>题目需求</th><th>优先选项</th><th>补充核对</th></tr></thead><tbody>
+<tr><td>免开放 SSH 的管理员终端</td><td>Session Manager</td><td>受管节点、IAM、出站连接和会话日志配置。</td></tr>
+<tr><td>按计划给多台服务器安装补丁</td><td>Patch Manager + Maintenance Window</td><td>基线、标签目标、分批、重启和验证。</td></tr>
+<tr><td>安全存储参数并按环境读取</td><td>Parameter Store SecureString</td><td>KMS 权限；若需自动轮换凭据选 Secrets Manager。</td></tr>
+<tr><td>一次性批量运行命令</td><td>Run Command</td><td>实例筛选、超时、并发、输出和错误处理。</td></tr>
+<tr><td>可重复、多步资源修复</td><td>Automation Runbook</td><td>执行角色、审批、回滚与幂等性。</td></tr>
+</tbody></table></div></section>
+<section id="scenarios"><h2>八、场景题解析（6 题）</h2>
+<details class="scenario"><summary>1. 私有子网中的 Linux 实例不得开放 22 端口，管理员仍需交互式排障并留存会话记录。</summary><p>采用 Session Manager。确保 Agent 在线、节点出站到 SSM（必要时用 VPC endpoints）、操作者/实例角色授权，并配置 CloudWatch Logs 或 S3 会话记录。</p></details>
+<details class="scenario"><summary>2. 数百台 EC2 需要每月在批准时段安装经过测试的安全补丁。</summary><p>使用 Patch Manager 基线定义批准规则，按标签/patch group 分批目标，通过 Maintenance Window 安排扫描和安装，监控合规状态并验证应用。</p></details>
+<details class="scenario"><summary>3. 开发者需要读取应用配置，但不得解密生产数据库密码。</summary><p>按路径和资源 ARN 授权只读非敏感参数；生产凭据采用独立权限边界。SecureString 还需 KMS 权限，不能只依赖路径命名来隔离。</p></details>
+<details class="scenario"><summary>4. 一组受管节点需要立即执行同一诊断脚本，并返回每台机器的执行结果。</summary><p>选择 Run Command，按标签定位目标，限制并发与错误比例，设定超时并检查每个 invocation 的状态和输出。</p></details>
+<details class="scenario"><summary>5. Config 发现安全组违规后要自动执行多步修复，并保留可审计执行记录。</summary><p>将 Config remediation 指向 Systems Manager Automation Runbook，设置执行角色与必要审批/参数，并验证幂等性、失败处置及修复后的 Config 评估。</p></details>
+<details class="scenario"><summary>6. 凭据需要定期自动轮换，并在轮换时更新数据库凭据。</summary><p>优先 Secrets Manager 及其轮换集成；Parameter Store SecureString 提供加密存储，但本身不负责完整的秘密轮换生命周期。</p></details>
+</section>
+<section id="memory"><h2>九、考前速记卡</h2><p class="small">勾选已掌握项目，页面内进度自动更新。</p><div class="progress"><span id="progressBar"></span></div><p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>Managed node：</b>Agent + 节点身份 + 网络</span></li><li><input type="checkbox"><span><b>SSM Agent：</b>在线状态是运维能力前提</span></li>
+<li><input type="checkbox"><span><b>实例角色：</b>节点与 SSM 服务通信权限</span></li><li><input type="checkbox"><span><b>操作者 IAM：</b>决定谁可启动操作</span></li>
+<li><input type="checkbox"><span><b>Session Manager：</b>受控交互会话</span></li><li><input type="checkbox"><span><b>免入站端口：</b>不代表免 IAM/网络配置</span></li>
+<li><input type="checkbox"><span><b>会话日志：</b>CloudWatch Logs / S3，可配 KMS</span></li><li><input type="checkbox"><span><b>VPC Endpoint：</b>私网访问 SSM 服务的选项</span></li>
+<li><input type="checkbox"><span><b>Run Command：</b>一次性批量命令</span></li><li><input type="checkbox"><span><b>Automation：</b>多步骤运维 Runbook</span></li>
+<li><input type="checkbox"><span><b>Patch baseline：</b>补丁批准规则</span></li><li><input type="checkbox"><span><b>Patch group：</b>标签映射基线</span></li>
+<li><input type="checkbox"><span><b>Maintenance Window：</b>控制任务执行时机</span></li><li><input type="checkbox"><span><b>扫描 ≠ 安装：</b>补丁需明确工作流</span></li>
+<li><input type="checkbox"><span><b>Parameter Store：</b>分层管理参数</span></li><li><input type="checkbox"><span><b>SecureString：</b>KMS 加密且解密需授权</span></li>
+<li><input type="checkbox"><span><b>参数策略：</b>高级参数支持治理策略</span></li><li><input type="checkbox"><span><b>自动轮换：</b>凭据轮换优先看 Secrets Manager</span></li>
+</ul></section>
+<section id="quiz"><h2>十、快速自测</h2>
+<details class="scenario"><summary>1. Session Manager 连接失败，实例显示 Offline，首先应核对什么？</summary><p>Agent 是否运行、节点 IAM 凭证是否有效，以及实例到 SSM 服务端点的出站网络/DNS；操作者有权限也无法弥补节点不在线。</p></details>
+<details class="scenario"><summary>2. 需要周期性维持服务器具备指定软件和配置，而非只执行一次命令，应选什么？</summary><p>State Manager Association；Run Command 更适合一次性命令执行。</p></details>
+<details class="scenario"><summary>3. Parameter Store SecureString 读取时报 KMS AccessDenied，应该检查什么？</summary><p>调用者 IAM、KMS key policy/grant 以及跨账号授权和密钥状态，确保允许解密；不是重新创建普通 String。</p></details>
+</section>
+<section><h2>官方资料</h2><ul><li><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html" target="_blank" rel="noopener">AWS Systems Manager 用户指南</a></li><li><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html" target="_blank" rel="noopener">Session Manager</a></li><li><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager.html" target="_blank" rel="noopener">Patch Manager</a></li><li><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html" target="_blank" rel="noopener">Parameter Store</a></li></ul><p class="small">配额、支持的操作系统和区域能力可能变化；实施前核对最新 AWS 文档与计费说明。</p></section>
+</main></div><footer class="container">AWS SAP-C02 Systems Manager 复习笔记</footer>
+<script>
+function updateProgress(){const boxes=[...document.querySelectorAll('#memoryList input')];const done=boxes.filter(x=>x.checked).length;document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+</script>
+</body>
+</html>
