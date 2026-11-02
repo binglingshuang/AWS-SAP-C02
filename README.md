@@ -1,21 +1,34 @@
-# AWS SAP Exam
+# AWS SAP Exam 学习资料
 
 ## HTML 导航页
 
-在仓库根目录运行以下命令，递归扫描文件夹并更新 `index.html` 与 HTML 文件列表数据 `html-files.js`：
+本仓库整理 AWS Certified Solutions Architect – Professional（SAP-C02）备考资料，包括服务考点、架构笔记、复习手册和 Draw.io 架构图。
+
+在仓库根目录运行以下命令，递归扫描 HTML 学习资料并更新导航数据：
 
 ```powershell
 python tools\generate_index.py
 ```
 
-导航页会动态加载 `html-files.js` 中的数据。新增、删除或移动 HTML 文件后重新运行即可。生成器会排除 `.git` 目录和导航页自身。
+导航页 `index.html` 会读取 `html-files.js` 中的文件列表。新增、删除、移动或重命名 HTML 文件后，重新运行生成器即可同步导航。
 
+## 文件命名规范
+
+- 学习资料文件名使用小写英文和 kebab-case（单词之间用连字符 `-`），避免空格、下划线和含义不清的缩写。
+- SAP-C02 HTML 学习资料统一使用 `aws-sap-c02-<主题>-<内容>.html` 格式；主题写服务或架构领域，内容写资料类型或具体考点。
+- Draw.io 架构图使用相同前缀和 kebab-case，扩展名为 `.drawio`。
+- 保留现有主题目录用于分类；文件名应能单独说明内容，不依赖目录名才能看懂。
+- `index.html` 是导航页，`html-files.js` 和 `tools\generate_index.py` 是导航功能文件，不按学习资料规则重命名。
+
+示例：
+
+```text
+aws-sap-c02-cloudformation-exam-review.html
+aws-sap-c02-nat-gateway-vpc-flow-logs.html
+Draw.io\aws-sap-c02-client-vpn-solution.drawio
+```
 
 ## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
 
 ## Add your files
 

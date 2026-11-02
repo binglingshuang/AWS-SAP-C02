@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS SAP-C02 备考指南：SQS vs SNS 与高频解题技巧</title>
+    <style>
+        :root {
+            --aws-squid-ink: #232f3e;
+            --aws-orange: #ff9900;
+            --aws-blue: #0073bb;
+            --aws-light-gray: #f2f3f3;
+            --aws-dark-blue: #161e2e;
+            --text-color: #16191f;
+            --border-color: #eaeded;
+            --success-color: #1d8102;
+            --warning-color: #d13212;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #fafafa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-top: 6px solid var(--aws-orange);
+        }
+
+        header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--aws-squid-ink);
+            font-size: 28px;
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge {
+            background-color: var(--aws-orange);
+            color: #ffffff;
+            font-size: 14px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            color: #545b64;
+            font-size: 15px;
+            margin: 0;
+        }
+
+        h2 {
+            color: var(--aws-squid-ink);
+            font-size: 20px;
+            border-left: 4px solid var(--aws-blue);
+            padding-left: 12px;
+            margin-top: 35px;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            color: var(--aws-dark-blue);
+            font-size: 16px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--aws-squid-ink);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--aws-light-gray);
+        }
+
+        /* 卡片与高亮框 */
+        .card {
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box {
+            background-color: #f1f8ff;
+            border-left: 4px solid var(--aws-blue);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .warning-box {
+            background-color: #fdf2f2;
+            border-left: 4px solid var(--warning-color);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* 标签与关键术语 */
+        .keyword {
+            background-color: #e8f0fe;
+            color: var(--aws-blue);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        .rule-title {
+            font-weight: bold;
+            color: var(--aws-squid-ink);
+        }
+
+        ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* 解题秒杀卡片 */
+        .shortcut-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .shortcut-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-top: 3px solid var(--aws-blue);
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .shortcut-card .trigger {
+            font-size: 13px;
+            color: var(--warning-color);
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .shortcut-card .target {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--aws-squid-ink);
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #879596;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>AWS SAP-C02 核心考点：SQS vs SNS <span class="badge">解题指南</span></h1>
+        <p class="subtitle">针对 AWS Certified Solutions Architect – Professional 考试的解题逻辑、架构模式与秒杀技巧总结</p>
+    </header>
+
+    <!-- 第一部分：核心维度对比矩阵 -->
+    <section>
+        <h2>一、 SAP-C02 维度对比矩阵</h2>
+        <p>在 SAP-C02 考试中，系统架构的<b>可靠性 (Reliability)</b> 和 <b>解耦 (Decoupling)</b> 是高频考察点。理解两者机制上的差异是做对选择题的前提。</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>对比维度</th>
+                    <th>Amazon SQS (Simple Queue Service)</th>
+                    <th>Amazon SNS (Simple Notification Service)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>架构模式</b></td>
+                    <td><b>PULL（拉取模式）</b><br>消费者主动向队列轮询消息</td>
+                    <td><b>PUSH（推送模式）</b><br>消息到达后自动向所有订阅者广播</td>
+                </tr>
+                <tr>
+                    <td><b>消息持久化</b></td>
+                    <td><b>支持持久化</b><br>默认 4 天，最长可达 14 天。即使消费方不可用消息也不会丢。</td>
+                    <td><b>不持久化（即发即弃）</b><br>无内置消息排队存储机制（除非订阅端挂载 SQS 队列）。</td>
+                </tr>
+                <tr>
+                    <td><b>消费关系</b></td>
+                    <td><b>1-to-1（单播/竞争消费者模式）</b><br>一条消息仅被一个 Worker 处理并随后删除。</td>
+                    <td><b>1-to-N（多播/广播模式）</b><br>同一条消息会被副本化推送给所有符合条件的订阅者。</td>
+                </tr>
+                <tr>
+                    <td><b>流量控制</b></td>
+                    <td><b>天然支持削峰填谷</b><br>消费者控制拉取速率，应对下游瓶颈能力极强。</td>
+                    <td><b>无削峰能力</b><br>下游系统可能直接被高并发推送流量冲垮。</td>
+                </tr>
+                <tr>
+                    <td><b>消息过滤与排序</b></td>
+                    <td>支持 <span class="keyword">SQS FIFO</span>（确保严格顺序和仅一次处理）。</td>
+                    <td>支持 <span class="keyword">Subscription Filter Policies</span>（在主题层面过滤消息后再推送）。</td>
+                </tr>
+                <tr>
+                    <td><b>典型端点 (Endpoints)</b></td>
+                    <td>EC2, Lambda, ECS, 业务系统 Worker。</td>
+                    <td>SQS, Lambda, HTTP/HTTPS API, Email, SMS, Mobile Push。</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 第二部分：高频架构模式 -->
+    <section>
+        <h2>二、 考试高频架构：SNS + SQS 扇出模式 (Fan-out)</h2>
+        <div class="card">
+            <h3>核心应用场景：一次发布，并行异构处理 + 容错削峰</h3>
+            <p><b>场景描述：</b>某个关键业务事件发生（如“订单生成”），需要同时触发多个逻辑独立的服务（如：库存扣减、发票生成、风控审计、用户通知）。如果下游有服务处理缓慢甚至宕机，不能影响主业务或其他服务。</p>
+            <p><b>标准架构解法：</b></p>
+            <ul>
+                <li>生产者将业务事件发布至 <b>SNS Topic</b>。</li>
+                <li>为每个下游独立业务模块创建一个专属的 <b>SQS Queue</b>，并将这些 SQS 队列订阅到该 SNS Topic。</li>
+                <li>各业务服务的 Worker 节点分别从自己的 SQS 队列中 <span class="keyword">PULL</span> 消息并进行异步处理。</li>
+            </ul>
+        </div>
+
+        <div class="tip-box">
+            <span class="rule-title">💡 SAP-C02 考点变体：Cross-Account Fan-out（跨账号扇出）</span><br>
+            考试常结合 AWS Organizations 考察：允许不同 AWS 账号下的 SQS 队列订阅中央账号下的 SNS Topic。这需要配置 SQS 的 <span class="keyword">Resource-based Policy</span>（允许 `sns.amazonaws.com` 发送 `sqs:SendMessage` 权限），同时利用 SNS 的 Filter Policy 减少跨账号无效消息传输成本。
+        </div>
+    </section>
+
+    <!-- 第三部分：SAP-C02 秒杀解题技巧 -->
+    <section>
+        <h2>三、 SAP-C02 解题关键词与秒杀法则</h2>
+        
+        <div class="shortcut-grid">
+            <div class="shortcut-card">
+                <div class="trigger">题干模式 A：削峰与流量平抑</div>
+                <div class="target">SQS Queue + Auto Scaling Group</div>
+                <p style="font-size: 13px; color: #545b64; margin-top: 8px;">
+                    当题干提到“Spike in traffic（突发流量）”、“Downstream system cannot handle burst（下游无法处理突增流量）”时，必选基于 SQS 队列长度（Queue Depth/`ApproximateNumberOfMessagesVisible`）扩展 EC2 Worker 的方案。
+                </p>
+            </div>
+
+            <div class="shortcut-card">
+                <div class="trigger">题干模式 B：广播与解耦</div>
+                <div class="target">SNS + Multiple SQS (Fan-out)</div>
+                <p style="font-size: 13px; color: #545b64; margin-top: 8px;">
+                    当题干要求“Publish event to multiple independent applications asynchronously（将事件异步发布给多个独立应用）”，且强调“Message durability for each subscriber（保证各订阅者的消息持久性）”时，首选 SNS + SQS 组合。
+                </p>
+            </div>
+
+            <div class="shortcut-card">
+                <div class="trigger">题干模式 C：顺序与防重</div>
+                <div class="target">SQS FIFO + Message Group ID</div>
+                <p style="font-size: 13px; color: #545b64; margin-top: 8px;">
+                    当题干要求“Strict ordering（严格顺序）”和“Exactly-once processing（仅一次处理/去重）”时，直接排除 Standard SQS，锁定 SQS FIFO 队列。
+                </p>
+            </div>
+
+            <div class="shortcut-card">
+                <div class="trigger">题干模式 D：降低 API 轮询成本</div>
+                <div class="target">SQS Long Polling (WaitTimeSeconds > 0)</div>
+                <p style="font-size: 13px; color: #545b64; margin-top: 8px;">
+                    当题干提到“Reduce API calls / costs for ReceiveMessage（减少接收消息的 API 调用和成本）”或“Reduce empty responses（减少空响应）”时，正确答案必包含长轮询（Long Polling）。
+                </p>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <span class="rule-title">⚠️ SAP-C02 常见坑点与排除策略</span>
+            <ul>
+                <li><b>处理重试导致的重复消费：</b>如果题干提到“Worker 在处理消息期间，其他 Worker 又收到了相同的消息”，这通常不是因为 FIFO 未开启，而是因为 <span class="keyword">Visibility Timeout (可见性超时)</span> 设置过短！正确解法是增大 Visibility Timeout 或在代码中调用 `ChangeMessageVisibility`。</li>
+                <li><b>处理中毒消息 (Poison Message)：</b>当某些破坏性消息导致 Worker 反复崩溃、反复重试时，正确解法是配置 <span class="keyword">Dead-Letter Queue (DLQ)</span>，设置 `maxReceiveCount` 阈值。</li>
+                <li><b>SNS 消息丢失问题：</b>在考察高可用架构时，若直接将 HTTP Endpoint 或 Lambda 作为 SNS 的订阅端，在下游宕机时可能会丢消息。如果题目要求<b>无损 (Zero Data Loss)</b>，必须在 SNS 和下游应用之间插入 SQS 队列作为缓冲。</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        AWS SAP-C02 Exam Preparation Resource | Designed for Architectural Decision Making
+    </footer>
+</div>
+
+</body>
+</html>
