@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 AWS Config 考点速查：配置记录器、资源时间线、托管与自定义规则、自动修复、聚合器和组织级合规治理。">
+<title>AWS SAP-C02｜AWS Config 考试速查手册</title>
+<style>
+:root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;--primary:#2563eb;--soft:#eff6ff;--green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;--shadow:0 8px 28px rgba(15,23,42,.06)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}a{color:var(--primary);text-decoration:none}a:hover{text-decoration:underline}.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}header p{color:#dbeafe;max-width:760px;margin:0}.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}nav strong{display:block;margin-bottom:10px}nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}nav a:hover{background:var(--soft);color:var(--primary);text-decoration:none}main{min-width:0}section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}h3{font-size:19px;margin:26px 0 10px}p{margin:9px 0}ul,ol{padding-left:23px}li{margin:5px 0}.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--soft);border-left:4px solid var(--primary);margin:15px 0}.callout.green{background:var(--green-soft);border-color:var(--green)}.callout.orange{background:var(--orange-soft);border-color:var(--orange)}table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f8fafc;color:#334155;font-weight:700}tr:last-child td{border-bottom:0}.table-wrap{overflow-x:auto}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}.diagram .arrow{color:#64748b;font-weight:700}
+.checklist{list-style:none;padding:0}.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}button.secondary{background:#e2e8f0;color:#334155}.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}.quiz button{margin:5px 6px 5px 0}.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}.small{font-size:13px;color:var(--muted)}footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}@media print{body{background:#fff;font-size:12px}header{background:#fff;color:#111;padding:20px 0}header p,.eyebrow{color:#444!important}.pill{border:1px solid #aaa;color:#333}.layout{display:block;padding:10px 0}nav,.toolbar,.no-print{display:none!important}section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}a{color:#111;text-decoration:none}}
+</style>
+</head>
+<body>
+<header><div class="container">
+ <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+ <h1>AWS Config<br>资源配置与合规治理</h1>
+ <p>AWS Config 持续记录受支持 AWS 资源的配置状态和变化，并依据规则评估资源是否符合要求。它回答“资源现在是什么配置、过去如何变化、是否合规”；需要把记录范围、规则评估、修复执行和跨账号聚合组合起来，形成可验证的治理闭环。</p>
+ <div class="header-meta"><span class="pill">🔥 高频考点</span><span class="pill">SAP-C02</span><span class="pill">管理 / 治理</span><span class="pill">关键词：Recorder · Rules · Remediation · Aggregator</span></div>
+ <div class="toolbar no-print"><button onclick="window.print()">打印 / 另存为 PDF</button><button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button><button class="secondary" onclick="location.href='index.html'">返回管理分类</button></div>
+</div></header>
+<div class="container layout">
+<nav><strong>页面目录</strong>
+ <a href="#overview">一、Config 能力地图</a><a href="#recording">二、记录器与记录范围</a><a href="#history">三、配置项、时间线与交付</a><a href="#rules">四、规则与合规评估</a><a href="#remediation">五、自动修复与合规包</a><a href="#aggregator">六、聚合器与组织治理</a><a href="#operations">七、查询、告警与运维</a><a href="#comparison">八、服务边界与选型</a><a href="#scenarios">九、场景题解析</a><a href="#quick">十、关键词速查</a><a href="#memory">十一、考前速记卡</a><a href="#quiz">十二、快速自测</a>
+</nav>
+<main>
+<section id="overview">
+<h2>一、Config 能力地图</h2>
+<p class="lead">AWS Config 是资源配置清单、配置历史和合规评估服务。它先通过配置记录器采集配置，再按规则评估；需要时可执行修复，并通过聚合器汇总多个账号和区域的合规与配置数据。</p>
+<div class="diagram"><div class="node"><b>AWS 资源</b><br><small>EC2 · S3 · IAM · RDS …</small></div><span class="arrow">→</span><div class="node"><b>Config Recorder</b><br><small>记录配置项与变化</small></div><span class="arrow">→</span><div class="node"><b>Rules / Conformance Packs</b><br><small>评估是否符合要求</small></div><span class="arrow">→</span><div class="node"><b>治理动作</b><br><small>通知 · 修复 · 聚合</small></div></div>
+<div class="table-wrap"><table><thead><tr><th>组件</th><th>职责</th><th>典型问题</th></tr></thead><tbody>
+<tr><td>Configuration Recorder</td><td>指定需要记录的资源类型和记录频率，持续采集资源配置。</td><td>哪些资源的配置变化进入 Config？</td></tr>
+<tr><td>Configuration Item (CI)</td><td>某资源在某个时间点的配置快照与相关元数据。</td><td>该资源某一时刻是什么状态？</td></tr>
+<tr><td>Config Rule</td><td>用托管规则或自定义逻辑评估资源配置，产生合规结果。</td><td>资源是否满足安全/治理要求？</td></tr>
+<tr><td>Remediation</td><td>对不合规结果执行手动或自动修复动作，常用 Systems Manager Automation。</td><td>检测到偏差后如何纠正？</td></tr>
+<tr><td>Aggregator</td><td>跨账号、跨区域汇总 Config 数据，集中查看和查询，不替代源账号记录器。</td><td>组织里哪些账号/区域不合规？</td></tr>
+<tr><td>Conformance Pack</td><td>以 YAML 模板组合一组规则及可选修复配置，便于一致部署。</td><td>如何把一套合规基线部署到多个账户？</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>记忆主链：</b>记录器决定“看得到什么” → 规则决定“怎样算合规” → 修复决定“怎样纠正” → 聚合器决定“怎样集中观察”。任何一环缺失，治理闭环都会不完整。</div>
+</section>
+<section id="recording">
+<h2>二、记录器与记录范围</h2>
+<h3>Configuration Recorder：先采集，才有历史可评估</h3>
+<ul>
+<li>Config Recorder 按所选范围记录资源配置。规则只能评估已纳入记录范围且 Config 能识别的资源；配置规则本身不会自动打开所有类型的记录。</li>
+<li>记录器通常按区域配置。要覆盖多个区域，需要在目标区域启用并配置记录；多区域治理还要逐一确认区域范围及新启用区域的策略。</li>
+<li>可选择记录所有当前和未来受支持的资源类型，也可限定资源类型；还可按包含/排除范围控制记录对象。考试场景中要识别“所有资源”与“特定关键类型”的范围差别。</li>
+<li>资源类型的支持情况会随服务更新；不是每一种 AWS 资源都能被 Config 记录。先核对支持类型，再决定是否需其他 API、日志或清单机制补足。</li>
+<li>记录频率可按资源类型支持连续记录或每日记录。连续模式更适合需要及时配置变化和细粒度时间线的场景；每日记录降低变更采集频率，但不适合要求即时发现的控制。</li>
+<li>全球资源与区域资源要分别规划。某些全局资源类型的记录范围/区域行为有特殊规则，避免仅凭在单一区域启用就推断组织内所有全球资源都已覆盖。</li>
+</ul>
+<div class="callout orange"><b>常见误区：</b>“Config Rule 显示 compliant”不代表全账号所有资源均已被记录。检查记录器状态、记录资源类型、账号/区域覆盖与规则适用范围，再解释合规结果。</div>
+<h3>交付与权限准备</h3>
+<p>Config 需要将配置历史和快照交付到指定的 S3 Bucket，并可通过 SNS 通知相关变化。使用集中式 Bucket、客户管理 KMS 密钥或跨账号目标时，必须同时设计 Config 服务角色、Bucket Policy、KMS Key Policy 和组织授权；单独创建规则不能解决交付权限问题。</p>
+</section>
+<section id="history">
+<h2>三、配置项、时间线与交付</h2>
+<div class="table-wrap"><table><thead><tr><th>概念</th><th>含义</th><th>适合用途</th></tr></thead><tbody>
+<tr><td>Configuration Item</td><td>资源在特定时间点的配置表示，含资源标识、类型、关系、配置和时间等信息。</td><td>分析某次评估时资源状态及其上下文。</td></tr>
+<tr><td>Configuration History</td><td>按资源查看 Config 记录到的配置变化序列。</td><td>回答“什么时候改了安全组规则、改前改后是什么”。</td></tr>
+<tr><td>Configuration Timeline</td><td>在控制台按时间查看配置项和相关变更。</td><td>追踪单资源配置漂移、回溯事故时间线。</td></tr>
+<tr><td>Snapshot / S3 Delivery</td><td>定期或按需形成配置快照并交付到指定 S3 位置。</td><td>集中归档、合规留存、与数据分析工作流集成。</td></tr>
+<tr><td>SNS Notification</td><td>将 Config 变更通知发布到 SNS Topic，供订阅者消费。</td><td>通知系统或触发下游事件处理；需额外设计过滤和幂等。</td></tr>
+</tbody></table></div>
+<ul>
+<li>Config 历史关注资源配置状态及变化；CloudTrail 关注发起 API 调用的身份、时间和操作。遇到“改了什么”优先 Config，“谁调用 API 改的”关联 CloudTrail。</li>
+<li>配置历史与快照受记录范围、交付状态和保留期影响。若要求长期证据，明确 S3 生命周期、对象访问权限、加密、不可变保留和审计读取角色。</li>
+<li>启用 Config 后不代表可追溯启用之前的所有状态。设计调查与合规要求时，先确认采集开始时间、记录频率及资源类型支持。</li>
+<li>若资源删除，Config 可能保留资源删除状态/历史线索；应以具体资源和当前产品行为为准，不能把删除理解成审计证据必然消失。</li>
+</ul>
+<div class="callout green"><b>排查时间线：</b>确认资源类型受支持 → 目标区域记录器已启用 → 资源纳入记录范围 → 变更时间在采集开始后 → 检查交付与权限 → 关联 CloudTrail 确认操作者。</div>
+</section>
+<section id="rules">
+<h2>四、规则与合规评估</h2>
+<h3>托管规则 vs 自定义规则</h3>
+<div class="table-wrap"><table><thead><tr><th>类型</th><th>实现方式</th><th>适合情况</th><th>维护重点</th></tr></thead><tbody>
+<tr><td>AWS Managed Config Rule</td><td>使用 AWS 提供的规则标识符与参数配置，例如评估 S3 公有访问阻止或加密状态。</td><td>需求与现有托管规则匹配，想减少自建逻辑。</td><td>核对规则支持的资源类型、参数、触发方式和区域可用性。</td></tr>
+<tr><td>Custom Lambda Rule</td><td>由 Lambda 函数实现评估逻辑，可采用配置变更触发或定期触发。</td><td>需要自定义业务标准或检查跨资源条件。</td><td>函数权限、超时、错误处理、依赖与评估结果合规性。</td></tr>
+<tr><td>Custom Policy Rule</td><td>以 Guard DSL 描述配置策略，不必为每条策略编写 Lambda 评估代码。</td><td>偏声明式、希望版本化和复用策略表达式。</td><td>确保策略可表达目标逻辑，并验证参数及资源覆盖。</td></tr>
+</tbody></table></div>
+<h3>触发方式与结果解释</h3>
+<ul>
+<li><b>Configuration change trigger：</b>资源配置发生变化时评估适用规则，适合需要较快发现配置漂移的场景；及时性仍取决于资源变更进入 Config 的时延。</li>
+<li><b>Periodic trigger：</b>按指定周期运行评估，适合依赖时间、外部状态或需要定期复核的检查；不是“每次资源变化立即评估”。</li>
+<li>规则的评估范围可以通过资源类型、标签、资源 ID 或规则参数限定。范围太窄会漏检，范围太宽可能产生噪声或成本。</li>
+<li>Compliance 状态包括合规、不合规及评估/数据不足等非最终状态。尚未完成评估、不支持的资源或缺少配置数据，不应错误解释为已通过。</li>
+<li>规则只判断声明的条件，不会自动阻止资源创建或变更。若要求预防性阻止，可结合 IAM/SCP 权限边界、服务控制或其他预防控制。</li>
+<li>Config Rules 的合规结果是检查信号，不等于完整的安全审计或威胁检测；将其与 CloudTrail、Security Hub、GuardDuty 等按职责组合。</li>
+</ul>
+<div class="callout orange"><b>评估顺序：</b>资源是否被记录 → 规则是否适用于该资源 → 触发器是否启动评估 → 规则逻辑/参数是否正确 → 结果是 compliant、noncompliant 还是未评估。</div>
+</section>
+<section id="remediation">
+<h2>五、自动修复与合规包</h2>
+<h3>Remediation：发现问题后执行纠正</h3>
+<ul>
+<li>Config 可为不合规规则配置修复操作，常通过 Systems Manager Automation 文档执行；可先手动触发，也可为支持的规则配置自动修复。</li>
+<li>自动修复不是预防控制：资源可能先变为不合规，再由规则评估发现并启动修复。需要“创建时即阻止”时，应另配预防性控制。</li>
+<li>修复动作需要正确的 Automation 文档、参数、执行角色和目标资源权限。采用最小权限并限制允许调用的文档与参数，避免给自动化角色过宽管理权限。</li>
+<li>幂等性和安全护栏很重要：重复执行不应造成破坏；对有业务影响的动作先在测试账号验证，必要时使用手动批准、变更窗口和失败告警。</li>
+<li>评估是否修复成功需要回看资源状态并等待规则重新评估。Automation 执行成功和资源最终合规并非同一件事。</li>
+</ul>
+<h3>Conformance Pack：一组可复用的治理基线</h3>
+<p>Conformance Pack 通过模板组合多个 Config Rules，并可包含修复配置，用于将一套控制以一致方式部署到一个或多个账号/区域。组织级 Conformance Pack 适合集中部署；但它仍依赖目标账号的 Config 记录器、服务权限、规则支持范围和区域可用性。</p>
+<div class="table-wrap"><table><thead><tr><th>需求</th><th>优先方案</th><th>不要混淆</th></tr></thead><tbody>
+<tr><td>发现资源不符合基线</td><td>Config Rule / Conformance Pack</td><td>规则评估不是阻止变更</td></tr>
+<tr><td>不合规时自动纠正配置</td><td>Config Remediation + SSM Automation</td><td>修复权限不等于规则权限</td></tr>
+<tr><td>多个账号部署相同规则集</td><td>Organization Conformance Pack 或集中部署流程</td><td>部署规则不自动证明记录器已覆盖全部资源</td></tr>
+<tr><td>资源创建前阻止违规操作</td><td>SCP/IAM/服务端预防控制；视需求结合策略校验</td><td>自动修复属于事后检测/纠正</td></tr>
+</tbody></table></div>
+</section>
+<section id="aggregator">
+<h2>六、聚合器与组织治理</h2>
+<p>Config Aggregator 是组织范围的只读汇总视图，可从多个源账号和区域收集 Config 配置及合规数据，便于集中查看和高级查询。它本身不记录源资源，也不替代每个源账号/区域的 Configuration Recorder。</p>
+<ul>
+<li>聚合器可使用 AWS Organizations 集成来纳入组织账号，也可通过授权流程纳入非组织账号；具体源账号授权、组织权限和委派管理员设置必须完成。</li>
+<li>显式检查聚合器的账号和区域范围。新增成员账号、新启用区域或规则覆盖变化后，验证聚合视图是否包含预期来源。</li>
+<li>源账号必须启用 Config 并有有效记录数据；聚合器无法凭空补录源账号未收集的配置历史。</li>
+<li>Aggregator 用于集中只读查看与查询，不是把配置记录复制到管理账号，也不是跨账号自动修复编排器。</li>
+<li>组织级治理通常分离职责：源账号记录资源与评估规则；管理/委派账号部署聚合器并监控；独立修复角色按需操作资源。</li>
+</ul>
+<div class="callout green"><b>多账号覆盖检查：</b>组织授权有效 + 源账号/区域纳入 + 源端记录器运行 + 目标资源类型已记录 + 聚合器数据已刷新。只看到 Aggregator 资源不代表链路全部正常。</div>
+<h3>集中治理的推荐闭环</h3>
+<ol>
+<li>定义资源类型、区域范围、记录频率、数据保留和例外管理策略。</li>
+<li>在目标账号/区域启用记录器，建立可验证的 S3/SNS 交付与加密权限。</li>
+<li>使用托管规则优先覆盖标准控制，将自定义业务逻辑独立版本化并测试。</li>
+<li>以 Conformance Pack 部署一致规则，对高风险且安全的规则配置 SSM 自动修复。</li>
+<li>在集中治理账号创建 Aggregator，核验组织账号和区域覆盖，并将不合规趋势纳入运营看板。</li>
+<li>用 CloudTrail 记录治理策略、规则、记录器和修复权限的变更，定期复核例外与审计保留。</li>
+</ol>
+</section>
+<section id="operations">
+<h2>七、查询、告警与日常运维</h2>
+<h3>查询和事件联动</h3>
+<ul>
+<li>Config Advanced Query 可对 Config 资源配置数据使用类 SQL 语法进行筛选与聚合；跨账号/区域分析时结合 Aggregator，并关注查询支持的数据范围和结果字段。</li>
+<li>需要针对特定资源变更通知下游时，可使用 Config/SNS 通知或 EventBridge 的相应事件集成。设计告警时过滤事件类型、资源和严重性，避免把每次配置更新都变成高噪声告警。</li>
+<li>Config 回答状态和合规，CloudTrail 事件可帮助补充操作者和 API 上下文；将资源标识、时间窗口和账号/区域作为关联键。</li>
+</ul>
+<h3>成本、保留与故障定位</h3>
+<div class="table-wrap"><table><thead><tr><th>风险点</th><th>检查方向</th><th>治理建议</th></tr></thead><tbody>
+<tr><td>配置记录与评估费用增长</td><td>记录资源数量/类型、规则数量与评估频率、区域覆盖。</td><td>按合规目标选择连续/每日记录和规则触发方式，监测费用趋势。</td></tr>
+<tr><td>历史留存不满足审计</td><td>核对交付 Bucket、S3 生命周期、对象保留与 KMS 权限。</td><td>定义保留年限、归档层级、删除审批和独立审计读取角色。</td></tr>
+<tr><td>规则持续显示未评估</td><td>检查记录器、资源类型支持、规则触发类型和执行权限。</td><td>对照单个资源测试，并检查 Config 及 Lambda/SSM 相关错误。</td></tr>
+<tr><td>自动修复未执行</td><td>检查规则修复配置、Automation 文档参数、执行角色与目标权限。</td><td>查看 Automation 执行记录；将执行成功与合规复评分开验证。</td></tr>
+<tr><td>聚合数据不完整</td><td>核实来源账号授权、区域列表、Config 记录器状态与刷新。</td><td>从一个源账号/区域逐层验证，不要只看聚合器总体状态。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>故障排除顺序：</b>资源支持吗 → 记录器开启了吗 → 资源纳入范围了吗 → 规则触发和逻辑正确吗 → 评估权限有效吗 → 结果是否聚合 → 修复角色/SSM 执行是否成功 → 交付与费用是否符合预期。</div>
+</section>
+<section id="comparison">
+<h2>八、服务边界与选型</h2>
+<div class="table-wrap"><table><thead><tr><th>服务</th><th>核心问题</th><th>典型职责</th></tr></thead><tbody>
+<tr><td>AWS Config</td><td>资源是什么配置、配置如何变化、是否符合规则？</td><td>资源配置项、历史时间线、规则评估、Aggregator。</td></tr>
+<tr><td>CloudTrail</td><td>谁在何时调用了什么 AWS API？</td><td>管理/数据 API 活动审计；与 Config 结合定位变更主体。</td></tr>
+<tr><td>CloudWatch</td><td>指标或日志是否达到告警条件？</td><td>Metrics、Logs、Alarms、运行状况监控。</td></tr>
+<tr><td>Systems Manager</td><td>如何安全地执行运维自动化和修复？</td><td>Automation 文档、Run Command、Patch Manager、Session Manager。</td></tr>
+<tr><td>Organizations / SCP</td><td>组织成员账号允许执行哪些 API 操作？</td><td>账户治理与权限上限；可做预防控制，不提供资源历史时间线。</td></tr>
+<tr><td>Security Hub</td><td>如何集中汇总安全发现与标准检查结果？</td><td>安全态势汇总；Config 是某些控制的数据来源之一。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>一句话记忆：</b>配置状态/漂移 → Config；API 操作者/调用 → CloudTrail；指标/日志/阈值 → CloudWatch；执行修复 → Systems Manager；限制账号权限 → SCP/IAM。</div>
+</section>
+<section id="scenarios">
+<h2>九、场景题解析</h2>
+<div class="quiz"><h3>场景一：发现所有未加密 EBS 卷并持续跟踪</h3><p>安全团队需要跨账号和区域识别未加密卷，查看其后续状态，并集中呈现合规结果。</p><p><b>正确方向：</b>确保各源账号/区域记录 EBS 资源，配置适用的 Config Rule，再用 Config Aggregator 汇总组织范围的合规数据。</p><p><b>分析思路：</b>规则负责判断，Aggregator 负责集中汇总；两者都依赖源端 Config 记录链路。</p><p><b>排除：</b>只创建 Aggregator 不会自动开启源端记录器；仅靠 CloudTrail 也不能直接提供持续合规状态。</p></div>
+<div class="quiz"><h3>场景二：安全组开放管理端口时自动纠正</h3><p>组织希望在发现安全组不符合端口基线时自动执行受控修复，同时保留不合规记录。</p><p><b>正确方向：</b>使用 Config Rule 检测，再配置经测试的 SSM Automation remediation；限制执行角色权限并监控修复结果。</p><p><b>分析思路：</b>Config 先评估状态，Systems Manager 执行修复；修复动作应幂等并经过风险评估。</p><p><b>排除：</b>CloudWatch Alarm 是指标告警工具；SCP 可阻止 API，但不能替代事后配置历史与评估。</p></div>
+<div class="quiz"><h3>场景三：某资源变更后立即评估合规规则</h3><p>团队需要在资源配置发生变化后尽快重新检查规则，而不是固定每天扫描。</p><p><b>正确方向：</b>为适用的 Config Rule 使用 configuration-change trigger，并确保目标资源类型已由 Recorder 连续记录。</p><p><b>分析思路：</b>触发器选择要与规则语义和记录频率相配；数据未进入 Config 时规则无法及时评估。</p><p><b>排除：</b>Periodic trigger 面向周期性评估，不是变更触发；先启用规则但不启用记录也无法补齐配置事件。</p></div>
+<div class="quiz"><h3>场景四：多账号快速部署相同合规规则集</h3><p>平台团队要把一组标准 Config 规则和修复配置一致部署到组织成员账号。</p><p><b>正确方向：</b>使用组织级 Conformance Pack（按实际支持与权限配置），配合 Organizations 授权和源账号 Config 设置。</p><p><b>分析思路：</b>Conformance Pack 将一组规则作为基线管理；组织部署减少逐账号差异。</p><p><b>排除：</b>Aggregator 只汇总数据，不负责部署规则；CloudFormation StackSets 可部署资源，但不是 Config 规则基线的专用合规视图。</p></div>
+<div class="quiz"><h3>场景五：集中管理账号看不到部分区域的配置</h3><p>Aggregator 已创建，但某些新账号和新区域没有资源配置数据。</p><p><b>正确方向：</b>逐项核实源账号 Config Recorder 是否启用、资源类型是否被记录、目标区域是否纳入 Aggregator，以及组织授权是否完成。</p><p><b>分析思路：</b>Aggregator 不会替源端采集；新账号/区域需纳入并具备有效 Config 数据。</p><p><b>排除：</b>重复创建规则或扩大聚合器查询范围，不能修复源端未记录的问题。</p></div>
+<div class="quiz"><h3>场景六：确认是谁移除了某个合规 Bucket 的加密配置</h3><p>Config 时间线显示 Bucket 加密设置已变化，审计方还需要知道发起变更的 IAM 身份和 API。</p><p><b>正确方向：</b>用 Config 确认资源配置变化前后状态和时间，再关联 CloudTrail 中对应时间、区域、资源和 API 事件。</p><p><b>分析思路：</b>两个服务回答不同问题：Config 呈现状态，CloudTrail 记录操作行为。</p><p><b>排除：</b>Config 单独不一定给出完整操作者证据；只看 CloudTrail 也不如 Config 时间线直接比较资源状态。</p></div>
+</section>
+<section id="quick">
+<h2>十、关键词速查</h2>
+<div class="table-wrap"><table><thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead><tbody>
+<tr><td>资源现在/过去的配置</td><td>Configuration Item / History / Timeline</td><td>谁调用 API 要查 CloudTrail</td></tr>
+<tr><td>是否满足加密、公有访问、标签等基线</td><td>AWS Config Rule</td><td>确认资源纳入记录范围</td></tr>
+<tr><td>变化发生时重新评估</td><td>Configuration-change trigger</td><td>依赖配置记录及时到达</td></tr>
+<tr><td>每天/定期重新检查</td><td>Periodic trigger</td><td>不是实时变更触发</td></tr>
+<tr><td>自定义业务合规逻辑</td><td>Custom Lambda Rule / Custom Policy Rule</td><td>评估角色与函数执行权限</td></tr>
+<tr><td>发现不合规后自动改配置</td><td>Config Remediation + SSM Automation</td><td>检测后修复，不是预防拦截</td></tr>
+<tr><td>一组规则作为可复用基线</td><td>Conformance Pack</td><td>检查部署权限与记录器</td></tr>
+<tr><td>跨账号/区域集中合规视图</td><td>Config Aggregator</td><td>只汇总，不代替源端 Recorder</td></tr>
+<tr><td>资源配置变更操作者</td><td>Config 时间线 + CloudTrail</td><td>配置状态和 API 活动互补</td></tr>
+<tr><td>预防账号执行某类 API</td><td>Organizations SCP / IAM</td><td>Config 规则通常是检测型控制</td></tr>
+<tr><td>集中配置历史留存</td><td>Config S3 Delivery + 生命周期/保留策略</td><td>核对 Bucket/KMS/服务角色权限</td></tr>
+<tr><td>资源结果未评估</td><td>Recorder、覆盖范围、触发器、支持类型</td><td>不要当作 compliant</td></tr>
+</tbody></table></div>
+</section>
+<section id="memory">
+<h2>十一、考前速记卡</h2><p class="small">勾选已掌握项目，页面内进度自动更新。</p><div class="progress"><span id="progressBar"></span></div><p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>Recorder：</b>决定记录哪些受支持资源及其频率</span></li>
+<li><input type="checkbox"><span><b>区域范围：</b>每个目标区域都要验证记录器与覆盖</span></li>
+<li><input type="checkbox"><span><b>Configuration Item：</b>资源在特定时间点的配置状态</span></li>
+<li><input type="checkbox"><span><b>Config History：</b>回看资源配置变化</span></li>
+<li><input type="checkbox"><span><b>Config Rule：</b>评估配置是否符合要求</span></li>
+<li><input type="checkbox"><span><b>Managed Rule：</b>优先复用 AWS 托管检查</span></li>
+<li><input type="checkbox"><span><b>Custom Rule：</b>Lambda 或 Guard Policy 实现自定义逻辑</span></li>
+<li><input type="checkbox"><span><b>Change trigger：</b>配置变化时评估</span></li>
+<li><input type="checkbox"><span><b>Periodic trigger：</b>按周期评估</span></li>
+<li><input type="checkbox"><span><b>未评估：</b>不等于 compliant，检查数据和触发器</span></li>
+<li><input type="checkbox"><span><b>Remediation：</b>常用 SSM Automation 执行纠正</span></li>
+<li><input type="checkbox"><span><b>自动修复：</b>检测后纠正，不是创建前拦截</span></li>
+<li><input type="checkbox"><span><b>Conformance Pack：</b>将多条规则作为一组基线部署</span></li>
+<li><input type="checkbox"><span><b>Aggregator：</b>跨账号/区域只读汇总配置与合规数据</span></li>
+<li><input type="checkbox"><span><b>聚合器边界：</b>不替源账号开启 Recorder</span></li>
+<li><input type="checkbox"><span><b>Config + CloudTrail：</b>配置状态 + API 操作者证据</span></li>
+<li><input type="checkbox"><span><b>Config + SCP：</b>检测合规 + 预防权限控制</span></li>
+<li><input type="checkbox"><span><b>费用与留存：</b>记录范围、评估频率、S3 生命周期都要规划</span></li>
+</ul></section>
+<section id="quiz">
+<h2>十二、快速自测</h2><p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz"><b>1. 需要在组织管理账号集中查看多个账号和区域的 Config 合规结果，应使用什么？</b><br>
+<button class="secondary" onclick="showAnswer('q1',false)">A. CloudTrail Event History</button><button class="secondary" onclick="showAnswer('q1',true)">B. Config Aggregator，并确保源端记录器已启用</button><button class="secondary" onclick="showAnswer('q1',false)">C. 单个区域的 CloudWatch Dashboard</button><button class="secondary" onclick="showAnswer('q1',false)">D. SSM Session Manager</button>
+<div class="answer" id="q1"><b>正确答案：B。</b>Aggregator 汇总跨账号/区域数据，但源账号和区域仍需产生 Config 记录。</div></div>
+<div class="quiz"><b>2. 检测到 S3 Bucket 不符合加密要求后自动设置加密，适合的治理链路是什么？</b><br>
+<button class="secondary" onclick="showAnswer('q2',false)">A. 仅启用 CloudTrail</button><button class="secondary" onclick="showAnswer('q2',true)">B. Config Rule + SSM Automation remediation</button><button class="secondary" onclick="showAnswer('q2',false)">C. Config Aggregator 单独执行变更</button><button class="secondary" onclick="showAnswer('q2',false)">D. 只创建 SNS Topic</button>
+<div class="answer" id="q2"><b>正确答案：B。</b>Config 负责发现不合规，修复操作由已授权的 Automation 执行。</div></div>
+<div class="quiz"><b>3. Config 合规规则没有评估新建的资源，首先应检查什么？</b><br>
+<button class="secondary" onclick="showAnswer('q3',true)">A. Recorder 是否启用且包含资源类型/区域，规则触发条件是否正确</button><button class="secondary" onclick="showAnswer('q3',false)">B. 是否增加 CloudTrail Event History 保留天数</button><button class="secondary" onclick="showAnswer('q3',false)">C. 是否为聚合器添加修复权限</button><button class="secondary" onclick="showAnswer('q3',false)">D. 是否创建更多 IAM 用户</button>
+<div class="answer" id="q3"><b>正确答案：A。</b>规则依赖记录数据；还需验证资源支持情况、记录范围和触发器。</div></div>
+</section>
+<section><h2>官方资料</h2><ul>
+<li><a href="https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html" target="_blank" rel="noopener">AWS Config 开发人员指南</a></li>
+<li><a href="https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html#config-recording" target="_blank" rel="noopener">Config 资源记录与配置项</a></li>
+<li><a href="https://docs.aws.amazon.com/config/latest/developerguide/evaluate-config.html" target="_blank" rel="noopener">评估资源配置与 Config Rules</a></li>
+<li><a href="https://docs.aws.amazon.com/config/latest/developerguide/remediation.html" target="_blank" rel="noopener">Config Remediation</a></li>
+<li><a href="https://docs.aws.amazon.com/config/latest/developerguide/aggregate-data.html" target="_blank" rel="noopener">Config Aggregator 与聚合数据</a></li>
+<li><a href="https://docs.aws.amazon.com/config/latest/developerguide/conformance-packs.html" target="_blank" rel="noopener">Conformance Packs</a></li>
+</ul><div class="callout orange"><b>备考提醒：</b>资源支持类型、规则参数、区域可用性、记录频率和收费可能变化；按当前 AWS Config 文档及账户所在区域核实。本页为非官方复习资料，不构成 AWS 官方考试题或服务承诺。</div></section>
+</main></div>
+<footer class="container">AWS SAP-C02 AWS Config 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+<script>
+function updateProgress(){const boxes=[...document.querySelectorAll('#memoryList input')];const done=boxes.filter(x=>x.checked).length;document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){const el=document.getElementById(id);el.style.display='block';el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';}
+</script>
+</body>
+</html>
