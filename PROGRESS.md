@@ -13,14 +13,14 @@
 |---|---|
 | 根导航页 | 已完成；各分类卡片已标注完成进度，未创建的 `architecture-patterns.html` 入口已禁用，无断链 |
 | 分类入口页 | 12 个已完成（根导航挂了 11 个，`hybrid-edge` 未挂载） |
-| 服务正文 | **已完成 64 篇 / 导航规划 78 篇（去重）＝ 82.1%** |
-| 未创建正文 | **14 篇**（78 篇规划减去已完成 64 篇；含已禁用入口的 `architecture-patterns.html`） |
+| 服务正文 | **已完成 72 篇 / 导航规划 78 篇（去重）＝ 92.3%** |
+| 未创建正文 | **6 篇**（78 篇规划减去已完成 72 篇；含已禁用入口的 `architecture-patterns.html`） |
 | 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
 | 正文内场景题 | 各正文内嵌手写场景题，另有 529 道参考考题尚未题库化 |
-| 推荐下一篇 | `migration/migration-strategy.html`（P0） |
+| 推荐下一篇 | `architecture-patterns.html`（P1） |
 | 最大阻塞 | 剩余正文量大，且 529 题尚未按服务归类、题库化；导航/命名旧规范已清理 |
 
-**一句话：站点骨架和 64 篇服务正文已经成形，剩余 14 篇正文、529 道参考题的归类与题库化、全站断链修复尚未完成。**
+**一句话：站点骨架和 72 篇服务正文已经成形，剩余 6 篇正文、529 道参考题的归类与题库化、全站断链修复尚未完成。**
 
 ---
 
@@ -30,7 +30,7 @@
 |---|---|---:|---|
 | 根导航页 | `index.html` | 1 | 手工维护的 11 分类卡片入口，设计完成 |
 | 分类入口页 | `<category>/index.html` | 12 | 11 个已挂到根页，`hybrid-edge/index.html` 未挂载 |
-| 服务正文 | `<category>/*.html` | **64** | 当前完成正文见下表；本次补齐分析分类 7 篇 |
+| 服务正文 | `<category>/*.html` | **68** | 当前完成正文见下表；本次补齐迁移分类 4 篇 |
 | 参考考题库 | `input/exam.csv` | **529 题** | 含题干、选项、答案、中文解析；只读参考，未加工成页面 |
 | 历史归档正文 | `old/**/*.html` | 10 篇（1 篇 0 字节） | **历史归档，禁止读取或作为续写素材** |
 | 历史归档架构图 | `old/Draw.io/*.drawio` | 4 张 | **历史归档，不读取、不复用** |
@@ -93,6 +93,10 @@
 | `compute/elastic-beanstalk.html` | 计算 | — | — | 6 | 18 | 有 |
 | `compute/batch.html` | 计算 | — | — | 6 | 18 | 有 |
 | `compute/outposts-wavelength.html` | 计算 | — | — | 6 | 18 | 有 |
+| `devops/codepipeline.html` | DevOps | — | — | 6 | 18 | 有 |
+| `devops/codedeploy.html` | DevOps | — | — | 6 | 18 | 有 |
+| `devops/codecommit-build.html` | DevOps | — | — | 6 | 18 | 有 |
+| `devops/xray.html` | DevOps | — | — | 6 | 18 | 有 |
 
 这些正文共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
 
@@ -111,15 +115,15 @@
 | 安全、身份与合规 | `security/index.html` | 11 | 11 | 0 | 100% | P0 |
 | 管理与治理 | `management/index.html` | 9 | 9 | 0 | 100% | P0 |
 | 应用集成 | `application-integration/index.html` | 6 | 6 | 0 | 100% | P1 |
-| 分析 | `analytics/index.html` | 0 | 7 | 7 | 0% | P2 |
-| 迁移与传输 | `migration/index.html` | 0 | 4 | 4 | 0% | P2 |
-| DevOps | `devops/index.html` | 0 | 4 | 4 | 0% | P2 |
+| 分析 | `analytics/index.html` | 7 | 7 | 0 | 100% | P2 |
+| 迁移与传输 | `migration/index.html` | 4 | 4 | 0 | 100% | P2 |
+| DevOps | `devops/index.html` | 4 | 4 | 0 | 100% | P2 |
 | 机器学习与 AI | `ml/index.html` | 0 | 2 | 2 | 0% | P3 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 0 | 3 | 3 | 0% | P3 |
 | 综合专题 | 根页直达 | 0 | 1 | 1 | 0% | P1 |
-| **合计** |  | **57** | **78** | **21** | **73.1%** |  |
+| **合计** |  | **72** | **78** | **6** | **92.3%** |  |
 
-> 根页写的“74 个文档”是旧口径 / 合并页口径；按当前导航实际目标去重后是 78 篇。完成全部正文后再统一校准首页数字。
+> 根页统计已按当前导航实际目标去重口径更新为 72 / 78；剩余正文完成后继续同步校准。
 
 ---
 
@@ -223,21 +227,21 @@
 
 > 分类页第 7 张卡片链接到 `database/redshift.html`，不计入本分类的 7 篇；正文位于数据库模块。
 
-### 3.9 迁移与传输（0 / 4，另有 1 篇跨模块 DMS/SCT）
+### 3.9 迁移与传输（4 / 4，另有 1 篇跨模块 DMS/SCT）
 
-- [ ] P0 `migration/migration-strategy.html` — 7R、决策树、TCO、阶段划分
-- [ ] P0 `migration/application-migration.html` — MGN、Replication Agent、测试/切割
-- [ ] P0 `migration/datasync-transfer.html` — DataSync、Transfer Family、带宽管理
-- [ ] P1 `migration/migration-hub.html` — 项目跟踪、ADS、与 DMS/MGN 集成
+- [x] P0 `migration/migration-strategy.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 7R、策略决策树、商业案例/TCO、Assess/Mobilize/Migrate 阶段与波次规划
+- [x] P0 `migration/application-migration.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 MGN、Replication Agent、Staging Area、Test/Cutover/Finalize、网络准备与 DRS/VM Import 边界
+- [x] P0 `migration/datasync-transfer.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 DataSync 任务/带宽/验证、Transfer Family 协议/身份、Storage Gateway 与 Snow Family 选型
+- [x] P1 `migration/migration-hub.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Migration Hub 跟踪、ADS 发现方式、依赖/波次规划、状态集成及权限治理
 
 > 分类页第 4 张卡片链接到 `database/dms-sct.html`；正文位于数据库模块。
 
-### 3.10 DevOps（0 / 4）
+### 3.10 DevOps（4 / 4）
 
-- [ ] P1 `devops/codepipeline.html` — Stage/Action、跨账号部署、手动审批
-- [ ] P1 `devops/codedeploy.html` — 蓝绿/原地、AppSpec、回滚
-- [ ] P1 `devops/codecommit-build.html` — buildspec、缓存、CodeArtifact
-- [ ] P2 `devops/xray.html` — Trace/Segment、采样、Service Map
+- [x] P1 `devops/codepipeline.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Stage/Action、制品、跨账号/区域部署、审批与触发器
+- [x] P1 `devops/codedeploy.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 EC2/ECS/Lambda、蓝绿/原地、AppSpec、生命周期钩子与回滚
+- [x] P1 `devops/codecommit-build.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 CodeCommit、CodeBuild buildspec/缓存、CodeArtifact、私有网络与权限
+- [x] P2 `devops/xray.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Trace/Segment、上下文传播、采样、Service Map、Annotation 与权限
 
 ### 3.11 机器学习与 AI（0 / 2）
 
@@ -357,8 +361,8 @@ CSV 没有“服务 / 分类”标签。要把 529 题挂到对应服务页或�
 ### 6.1 恢复步骤
 
 1. 先看 `git status`，确认第 7 节的工作区状态。
-2. 打开本文件第 3 节，从 P0 且 `[ ]` 的第一项开始。
-3. 不要读取 `old/` 历史归档；所有正文从零编写，只参考现有 37 篇正文的结构与写法。
+2. 打开本文件第 3 节，从最高优先级的 `[ ]` 项开始。
+3. 不要读取 `old/` 历史归档；新正文从零编写，可参考现有正文的结构与写法。
 4. 新建正文后，确认分类页已有同名链接；如果链接写错（如 App Runner），顺手修正入口页。
 5. 完成后更新本文件，再继续下一篇。
 6. 每完成 3–5 篇，跑一次断链检查并提交一次 Git。
@@ -477,7 +481,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 ---
 
-## 9. 建议的续写顺序（下一批 10 篇）
+## 9. 第一批续写记录（10 篇，均已完成）
 
 | 顺序 | 文件 | 理由 | 编写方式 |
 |---:|---|---|---|
@@ -492,7 +496,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | ~~9~~ | ~~`database/dynamodb.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
 | ~~10~~ | ~~`security/kms-cloudhsm.html`~~ | ✅ 已完成（2026-11-02） | 从零编写；引用 S3 加密章节 |
 
-这批 10 篇均已完成。下一步按第 6.1 节从未完成的 P0 项继续，建议先写 `application-integration/sqs-sns.html`，再处理题库化与全站校准。
+这批 10 篇均已完成。DevOps 四篇正文现已补齐；下一篇建议为 `architecture-patterns.html`（P1），后续继续处理剩余正文、题库化与全站校准。
 
 ---
 
@@ -524,5 +528,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-02 | 完成应用集成剩余 5 篇正文：EventBridge、Step Functions、API Gateway、AppSync、Amazon MQ；每篇含 6 道场景题、16 张速记卡、3 道快速自测；分类页 6 / 6、首页总数和进度统计同步更新为 32 / 78 | `application-integration/*.html`、`application-integration/index.html`、`index.html`、`PROGRESS.md` | P0：`analytics/glue.html` |
 | 2026-11-02 | 完成计算分类剩余 5 篇正文：EKS、App Runner、Elastic Beanstalk、Batch、Outposts/Local Zones/Wavelength；每篇含 6 道场景题、18 张速记卡、3 道快速自测；计算分类更新为 9 / 9，首页及进度统计更新为 37 / 78；边缘主题采用唯一计算正文避免重复 | `compute/*.html`、`compute/index.html`、`index.html`、`PROGRESS.md` | 下一分类按优先级继续 |
 | 2026-11-03 | 完成管理与治理分类剩余 5 篇正文：Systems Manager、成本管理、Control Tower、Service Catalog、Trusted Advisor；每篇含 6 道场景题、18 张速记卡和快速自测；分类入口开放，管理模块更新至 9 / 9，全站正文统计更新为 57 / 78 | `management/*.html`、`management/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `analytics/glue.html`（P0） |
+| 2026-11-03 | 完成迁移与传输剩余 4 篇正文：7R 迁移策略、MGN、DataSync/Transfer Family、Migration Hub/ADS；每篇含 6 道场景题、18 张速记卡和 3 道快速自测；迁移分类 4 / 4（另有数据库模块 DMS/SCT），分类页和首页状态同步，全站正文统计更新为 68 / 78 | `migration/*.html`、`migration/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `devops/codepipeline.html`（P1） |
+| 2026-11-03 | 完成 DevOps 4 篇正文：CodePipeline、CodeDeploy、CodeBuild/CodeCommit/CodeArtifact、X-Ray；每篇含 6 道场景题、18 张速记卡和 3 道快速自测；分类页 4 / 4 开放，首页和进度统计同步更新为 72 / 78 | `devops/*.html`、`devops/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `architecture-patterns.html`（P1） |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。

@@ -315,13 +315,13 @@
 </header>
 
 <main>
-  <p class="section-label">服务导航 · 5 个核心服务 · 已完成 0 / 5</p>
+  <p class="section-label">服务导航 · 5 个核心服务 · 已完成 5 / 5</p>
 
   <div class="grid">
 
     <!-- 1. 云迁移策略 (7R) -->
-    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
-      <span class="status-badge status-todo">待补充</span>
+    <a class="card" href="migration-strategy.html">
+      <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">🗺️</span>
@@ -339,8 +339,8 @@
     </a>
 
     <!-- 2. AWS Application Migration Service -->
-    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
-      <span class="status-badge status-todo">待补充</span>
+    <a class="card" href="application-migration.html">
+      <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">🚀</span>
@@ -359,8 +359,8 @@
     </a>
 
     <!-- 3. AWS DataSync / Transfer Family -->
-    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
-      <span class="status-badge status-todo">待补充</span>
+    <a class="card" href="datasync-transfer.html">
+      <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">🔄</span>
@@ -379,7 +379,7 @@
 
     <!-- 4. AWS DMS / SCT（交叉链接） -->
     <a class="card" href="../database/dms-sct.html">
-      <span class="status-badge status-partial">见数据库模块</span>
+      <span class="status-badge status-done">跨模块已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">🗃️</span>
@@ -398,8 +398,8 @@
     </a>
 
     <!-- 5. AWS Migration Hub -->
-    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
-      <span class="status-badge status-todo">待补充</span>
+    <a class="card" href="migration-hub.html">
+      <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">🏠</span>
@@ -420,7 +420,7 @@
   <!-- Callout -->
   <div class="callout">
     <strong>💡 考试提示</strong>
-    7R 策略是迁移场景题的判断基础，Rehost（Lift &amp; Shift）= 最快但收益最小，Refactor = 最慢但云原生化最彻底。大量数据（TB 级以上）优先考虑 Snow Family 物理迁移，有持续同步需求用 DataSync。数据库异构迁移必用 SCT + DMS 组合。
+    7R 策略应由业务目标、约束和改造意愿决定；Rehost 通常改动较少，Refactor/Re-architect 投入更高但可获得更大长期架构收益。在线文件/对象迁移可评估 DataSync，带宽或时限受限时再比较 Snow Family；异构数据库迁移常评估 SCT + DMS，但须以引擎支持和转换评估为准。
   </div>
 
 </main>
