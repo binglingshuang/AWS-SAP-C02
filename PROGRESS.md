@@ -13,14 +13,14 @@
 |---|---|
 | 根导航页 | 已完成；各分类卡片已标注完成进度，未创建的 `architecture-patterns.html` 入口已禁用，无断链 |
 | 分类入口页 | 12 个已完成（根导航挂了 11 个，`hybrid-edge` 未挂载） |
-| 服务正文 | **已完成 9 篇 / 导航规划 78 篇（去重）＝ 11.5%** |
-| 未创建正文 | **69 篇**（78 篇规划减去已完成 9 篇；含已禁用入口的 `architecture-patterns.html` 与 `app-runner.html`） |
+| 服务正文 | **已完成 10 篇 / 导航规划 78 篇（去重）＝ 12.8%** |
+| 未创建正文 | **68 篇**（78 篇规划减去已完成 10 篇；含已禁用入口的 `architecture-patterns.html` 与 `app-runner.html`） |
 | 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
 | 正文内场景题 | 9 篇正文共内嵌 **46 道手写场景题**，不是 529 道 |
 | 推荐下一篇 | `compute/auto-scaling.html`（从零编写；`old/` 归档不读取） |
 | 最大阻塞 | 剩余正文量大，且 529 题尚未按服务归类、题库化；导航/命名旧规范已清理 |
 
-**一句话：站点骨架和 9 篇高频核心服务正文已经成形，剩余约 69 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
+**一句话：站点骨架和 10 篇高频核心服务正文已经成形，剩余约 68 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
 
 ---
 
@@ -50,8 +50,9 @@
 | `compute/ec2.html` | 计算 | 30 KB | 7,800 | 4 | 14 | 有 |
 | `storage/s3.html` | 存储 | 52 KB | 16,300 | 5 | 20 | 有 |
 | `security/iam.html` | 安全 | 62 KB | 19,800 | 6 | 20 | 有 |
+| `compute/auto-scaling.html` | 计算 | ~50 KB | ~13,000 | 6 | 18 | 有 |
 
-这 9 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
+这 10 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
 
 ---
 
@@ -62,7 +63,7 @@
 | 分类 | 入口页 | 已完成 | 规划 | 缺失 | 完成率 | 优先级 |
 |---|---|---:|---:|---:|---:|---|
 | 网络与内容分发 | `networking/index.html` | 6 | 9 | 3 | 66.7% | P0 |
-| 计算 | `compute/index.html` | 1 | 9 | 8 | 11.1% | P0 |
+| 计算 | `compute/index.html` | 2 | 9 | 7 | 22.2% | P0 |
 | 存储 | `storage/index.html` | 1 | 7 | 6 | 14.3% | P0 |
 | 数据库 | `database/index.html` | 0 | 6 | 6 | 0% | P0 |
 | 安全、身份与合规 | `security/index.html` | 1 | 11 | 10 | 9.1% | P1 |
@@ -74,7 +75,7 @@
 | 机器学习与 AI | `ml/index.html` | 0 | 2 | 2 | 0% | P3 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 0 | 3 | 3 | 0% | P3 |
 | 综合专题 | 根页直达 | 0 | 1 | 1 | 0% | P1 |
-| **合计** |  | **9** | **78** | **69** | **11.5%** |  |
+| **合计** |  | **10** | **78** | **68** | **12.8%** |  |
 
 > 根页写的“74 个文档”是旧口径 / 合并页口径；按当前导航实际目标去重后是 78 篇。完成全部正文后再统一校准首页数字。
 
@@ -101,7 +102,7 @@
 ### 3.2 计算（1 / 9）
 
 - [x] `compute/ec2.html`
-- [ ] P0 `compute/auto-scaling.html` — 扩展策略、生命周期钩子、混合实例、暖池
+- [x] `compute/auto-scaling.html` — 完成日期：2026-11-02；字数约 13,000；场景题 6 道；覆盖四种扩展策略、冷却期、生命周期钩子、混合实例策略、终止保护、暖池、健康检查
 - [ ] P0 `compute/lambda.html` — 并发、触发器、冷启动、Lambda@Edge
 - [ ] P1 `compute/fargate-ecs.html` — Launch Type、Task Definition、Service Auto Scaling
 - [ ] P1 `compute/eks.html` — 节点类型、Fargate Profile、IRSA、与 ECS 对比
@@ -432,7 +433,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | ~~1~~ | ~~`networking/vpn.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
 | ~~2~~ | ~~`networking/transit-gateway.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
 | ~~3~~ | ~~`networking/route53.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
-| 4 | `compute/auto-scaling.html` | 计算层高频，与 EC2 直接衔接 | 从零编写；引用 EC2 购买选项 |
+| ~~4~~ | ~~`compute/auto-scaling.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
 | 5 | `compute/lambda.html` | 无服务器高频 | 从零编写；与 CloudFront/Edge 交叉引用 |
 | 6 | `storage/ebs.html` | 与 S3 组成存储核心 | 从零编写；引用 EC2 实例存储对比 |
 | 7 | `database/rds-aurora.html` | 数据库最高频 | 从零编写 |
@@ -461,5 +462,6 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-02 | 新增 `networking/transit-gateway.html`：14 个章节、6 道场景题、18 张速记卡、3 道快速自测；断链清单由 75 条降至 74 条 | `networking/transit-gateway.html`、`PROGRESS.md` | 下一篇 `networking/route53.html` |
 | 2026-11-02 | 新增 `networking/route53.html`：13 个章节、6 道场景题、18 张速记卡、5 道快速自测；覆盖七种路由策略、健康检查、Public/Private 托管区、Resolver 混合云 DNS、Traffic Flow、与 CloudFront/ELB/S3/GA 集成；断链清单中 `route53.html` 断链消除 | `networking/route53.html`、`PROGRESS.md` | 下一篇 `compute/auto-scaling.html` |
 | 2026-11-02 | 全站 12 个分类入口页与根页卡片加上“已完成 / 待补充”状态标记；未创建正文的卡片取消 `href` 并禁用点击；修正 App Runner 错误链接、移除跨模块卡片内嵌链接；首页统计与页脚校准。断链检查：根页与分类页 0 条断链 | `index.html`、12 个 `*/index.html`、`PROGRESS.md` | 继续 `compute/auto-scaling.html` |
+| 2026-11-02 | 新增 `compute/auto-scaling.html`：12 个章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖四种扩展策略、冷却期、生命周期钩子、混合实例策略、终止保护、暖池、健康检查；`compute/index.html` 卡片改为已完成 | `compute/auto-scaling.html`、`compute/index.html`、`PROGRESS.md` | 下一篇 `compute/lambda.html` |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。

@@ -1,0 +1,18 @@
+# ── Trae IDE 产物 ──
+.trae-html-share-packages/
+.trae/
+
+# ── 操作系统 ──
+.DS_Store
+Thumbs.db
+
+# ── 编辑器 ──
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── 临时文件 ──
+*.log
+*.tmp
+*.bak
