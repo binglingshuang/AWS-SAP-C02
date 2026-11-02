@@ -11,16 +11,16 @@
 
 | 项目 | 当前状态 |
 |---|---|
-| 根导航页 | 已完成；各分类卡片已标注完成进度，未创建的 `architecture-patterns.html` 入口已禁用，无断链 |
-| 分类入口页 | 12 个已完成（根导航挂了 11 个，`hybrid-edge` 未挂载） |
-| 服务正文 | **已完成 72 篇 / 导航规划 78 篇（去重）＝ 92.3%** |
-| 未创建正文 | **6 篇**（78 篇规划减去已完成 72 篇；含已禁用入口的 `architecture-patterns.html`） |
+| 根导航页 | 已完成；12 个分类均已挂载并标注进度，未创建的 `architecture-patterns.html` 入口已禁用，无断链 |
+| 分类入口页 | 12 个已完成并全部挂到根页 |
+| 服务正文 | **已完成 75 篇 / 去重规划 76 篇＝ 98.7%** |
+| 未创建正文 | **1 篇**（`architecture-patterns.html`，根页入口已禁用） |
 | 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
 | 正文内场景题 | 各正文内嵌手写场景题，另有 529 道参考考题尚未题库化 |
 | 推荐下一篇 | `architecture-patterns.html`（P1） |
 | 最大阻塞 | 剩余正文量大，且 529 题尚未按服务归类、题库化；导航/命名旧规范已清理 |
 
-**一句话：站点骨架和 72 篇服务正文已经成形，剩余 6 篇正文、529 道参考题的归类与题库化、全站断链修复尚未完成。**
+**一句话：站点骨架和 75 篇服务正文已经成形，剩余 1 篇综合专题、529 道参考题的归类与题库化尚未完成。**
 
 ---
 
@@ -28,9 +28,9 @@
 
 | 资产 | 路径 | 数量 / 状态 | 说明 |
 |---|---|---:|---|
-| 根导航页 | `index.html` | 1 | 手工维护的 11 分类卡片入口，设计完成 |
-| 分类入口页 | `<category>/index.html` | 12 | 11 个已挂到根页，`hybrid-edge/index.html` 未挂载 |
-| 服务正文 | `<category>/*.html` | **68** | 当前完成正文见下表；本次补齐迁移分类 4 篇 |
+| 根导航页 | `index.html` | 1 | 手工维护的 12 分类卡片入口，设计完成 |
+| 分类入口页 | `<category>/index.html` | 12 | 12 个均已挂到根页 |
+| 服务正文 | `<category>/*.html` | **75** | 当前完成正文见下表；混合云与边缘共用计算正文并新增 IoT 正文 |
 | 参考考题库 | `input/exam.csv` | **529 题** | 含题干、选项、答案、中文解析；只读参考，未加工成页面 |
 | 历史归档正文 | `old/**/*.html` | 10 篇（1 篇 0 字节） | **历史归档，禁止读取或作为续写素材** |
 | 历史归档架构图 | `old/Draw.io/*.drawio` | 4 张 | **历史归档，不读取、不复用** |
@@ -97,6 +97,9 @@
 | `devops/codedeploy.html` | DevOps | — | — | 6 | 18 | 有 |
 | `devops/codecommit-build.html` | DevOps | — | — | 6 | 18 | 有 |
 | `devops/xray.html` | DevOps | — | — | 6 | 18 | 有 |
+| `ml/ml-ai.html` | 机器学习与 AI | — | — | 6 | 18 | 有 |
+| `ml/sagemaker.html` | 机器学习与 AI | — | — | 6 | 18 | 有 |
+| `hybrid-edge/iot.html` | 混合云与边缘 | — | — | 6 | 18 | 有 |
 
 这些正文共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
 
@@ -118,12 +121,12 @@
 | 分析 | `analytics/index.html` | 7 | 7 | 0 | 100% | P2 |
 | 迁移与传输 | `migration/index.html` | 4 | 4 | 0 | 100% | P2 |
 | DevOps | `devops/index.html` | 4 | 4 | 0 | 100% | P2 |
-| 机器学习与 AI | `ml/index.html` | 0 | 2 | 2 | 0% | P3 |
-| 混合云与边缘 | `hybrid-edge/index.html` | 0 | 3 | 3 | 0% | P3 |
+| 机器学习与 AI | `ml/index.html` | 2 | 2 | 0 | 100% | P2 |
+| 混合云与边缘 | `hybrid-edge/index.html` | 1 | 1 | 0 | 100% | P3 |
 | 综合专题 | 根页直达 | 0 | 1 | 1 | 0% | P1 |
-| **合计** |  | **72** | **78** | **6** | **92.3%** |  |
+| **合计** |  | **75** | **76** | **1** | **98.7%** |  |
 
-> 根页统计已按当前导航实际目标去重口径更新为 72 / 78；剩余正文完成后继续同步校准。
+> 混合云与边缘分类的 3 个核心方向均已覆盖：Outposts、Local Zones、Wavelength 共用 `compute/outposts-wavelength.html`；IoT 由 `hybrid-edge/iot.html` 覆盖。分类表及全站合计按唯一正文去重，因此混合云与边缘单列 1 篇新增正文。
 
 ---
 
@@ -243,19 +246,19 @@
 - [x] P1 `devops/codecommit-build.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 CodeCommit、CodeBuild buildspec/缓存、CodeArtifact、私有网络与权限
 - [x] P2 `devops/xray.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Trace/Segment、上下文传播、采样、Service Map、Annotation 与权限
 
-### 3.11 机器学习与 AI（0 / 2）
+### 3.11 机器学习与 AI（2 / 2）
 
-- [ ] P2 `ml/ml-ai.html` — 一篇覆盖 Rekognition、Comprehend、Textract、Translate、Polly、Kendra、Personalize、Fraud Detector、Lex
-- [ ] P2 `ml/sagemaker.html` — Studio、训练/推理、Pipelines、Ground Truth、Feature Store
+- [x] P2 `ml/ml-ai.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Rekognition、Comprehend、Textract、语言/语音、Kendra、Personalize、Fraud Detector 与 Lex
+- [x] P2 `ml/sagemaker.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Studio、Ground Truth、Feature Store、训练/推理、Pipelines、Registry、监控与安全
 
-> 根页写“10 个服务”，但分类页按 2 篇合并页设计，这是有意的，不需要拆成 10 篇。
+> 根页按 11 个服务列出清单；分类页按 2 篇合并页设计，这是有意的，不需要拆成 11 篇。
 
-### 3.12 混合云与边缘（0 / 3，未挂到根页）
+### 3.12 混合云与边缘（3 / 3，已挂到根页）
 
-- [x] Outposts、Local Zones、Wavelength 共用唯一正文：`compute/outposts-wavelength.html`（计入计算分类，不重复计数）
-- [ ] P3 `hybrid-edge/iot.html` — IoT Core、Greengrass、Device Shadow
+- [x] Outposts、Local Zones、Wavelength 共用唯一正文：`compute/outposts-wavelength.html`（已计入计算分类；入口互相链接，不重复计数）
+- [x] P3 `hybrid-edge/iot.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 IoT Core/MQTT、设备身份与策略、Rules Engine、Device Shadow、Greengrass、Jobs 与设备规模化运营
 
-> `hybrid-edge/index.html` 仍未挂到根页。边缘计算正文统一放在 `compute/outposts-wavelength.html`，不再另建重复页面；IoT 主题仍待补充。
+> 分类页 3 个核心方向均已开放；其中 2 个方向共用计算模块正文，唯一新增正文为 IoT。分类已挂到根页，全站规划总数按去重后的唯一正文统计。
 
 ### 3.13 综合专题（0 / 1）
 
@@ -462,7 +465,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 建议：在内容未完成前改为“37 篇已上线 / 41 篇待补 / 529 道题库待整理”，或完成后再恢复宣传数字。
 
-**已处理（2026-11-02）：** 首页统计已改为“37 / 78 篇正文已完成”“529 道题库待整理”，页脚同步调整；网络和计算分类进度分别为 9 / 9。
+**已处理（2026-11-02；分类挂载于 2026-11-03）：** 首页分类统计改为 12 大类，`hybrid-edge` 已挂载；正文进度同步为去重口径 75 / 76，题库仍待整理。
 
 ### 8.7 P2：历史归档与部署
 
@@ -530,5 +533,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-03 | 完成管理与治理分类剩余 5 篇正文：Systems Manager、成本管理、Control Tower、Service Catalog、Trusted Advisor；每篇含 6 道场景题、18 张速记卡和快速自测；分类入口开放，管理模块更新至 9 / 9，全站正文统计更新为 57 / 78 | `management/*.html`、`management/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `analytics/glue.html`（P0） |
 | 2026-11-03 | 完成迁移与传输剩余 4 篇正文：7R 迁移策略、MGN、DataSync/Transfer Family、Migration Hub/ADS；每篇含 6 道场景题、18 张速记卡和 3 道快速自测；迁移分类 4 / 4（另有数据库模块 DMS/SCT），分类页和首页状态同步，全站正文统计更新为 68 / 78 | `migration/*.html`、`migration/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `devops/codepipeline.html`（P1） |
 | 2026-11-03 | 完成 DevOps 4 篇正文：CodePipeline、CodeDeploy、CodeBuild/CodeCommit/CodeArtifact、X-Ray；每篇含 6 道场景题、18 张速记卡和 3 道快速自测；分类页 4 / 4 开放，首页和进度统计同步更新为 72 / 78 | `devops/*.html`、`devops/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `architecture-patterns.html`（P1） |
+| 2026-11-03 | 完成机器学习与 AI 2 篇正文：AI 托管服务全览、Amazon SageMaker；各含 6 道场景题、18 张速记卡和快速自测；分类页开放，首页和进度统计同步更新为 74 / 78 | `ml/ml-ai.html`、`ml/sagemaker.html`、`ml/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `architecture-patterns.html`（P1） |
+| 2026-11-03 | 完成混合云与边缘分类：新增 IoT Core/Greengrass/Device Shadow 正文，复用计算模块的 Outposts/Local Zones/Wavelength 正文；3 个方向全部开放并将分类页挂至根页；校准去重总规划为 76 篇，进度更新至 75 / 76 | `hybrid-edge/iot.html`、`hybrid-edge/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `architecture-patterns.html`（P1） |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。
