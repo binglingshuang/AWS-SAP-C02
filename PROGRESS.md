@@ -11,10 +11,10 @@
 
 | 项目 | 当前状态 |
 |---|---|
-| 根导航页 | 已完成，但存在 1 个断链（`architecture-patterns.html`） |
+| 根导航页 | 已完成；各分类卡片已标注完成进度，未创建的 `architecture-patterns.html` 入口已禁用，无断链 |
 | 分类入口页 | 12 个已完成（根导航挂了 11 个，`hybrid-edge` 未挂载） |
 | 服务正文 | **已完成 9 篇 / 导航规划 78 篇（去重）＝ 11.5%** |
-| 未创建正文 | **69 篇**（78 篇规划减去已完成 9 篇；含根页断链 `architecture-patterns.html` 与 `app-runner.html`） |
+| 未创建正文 | **69 篇**（78 篇规划减去已完成 9 篇；含已禁用入口的 `architecture-patterns.html` 与 `app-runner.html`） |
 | 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
 | 正文内场景题 | 9 篇正文共内嵌 **46 道手写场景题**，不是 529 道 |
 | 推荐下一篇 | `compute/auto-scaling.html`（从零编写；`old/` 归档不读取） |
@@ -280,6 +280,7 @@ CSV 没有“服务 / 分类”标签。要把 529 题挂到对应服务页或�
 - [ ] 有“快速自测”时，题目和答案分开呈现
 - [ ] 官方文档链接与“非官方题库”免责声明
 - [ ] 返回分类页链接
+- [ ] 把对应分类入口页的 Card 状态由“待补充”改为“已完成”（恢复 `href`、移除 `card-pending`、恢复箭头）
 - [ ] 移动端可读，表格可横向滚动
 - [ ] 文件大小约 25–45 KB，可见正文约 8,000–20,000 字
 - [ ] 更新本文件第 2、3 节的完成数与勾选状态
@@ -388,9 +389,13 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 建议：Redshift 与 DMS/SCT 在 `database/` 创建主页面；分析、迁移入口保留“另见数据库模块”；`database/index.html` 的两条“另见”文案改为指向本模块页面，或直接删除。
 
+**已处理（2026-11-02）：** 上述卡片已标记为“待补充”并禁用跳转，`analytics` 与 `database` 卡片内嵌套的 `<a>` 已移除，不再产生 404。
+
 ### 8.5 P2：App Runner 卡片指向错误
 
 `compute/index.html` 中 App Runner 卡片的 `href="ec2.html"`，与 EC2 重复。应改为 `app-runner.html`，并创建对应正文。
+
+**已处理（2026-11-02）：** 卡片 `href` 已改为 `app-runner.html`，因正文未创建，卡片标记为“待补充”并禁用跳转。
 
 ### 8.6 P2：首页统计与事实不符
 
@@ -400,6 +405,8 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 - `networking` 首页写“10 个服务”，分类页实际 9 项。
 
 建议：在内容未完成前改为“8 篇已上线 / 70 篇待补 / 529 道题库待整理”，或完成后再恢复宣传数字。
+
+**已处理（2026-11-02）：** 首页统计已改为“9 / 78 篇正文已完成”“529 道题库待整理”，页脚同步调整。
 
 ### 8.7 P2：历史归档与部署
 
@@ -414,7 +421,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 - `networking/direct-connect.html` 缺少其他 5 篇都有的“官方资料”区块。
 - `networking/cloudfront.html`、`direct-connect.html` 没有“快速自测”，不算错误，但与其余 4 篇不完全一致。
-- 根页的“架构设计模式”卡片指向不存在的 `architecture-patterns.html`，是当前根页唯一断链。
+- 根页的“架构设计模式”卡片指向不存在的 `architecture-patterns.html`；**已处理（2026-11-02）**：入口改为“待补充”并禁用跳转，根页已无断链。
 
 ---
 
@@ -453,5 +460,6 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-02 | 新增 `networking/vpn.html`：13 个章节、6 道场景题、18 张速记卡、3 道快速自测；断链清单由 76 条（含跨目录重复）降至 75 条，`vpn.html` 无新增断链 | `networking/vpn.html`、`PROGRESS.md` | 下一篇 `networking/transit-gateway.html` |
 | 2026-11-02 | 新增 `networking/transit-gateway.html`：14 个章节、6 道场景题、18 张速记卡、3 道快速自测；断链清单由 75 条降至 74 条 | `networking/transit-gateway.html`、`PROGRESS.md` | 下一篇 `networking/route53.html` |
 | 2026-11-02 | 新增 `networking/route53.html`：13 个章节、6 道场景题、18 张速记卡、5 道快速自测；覆盖七种路由策略、健康检查、Public/Private 托管区、Resolver 混合云 DNS、Traffic Flow、与 CloudFront/ELB/S3/GA 集成；断链清单中 `route53.html` 断链消除 | `networking/route53.html`、`PROGRESS.md` | 下一篇 `compute/auto-scaling.html` |
+| 2026-11-02 | 全站 12 个分类入口页与根页卡片加上“已完成 / 待补充”状态标记；未创建正文的卡片取消 `href` 并禁用点击；修正 App Runner 错误链接、移除跨模块卡片内嵌链接；首页统计与页脚校准。断链检查：根页与分类页 0 条断链 | `index.html`、12 个 `*/index.html`、`PROGRESS.md` | 继续 `compute/auto-scaling.html` |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。

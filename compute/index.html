@@ -276,6 +276,62 @@
       main { padding: 32px 20px 60px; }
       .card-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── 内容完成状态 ── */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      width: fit-content;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.5;
+      padding: 2px 10px;
+      border-radius: 999px;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+
+    .status-done {
+      background: #ecfdf3;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .status-partial {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .status-todo {
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+    }
+
+    .card-pending {
+      cursor: not-allowed;
+      opacity: .82;
+    }
+
+    .card-pending:hover {
+      transform: none;
+      border-color: var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .card-pending .card-title {
+      color: var(--muted);
+    }
+
+    .card-pending .tag {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    .card-pending .card-arrow, .card-pending .card-featured-arrow { display: none; }
+
   </style>
 </head>
 <body>
@@ -298,12 +354,13 @@
 
   <!-- ══════════════════════ MAIN ══════════════════════ -->
   <main>
-    <p class="section-label">9 项核心服务</p>
+    <p class="section-label">9 项核心服务 · 已完成 1 / 9</p>
 
     <div class="card-grid">
 
       <!-- 1. Amazon EC2 -->
       <a class="card" href="ec2.html">
+        <span class="status-badge status-done">已完成</span>
         <div class="card-header">
           <div class="card-icon">💻</div>
           <div class="card-title-group">
@@ -325,7 +382,8 @@
       </a>
 
       <!-- 2. EC2 Auto Scaling -->
-      <a class="card" href="auto-scaling.html">
+      <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+        <span class="status-badge status-todo">待补充</span>
         <div class="card-header">
           <div class="card-icon">📈</div>
           <div class="card-title-group">
@@ -347,7 +405,8 @@
       </a>
 
       <!-- 3. AWS Lambda -->
-      <a class="card" href="lambda.html">
+      <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+        <span class="status-badge status-todo">待补充</span>
         <div class="card-header">
           <div class="card-icon" style="font-size:1.6rem;font-weight:700;color:#2457c5;background:#eaf1ff;">λ</div>
           <div class="card-title-group">
@@ -369,7 +428,8 @@
       </a>
 
       <!-- 4. Amazon ECS / AWS Fargate -->
-      <a class="card" href="fargate-ecs.html">
+      <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+        <span class="status-badge status-todo">待补充</span>
         <div class="card-header">
           <div class="card-icon">🐳</div>
           <div class="card-title-group">
@@ -391,7 +451,8 @@
       </a>
 
       <!-- 5. Amazon EKS -->
-      <a class="card" href="eks.html">
+      <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+        <span class="status-badge status-todo">待补充</span>
         <div class="card-header">
           <div class="card-icon">☸️</div>
           <div class="card-title-group">
@@ -413,7 +474,8 @@
       </a>
 
       <!-- 6. AWS Elastic Beanstalk -->
-      <a class="card" href="elastic-beanstalk.html">
+      <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+        <span class="status-badge status-todo">待补充</span>
         <div class="card-header">
           <div class="card-icon">🌱</div>
           <div class="card-title-group">
@@ -434,7 +496,8 @@
       </a>
 
       <!-- 7. AWS Batch -->
-      <a class="card" href="batch.html">
+      <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+        <span class="status-badge status-todo">待补充</span>
         <div class="card-header">
           <div class="card-icon">⚙️</div>
           <div class="card-title-group">
@@ -455,7 +518,8 @@
       </a>
 
       <!-- 8. AWS Outposts / Local Zones / Wavelength -->
-      <a class="card" href="outposts-wavelength.html">
+      <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+        <span class="status-badge status-todo">待补充</span>
         <div class="card-header">
           <div class="card-icon">🏭</div>
           <div class="card-title-group">
@@ -475,7 +539,8 @@
       </a>
 
       <!-- 9. AWS App Runner -->
-      <a class="card" href="ec2.html">
+      <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+        <span class="status-badge status-todo">待补充</span>
         <div class="card-header">
           <div class="card-icon">🏃</div>
           <div class="card-title-group">

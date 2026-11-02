@@ -273,6 +273,62 @@
         display: none;
       }
     }
+
+    /* ── 内容完成状态 ── */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      width: fit-content;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.5;
+      padding: 2px 10px;
+      border-radius: 999px;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+
+    .status-done {
+      background: #ecfdf3;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .status-partial {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .status-todo {
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+    }
+
+    .card-pending {
+      cursor: not-allowed;
+      opacity: .82;
+    }
+
+    .card-pending:hover {
+      transform: none;
+      border-color: var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .card-pending .card-title {
+      color: var(--muted);
+    }
+
+    .card-pending .tag {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    .card-pending .card-arrow, .card-pending .card-featured-arrow { display: none; }
+
   </style>
 </head>
 <body>
@@ -286,8 +342,8 @@
     </p>
     <div class="stats-bar">
       <div class="stat-pill"><span class="icon">📁</span> 11 大类</div>
-      <div class="stat-pill"><span class="icon">📄</span> 74 个文档</div>
-      <div class="stat-pill"><span class="icon">❓</span> 529 道真题</div>
+      <div class="stat-pill"><span class="icon">📄</span> 9 / 78 篇正文已完成</div>
+      <div class="stat-pill"><span class="icon">❓</span> 529 道题库待整理</div>
       <div class="stat-pill"><span class="icon">🎯</span> SAP-C02</div>
     </div>
   </header>
@@ -301,6 +357,7 @@
 
       <!-- 1. 网络与内容分发 -->
       <a class="card" href="networking/index.html">
+        <span class="status-badge status-partial">已完成 6 / 9</span>
         <div class="card-icon">🌐</div>
         <div class="card-header">
           <div>
@@ -316,6 +373,7 @@
 
       <!-- 2. 计算 -->
       <a class="card" href="compute/index.html">
+        <span class="status-badge status-partial">已完成 1 / 9</span>
         <div class="card-icon">⚡</div>
         <div class="card-header">
           <div>
@@ -331,6 +389,7 @@
 
       <!-- 3. 存储 -->
       <a class="card" href="storage/index.html">
+        <span class="status-badge status-partial">已完成 1 / 7</span>
         <div class="card-icon">🗄️</div>
         <div class="card-header">
           <div>
@@ -346,6 +405,7 @@
 
       <!-- 4. 数据库 -->
       <a class="card" href="database/index.html">
+        <span class="status-badge status-todo">待补充 0 / 6</span>
         <div class="card-icon">🗃️</div>
         <div class="card-header">
           <div>
@@ -361,6 +421,7 @@
 
       <!-- 5. 安全、身份与合规 -->
       <a class="card" href="security/index.html">
+        <span class="status-badge status-partial">已完成 1 / 11</span>
         <div class="card-icon">🔒</div>
         <div class="card-header">
           <div>
@@ -376,6 +437,7 @@
 
       <!-- 6. 管理与治理 -->
       <a class="card" href="management/index.html">
+        <span class="status-badge status-todo">待补充 0 / 9</span>
         <div class="card-icon">⚙️</div>
         <div class="card-header">
           <div>
@@ -391,6 +453,7 @@
 
       <!-- 7. 应用集成 -->
       <a class="card" href="application-integration/index.html">
+        <span class="status-badge status-todo">待补充 0 / 6</span>
         <div class="card-icon">🔗</div>
         <div class="card-header">
           <div>
@@ -406,6 +469,7 @@
 
       <!-- 8. 分析 -->
       <a class="card" href="analytics/index.html">
+        <span class="status-badge status-todo">待补充 0 / 7</span>
         <div class="card-icon">📊</div>
         <div class="card-header">
           <div>
@@ -421,6 +485,7 @@
 
       <!-- 9. 迁移与传输 -->
       <a class="card" href="migration/index.html">
+        <span class="status-badge status-todo">待补充 0 / 4</span>
         <div class="card-icon">🚚</div>
         <div class="card-header">
           <div>
@@ -436,6 +501,7 @@
 
       <!-- 10. DevOps 与开发者工具 -->
       <a class="card" href="devops/index.html">
+        <span class="status-badge status-todo">待补充 0 / 4</span>
         <div class="card-icon">🛠️</div>
         <div class="card-header">
           <div>
@@ -451,6 +517,7 @@
 
       <!-- 11. 机器学习与 AI -->
       <a class="card" href="ml/index.html">
+        <span class="status-badge status-todo">待补充 0 / 2</span>
         <div class="card-icon">🤖</div>
         <div class="card-header">
           <div>
@@ -469,7 +536,7 @@
     <!-- ── Featured: Architecture Patterns ── -->
     <div class="featured-section">
       <p class="section-title">综合专题</p>
-      <a class="card-featured" href="architecture-patterns.html">
+      <a class="card-featured card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
         <div class="card-icon">🏗️</div>
         <div class="card-featured-body">
           <div class="card-header" style="margin-bottom:0">
@@ -477,7 +544,7 @@
               <div class="card-title">架构设计模式</div>
               <div class="card-subtitle">Architecture Design Patterns</div>
             </div>
-            <span class="service-count">综合专题</span>
+            <span class="status-badge status-todo">待补充</span>
           </div>
           <div class="card-services">
             Well-Architected Framework · 灾难恢复策略(DR) · 高可用设计 · 多账号策略 · 成本优化模式
@@ -491,7 +558,7 @@
 
   <!-- ══════════════ FOOTER ══════════════ -->
   <footer>
-    AWS SAP-C02 备考资料整理 &nbsp;·&nbsp; 仅供学习参考 &nbsp;·&nbsp; 529 道真题全覆盖
+    AWS SAP-C02 备考资料整理 &nbsp;·&nbsp; 仅供学习参考 &nbsp;·&nbsp; 529 道题库持续整理中
   </footer>
 
 </body>

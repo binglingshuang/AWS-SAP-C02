@@ -233,6 +233,62 @@
       .grid { grid-template-columns: 1fr; }
       main { padding: 2rem 1.1rem 3rem; }
     }
+
+    /* ── 内容完成状态 ── */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      width: fit-content;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.5;
+      padding: 2px 10px;
+      border-radius: 999px;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+
+    .status-done {
+      background: #ecfdf3;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .status-partial {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .status-todo {
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+    }
+
+    .card-pending {
+      cursor: not-allowed;
+      opacity: .82;
+    }
+
+    .card-pending:hover {
+      transform: none;
+      border-color: var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .card-pending .card-title {
+      color: var(--muted);
+    }
+
+    .card-pending .tag {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    .card-pending .card-arrow, .card-pending .card-featured-arrow { display: none; }
+
   </style>
 </head>
 <body>
@@ -251,12 +307,13 @@
 </header>
 
 <main>
-  <p class="section-label">服务导航 · 9 个核心服务</p>
+  <p class="section-label">服务导航 · 9 个核心服务 · 已完成 0 / 9</p>
 
   <div class="grid">
 
     <!-- 1. CloudFormation -->
-    <a href="cloudformation.html" class="card">
+    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+      <span class="status-badge status-todo">待补充</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">📋</span>
@@ -276,7 +333,8 @@
     </a>
 
     <!-- 2. CloudWatch -->
-    <a href="cloudwatch.html" class="card">
+    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+      <span class="status-badge status-todo">待补充</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">📡</span>
@@ -296,7 +354,8 @@
     </a>
 
     <!-- 3. CloudTrail -->
-    <a href="cloudtrail.html" class="card">
+    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+      <span class="status-badge status-todo">待补充</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">📝</span>
@@ -315,7 +374,8 @@
     </a>
 
     <!-- 4. AWS Config -->
-    <a href="config.html" class="card">
+    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+      <span class="status-badge status-todo">待补充</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">⚙️</span>
@@ -334,7 +394,8 @@
     </a>
 
     <!-- 5. Systems Manager -->
-    <a href="systems-manager.html" class="card">
+    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+      <span class="status-badge status-todo">待补充</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">🖥️</span>
@@ -354,7 +415,8 @@
     </a>
 
     <!-- 6. Control Tower -->
-    <a href="control-tower.html" class="card">
+    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+      <span class="status-badge status-todo">待补充</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">🗼</span>
@@ -373,7 +435,8 @@
     </a>
 
     <!-- 7. Service Catalog -->
-    <a href="service-catalog.html" class="card">
+    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+      <span class="status-badge status-todo">待补充</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">🏪</span>
@@ -391,7 +454,8 @@
     </a>
 
     <!-- 8. Trusted Advisor -->
-    <a href="trusted-advisor.html" class="card">
+    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+      <span class="status-badge status-todo">待补充</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">💡</span>
@@ -409,7 +473,8 @@
     </a>
 
     <!-- 9. 成本管理工具 -->
-    <a href="cost-management.html" class="card">
+    <a class="card card-pending" aria-disabled="true" tabindex="-1" title="内容建设中，暂未开放">
+      <span class="status-badge status-todo">待补充</span>
       <div class="card-header">
         <div class="card-icon-title">
           <span class="icon">💰</span>
