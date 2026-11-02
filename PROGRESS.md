@@ -13,14 +13,14 @@
 |---|---|
 | 根导航页 | 已完成；各分类卡片已标注完成进度，未创建的 `architecture-patterns.html` 入口已禁用，无断链 |
 | 分类入口页 | 12 个已完成（根导航挂了 11 个，`hybrid-edge` 未挂载） |
-| 服务正文 | **已完成 37 篇 / 导航规划 78 篇（去重）＝ 47.4%** |
-| 未创建正文 | **41 篇**（78 篇规划减去已完成 37 篇；含已禁用入口的 `architecture-patterns.html`） |
+| 服务正文 | **已完成 52 篇 / 导航规划 78 篇（去重）＝ 66.7%** |
+| 未创建正文 | **26 篇**（78 篇规划减去已完成 52 篇；含已禁用入口的 `architecture-patterns.html`） |
 | 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
-| 正文内场景题 | 37 篇正文共内嵌 **214 道手写场景题**，不是 529 道 |
+| 正文内场景题 | 各正文内嵌手写场景题，另有 529 道参考考题尚未题库化 |
 | 推荐下一篇 | `analytics/glue.html`（P0；从零编写） |
 | 最大阻塞 | 剩余正文量大，且 529 题尚未按服务归类、题库化；导航/命名旧规范已清理 |
 
-**一句话：站点骨架和 37 篇高频核心服务正文已经成形，剩余 41 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
+**一句话：站点骨架和 52 篇服务正文已经成形，剩余 26 篇正文、529 道参考题的归类与题库化、全站断链修复尚未完成。**
 
 ---
 
@@ -30,7 +30,7 @@
 |---|---|---:|---|
 | 根导航页 | `index.html` | 1 | 手工维护的 11 分类卡片入口，设计完成 |
 | 分类入口页 | `<category>/index.html` | 12 | 11 个已挂到根页，`hybrid-edge/index.html` 未挂载 |
-| 服务正文 | `<category>/*.html` | **37** | 当前完成正文见下表；本次补齐计算分类剩余 5 篇 |
+| 服务正文 | `<category>/*.html` | **52** | 当前完成正文见下表；本次补齐安全分类剩余 7 篇 |
 | 参考考题库 | `input/exam.csv` | **529 题** | 含题干、选项、答案、中文解析；只读参考，未加工成页面 |
 | 历史归档正文 | `old/**/*.html` | 10 篇（1 篇 0 字节） | **历史归档，禁止读取或作为续写素材** |
 | 历史归档架构图 | `old/Draw.io/*.drawio` | 4 张 | **历史归档，不读取、不复用** |
@@ -57,12 +57,27 @@
 | `compute/fargate-ecs.html` | 计算 | — | — | 6 | 18 | 有 |
 | `storage/efs.html` | 存储 | — | — | 6 | 18 | 有 |
 | `storage/ebs.html` | 存储 | — | — | 6 | 18 | 有 |
+| `storage/storage-gateway.html` | 存储 | — | — | 4 | 8 | 有 |
+| `storage/backup.html` | 存储 | — | — | 3 | 8 | 有 |
+| `storage/fsx.html` | 存储 | — | — | 3 | 8 | 有 |
+| `storage/snow-family.html` | 存储 | — | — | 3 | 7 | 有 |
 | `networking/elb.html` | 网络 | — | — | 6 | 18 | 有 |
 | `database/rds-aurora.html` | 数据库 | — | — | 6 | 18 | 有 |
 | `database/dynamodb.html` | 数据库 | — | — | 6 | 18 | 有 |
+| `database/elasticache.html` | 数据库 | — | — | 6 | 18 | 有 |
+| `database/redshift.html` | 数据库 | — | — | 6 | 18 | 有 |
+| `database/documentdb-neptune.html` | 数据库 | — | — | 6 | 18 | 有 |
+| `database/dms-sct.html` | 数据库 | — | — | 6 | 18 | 有 |
 | `security/kms-cloudhsm.html` | 安全 | — | — | 6 | 18 | 有 |
 | `security/organizations-scp.html` | 安全 | — | — | 6 | 18 | 有 |
 | `security/iam-identity-center.html` | 安全 | — | — | 6 | 18 | 有 |
+| `security/secrets-manager.html` | 安全 | — | — | 6 | 18 | 有 |
+| `security/waf-shield-firewall.html` | 安全 | — | — | 6 | 18 | 有 |
+| `security/ram.html` | 安全 | — | — | 6 | 18 | 有 |
+| `security/cognito.html` | 安全 | — | — | 6 | 18 | 有 |
+| `security/guardduty-detective.html` | 安全 | — | — | 6 | 18 | 有 |
+| `security/inspector-macie.html` | 安全 | — | — | 6 | 18 | 有 |
+| `security/certificate-manager.html` | 安全 | — | — | 6 | 18 | 有 |
 | `management/cloudformation.html` | 管理 | — | — | 6 | 18 | 有 |
 | `management/cloudwatch.html` | 管理 | — | — | 6 | 18 | 有 |
 | `management/cloudtrail.html` | 管理 | — | — | 6 | 18 | 有 |
@@ -79,7 +94,7 @@
 | `compute/batch.html` | 计算 | — | — | 6 | 18 | 有 |
 | `compute/outposts-wavelength.html` | 计算 | — | — | 6 | 18 | 有 |
 
-这 37 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
+这些正文共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
 
 ---
 
@@ -92,8 +107,8 @@
 | 网络与内容分发 | `networking/index.html` | 9 | 9 | 0 | 100% | P0 |
 | 计算 | `compute/index.html` | 9 | 9 | 0 | 100% | P0 |
 | 存储 | `storage/index.html` | 7 | 7 | 0 | 100% | P0 |
-| 数据库 | `database/index.html` | 2 | 6 | 4 | 33.3% | P0 |
-| 安全、身份与合规 | `security/index.html` | 4 | 11 | 7 | 36.4% | P0 |
+| 数据库 | `database/index.html` | 6 | 6 | 0 | 100% | P0 |
+| 安全、身份与合规 | `security/index.html` | 11 | 11 | 0 | 100% | P0 |
 | 管理与治理 | `management/index.html` | 4 | 9 | 5 | 44.4% | P0 |
 | 应用集成 | `application-integration/index.html` | 6 | 6 | 0 | 100% | P1 |
 | 分析 | `analytics/index.html` | 0 | 7 | 7 | 0% | P2 |
@@ -102,7 +117,7 @@
 | 机器学习与 AI | `ml/index.html` | 0 | 2 | 2 | 0% | P3 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 0 | 3 | 3 | 0% | P3 |
 | 综合专题 | 根页直达 | 0 | 1 | 1 | 0% | P1 |
-| **合计** |  | **41** | **78** | **37** | **52.6%** |  |
+| **合计** |  | **52** | **78** | **26** | **66.7%** |  |
 
 > 根页写的“74 个文档”是旧口径 / 合并页口径；按当前导航实际目标去重后是 78 篇。完成全部正文后再统一校准首页数字。
 
@@ -159,19 +174,19 @@
 
 > 跨分类链接：`analytics/index.html` 的 Redshift 卡片链接到 `database/redshift.html`；`migration/index.html` 的 DMS/SCT 卡片链接到 `database/dms-sct.html`。两篇已作为数据库模块正式页面创建，并保留跨模块入口。
 
-### 3.5 安全、身份与合规（4 / 11）
+### 3.5 安全、身份与合规（11 / 11）
 
 - [x] `security/iam.html`
 - [x] `security/kms-cloudhsm.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 KMS Key 类型、Key Policy、Grant、信封加密、轮换、多区域密钥与 CloudHSM
 - [x] `security/organizations-scp.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Organizations 层级、SCP 边界与继承、Allow/Deny、管理账号例外、委派管理员与 Control Tower
 - [x] `security/iam-identity-center.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖身份来源、SAML/SCIM、Permission Set、账号分配与 provision、应用 SSO、生命周期与审计
-- [ ] P1 `security/secrets-manager.html` — 自动轮换、RDS 集成、vs Parameter Store
-- [ ] P1 `security/waf-shield-firewall.html` — Web ACL、Shield、Network Firewall
-- [ ] P1 `security/ram.html` — 共享资源类型、与 Organizations 集成
-- [ ] P2 `security/cognito.html` — User Pools vs Identity Pools、JWT
-- [ ] P2 `security/guardduty-detective.html` — 威胁检测、调查链路
-- [ ] P2 `security/inspector-macie.html` — 漏洞 / 敏感数据发现
-- [ ] P2 `security/certificate-manager.html` — 公有/私有 CA、CloudFront 证书区域
+- [x] P1 `security/secrets-manager.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖自动轮换、RDS 集成、跨账号/KMS 授权与 Parameter Store 选型
+- [x] P1 `security/waf-shield-firewall.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖 Web ACL、Shield Standard/Advanced、Network Firewall 路由与部署
+- [x] P1 `security/ram.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖组织集成、共享 VPC 子网、Transit Gateway 与权限边界
+- [x] P2 `security/cognito.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖 User Pools/Identity Pools、JWT、联合身份与临时凭证
+- [x] P2 `security/guardduty-detective.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖 GuardDuty 检测/保护计划、组织管理、Detective 调查与 EventBridge 响应
+- [x] P2 `security/inspector-macie.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖 EC2/ECR/Lambda 漏洞发现、Macie S3 敏感数据发现与多账号治理
+- [x] P2 `security/certificate-manager.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖公有/私有证书、CloudFront us-east-1、续订与 ACM Private CA
 
 ### 3.6 管理与治理（4 / 9）
 
