@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Direct Connect 考点整理、VIF类型、冗余设计与快速答题技巧">
+<title>AWS SAP-C02｜Direct Connect 专用私有线路连接</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:#bfdbfe;font-size:14px;margin-bottom:16px}
+.back-link:hover{color:#fff;text-decoration:none}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.orange{background:var(--orange-soft);color:var(--orange)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff}
+.card b{display:block;margin-bottom:5px}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;margin:2px 4px 2px 0}
+.badge-blue{background:#dbeafe;color:#1d4ed8}
+.badge-green{background:#dcfce7;color:#15803d}
+.badge-orange{background:#ffedd5;color:#c2410c}
+.badge-red{background:#fee2e2;color:#b91c1c}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}.cards{grid-template-columns:1fr}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <a class="back-link no-print" href="index.html">← 返回网络模块</a>
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>AWS Direct Connect<br>专用私有线路连接</h1>
+  <p>DX 连接类型、VIF 虚拟接口、冗余设计、加密方案与 BGP 路由控制。以"考试场景 → 功能映射 → 易错边界"为主线，适合系统复习和考前速查。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">混合网络</span>
+   <span class="pill">可打印 / 可勾选</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#basics">一、Direct Connect 基础</a>
+ <a href="#vif">二、虚拟接口（VIF）类型</a>
+ <a href="#dxgw">三、Direct Connect Gateway</a>
+ <a href="#lag">四、LAG 链路聚合组</a>
+ <a href="#redundancy">五、冗余设计</a>
+ <a href="#encryption">六、加密方案</a>
+ <a href="#bgp">七、BGP 路由</a>
+ <a href="#scenarios">八、场景题解析</a>
+ <a href="#quick">九、关键词速查</a>
+ <a href="#memory">十、考前速记卡</a>
+</nav>
+
+<main>
+
+<!-- 一、基础 -->
+<section id="basics">
+<h2>一、Direct Connect 基础</h2>
+<p class="lead">AWS Direct Connect（DX）提供从企业数据中心或办公室到 AWS 的专用物理网络连接，绕过公共互联网，提供稳定低延迟和一致带宽。</p>
+
+<div class="callout red"><b>核心记忆：</b>Direct Connect 是专用物理连接，<b>不走公共互联网</b>，但<b>默认不加密</b>。需要加密时，必须在 DX 之上叠加 VPN（MACsec 或 IPsec）。</div>
+
+<h3>两种连接类型</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>类型</th><th>带宽选项</th><th>说明</th><th>典型场景</th></tr></thead>
+<tbody>
+<tr><td><b>专用连接</b><br>Dedicated Connection</td><td>1 Gbps、10 Gbps、100 Gbps</td><td>客户独享单根物理端口，直接从 AWS 申请或通过合作伙伴托管</td><td>大型企业，高带宽需求</td></tr>
+<tr><td><b>托管连接</b><br>Hosted Connection</td><td>50 Mbps ~ 10 Gbps（多档）</td><td>由 AWS Direct Connect 合作伙伴提供，共享物理端口再分配逻辑带宽</td><td>中小企业，灵活带宽</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>接入流程</h3>
+<div class="diagram">
+ <div class="node"><b>企业数据中心</b><br><small>On-Premises 路由器</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>DX Location</b><br><small>运营商接入点</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>AWS 骨干网</b><br><small>AWS Edge Router</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>AWS 服务</b><br><small>VPC / 公有服务</small></div>
+</div>
+
+<ul>
+ <li><b>DX Location（接入位置）：</b>全球分布的运营商托管数据中心，是客户物理连接接入 AWS 网络的位置</li>
+ <li><b>运营商（Partner）：</b>可通过 AWS 授权的 Direct Connect 合作伙伴建立托管连接</li>
+ <li><b>交叉连接（Cross Connect）：</b>在 DX Location 中，从客户设备到 AWS 机架的物理跳线</li>
+ <li><b>BGP 必需：</b>DX 连接必须使用 BGP（边界网关协议）进行路由交换</li>
+</ul>
+
+<div class="callout orange"><b>注意：DX 建立周期较长</b>——从申请到物理线路就绪通常需要数周。考试中若题目要求"快速建立混合连接"，答案通常是 Site-to-Site VPN 而非 Direct Connect。</div>
+</section>
+
+<!-- 二、VIF -->
+<section id="vif">
+<h2>二、虚拟接口（VIF）类型</h2>
+<p class="lead">一条物理 Direct Connect 连接上，通过 <b>VLAN 标签</b>可以创建多个逻辑虚拟接口（VIF），每种 VIF 类型对应不同的访问目标。</p>
+
+<h3>三种 VIF 详解</h3>
+
+<div class="cards">
+ <div class="card">
+  <b>🔵 Private VIF</b>
+  <p>连接到 VPC 的私有资源（EC2、RDS 等），通过 <b>Virtual Private Gateway（VGW）</b>或 <b>Direct Connect Gateway</b> 接入。</p>
+  <p>使用私有 IP 地址段，不能访问公有 AWS 服务（如 S3）。</p>
+ </div>
+ <div class="card">
+  <b>🟠 Public VIF</b>
+  <p>访问 <b>AWS 公有服务</b>（S3、DynamoDB、Glacier 等），使用 AWS 公有 IP 地址范围。</p>
+  <p>流量不走公共互联网，但目标是公有服务端点，不是 VPC 私有资源。</p>
+ </div>
+ <div class="card">
+  <b>🟢 Transit VIF</b>
+  <p>连接 <b>Transit Gateway（TGW）</b>，支持通过单条 DX 连接访问多个 VPC。</p>
+  <p>必须配合 Direct Connect Gateway 使用，是大规模混合网络的推荐方案。</p>
+ </div>
+ <div class="card">
+  <b>📌 Hosted VIF</b>
+  <p>由 DX 合作伙伴创建并共享给客户账户，客户需要接受共享请求后才能使用。</p>
+  <p>适用于托管连接（Hosted Connection）场景。</p>
+ </div>
+</div>
+
+<h3>VIF 类型对比表</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>属性</th><th>Private VIF</th><th>Public VIF</th><th>Transit VIF</th></tr></thead>
+<tbody>
+<tr><td><b>连接目标</b></td><td>VPC 私有资源</td><td>AWS 公有服务（S3等）</td><td>Transit Gateway</td></tr>
+<tr><td><b>IP 类型</b></td><td>私有 IP</td><td>AWS 公有 IP</td><td>私有 IP</td></tr>
+<tr><td><b>接入端点</b></td><td>VGW 或 DX Gateway</td><td>直接到 AWS 公有端点</td><td>DX Gateway（必需）</td></tr>
+<tr><td><b>跨账号支持</b></td><td>通过 DX Gateway 跨账号</td><td>不支持跨账号</td><td>通过 DX Gateway 跨账号</td></tr>
+<tr><td><b>多 VPC 支持</b></td><td>需配合 DX Gateway</td><td>N/A</td><td>原生支持（通过 TGW）</td></tr>
+<tr><td><b>VLAN 标签</b></td><td>需要指定</td><td>需要指定</td><td>需要指定</td></tr>
+<tr><td><b>BGP ASN</b></td><td>客户端 ASN</td><td>客户端 ASN</td><td>客户端 ASN</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout green"><b>快速记忆：</b>Private VIF → VPC 内部资源；Public VIF → AWS 公有服务（S3/DynamoDB）；Transit VIF → 多 VPC（通过 TGW）。考试看目标类型即可判断 VIF 类型。</div>
+
+<div class="callout orange"><b>易错陷阱：</b>通过 Public VIF 访问 S3 时，流量<b>不走公共互联网</b>，但使用的是 S3 的公有 IP 端点，而非 VPC Endpoint。如果想通过私有 IP 访问 S3，需要使用 Private VIF + VPC Gateway Endpoint for S3。</div>
+</section>
+
+<!-- 三、DX Gateway -->
+<section id="dxgw">
+<h2>三、Direct Connect Gateway</h2>
+<p class="lead">Direct Connect Gateway 是全球级别的逻辑组件，允许一条 DX 连接关联多个 VPC（跨 Region）或多个 Transit Gateway，解决"一线通多点"的问题。</p>
+
+<div class="diagram">
+ <div class="node"><b>On-Premises</b></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>DX Connection</b><br><small>物理专线</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>DX Gateway</b><br><small>全球资源</small></div>
+ <span class="arrow">→</span>
+ <div class="node">VGW / TGW<br>（多区域）</div>
+</div>
+
+<h3>核心功能</h3>
+<ul>
+ <li><b>跨 Region 连接：</b>一个 DX Gateway 可关联多个不同 Region 的 VGW 或 TGW，实现单条 DX 线路跨区域访问</li>
+ <li><b>跨账号连接：</b>DX Gateway 可跨 AWS 账号关联 VGW</li>
+ <li><b>与 TGW 配合：</b>使用 Transit VIF + DX Gateway + TGW 是连接多 VPC 的最佳实践</li>
+</ul>
+
+<h3>DX Gateway 使用模式</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>模式</th><th>VIF 类型</th><th>接入方式</th><th>适用场景</th></tr></thead>
+<tbody>
+<tr><td>单 VPC（同区域）</td><td>Private VIF</td><td>直连 VGW</td><td>简单场景，无需 DX Gateway</td></tr>
+<tr><td>多 VPC（跨区域）</td><td>Private VIF</td><td>DX Gateway → 多个 VGW</td><td>需要访问多区域 VPC</td></tr>
+<tr><td>多 VPC（大规模）</td><td>Transit VIF</td><td>DX Gateway → TGW</td><td>数十上百 VPC 的混合网络</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout red"><b>重要限制：</b>
+ <ul>
+  <li>通过 DX Gateway 连接的 VPC 之间，<b>不能相互通信</b>（DX Gateway 只做 On-Premises ↔ VPC 的中转，不做 VPC ↔ VPC 的路由）</li>
+  <li>关联的 VPC CIDR 之间不能重叠</li>
+  <li>每个 DX Gateway 最多关联 10 个 VGW（可申请提额）</li>
+  <li>DX Gateway 是全球资源，但每个 DX Gateway 只能属于一个 AWS 账户</li>
+ </ul>
+</div>
+</section>
+
+<!-- 四、LAG -->
+<section id="lag">
+<h2>四、LAG（链路聚合组）</h2>
+<p class="lead">LAG（Link Aggregation Group）将多条相同速率的物理 DX 连接捆绑为一条逻辑连接，提升带宽并增加冗余。</p>
+
+<div class="diagram">
+ <div class="node"><b>企业路由器</b></div>
+ <span class="arrow">→ 多条物理线路 →</span>
+ <div class="node"><b>LAG（逻辑聚合）</b><br><small>LACP 协议</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>AWS 接入</b></div>
+</div>
+
+<ul>
+ <li><b>LACP（802.3ad）：</b>LAG 基于 LACP 协议实现链路聚合</li>
+ <li><b>同速率要求：</b>所有加入 LAG 的连接必须具有相同的带宽（如都是 10G）</li>
+ <li><b>同位置要求：</b>所有连接必须位于同一个 DX Location</li>
+ <li><b>最大端口数：</b>LAG 中最多 4 条活跃连接</li>
+ <li><b>最少活跃数：</b>可设置 LAG 的最小活跃连接数，低于该数量时 LAG 自动关闭</li>
+</ul>
+
+<div class="callout"><b>LAG vs 双 DX 连接：</b>LAG 提升带宽聚合，但所有连接在同一 Location，仍有单位置故障风险。真正高可用需要<b>双 Location + 双 DX</b>（参见第五节冗余设计）。</div>
+</section>
+
+<!-- 五、冗余设计 -->
+<section id="redundancy">
+<h2>五、冗余设计（高可用架构）</h2>
+<p class="lead">SAP-C02 高频考点。不同冗余方案对应不同的可用性级别，需要根据题目需求判断最合适的方案。</p>
+
+<h3>冗余级别对比</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>方案</th><th>示意</th><th>可抗故障</th><th>风险点</th><th>成本</th></tr></thead>
+<tbody>
+<tr>
+ <td><b>单连接（无冗余）</b></td>
+ <td>1条DX → VGW</td>
+ <td>无</td>
+ <td><span class="badge badge-red">SPOF</span> 单线路/单位置故障</td>
+ <td>最低</td>
+</tr>
+<tr>
+ <td><b>双连接单位置</b></td>
+ <td>2条DX (同DX Location) → VGW</td>
+ <td>单线路故障</td>
+ <td><span class="badge badge-orange">注意</span> DX Location 整体故障</td>
+ <td>中</td>
+</tr>
+<tr>
+ <td><b>双连接双位置</b></td>
+ <td>2条DX (不同DX Location) → VGW</td>
+ <td>单线路 + 单位置故障</td>
+ <td>极端情况下双位置同时故障</td>
+ <td>高</td>
+</tr>
+<tr>
+ <td><b>DX 主用 + VPN 备用</b></td>
+ <td>DX（主）+ Site-to-Site VPN（备）</td>
+ <td>DX 完全中断时自动切换 VPN</td>
+ <td>VPN 带宽和延迟较差</td>
+ <td>中低</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h3>AWS 官方推荐的最大弹性架构</h3>
+<div class="diagram">
+ <div class="node"><b>企业</b><br><small>数据中心</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>DX Location A</b><br><small>连接1 + 连接2</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>VGW / TGW</b><br><small>AWS VPC</small></div>
+ <span class="arrow">←</span>
+ <div class="node"><b>DX Location B</b><br><small>连接3 + 连接4</small></div>
+</div>
+<p><b>最大弹性（Maximum Resiliency）：</b>每个 DX Location 部署 2 条连接，共 2 个 Location、4 条连接，实现任意单点故障都不影响连通性。</p>
+
+<h3>DX + VPN 备份路由控制</h3>
+<p>当同时存在 DX 和 Site-to-Site VPN 时，通过 BGP 控制优先使用 DX：</p>
+<ul>
+ <li><b>AS-PATH Prepend（VPN 侧）：</b>在 VPN 的 BGP 路由上增加 AS-PATH 长度，使 DX 路由更优先</li>
+ <li><b>MED（Metric）：</b>对 VPN 路由设置更高 MED 值，降低优先级</li>
+ <li><b>LOCAL_PREF（AWS 侧）：</b>在 AWS VGW 上为 DX 路由设置更高 LOCAL_PREF</li>
+</ul>
+
+<div class="callout green"><b>考试关键词：</b>需要"最高可用性"→ 双 DX 双位置；需要"成本低且有备份"→ DX 主用 + VPN 备用；"快速建立连接"→ VPN（DX 建立周期长）。</div>
+</section>
+
+<!-- 六、加密方案 -->
+<section id="encryption">
+<h2>六、加密方案</h2>
+<p class="lead">Direct Connect 物理链路默认<b>不提供数据加密</b>。若需要传输加密，必须在 DX 之上叠加加密层。</p>
+
+<div class="callout red"><b>考试必记：</b>Direct Connect 默认不加密。题目若同时要求"低延迟专线"和"数据加密"，答案通常是 <b>VPN over Direct Connect</b>（在 DX 之上运行 IPsec VPN）。</div>
+
+<h3>两种加密方案对比</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>方案</th><th>MACsec（802.1AE）</th><th>VPN over Direct Connect（IPsec）</th></tr></thead>
+<tbody>
+<tr><td><b>加密层级</b></td><td>Layer 2（链路层）</td><td>Layer 3（网络层）</td></tr>
+<tr><td><b>加密位置</b></td><td>在 DX Location 内，逐跳加密</td><td>端到端加密（客户设备 → VGW/TGW）</td></tr>
+<tr><td><b>适用连接类型</b></td><td>仅专用连接（Dedicated，1G/10G/100G）</td><td>专用连接 + 托管连接均可</td></tr>
+<tr><td><b>性能影响</b></td><td>极小（硬件加速）</td><td>有一定 CPU 开销，带宽上限约 1.25 Gbps/隧道</td></tr>
+<tr><td><b>配置复杂度</b></td><td>较高（需要支持 MACsec 的设备）</td><td>相对简单（标准 IPsec 配置）</td></tr>
+<tr><td><b>跨 Region</b></td><td>不支持跨 Region（链路层限制）</td><td>支持（IP 路由不受限制）</td></tr>
+<tr><td><b>典型场景</b></td><td>金融、政务等高合规要求，需要硬件级加密</td><td>通用加密需求，与 DX 冗余配合</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>VPN over Direct Connect 架构</h3>
+<div class="diagram">
+ <div class="node"><b>On-Premises</b><br><small>IPsec 端点</small></div>
+ <span class="arrow">→ DX 物理链路 →</span>
+ <div class="node"><b>Public VIF</b><br><small>访问 VGW 公有 IP</small></div>
+ <span class="arrow">→ IPsec 隧道 →</span>
+ <div class="node"><b>VGW / TGW</b><br><small>AWS 侧 VPN 终端</small></div>
+</div>
+<p>VPN over DX 使用 <b>Public VIF</b>（访问 VGW 的公有 IP），在 DX 物理链路上建立 IPsec 加密隧道，实现"物理隔离 + 端到端加密"双重安全。</p>
+</section>
+
+<!-- 七、BGP 路由 -->
+<section id="bgp">
+<h2>七、BGP 路由控制</h2>
+<p class="lead">Direct Connect 强制使用 BGP 协议（Border Gateway Protocol）进行路由交换，理解 BGP 属性对于控制流量优先级至关重要。</p>
+
+<h3>BGP 核心属性（考试相关）</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>BGP 属性</th><th>说明</th><th>控制方向</th><th>值越大/越长？</th></tr></thead>
+<tbody>
+<tr><td><b>AS-PATH</b></td><td>路由经过的 AS（自治系统）路径列表</td><td>影响入站路由选择（对端如何选择路径）</td><td>越短越优先</td></tr>
+<tr><td><b>AS-PATH Prepend</b></td><td>人为增加 AS 号让路径看起来更长</td><td>降低该路径优先级（用于备份路由）</td><td>添加后变长，优先级降低</td></tr>
+<tr><td><b>MED</b><br>（Multi-Exit Discriminator）</td><td>向对端 AS 建议进入本 AS 的首选入口</td><td>影响对端 AS 如何选择进入路径</td><td>越小越优先</td></tr>
+<tr><td><b>LOCAL_PREF</b></td><td>AS 内部的路由优先级</td><td>影响 AS 内部路由器如何选择出口路径</td><td>越大越优先</td></tr>
+<tr><td><b>BGP Communities</b></td><td>路由标记，用于策略控制</td><td>AWS DX 支持特定 Community 值控制路由传播范围</td><td>—</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>DX 优先于 VPN 的路由配置</h3>
+<ul>
+ <li><b>方法1（VPN 侧降权）：</b>在 VPN 的 BGP 路由上使用 AS-PATH Prepend，增加跳数 → AWS 优先选择 DX 路由</li>
+ <li><b>方法2（DX 侧提权）：</b>配置 DX 路由的 LOCAL_PREF 值高于 VPN → AWS 内部路由器优先选 DX 出口</li>
+ <li><b>方法3（MED）：</b>对 VPN 路由设置较高 MED 值 → 对端 AS 优先从 DX 入口进入</li>
+</ul>
+
+<div class="callout"><b>ECMP（等价多路径）：</b>Transit Gateway 支持跨多条 DX 或 VPN 连接做 ECMP，实现水平扩展带宽。VGW 不支持 ECMP（仅支持主备切换）。</div>
+</section>
+
+<!-- 八、场景题 -->
+<section id="scenarios">
+<h2>八、场景题解析</h2>
+<p class="small">先独立思考，再查看解析。</p>
+
+<div class="quiz">
+<b>场景1：某公司需要将大型数据集从本地传输到 S3，要求低延迟、高带宽，数据不经过公共互联网，但不需要额外加密（数据本身已加密）。最合适的方案是？</b>
+<br><button class="secondary" onclick="showAnswer('s1a',false)">A. Site-to-Site VPN</button>
+<button class="secondary" onclick="showAnswer('s1a',true)">B. Direct Connect + Public VIF</button>
+<button class="secondary" onclick="showAnswer('s1a',false)">C. Direct Connect + Private VIF</button>
+<button class="secondary" onclick="showAnswer('s1a',false)">D. S3 Transfer Acceleration</button>
+<div class="answer" id="s1a">
+ <b>正确答案：B。</b>访问 S3 等公有 AWS 服务，需要 Public VIF（使用 AWS 公有 IP 端点）。数据已自行加密，无需叠加 VPN。Private VIF 连接的是 VPC 私有资源，不能直接访问 S3 公有端点。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景2：某金融机构要求所有从本地到 AWS 的数据传输必须满足：低延迟、高带宽、数据传输加密（合规要求）。应该选择哪种方案？</b>
+<br><button class="secondary" onclick="showAnswer('s2a',false)">A. Direct Connect（无加密）</button>
+<button class="secondary" onclick="showAnswer('s2a',false)">B. 仅 Site-to-Site VPN</button>
+<button class="secondary" onclick="showAnswer('s2a',true)">C. VPN over Direct Connect（IPsec over DX）</button>
+<button class="secondary" onclick="showAnswer('s2a',false)">D. AWS PrivateLink</button>
+<div class="answer" id="s2a">
+ <b>正确答案：C。</b>VPN over Direct Connect 结合了 DX 的低延迟专线优势和 IPsec VPN 的端到端加密。DX 单独使用不加密；仅 VPN 延迟高且带宽受限；PrivateLink 是 VPC 内服务访问方案，不适用于混合网络传输加密。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景3：某企业目前使用单条 DX 连接到 AWS，想提升连接可用性，在 DX 完全中断时仍能访问 AWS 资源，且希望成本合理（不需要最高级别冗余）。最优方案是？</b>
+<br><button class="secondary" onclick="showAnswer('s3a',false)">A. 增加第二条 DX（同一 DX Location）</button>
+<button class="secondary" onclick="showAnswer('s3a',false)">B. 使用 LAG 聚合两条 DX</button>
+<button class="secondary" onclick="showAnswer('s3a',true)">C. DX 主用 + Site-to-Site VPN 备用</button>
+<button class="secondary" onclick="showAnswer('s3a',false)">D. 双 DX 双 Location</button>
+<div class="answer" id="s3a">
+ <b>正确答案：C。</b>DX+VPN 备份是最具成本效益的冗余方案，VPN 在 DX 中断时自动接管（通过 BGP 路由优先级控制）。同位置双 DX 无法抗 DX Location 故障；LAG 同样在同一 Location；双 DX 双 Location 成本最高，超出"成本合理"要求。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景4：某企业在 us-east-1 和 ap-southeast-1 都有 VPC，需要通过一条本地 DX 线路同时访问两个 Region 的 VPC 资源，应该如何设计？</b>
+<br><button class="secondary" onclick="showAnswer('s4a',false)">A. 为每个 Region 建立独立 DX 连接</button>
+<button class="secondary" onclick="showAnswer('s4a',false)">B. 使用两个 Private VIF 分别连接两个 VGW</button>
+<button class="secondary" onclick="showAnswer('s4a',true)">C. 使用 Direct Connect Gateway + 两个 Region 的 VGW</button>
+<button class="secondary" onclick="showAnswer('s4a',false)">D. 使用 Public VIF 跨 Region 访问</button>
+<div class="answer" id="s4a">
+ <b>正确答案：C。</b>Direct Connect Gateway 是全球级资源，可将一条 DX 连接关联到多个 Region 的 VGW，实现跨 Region 连接，无需建立多条物理 DX 线路。选项B中一条 DX 连接只能创建有限数量 VIF，而 DX Gateway 提供更简洁的管理方式。
+</div>
+</div>
+</section>
+
+<!-- 九、关键词速查 -->
+<section id="quick">
+<h2>九、关键词速查表</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>题目关键词 / 场景</th><th>对应答案</th></tr></thead>
+<tbody>
+<tr><td>专用物理连接，不走公共互联网</td><td>AWS Direct Connect</td></tr>
+<tr><td>快速建立混合连接（数周内）</td><td>Site-to-Site VPN（DX 需要数周建立）</td></tr>
+<tr><td>访问 S3、DynamoDB 通过 DX</td><td>Public VIF</td></tr>
+<tr><td>访问 VPC 私有资源通过 DX</td><td>Private VIF</td></tr>
+<tr><td>DX 连接多 VPC（通过 TGW）</td><td>Transit VIF + DX Gateway</td></tr>
+<tr><td>DX 跨 Region 连接多 VPC</td><td>Direct Connect Gateway</td></tr>
+<tr><td>DX 默认加密吗？</td><td>不加密（需叠加 MACsec 或 VPN）</td></tr>
+<tr><td>DX + 加密（低延迟合规）</td><td>VPN over Direct Connect（IPsec）</td></tr>
+<tr><td>硬件级 Layer2 加密</td><td>MACsec（仅 Dedicated Connection）</td></tr>
+<tr><td>多条 DX 带宽聚合</td><td>LAG（链路聚合组）</td></tr>
+<tr><td>最高 DX 可用性</td><td>双 DX 双 DX Location</td></tr>
+<tr><td>成本合理的 DX 备份方案</td><td>DX 主用 + VPN 备用（BGP 路由控制）</td></tr>
+<tr><td>控制流量优先走 DX 而非 VPN</td><td>BGP: AS-PATH Prepend（VPN侧增长路径）或 LOCAL_PREF（DX侧提权）</td></tr>
+<tr><td>多条 DX 水平扩展带宽</td><td>TGW + ECMP（VGW 不支持 ECMP）</td></tr>
+<tr><td>DX 连接通过合作伙伴，50M~10G</td><td>Hosted Connection（托管连接）</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- 十、速记卡 -->
+<section id="memory">
+<h2>十、考前速记卡（可勾选）</h2>
+<p>复习时勾选已掌握的项目。进度仅在当前页面打开期间有效。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 15</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>DX 本质：</b>专用物理连接，不走公共互联网，默认不加密</span></li>
+<li><input type="checkbox"><span><b>Private VIF：</b>连接 VPC 私有资源，通过 VGW 或 DX Gateway</span></li>
+<li><input type="checkbox"><span><b>Public VIF：</b>访问 S3/DynamoDB 等 AWS 公有服务（使用公有 IP 端点）</span></li>
+<li><input type="checkbox"><span><b>Transit VIF：</b>连接 Transit Gateway，支持多 VPC，必须配合 DX Gateway</span></li>
+<li><input type="checkbox"><span><b>DX Gateway：</b>全球级资源，单条 DX 连接多 Region VPC</span></li>
+<li><input type="checkbox"><span><b>DX Gateway 限制：</b>通过它连接的 VPC 之间不能相互通信</span></li>
+<li><input type="checkbox"><span><b>LAG：</b>多条相同速率 DX 聚合，提升带宽，同一 DX Location</span></li>
+<li><input type="checkbox"><span><b>最高可用性：</b>双 DX 双 DX Location（每处两条连接）</span></li>
+<li><input type="checkbox"><span><b>成本优化冗余：</b>DX 主用 + Site-to-Site VPN 备用</span></li>
+<li><input type="checkbox"><span><b>DX 加密方案：</b>MACsec（L2，仅专用连接）或 VPN over DX（L3 IPsec）</span></li>
+<li><input type="checkbox"><span><b>VPN over DX：</b>使用 Public VIF + IPsec，提供"物理隔离 + 数据加密"</span></li>
+<li><input type="checkbox"><span><b>BGP AS-PATH Prepend：</b>增长 VPN 路径 → 流量优先走 DX</span></li>
+<li><input type="checkbox"><span><b>ECMP：</b>TGW 支持，VGW 不支持；可跨多 DX/VPN 水平扩展带宽</span></li>
+<li><input type="checkbox"><span><b>DX 建立周期：</b>数周，不适合"快速建立"场景（选 VPN）</span></li>
+<li><input type="checkbox"><span><b>Hosted Connection：</b>合作伙伴提供，带宽 50M~10G，灵活适合中小企业</span></li>
+</ul>
+</section>
+
+</main>
+</div>
+<footer class="container">AWS SAP-C02 Direct Connect 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

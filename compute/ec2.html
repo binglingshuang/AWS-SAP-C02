@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Amazon EC2 弹性计算考点整理、场景辨析与快速答题技巧">
+<title>AWS SAP-C02｜Amazon EC2 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.orange{background:var(--orange-soft);color:var(--orange)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff}
+.card b{display:block;margin-bottom:5px}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}.cards{grid-template-columns:1fr}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>Amazon EC2<br>弹性计算服务 考试速查手册</h1>
+  <p>实例类型、购买选项、Spot 实例、置放群组、存储、AMI、ENI 核心考点全覆盖。以"题目需求 → 对应功能 → 易错边界"为主线，适合系统复习和考前速查。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">计算</span>
+   <span class="pill">可打印 / 可勾选</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#instance-types">一、实例类型系列</a>
+ <a href="#purchase">二、购买选项</a>
+ <a href="#spot">三、Spot 实例</a>
+ <a href="#placement">四、置放群组</a>
+ <a href="#storage">五、实例存储 vs EBS</a>
+ <a href="#userdata">六、用户数据与实例元数据</a>
+ <a href="#ami">七、AMI</a>
+ <a href="#eni">八、Elastic Network Interface</a>
+ <a href="#scenarios">九、场景题解析</a>
+ <a href="#quick">十、关键词速查</a>
+ <a href="#memory">十一、考前速记卡</a>
+ <a href="#quiz">十二、快速自测</a>
+</nav>
+
+<main>
+
+<section id="instance-types">
+<h2>一、实例类型系列</h2>
+<p class="lead">EC2 实例类型由系列前缀、代数、处理器代码和大小组成，如 <code>m6i.xlarge</code>。SAP-C02 考查的是不同系列的适用场景，而非具体型号。</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>系列</th><th>前缀</th><th>特点</th><th>典型场景</th></tr></thead>
+<tbody>
+<tr><td><b>通用型</b></td><td>M / T</td><td>CPU/内存平衡；T 系列支持突发（Burstable）</td><td>Web 应用、开发测试、小型数据库</td></tr>
+<tr><td><b>计算优化</b></td><td>C</td><td>高 CPU/内存比，最低延迟</td><td>批量计算、媒体转码、HPC</td></tr>
+<tr><td><b>内存优化</b></td><td>R / X / z</td><td>大内存；X 系列内存最大；z 系列高频</td><td>内存数据库（SAP HANA）、实时大数据</td></tr>
+<tr><td><b>存储优化</b></td><td>I / D / H</td><td>高 IOPS NVMe SSD（I）或高吞吐磁盘（D/H）</td><td>NoSQL、数据仓库、分布式文件系统</td></tr>
+<tr><td><b>加速计算</b></td><td>P / G / Inf / Trn</td><td>GPU/FPGA/Inferentia 加速</td><td>机器学习训练与推理、图形渲染</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout green"><b>快速记忆：</b>M = Most general；C = CPU 密集；R = RAM 大；I = IOPS 高；P/G = GPU。T 系列适合波动负载，有 CPU Credit 机制。</div>
+<div class="callout orange"><b>考试陷阱：</b>HPC 低延迟首选 C 系列 + Cluster Placement Group，而不是 M 系列。内存型数据库（SAP HANA）选 X 系列，不要选 R。</div>
+</section>
+
+<section id="purchase">
+<h2>二、购买选项</h2>
+<p class="lead">购买选项是 SAP-C02 的高频考点，尤其是成本优化场景。</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>类型</th><th>折扣幅度</th><th>承诺期</th><th>中断风险</th><th>典型场景</th></tr></thead>
+<tbody>
+<tr><td><b>On-Demand</b></td><td>无折扣（基准价）</td><td>无</td><td>无</td><td>短期/不可预测负载、开发测试</td></tr>
+<tr><td><b>Reserved（标准）</b></td><td>最高 72%</td><td>1 年 / 3 年</td><td>无</td><td>稳定可预测负载（数据库、Web）</td></tr>
+<tr><td><b>Reserved（可转换）</b></td><td>最高 54%</td><td>1 年 / 3 年</td><td>无</td><td>需要更换实例系列/OS的场景</td></tr>
+<tr><td><b>Savings Plans</b></td><td>最高 66%</td><td>1 年 / 3 年</td><td>无</td><td>承诺固定美元/小时消费，灵活</td></tr>
+<tr><td><b>Spot</b></td><td>最高 90%</td><td>无</td><td>高（2 min 通知）</td><td>可容错、无状态批处理</td></tr>
+<tr><td><b>Dedicated Host</b></td><td>按需/RI 定价</td><td>可选 1/3 年</td><td>无</td><td>BYOL（按 Socket/Core 许可证）</td></tr>
+<tr><td><b>Dedicated Instance</b></td><td>略高于 On-Demand</td><td>无</td><td>无</td><td>合规要求物理隔离，不需 BYOL</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout"><b>Dedicated Host vs Dedicated Instance：</b>Dedicated Host 提供<b>对物理服务器的可见性</b>（Socket/Core 数量），适合 BYOL 软件许可证（Oracle、Windows Server 等）。Dedicated Instance 只保证物理隔离，不提供 Host 级别控制。</div>
+<h3>Reserved Instance 类型对比</h3>
+<div class="cards">
+ <div class="card"><b>标准 RI（Standard）</b><p>折扣最高，但<b>不可更改</b>实例系列、OS 或租户。可在 Marketplace 二手转售。</p></div>
+ <div class="card"><b>可转换 RI（Convertible）</b><p>折扣略低，但可以<b>交换</b>为同等或更高价值的其他实例类型（不可卖出）。</p></div>
+</div>
+</section>
+
+<section id="spot">
+<h2>三、Spot 实例</h2>
+<p class="lead">Spot 实例利用 AWS 闲置容量，折扣高达 90%，但 AWS 可随时回收，提前 2 分钟通知。</p>
+<h3>核心机制</h3>
+<ul>
+ <li><b>中断通知：</b>实例被回收前 2 分钟，通过 EC2 实例元数据（IMDS）和 CloudWatch Events 发送中断通知。</li>
+ <li><b>Spot Block（已弃用）：</b>原本可以锁定 1–6 小时避免中断，AWS 已于 2021 年停止提供新的 Spot Block 购买，考试中如出现此选项通常是干扰项。</li>
+ <li><b>中断行为：</b>可配置为停止（Stop）、休眠（Hibernate）或终止（Terminate，默认）。</li>
+</ul>
+<h3>Spot Fleet</h3>
+<div class="diagram">
+ <div class="node"><b>Spot Fleet 请求</b><br><small>目标容量 + 价格上限</small></div>
+ <span class="arrow">→</span>
+ <div class="node">Spot 实例池 A<br><small>m5.large us-east-1a</small></div>
+ <div class="node">Spot 实例池 B<br><small>c5.large us-east-1b</small></div>
+ <div class="node">On-Demand 补充<br><small>容量不足时</small></div>
+</div>
+<ul>
+ <li><b>Spot Fleet</b> 允许跨多个实例类型和 AZ 申请 Spot 容量，提高可用性。</li>
+ <li>分配策略：<code>lowestPrice</code>（最低价格）、<code>diversified</code>（分散到多个池）、<code>capacityOptimized</code>（最大池容量，降低中断率）。</li>
+ <li>可混合 Spot + On-Demand 满足最低容量保障。</li>
+</ul>
+<h3>与 Auto Scaling 结合</h3>
+<p>EC2 Auto Scaling 支持<b>混合实例策略</b>，在同一 ASG 中混合 Spot 和 On-Demand 实例，结合 <code>capacityOptimized</code> 分配策略可以最大化降低中断率。</p>
+<div class="callout red"><b>考试陷阱：</b>Spot 实例<b>不适合</b>：有状态应用、持久数据库、不可中断的批处理任务。适合：无状态 Web 层、CI/CD 测试、大数据 Map-Reduce。</div>
+</section>
+
+<section id="placement">
+<h2>四、置放群组（Placement Groups）</h2>
+<p>置放群组控制实例的物理位置，影响网络延迟和故障隔离。</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>类型</th><th>物理策略</th><th>优势</th><th>限制</th><th>典型场景</th></tr></thead>
+<tbody>
+<tr><td><b>Cluster</b></td><td>同一机架（单 AZ）</td><td>最低网络延迟、最高带宽（10 Gbps+）</td><td>AZ 级别故障影响全部；不支持跨 AZ</td><td>HPC、紧耦合并行计算</td></tr>
+<tr><td><b>Spread</b></td><td>不同机架（可跨 AZ）</td><td>最高故障隔离；每个 AZ 最多 7 个实例</td><td>每 AZ 7 实例上限</td><td>关键应用（每 AZ 1 个 Primary）</td></tr>
+<tr><td><b>Partition</b></td><td>不同分区（每分区独立机架，可跨 AZ）</td><td>大规模分布式，每分区最多 100 实例</td><td>分区间不共享底层硬件</td><td>Hadoop、Kafka、Cassandra</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout green"><b>快速记忆：</b>Cluster = 快（低延迟）；Spread = 安全（隔离）；Partition = 大（分布式）。</div>
+<div class="callout orange"><b>注意：</b>Cluster Placement Group 中，如果需要的实例数量超出单个 AZ 的可用容量，启动会失败。建议在非高峰时段一次性启动所有实例。</div>
+</section>
+
+<section id="storage">
+<h2>五、实例存储 vs EBS</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>特性</th><th>实例存储（Instance Store）</th><th>EBS（弹性块存储）</th></tr></thead>
+<tbody>
+<tr><td>持久性</td><td>❌ 临时（实例停止/终止即丢失）</td><td>✅ 持久（独立于实例生命周期）</td></tr>
+<tr><td>跨 AZ 迁移</td><td>❌ 不支持（绑定物理机）</td><td>✅ 可快照后跨 AZ/Region 恢复</td></tr>
+<tr><td>性能</td><td>极高（NVMe SSD，数百万 IOPS）</td><td>gp3 最高 16K IOPS；io2 Block Express 最高 256K IOPS</td></tr>
+<tr><td>成本</td><td>包含在实例价格中</td><td>按容量 + IOPS + 吞吐单独计费</td></tr>
+<tr><td>加密</td><td>特定实例类型支持</td><td>KMS 加密，创建时启用</td></tr>
+<tr><td>典型实例</td><td>i3、i4i、d2、h1</td><td>所有实例类型均支持</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout red"><b>核心原则：</b>实例存储适合<b>临时缓存、缓冲区、Swap 分区</b>。任何需要持久化的数据（数据库文件、应用日志）必须使用 EBS 或外部存储（S3、EFS）。</div>
+<h3>EBS 卷类型速览</h3>
+<table>
+<thead><tr><th>类型</th><th>定位</th><th>最大 IOPS</th><th>典型场景</th></tr></thead>
+<tbody>
+<tr><td>gp3</td><td>通用 SSD（推荐）</td><td>16,000</td><td>Boot 卷、Web/DB</td></tr>
+<tr><td>io2 / io2 Block Express</td><td>预配置 IOPS SSD</td><td>256,000</td><td>高性能数据库（Oracle/SQL Server）</td></tr>
+<tr><td>st1</td><td>吞吐型 HDD</td><td>500 MB/s</td><td>大数据、日志顺序读写</td></tr>
+<tr><td>sc1</td><td>冷存储 HDD</td><td>250 MB/s</td><td>归档、不频繁访问</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="userdata">
+<h2>六、用户数据（User Data）与实例元数据（IMDS）</h2>
+<h3>User Data</h3>
+<ul>
+ <li>在实例<b>首次启动</b>时以 root 权限执行的 Shell 脚本或 cloud-init 指令。</li>
+ <li>只在首次启动运行（默认），除非明确配置 <code>cloud-init</code> 在每次启动时执行。</li>
+ <li>适合：安装软件包、拉取配置、注册服务发现。</li>
+ <li>通过 <code>http://169.254.169.254/latest/user-data</code> 访问。</li>
+</ul>
+<h3>实例元数据服务（IMDS）</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>特性</th><th>IMDSv1</th><th>IMDSv2（推荐）</th></tr></thead>
+<tbody>
+<tr><td>认证方式</td><td>无需认证，直接 GET 请求</td><td>需先 PUT 获取 Session Token，再使用 Token 请求</td></tr>
+<tr><td>安全性</td><td>容易受 SSRF 攻击</td><td>防 SSRF，Token 有 TTL 限制</td></tr>
+<tr><td>访问地址</td><td><code>169.254.169.254/latest/meta-data/</code></td><td>同左，但需 Header: <code>X-aws-ec2-metadata-token</code></td></tr>
+<tr><td>强制启用</td><td>-</td><td>可在启动模板/AMI 级别强制禁用 v1</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout red"><b>安全最佳实践：</b>强制使用 IMDSv2（<code>HttpTokens: required</code>），可通过 SCP、IAM 策略或 AWS Config 规则在组织级别强制执行。IMDSv1 暴露的凭证是 SSRF 攻击的主要目标。</div>
+<div class="callout green"><b>常用元数据路径：</b><code>/latest/meta-data/iam/security-credentials/</code>（临时凭证）、<code>/latest/meta-data/instance-id</code>、<code>/latest/meta-data/placement/availability-zone</code></div>
+</section>
+
+<section id="ami">
+<h2>七、AMI（Amazon Machine Image）</h2>
+<ul>
+ <li><b>区域级资源：</b>AMI 属于特定 Region，不能直接在其他 Region 使用。</li>
+ <li><b>跨 Region 复制：</b>使用 <code>CopyImage</code> 复制 AMI 到目标 Region，同时自动复制底层 EBS 快照。</li>
+ <li><b>EBS 快照支持：</b>EBS-backed AMI 由一个或多个 EBS 快照组成；Instance Store-backed AMI 由 S3 模板组成。</li>
+ <li><b>共享 AMI：</b>可私有共享（按账号 ID）、公开分享或通过 AWS Marketplace 发布。</li>
+ <li><b>加密注意：</b>加密的 AMI 复制时会保持加密状态；跨账号共享加密 AMI 需要共享 KMS 密钥。</li>
+</ul>
+<div class="diagram">
+ <div class="node"><b>EBS Snapshot</b><br><small>Region A</small></div>
+ <span class="arrow">CopyImage →</span>
+ <div class="node"><b>AMI</b><br><small>Region B</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>EC2 实例</b><br><small>Region B</small></div>
+</div>
+<div class="callout orange"><b>Golden AMI 模式：</b>预先安装并配置好所有软件依赖的 AMI，配合 Auto Scaling 可实现秒级快速启动，避免 User Data 冷启动延迟。这是 SAP-C02 常见的"最小化启动时间"答案。</div>
+</section>
+
+<section id="eni">
+<h2>八、Elastic Network Interface（ENI）高级用法</h2>
+<p>ENI 是 VPC 中的虚拟网络接口，每个 EC2 实例至少有一个主 ENI（eth0）。</p>
+<h3>多 IP 地址</h3>
+<ul>
+ <li>一个 ENI 可分配多个私有 IPv4 地址，适合在同一实例上托管多个域名/SSL 证书。</li>
+ <li>每个私有 IP 可关联独立的弹性 IP（EIP）。</li>
+</ul>
+<h3>移动 ENI 实现快速故障切换</h3>
+<div class="diagram">
+ <div class="node"><b>Primary EC2</b><br><small>附加 eth1（ENI）</small></div>
+ <span class="arrow">故障 →</span>
+ <div class="node"><b>分离 ENI</b><br><small>（保留 IP/MAC）</small></div>
+ <span class="arrow">→ 附加</span>
+ <div class="node"><b>Standby EC2</b><br><small>接管同一 IP</small></div>
+</div>
+<ul>
+ <li>ENI 可在同 AZ 的实例之间移动，迁移后保留私有 IP 和 MAC 地址。</li>
+ <li>相比 DNS 切换，ENI 迁移几乎零延迟，适合需要毫秒级故障切换的场景。</li>
+ <li>常用于：网络设备（防火墙、NAT）、许可证绑定 MAC 的软件。</li>
+</ul>
+<div class="callout"><b>ENI vs EIP：</b>EIP 切换依赖于 IP 重新关联（秒级），ENI 移动同样是秒级但额外保留 MAC 地址（对许可证软件重要）。两者均不需要 DNS TTL 等待。</div>
+</section>
+
+<section id="scenarios">
+<h2>九、场景题解析</h2>
+
+<div class="quiz">
+ <b>场景 1：公司有一个稳定运行的 Web 应用，预计未来 1 年的流量保持不变，如何最低成本运行？</b>
+ <button class="secondary" onclick="showAnswer('s1',false)">A. On-Demand 实例</button>
+ <button class="secondary" onclick="showAnswer('s1',false)">B. Spot 实例</button>
+ <button class="secondary" onclick="showAnswer('s1',true)">C. 标准 Reserved Instance（1 年，全预付）</button>
+ <button class="secondary" onclick="showAnswer('s1',false)">D. Dedicated Host</button>
+ <div class="answer" id="s1"><b>正确答案：C。</b>稳定可预测的负载 + 明确使用期限 → 标准 Reserved Instance 折扣最高（可达 72%）。全预付比部分预付和无预付折扣更大。</div>
+</div>
+
+<div class="quiz">
+ <b>场景 2：数据分析团队需要处理大量可中断的批处理任务，要求最低成本，失败可以重试。</b>
+ <button class="secondary" onclick="showAnswer('s2',false)">A. On-Demand</button>
+ <button class="secondary" onclick="showAnswer('s2',true)">B. Spot 实例 + Spot Fleet（capacityOptimized）</button>
+ <button class="secondary" onclick="showAnswer('s2',false)">C. 标准 RI</button>
+ <button class="secondary" onclick="showAnswer('s2',false)">D. Dedicated Instance</button>
+ <div class="answer" id="s2"><b>正确答案：B。</b>可容错 + 可中断 + 最低成本 → Spot 实例。使用 Spot Fleet + capacityOptimized 策略可降低中断概率，并通过多实例类型提高容量获取成功率。</div>
+</div>
+
+<div class="quiz">
+ <b>场景 3：HPC 集群需要节点间超低延迟通信（MPI 并行计算），如何部署？</b>
+ <button class="secondary" onclick="showAnswer('s3',false)">A. Spread Placement Group</button>
+ <button class="secondary" onclick="showAnswer('s3',true)">B. Cluster Placement Group + 增强联网（ENA）</button>
+ <button class="secondary" onclick="showAnswer('s3',false)">C. Partition Placement Group</button>
+ <button class="secondary" onclick="showAnswer('s3',false)">D. 默认不使用置放群组</button>
+ <div class="answer" id="s3"><b>正确答案：B。</b>HPC 紧耦合并行计算需要最低延迟 → Cluster Placement Group（同一机架，10 Gbps+ 带宽）+ Enhanced Networking（ENA/SR-IOV）。</div>
+</div>
+
+<div class="quiz">
+ <b>场景 4：一个关键数据库服务器需要实现快速故障切换（目标 RTO < 30 秒），不希望依赖 DNS TTL。</b>
+ <button class="secondary" onclick="showAnswer('s4',false)">A. Route 53 健康检查 + DNS 切换</button>
+ <button class="secondary" onclick="showAnswer('s4',false)">B. Auto Scaling 替换实例</button>
+ <button class="secondary" onclick="showAnswer('s4',true)">C. 移动 Elastic Network Interface（ENI）</button>
+ <button class="secondary" onclick="showAnswer('s4',false)">D. EIP 重关联</button>
+ <div class="answer" id="s4"><b>正确答案：C。</b>需要保留同一 IP 地址且不依赖 DNS TTL → 移动 ENI（保留私有 IP 和 MAC 地址）。脚本可在故障检测后数秒内完成 ENI 分离和重新挂载到备用实例。</div>
+</div>
+</section>
+
+<section id="quick">
+<h2>十、关键词速查</h2>
+<table>
+<thead><tr><th>题目关键词</th><th>优先考虑</th></tr></thead>
+<tbody>
+<tr><td>稳定负载、最低成本、1/3 年承诺</td><td>标准 Reserved Instance（全预付）</td></tr>
+<tr><td>可中断批处理、最低价格</td><td>Spot 实例 + Spot Fleet</td></tr>
+<tr><td>BYOL、Socket/Core 许可证</td><td>Dedicated Host</td></tr>
+<tr><td>物理隔离合规（无需 BYOL）</td><td>Dedicated Instance</td></tr>
+<tr><td>HPC、低延迟节点间通信</td><td>Cluster Placement Group</td></tr>
+<tr><td>高可用隔离、每 AZ 7 实例</td><td>Spread Placement Group</td></tr>
+<tr><td>Hadoop/Kafka/Cassandra 大规模分布式</td><td>Partition Placement Group</td></tr>
+<tr><td>临时高性能存储、NVMe、不需持久</td><td>Instance Store</td></tr>
+<tr><td>持久存储、可快照</td><td>EBS</td></tr>
+<tr><td>快速启动、预装软件</td><td>Golden AMI</td></tr>
+<tr><td>跨 Region 使用 AMI</td><td>CopyImage（跨 Region 复制）</td></tr>
+<tr><td>快速故障切换、保留 IP/MAC</td><td>移动 ENI</td></tr>
+<tr><td>SSRF 防护、元数据安全</td><td>IMDSv2（强制 HttpTokens: required）</td></tr>
+<tr><td>灵活更换实例系列</td><td>可转换 Reserved Instance 或 Savings Plans</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="memory">
+<h2>十一、考前速记卡（可勾选）</h2>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 14</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>稳定负载最低成本：</b>标准 Reserved Instance（全预付，最高 72% 折扣）</span></li>
+<li><input type="checkbox"><span><b>可中断批处理最低成本：</b>Spot 实例（最高 90% 折扣，2 分钟中断通知）</span></li>
+<li><input type="checkbox"><span><b>BYOL 许可证：</b>Dedicated Host（可见 Socket/Core 数量）</span></li>
+<li><input type="checkbox"><span><b>HPC 低延迟：</b>Cluster Placement Group（同 AZ，最低延迟）</span></li>
+<li><input type="checkbox"><span><b>高隔离关键实例：</b>Spread Placement Group（每 AZ 最多 7 个）</span></li>
+<li><input type="checkbox"><span><b>Hadoop/Kafka：</b>Partition Placement Group（大规模分布式）</span></li>
+<li><input type="checkbox"><span><b>实例存储：</b>临时数据，实例停止即丢失，不可跨 AZ</span></li>
+<li><input type="checkbox"><span><b>EBS：</b>持久存储，可快照跨 AZ/Region 恢复</span></li>
+<li><input type="checkbox"><span><b>IMDSv2：</b>强制 HttpTokens: required，防 SSRF 攻击</span></li>
+<li><input type="checkbox"><span><b>Golden AMI：</b>预装软件，最小化 ASG 启动时间</span></li>
+<li><input type="checkbox"><span><b>AMI 跨 Region：</b>CopyImage 复制，连同 EBS Snapshot 一起</span></li>
+<li><input type="checkbox"><span><b>ENI 移动：</b>秒级故障切换，保留私有 IP + MAC 地址</span></li>
+<li><input type="checkbox"><span><b>Spot Block：</b>已弃用（2021 年），考试中是干扰项</span></li>
+<li><input type="checkbox"><span><b>可转换 RI vs 标准 RI：</b>可换系列 vs 折扣最高</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十二、快速自测</h2>
+<p class="small">先独立选择，再点击"查看解析"。</p>
+<div class="quiz">
+ <b>1. 一个许可证按 Socket 数量计费的 Oracle 数据库需要迁移到 AWS，应选择哪种购买选项？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',false)">A. Dedicated Instance</button>
+ <button class="secondary" onclick="showAnswer('q1',true)">B. Dedicated Host</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. Reserved Instance</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. Spot 实例</button>
+ <div class="answer" id="q1"><b>正确答案：B。</b>BYOL + 需要 Socket/Core 可见性 → Dedicated Host。Dedicated Instance 只保证物理隔离，不提供 Socket 信息。</div>
+</div>
+<div class="quiz">
+ <b>2. 团队需要在同一 EC2 实例上运行多个 SSL 证书绑定不同域名，最简单的实现方式是？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 为每个域名启动独立 EC2 实例</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. 为 ENI 分配多个私有 IP，每个 IP 关联一个 EIP</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 使用 ALB SNI</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. 使用 NLB</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>单 ENI 支持多私有 IP，每个私有 IP 关联独立 EIP，可在同一实例上绑定多个 SSL 证书。（注：ALB SNI 是更现代的方案，但此题考查 ENI 多 IP 特性。）</div>
+</div>
+<div class="quiz">
+ <b>3. 以下哪种情况最适合使用 Partition Placement Group？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',false)">A. MPI 紧耦合 HPC 计算</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">B. 单个关键应用需要最大化故障隔离</button>
+ <button class="secondary" onclick="showAnswer('q3',true)">C. Hadoop 集群，数百个节点，需要机架感知</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. 需要跨 Region 部署</button>
+ <div class="answer" id="q3"><b>正确答案：C。</b>Partition Placement Group 为每个分区提供独立机架，大规模分布式系统（Hadoop、Kafka、HDFS）利用分区信息实现机架感知副本放置。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html" target="_blank" rel="noopener">EC2 实例类型文档</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html" target="_blank" rel="noopener">Spot 实例用户指南</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html" target="_blank" rel="noopener">置放群组文档</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html" target="_blank" rel="noopener">IMDS v2 配置指南</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>本文为复习提纲，服务功能持续更新，请以 AWS 官方文档和最新考试指南为准。</div>
+</section>
+
+</main>
+</div>
+<footer class="container">AWS SAP-C02 EC2 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

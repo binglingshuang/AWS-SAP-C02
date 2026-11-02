@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>机器学习与 AI – AWS SAP-C02 备考</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --paper: #fff;
+      --ink: #172033;
+      --muted: #627089;
+      --line: #e3e9f2;
+      --blue: #2457c5;
+      --blue-soft: #eaf1ff;
+      --shadow: 0 8px 28px rgba(25, 45, 85, .07);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(120deg, #10264d, #2457c5);
+      color: #fff;
+      padding: 0 2rem;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.2rem 0 2.4rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      color: rgba(255,255,255,.78);
+      text-decoration: none;
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .02em;
+      margin-bottom: 1.4rem;
+      transition: color .18s;
+    }
+    .back-link:hover { color: #fff; }
+    .back-link::before { content: "←"; font-size: .95rem; }
+
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      color: rgba(255,255,255,.9);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .25rem .75rem;
+      border-radius: 99px;
+      border: 1px solid rgba(255,255,255,.25);
+      margin-bottom: .85rem;
+    }
+
+    header h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      margin-bottom: .3rem;
+    }
+
+    header .subtitle {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,.65);
+      font-weight: 400;
+      margin-bottom: 1.3rem;
+    }
+
+    header .intro {
+      max-width: 760px;
+      font-size: .95rem;
+      line-height: 1.75;
+      color: rgba(255,255,255,.82);
+      background: rgba(255,255,255,.08);
+      border-left: 3px solid rgba(255,255,255,.4);
+      padding: .9rem 1.2rem;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.8rem 2rem 4rem;
+    }
+
+    .section-label {
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.4rem;
+    }
+
+    /* ── Card Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 1.4rem;
+    }
+
+    /* 大卡片：横跨全宽 */
+    .card-wide {
+      grid-column: 1 / -1;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 1.55rem 1.6rem 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: .85rem;
+      transition: transform .18s, box-shadow .18s, border-color .18s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(25,45,85,.12);
+      border-color: #c5d5f5;
+    }
+
+    /* SageMaker 大卡片内部横向布局 */
+    .card-wide .card-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem 2rem;
+      align-items: start;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: .8rem;
+    }
+
+    .card-icon-title {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+
+    .icon {
+      font-size: 1.7rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.25;
+    }
+
+    /* 大卡片标题稍大 */
+    .card-wide .card-title {
+      font-size: 1.15rem;
+    }
+
+    /* ── Frequency badges ── */
+    .freq {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: .28rem;
+      font-size: .72rem;
+      font-weight: 700;
+      padding: .28rem .7rem;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+    .freq-high {
+      background: #fff1f1;
+      color: #c0392b;
+      border: 1px solid #f5c6c6;
+    }
+    .freq-mid {
+      background: #fff8ee;
+      color: #b45309;
+      border: 1px solid #f5dbb0;
+    }
+    .freq-low {
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .card-desc {
+      font-size: .875rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Tag list ── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+    }
+
+    .tag {
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: .72rem;
+      font-weight: 600;
+      padding: .22rem .65rem;
+      border-radius: 6px;
+      line-height: 1.5;
+    }
+
+    /* ── Callout ── */
+    .callout {
+      margin-top: 2.8rem;
+      background: linear-gradient(135deg, #f0f5ff 0%, #e8f0fd 100%);
+      border: 1px solid #c5d5f5;
+      border-left: 4px solid var(--blue);
+      border-radius: 12px;
+      padding: 1.35rem 1.6rem;
+      font-size: .92rem;
+      line-height: 1.8;
+      color: #1e3a6e;
+    }
+    .callout strong {
+      display: block;
+      font-size: .95rem;
+      margin-bottom: .45rem;
+      color: var(--blue);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.7rem; }
+      .grid { grid-template-columns: 1fr; }
+      .card-wide .card-body { grid-template-columns: 1fr; }
+      main { padding: 2rem 1.1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html" class="back-link">返回首页</a>
+    <div class="header-badge">SAP-C02 · ML &amp; AI</div>
+    <h1>机器学习与 AI</h1>
+    <p class="subtitle">Machine Learning &amp; AI</p>
+    <p class="intro">
+      SAP-C02 考察 ML/AI 服务的使用场景选型，而非算法实现。核心在于根据业务需求（图像识别、文本分析、推荐系统等）快速匹配正确的 AWS AI 服务。理解各托管服务的能力边界，是解题的关键。
+    </p>
+  </div>
+</header>
+
+<main>
+  <p class="section-label">服务导航 · 2 个核心页面</p>
+
+  <div class="grid">
+
+    <!-- 1. AWS ML/AI 服务全览 -->
+    <a href="ml-ai.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">🤖</span>
+          <span class="card-title">AWS ML/AI 服务全览</span>
+        </div>
+        <span class="freq freq-mid">🟡 中频</span>
+      </div>
+      <p class="card-desc">全托管 AI 服务套件，按业务场景即取即用</p>
+      <div class="tags">
+        <span class="tag">Rekognition(图像/视频)</span>
+        <span class="tag">Comprehend(文本分析)</span>
+        <span class="tag">Textract(文档提取)</span>
+        <span class="tag">Translate/Polly/Transcribe</span>
+        <span class="tag">Kendra(智能搜索)</span>
+        <span class="tag">Personalize(推荐)</span>
+        <span class="tag">Fraud Detector</span>
+        <span class="tag">Lex(对话机器人)</span>
+      </div>
+    </a>
+
+    <!-- 2. Amazon SageMaker（大卡片） -->
+    <a href="sagemaker.html" class="card card-wide">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">🧠</span>
+          <span class="card-title">Amazon SageMaker</span>
+        </div>
+        <span class="freq freq-mid">🟡 中频</span>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">端到端机器学习平台，从数据准备到模型部署。提供完整的 ML 生命周期管理工具，适合需要构建自定义模型的场景。</p>
+        <div class="tags">
+          <span class="tag">SageMaker Studio</span>
+          <span class="tag">训练 / 推理</span>
+          <span class="tag">SageMaker Pipelines</span>
+          <span class="tag">Ground Truth</span>
+          <span class="tag">Feature Store</span>
+          <span class="tag">与 S3/ECR 集成</span>
+        </div>
+      </div>
+    </a>
+
+  </div><!-- /grid -->
+
+  <!-- Callout -->
+  <div class="callout">
+    <strong>💡 考试提示</strong>
+    SAP 考试中 ML 服务主要考"选哪个服务"而非"如何训练模型"。记住：需要分析图片 → Rekognition，分析文本情感 → Comprehend，从 PDF 提取表格 → Textract，构建聊天机器人 → Lex，自定义 ML 模型 → SageMaker。
+  </div>
+
+</main>
+
+</body>
+</html>

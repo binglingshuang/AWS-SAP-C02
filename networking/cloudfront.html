@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 CloudFront 考点整理、CDN原理、OAC/Lambda@Edge/CF Functions 场景辨析">
+<title>AWS SAP-C02｜Amazon CloudFront 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:#bfdbfe;font-size:14px;margin-bottom:14px}
+.back-link:hover{color:#fff;text-decoration:none}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.orange{background:var(--orange-soft);color:var(--orange)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+pre{overflow:auto;background:#0f172a;color:#e2e8f0;padding:16px;border-radius:10px}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700;font-size:18px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff}
+.card b{display:block;margin-bottom:5px}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}.cards{grid-template-columns:1fr}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <a class="back-link" href="index.html">← 返回网络模块</a>
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>Amazon CloudFront<br>全球 CDN 内容分发</h1>
+  <p>CDN 原理、边缘缓存、OAC/OAI、Lambda@Edge 与 CloudFront Functions 辨析，以及 HTTPS/WAF/签名 URL 等访问控制考点。场景题导向，适合 SAP-C02 考前速查。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">内容分发</span>
+   <span class="pill">可打印 / 可勾选</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#basics">一、CloudFront 基础</a>
+ <a href="#origins">二、Origin 配置</a>
+ <a href="#cache">三、缓存行为</a>
+ <a href="#access">四、访问控制</a>
+ <a href="#edge-functions">五、Lambda@Edge vs CF Functions</a>
+ <a href="#https">六、HTTPS 与证书</a>
+ <a href="#performance">七、性能优化</a>
+ <a href="#scenarios">八、场景题解析</a>
+ <a href="#quick">九、关键词速查</a>
+ <a href="#memory">十、速记卡</a>
+</nav>
+
+<main>
+
+<section id="basics">
+<h2>一、CloudFront 基础</h2>
+<p class="lead">CloudFront 是 AWS 的全球内容分发网络（CDN），通过遍布全球的 PoP（Point of Presence）将内容缓存到距用户更近的位置，降低延迟，减少源站负载。</p>
+
+<h3>核心概念</h3>
+<div class="cards">
+ <div class="card"><b>边缘站点（Edge Location）</b><p>实际缓存内容的地理节点，全球 400+ 个。用户请求会被路由到最近的 PoP。</p></div>
+ <div class="card"><b>区域边缘缓存（Regional Edge Cache）</b><p>位于边缘站点和源站之间的中间层缓存，容量更大，缓存不常访问的内容，减少对源站的穿透。</p></div>
+ <div class="card"><b>分发（Distribution）</b><p>CloudFront 的核心配置单元，定义源站、行为、TTL、访问控制等。一个分发可关联多个 Origin 和多个缓存行为。</p></div>
+ <div class="card"><b>默认行为（Default Cache Behavior）</b><p>所有未匹配路径规则的请求都会应用默认行为，必须存在且无法删除。</p></div>
+</div>
+
+<h3>请求路径</h3>
+<div class="diagram">
+ <div class="node">用户浏览器</div>
+ <span class="arrow">→</span>
+ <div class="node"><b>边缘站点</b><br><small>命中缓存 → 直接返回</small></div>
+ <span class="arrow">→ miss</span>
+ <div class="node"><b>区域边缘缓存</b><br><small>二级缓存</small></div>
+ <span class="arrow">→ miss</span>
+ <div class="node"><b>Origin</b><br><small>S3 / ALB / EC2</small></div>
+</div>
+
+<div class="callout green"><b>考试要点：</b>CloudFront 本身不能替代 Transfer Acceleration（S3 上传加速）。CloudFront 主要用于内容分发（下载/读取）；S3 Transfer Acceleration 专用于加速上传到 S3 源站。</div>
+</section>
+
+<section id="origins">
+<h2>二、Origin 配置</h2>
+<p>CloudFront 支持多种源站类型，选择取决于访问控制需求和架构。</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>源站类型</th><th>典型配置</th><th>访问控制方式</th></tr></thead>
+<tbody>
+<tr><td>Amazon S3 存储桶</td><td>静态网站托管、媒体文件</td><td>OAC（推荐）或 OAI（旧版）</td></tr>
+<tr><td>Application Load Balancer</td><td>动态内容、API、Web 应用</td><td>自定义头部 + ALB 安全组限制 CF IP</td></tr>
+<tr><td>EC2 实例</td><td>自定义应用</td><td>安全组允许 CF 边缘 IP 范围</td></tr>
+<tr><td>自定义 HTTP 源</td><td>第三方服务、其他 HTTP 端点</td><td>HTTPS + 自定义头部验证</td></tr>
+<tr><td>S3 静态网站端点</td><td>静态网站（非 API 形式）</td><td>不能使用 OAC，作为自定义 HTTP 源</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>OAC vs OAI（高频考点）</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>特性</th><th>OAC（Origin Access Control）</th><th>OAI（Origin Access Identity）</th></tr></thead>
+<tbody>
+<tr><td>推荐状态</td><td>✅ 当前推荐方式</td><td>⚠️ 旧版，不推荐新部署</td></tr>
+<tr><td>支持 SSE-KMS</td><td>✅ 支持</td><td>❌ 不支持</td></tr>
+<tr><td>支持所有 AWS 区域 S3</td><td>✅ 包括所有区域</td><td>⚠️ 部分新区域不支持</td></tr>
+<tr><td>身份类型</td><td>IAM 服务主体（CloudFront Service Principal）</td><td>特殊 CloudFront 身份</td></tr>
+<tr><td>Bucket Policy</td><td>允许 <code>cloudfront.amazonaws.com</code> 主体</td><td>允许 OAI 的 ARN</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Origin Group（故障切换）</h3>
+<p>可以配置一个主 Origin 和一个备 Origin 组成 Origin Group。当主源返回特定 HTTP 错误码（如 500、502、503、504）时，CloudFront 自动切换到备源。</p>
+<div class="diagram">
+ <div class="node"><b>CloudFront 分发</b></div>
+ <span class="arrow">→ 主请求</span>
+ <div class="node">Primary Origin<br><small>us-east-1 S3</small></div>
+ <span class="arrow">→ 失败自动切换</span>
+ <div class="node">Secondary Origin<br><small>us-west-2 S3</small></div>
+</div>
+<div class="callout orange"><b>注意：</b>Origin Group 实现的是 Active-Passive 故障切换，不是负载均衡。若需要负载均衡，应使用 Origin 权重（Weighted Origins）。</div>
+</section>
+
+<section id="cache">
+<h2>三、缓存行为</h2>
+
+<h3>Cache Policy</h3>
+<p>Cache Policy 控制 CloudFront 如何构建缓存键（Cache Key）和转发哪些信息给源站。</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>配置项</th><th>说明</th><th>影响</th></tr></thead>
+<tbody>
+<tr><td>TTL（Time to Live）</td><td>缓存时间：最小 / 默认 / 最大 TTL</td><td>控制缓存时长，源站响应头可覆盖默认 TTL</td></tr>
+<tr><td>Headers</td><td>指定哪些请求头纳入缓存键</td><td>头部越多，缓存命中率越低</td></tr>
+<tr><td>Query Strings</td><td>哪些查询字符串纳入缓存键</td><td>全部包含会造成缓存碎片化</td></tr>
+<tr><td>Cookies</td><td>哪些 Cookie 纳入缓存键</td><td>建议只包含必要 Cookie</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>TTL 优先级规则</h3>
+<ul>
+ <li><b>源站响应头 Cache-Control: max-age</b> — 在 [最小TTL, 最大TTL] 范围内生效</li>
+ <li><b>源站响应头 Cache-Control: s-maxage</b> — 同上，优先于 max-age</li>
+ <li><b>源站响应头 Expires</b> — 若 max-age 未设置时使用</li>
+ <li>若源站不返回缓存头，使用 <b>默认 TTL</b>（Default TTL，默认 86400s = 24h）</li>
+</ul>
+
+<div class="callout"><b>最小/最大 TTL 作用：</b>最小 TTL 确保内容至少缓存该时长（即使源站说 0）；最大 TTL 确保内容不超过该时长（即使源站说更长）。</div>
+
+<h3>Cache Key 设计原则</h3>
+<div class="callout green"><b>原则：</b>Cache Key 越小越精确，缓存命中率越高；不相关的 Header/Cookie/QueryString 不纳入 Cache Key，避免缓存碎片。动态 API 请求通常 TTL=0，禁用缓存。</div>
+</section>
+
+<section id="access">
+<h2>四、访问控制</h2>
+
+<h3>签名 URL vs 签名 Cookie</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>特性</th><th>签名 URL（Signed URL）</th><th>签名 Cookie（Signed Cookie）</th></tr></thead>
+<tbody>
+<tr><td>适用场景</td><td>单个文件的时效访问</td><td>多个文件 / 整个目录的授权访问</td></tr>
+<tr><td>RTMP 分发</td><td>✅ 支持（旧版）</td><td>❌ 不支持</td></tr>
+<tr><td>客户端变更 URL</td><td>需重新生成</td><td>Cookie 有效期内无需重新生成</td></tr>
+<tr><td>典型场景</td><td>单个视频文件付费下载</td><td>付费会员访问整个视频目录</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>地理限制（Geo Restriction）</h3>
+<ul>
+ <li><b>白名单模式：</b>只允许指定国家/地区访问</li>
+ <li><b>黑名单模式：</b>拒绝指定国家/地区访问</li>
+ <li>基于 IP 的地理位置数据库，非 100% 精确</li>
+ <li>返回 <code>403 Forbidden</code></li>
+</ul>
+
+<h3>WAF Web ACL 集成</h3>
+<p>CloudFront 可关联 AWS WAF Web ACL，提供 L7 防护：SQL 注入、XSS 过滤、速率限制、IP 封禁、托管规则组（AWS 或第三方）。</p>
+<div class="diagram">
+ <div class="node">用户请求</div>
+ <span class="arrow">→</span>
+ <div class="node"><b>WAF Web ACL</b><br><small>规则匹配</small></div>
+ <span class="arrow">→ 通过</span>
+ <div class="node"><b>CloudFront</b><br><small>边缘缓存</small></div>
+ <span class="arrow">→</span>
+ <div class="node">Origin<br><small>ALB/S3</small></div>
+</div>
+
+<div class="callout red"><b>考试陷阱：</b>CloudFront 关联的 WAF Web ACL 必须在 <b>us-east-1（N. Virginia）</b> 区域创建，因为 CloudFront 是全球服务。区域级 ALB/API Gateway 的 WAF 则在对应区域创建。</div>
+</section>
+
+<section id="edge-functions">
+<h2>五、Lambda@Edge vs CloudFront Functions</h2>
+<p class="lead">这是 SAP-C02 最常考的 CloudFront 辨析题，务必记住关键差异。</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>特性</th><th>CloudFront Functions</th><th>Lambda@Edge</th></tr></thead>
+<tbody>
+<tr><td>运行时</td><td>JavaScript (ES5.1+)</td><td>Node.js、Python</td></tr>
+<tr><td>触发事件</td><td>Viewer Request / Viewer Response</td><td>Viewer Request / Viewer Response / <b>Origin Request / Origin Response</b></td></tr>
+<tr><td>最大执行时间</td><td><b>1ms</b></td><td><b>5s</b>（Viewer）/ <b>30s</b>（Origin）</td></tr>
+<tr><td>内存</td><td>2 MB</td><td>128 MB – 10 GB</td></tr>
+<tr><td>请求体访问</td><td>❌ 无法访问</td><td>✅ Origin 触发器可访问</td></tr>
+<tr><td>网络访问</td><td>❌ 不支持</td><td>✅ 支持（Origin 触发器）</td></tr>
+<tr><td>部署位置</td><td>所有边缘站点（400+）</td><td>区域边缘缓存（少量区域）</td></tr>
+<tr><td>扩展性/吞吐</td><td>极高（百万级 RPS）</td><td>高（受函数并发限制）</td></tr>
+<tr><td>成本</td><td>极低（$0.1/百万次）</td><td>较高</td></tr>
+<tr><td>典型用途</td><td>URL 重写、Header 注入/修改、简单 AB 测试、规范化缓存键</td><td>用户认证授权、动态内容生成、第三方 API 调用、请求体处理</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>触发器时机图</h3>
+<div class="diagram">
+ <div class="node">用户</div>
+ <span class="arrow">→</span>
+ <div class="node" style="border-color:#f59e0b"><b>Viewer Request</b><br><small>CF Functions ✅<br>Lambda@Edge ✅</small></div>
+ <span class="arrow">→</span>
+ <div class="node">CloudFront 缓存</div>
+ <span class="arrow">→ miss</span>
+ <div class="node" style="border-color:#8b5cf6"><b>Origin Request</b><br><small>Lambda@Edge 只</small></div>
+ <span class="arrow">→</span>
+ <div class="node">Origin</div>
+ <span class="arrow">→</span>
+ <div class="node" style="border-color:#8b5cf6"><b>Origin Response</b><br><small>Lambda@Edge 只</small></div>
+ <span class="arrow">→</span>
+ <div class="node" style="border-color:#f59e0b"><b>Viewer Response</b><br><small>CF Functions ✅<br>Lambda@Edge ✅</small></div>
+</div>
+
+<div class="callout green"><b>选择口诀：</b>轻量快速 Header 操作 → CF Functions；需要网络请求/认证/访问请求体/需要 Origin 触发器 → Lambda@Edge。</div>
+</section>
+
+<section id="https">
+<h2>六、HTTPS 与证书</h2>
+
+<h3>ACM 证书区域要求</h3>
+<div class="callout red"><b>超高频陷阱！</b>CloudFront 使用的 ACM（AWS Certificate Manager）证书 <b>必须在 us-east-1（美国东部 N. Virginia）</b> 申请和验证，无论你的 Origin 在哪个区域。区域性服务（ALB、API GW）使用同区域的 ACM 证书。</div>
+
+<h3>Viewer Protocol Policy vs Origin Protocol Policy</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>策略</th><th>作用</th><th>常见选项</th></tr></thead>
+<tbody>
+<tr><td>Viewer Protocol Policy</td><td>控制用户与 CloudFront 之间的协议</td><td>HTTP and HTTPS / Redirect HTTP to HTTPS / HTTPS Only</td></tr>
+<tr><td>Origin Protocol Policy</td><td>控制 CloudFront 与源站之间的协议</td><td>HTTP Only / HTTPS Only / Match Viewer</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>SNI（Server Name Indication）</h3>
+<p>CloudFront 支持 SNI（默认免费），允许一个 IP 对应多个 SSL 证书（多域名）。如果需要为旧版客户端使用专用 IP，则需要 <b>专用 IP SSL（额外收费）</b>。</p>
+<div class="callout"><b>考试提示：</b>SAP-C02 中若题目提到"旧版不支持 SNI 的设备"，则需要选择专用 IP SSL 方案（Dedicated IP Custom SSL）。</div>
+
+<h3>HTTPS 架构最佳实践</h3>
+<div class="diagram">
+ <div class="node">用户<br><small>HTTPS</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>CloudFront</b><br><small>ACM us-east-1<br>Viewer: HTTPS Only</small></div>
+ <span class="arrow">→ HTTPS</span>
+ <div class="node"><b>ALB / S3</b><br><small>Origin: HTTPS Only<br>ACM 同区域</small></div>
+</div>
+</section>
+
+<section id="performance">
+<h2>七、性能优化</h2>
+
+<h3>压缩（Compression）</h3>
+<ul>
+ <li>CloudFront 自动压缩支持 <b>Gzip</b> 和 <b>Brotli</b></li>
+ <li>需要在缓存行为中启用 <code>Compress objects automatically</code></li>
+ <li>只压缩特定 MIME 类型的内容（文本类），不压缩已压缩格式（JPEG/PNG/ZIP）</li>
+</ul>
+
+<h3>S3 Transfer Acceleration vs CloudFront 区别</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>特性</th><th>CloudFront</th><th>S3 Transfer Acceleration</th></tr></thead>
+<tbody>
+<tr><td>主要用途</td><td>内容分发（读取/下载）</td><td>加速上传到 S3</td></tr>
+<tr><td>方向</td><td>Origin → 用户</td><td>用户 → S3</td></tr>
+<tr><td>缓存</td><td>✅ 在边缘节点缓存</td><td>❌ 无缓存，纯加速传输</td></tr>
+<tr><td>使用场景</td><td>静态资源、视频、API 响应缓存</td><td>大文件上传、跨洲上传到 S3</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Field-Level Encryption（字段级加密）</h3>
+<p>在用户请求到达源站之前，对特定敏感字段（如信用卡号、密码）进行加密。使用非对称密钥（公钥加密），只有拥有私钥的应用程序才能解密。</p>
+<div class="callout orange"><b>考试场景：</b>需要保护敏感 POST 数据（如信用卡），且不希望敏感数据以明文形式出现在 CloudFront 或中间层 → Field-Level Encryption。</div>
+
+<h3>其他优化手段</h3>
+<ul>
+ <li><b>Cache Hit Ratio 优化：</b>减少 Cache Key 中不必要的 Header/Cookie/QueryString</li>
+ <li><b>Origin Shield：</b>在区域边缘缓存前再加一层集中缓存层，进一步减少源站请求（适合多区域多 CloudFront 分发共享同一 Origin）</li>
+ <li><b>预热（Invalidation）：</b>主动清除边缘缓存，前 1000 次路径/月免费，此后收费</li>
+</ul>
+</section>
+
+<section id="scenarios">
+<h2>八、场景题解析</h2>
+
+<div class="quiz">
+ <b>场景 ①：S3 私有桶 + CloudFront 访问，不暴露桶到公网</b><br>
+ <p class="small">需求：S3 桶必须设为私有，但用户通过 CloudFront 访问。要求使用最新推荐方式。</p>
+ <button class="secondary" onclick="showAnswer('s1',true)">A. OAC（Origin Access Control）</button>
+ <button class="secondary" onclick="showAnswer('s1',false)">B. OAI（Origin Access Identity）</button>
+ <button class="secondary" onclick="showAnswer('s1',false)">C. Bucket Policy 允许所有</button>
+ <button class="secondary" onclick="showAnswer('s1',false)">D. S3 静态网站端点 + 公开访问</button>
+ <div class="answer" id="s1"><b>正确答案：A。</b>OAC 是当前 AWS 推荐方式，支持 SSE-KMS 加密的 S3 桶，Bucket Policy 允许 <code>cloudfront.amazonaws.com</code> 服务主体访问。OAI 是旧版方式，新部署不推荐。</div>
+</div>
+
+<div class="quiz">
+ <b>场景 ②：旧版设备发送不规范的 HTTP 头部，需要在边缘规范化后再缓存，要求超低延迟且不需要网络调用</b><br>
+ <p class="small">需求：在 Viewer Request 阶段修改/规范化请求头，极高吞吐，成本低。</p>
+ <button class="secondary" onclick="showAnswer('s2',true)">A. CloudFront Functions</button>
+ <button class="secondary" onclick="showAnswer('s2',false)">B. Lambda@Edge（Viewer Request）</button>
+ <button class="secondary" onclick="showAnswer('s2',false)">C. Lambda@Edge（Origin Request）</button>
+ <button class="secondary" onclick="showAnswer('s2',false)">D. 在 Origin ALB 上处理</button>
+ <div class="answer" id="s2"><b>正确答案：A。</b>CloudFront Functions 专为超轻量 Viewer 阶段操作设计，执行时间 &lt;1ms，成本极低，适合 Header 规范化、URL 重写、缓存键处理等场景。不需要网络访问时优先选 CF Functions。</div>
+</div>
+
+<div class="quiz">
+ <b>场景 ③：动态内容需要在边缘进行 JWT 认证，认证失败则重定向，且可能需要调用外部认证 API</b><br>
+ <p class="small">需求：用户认证、外部 API 调用，可能需要几百毫秒执行时间。</p>
+ <button class="secondary" onclick="showAnswer('s3',false)">A. CloudFront Functions</button>
+ <button class="secondary" onclick="showAnswer('s3',true)">B. Lambda@Edge（Viewer Request）</button>
+ <button class="secondary" onclick="showAnswer('s3',false)">C. Lambda@Edge（Origin Response）</button>
+ <button class="secondary" onclick="showAnswer('s3',false)">D. ALB Listener Rule</button>
+ <div class="answer" id="s3"><b>正确答案：B。</b>Lambda@Edge Viewer Request 触发器支持网络调用（外部 API）、执行时间最长 5s，适合用户认证/授权场景。CF Functions 不支持网络调用。</div>
+</div>
+
+<div class="quiz">
+ <b>场景 ④：架构为 CloudFront → WAF → ALB → EC2，如何确保 EC2 只接受来自 ALB 的流量，而 ALB 只接受来自 CloudFront 的流量？</b><br>
+ <p class="small">需求：多层安全防护，防止绕过 CloudFront 直接访问 ALB。</p>
+ <button class="secondary" onclick="showAnswer('s4',false)">A. CloudFront + WAF 就够了，不需要额外配置</button>
+ <button class="secondary" onclick="showAnswer('s4',true)">B. ALB 安全组只允许 CF 托管前缀列表（或自定义头部+ALB规则），EC2 安全组只允许 ALB 安全组</button>
+ <button class="secondary" onclick="showAnswer('s4',false)">C. 使用 NLB 替代 ALB 以获得固定 IP</button>
+ <button class="secondary" onclick="showAnswer('s4',false)">D. 将 EC2 放入私有子网即可</button>
+ <div class="answer" id="s4"><b>正确答案：B。</b>ALB 安全组配置为只允许 <b>CloudFront 托管前缀列表</b>（<code>com.amazonaws.global.cloudfront.origin-facing</code>）中的 IP，或使用 CloudFront 自定义 Header + ALB Listener Rule 验证。EC2 安全组只允许来自 ALB 安全组的流量，形成完整防护链。</div>
+</div>
+
+</section>
+
+<section id="quick">
+<h2>九、关键词速查</h2>
+<table>
+<thead><tr><th>题目关键词</th><th>优先考虑</th></tr></thead>
+<tbody>
+<tr><td>S3 私有桶 + CloudFront 访问（最新推荐）</td><td>OAC（Origin Access Control）</td></tr>
+<tr><td>S3 私有桶 + CloudFront 访问（旧版）</td><td>OAI（Origin Access Identity）</td></tr>
+<tr><td>S3 SSE-KMS + CloudFront</td><td>必须使用 OAC，OAI 不支持</td></tr>
+<tr><td>CloudFront 故障切换 / HA</td><td>Origin Group（主备 Origin）</td></tr>
+<tr><td>超轻量 Header 修改 / URL 重写 / 缓存键规范化</td><td>CloudFront Functions</td></tr>
+<tr><td>边缘认证 / 外部 API 调用 / 请求体处理</td><td>Lambda@Edge（Origin Request）</td></tr>
+<tr><td>ACM 证书 + CloudFront</td><td>必须在 us-east-1 申请</td></tr>
+<tr><td>WAF + CloudFront</td><td>WAF Web ACL 必须在 us-east-1 创建</td></tr>
+<tr><td>单文件时效访问控制</td><td>Signed URL</td></tr>
+<tr><td>多文件 / 整目录授权访问</td><td>Signed Cookie</td></tr>
+<tr><td>国家级访问封禁 / 白名单</td><td>Geo Restriction（地理限制）</td></tr>
+<tr><td>敏感字段（信用卡/密码）端到端加密</td><td>Field-Level Encryption</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="memory">
+<h2>十、考前速记卡（可勾选）</h2>
+<p>复习时勾选已掌握的项目，进度在本次页面打开期间保持。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 12</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>OAC 是当前推荐方式：</b>替代旧版 OAI，支持 SSE-KMS，所有 S3 区域均支持</span></li>
+<li><input type="checkbox"><span><b>ACM 证书必须在 us-east-1：</b>CloudFront 为全球服务，证书只认 N.Virginia 区域</span></li>
+<li><input type="checkbox"><span><b>WAF Web ACL 也必须在 us-east-1：</b>关联 CloudFront 时与 ACM 证书同区域</span></li>
+<li><input type="checkbox"><span><b>CF Functions &lt;1ms：</b>只支持 Viewer 阶段，无网络访问，极低成本</span></li>
+<li><input type="checkbox"><span><b>Lambda@Edge 最多 30s：</b>支持 Origin 阶段，可网络调用，适合认证/动态内容</span></li>
+<li><input type="checkbox"><span><b>Origin Group = Active-Passive：</b>主源失败时切换备源，不是负载均衡</span></li>
+<li><input type="checkbox"><span><b>CloudFront ≠ Transfer Acceleration：</b>CF 是内容分发（下载），TA 是加速上传到 S3</span></li>
+<li><input type="checkbox"><span><b>Signed URL = 单文件；Signed Cookie = 多文件：</b>付费内容访问控制</span></li>
+<li><input type="checkbox"><span><b>Geo Restriction 返回 403：</b>基于 IP 地理位置，非 100% 精确</span></li>
+<li><input type="checkbox"><span><b>Field-Level Encryption：</b>敏感 POST 字段在边缘用公钥加密，只有拥有私钥的应用解密</span></li>
+<li><input type="checkbox"><span><b>SNI 默认免费，专用 IP 额外收费：</b>旧版客户端不支持 SNI 时需专用 IP SSL</span></li>
+<li><input type="checkbox"><span><b>Origin Shield：</b>集中缓存层，减少多分发共享同一 Origin 时的穿透请求</span></li>
+</ul>
+</section>
+
+<section>
+<h2>官方资料与备考说明</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank" rel="noopener">Amazon CloudFront 开发者指南</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html" target="_blank" rel="noopener">使用 OAC 限制 S3 访问</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/edge-functions.html" target="_blank" rel="noopener">CloudFront Edge Functions 对比</a></li>
+<li><a href="https://aws.amazon.com/certification/certified-solutions-architect-professional/" target="_blank" rel="noopener">AWS Certified Solutions Architect – Professional</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>服务功能持续更新，请以 AWS 官方文档为准。本文是复习提纲，不代表真实考试题目。</div>
+</section>
+
+</main>
+</div>
+<footer class="container">AWS SAP-C02 CloudFront 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

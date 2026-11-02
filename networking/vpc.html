@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Amazon VPC 核心考点整理、架构设计与场景题解析">
+<title>AWS SAP-C02｜Amazon VPC 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+nav a.active{background:var(--primary-soft);color:var(--primary);font-weight:600}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.orange{background:var(--orange-soft);color:var(--orange)}
+.tag.green{background:var(--green-soft);color:var(--green)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+pre{overflow:auto;background:#0f172a;color:#e2e8f0;padding:16px;border-radius:10px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;line-height:1.6}
+pre .comment{color:#64748b}
+pre .key{color:#7dd3fc}
+pre .val{color:#86efac}
+pre .str{color:#fca5a5}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:130px}
+.diagram .node.green{border-color:#86efac;background:#f0fdf4}
+.diagram .node.orange{border-color:#fed7aa;background:#fff7ed}
+.diagram .node.red{border-color:#fca5a5;background:#fef2f2}
+.diagram .arrow{color:#64748b;font-weight:700;font-size:18px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff}
+.card b{display:block;margin-bottom:5px}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+.answer.wrong{background:var(--orange-soft)}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+.scenario{border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0;background:#fafcff}
+.scenario .scenario-title{font-weight:700;font-size:15px;margin-bottom:10px;color:#1e3a5f}
+.scenario .analysis{background:#f0fdf4;border-left:3px solid var(--green);padding:10px 14px;border-radius:6px;margin:10px 0}
+.scenario .answer-box{background:var(--primary-soft);border-left:3px solid var(--primary);padding:10px 14px;border-radius:6px;margin:10px 0}
+.scenario .trap{background:var(--orange-soft);border-left:3px solid var(--orange);padding:10px 14px;border-radius:6px;margin:10px 0}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}.cards{grid-template-columns:1fr}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow"><a href="index.html" style="color:#bfdbfe">← 返回网络模块</a></div>
+  <h1>Amazon VPC<br><span style="font-size:0.65em;font-weight:400;color:#93c5fd">Virtual Private Cloud — SAP-C02 核心考点</span></h1>
+  <p>覆盖 VPC 基础架构、网络安全控制、地址转换、Endpoints、Peering、Flow Logs、DNS 及高级特性。以"场景需求 → 正确服务 → 边界陷阱"为主线，适合备考 AWS Certified Solutions Architect – Professional。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">网络基础</span>
+   <span class="pill">可打印 / 可勾选</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav id="mainNav">
+ <strong>页面目录</strong>
+ <a href="#basics">一、VPC 基础架构</a>
+ <a href="#security">二、网络安全控制</a>
+ <a href="#nat">三、网络地址转换</a>
+ <a href="#endpoints">四、VPC Endpoints</a>
+ <a href="#peering">五、VPC Peering</a>
+ <a href="#flowlogs">六、VPC Flow Logs</a>
+ <a href="#dns">七、DNS 解析</a>
+ <a href="#advanced">八、高级特性</a>
+ <a href="#scenarios">九、场景题解析</a>
+ <a href="#quick">十、关键词速查</a>
+ <a href="#compare">十一、易混淆概念</a>
+ <a href="#memory">十二、考前速记卡</a>
+ <a href="#quiz">十三、快速自测</a>
+</nav>
+
+<main>
+
+<!-- ===== 1. VPC 基础架构 ===== -->
+<section id="basics">
+<h2>一、VPC 基础架构</h2>
+<p class="lead">VPC（Virtual Private Cloud）是 AWS 提供的逻辑隔离网络环境，是所有 AWS 网络架构的基础。</p>
+
+<h3>VPC 的本质</h3>
+<p>VPC 是 <b>Region 级别</b>的逻辑网络隔离边界。一个 Region 内可以创建多个 VPC，每个 VPC 之间默认完全隔离，互不可达。每个 AWS 账户在每个 Region 有一个默认 VPC（CIDR: <code>172.31.0.0/16</code>）。</p>
+
+<div class="diagram">
+  <div class="node"><b>Region</b><br><small>ap-northeast-1</small></div>
+  <span class="arrow">⊃</span>
+  <div class="node"><b>VPC</b><br><small>10.0.0.0/16</small></div>
+  <span class="arrow">⊃</span>
+  <div class="node green"><b>Public Subnet</b><br><small>AZ-a / AZ-b</small></div>
+  <div class="node orange"><b>Private Subnet</b><br><small>AZ-a / AZ-b</small></div>
+</div>
+
+<h3>CIDR 规划</h3>
+<ul>
+  <li>VPC 支持一个<b>主 CIDR</b>（创建时指定）和最多 4 个<b>辅助 CIDR</b></li>
+  <li>CIDR 范围：<code>/16</code>（最大 65,536 个 IP）到 <code>/28</code>（最小 16 个 IP）</li>
+  <li>同一 VPC 内的 CIDR 不得重叠；与 Peering 对端 VPC 的 CIDR 不得重叠</li>
+  <li>AWS 在每个子网保留 5 个 IP：网络地址、VPC 路由器、DNS 服务器、未来保留、广播地址</li>
+</ul>
+<div class="callout orange"><b>CIDR 陷阱：</b>规划时预留足够空间，VPC 主 CIDR 一旦创建后不可修改。辅助 CIDR 可以后期添加，但不能与主 CIDR 重叠。</div>
+
+<h3>子网（Subnet）</h3>
+<p>子网是 <b>AZ（可用区）级别</b>的资源，一个子网只能属于一个 AZ，但一个 AZ 可以有多个子网。</p>
+<ul>
+  <li><b>公有子网：</b>路由表中有指向 IGW 的路由（<code>0.0.0.0/0 → igw-xxxx</code>），实例需分配公有 IP 或 EIP 才能直接通信</li>
+  <li><b>私有子网：</b>路由表中没有指向 IGW 的路由，通过 NAT Gateway 访问互联网</li>
+</ul>
+
+<h3>Internet Gateway（IGW）</h3>
+<ul>
+  <li>将 VPC 连接到互联网，每个 VPC 只能绑定一个 IGW</li>
+  <li><b>高可用设计：</b>IGW 本身是 AWS 托管的高可用组件，无需配置冗余</li>
+  <li>支持 IPv4 和 IPv6（双向通信）</li>
+  <li>仅作为路由目标，本身不做 NAT（与 NAT Gateway 区别）</li>
+</ul>
+
+<h3>路由表（Route Table）</h3>
+<ul>
+  <li><b>Main Route Table：</b>创建 VPC 时自动生成，所有未显式关联自定义路由表的子网使用此路由表</li>
+  <li><b>自定义路由表：</b>可为特定子网单独配置，实现公有/私有子网分离</li>
+  <li>每条路由由 <b>目标（Destination）</b> 和 <b>目标（Target）</b> 组成</li>
+  <li>本地路由（<code>local</code>）始终存在，不可修改，确保 VPC 内部通信</li>
+</ul>
+
+<pre><span class="comment"># 公有子网路由表示例</span>
+Destination        Target
+10.0.0.0/16        local          <span class="comment"># VPC 内部路由（不可删除）</span>
+0.0.0.0/0          igw-0a1b2c3d   <span class="comment"># 默认路由指向 IGW → 公有子网</span>
+
+<span class="comment"># 私有子网路由表示例</span>
+Destination        Target
+10.0.0.0/16        local
+0.0.0.0/0          nat-0x1y2z3w   <span class="comment"># 默认路由指向 NAT Gateway → 私有子网</span></pre>
+
+<h3>公有子网 vs 私有子网对比</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>特性</th><th>公有子网 (Public Subnet)</th><th>私有子网 (Private Subnet)</th></tr></thead>
+  <tbody>
+    <tr><td>路由到 IGW</td><td>✅ 有（<code>0.0.0.0/0 → IGW</code>）</td><td>❌ 无</td></tr>
+    <tr><td>互联网访问（出站）</td><td>✅ 直接通过 IGW</td><td>✅ 通过 NAT Gateway（单向出站）</td></tr>
+    <tr><td>互联网访问（入站）</td><td>✅ 需配置公有 IP 或 EIP</td><td>❌ 不可直接入站</td></tr>
+    <tr><td>典型用途</td><td>ALB、NAT Gateway、堡垒机</td><td>EC2 应用层、RDS 数据库</td></tr>
+    <tr><td>安全性</td><td>相对低（暴露于互联网）</td><td>高（不可直接访问）</td></tr>
+    <tr><td>公有 IP 自动分配</td><td>可配置自动分配</td><td>通常不分配</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="callout green"><b>最佳实践：</b>多层架构中，ALB 放公有子网，应用 EC2 放私有子网，RDS 放私有子网（无 NAT 路由）。每个 AZ 各部署一套，实现高可用。</div>
+</section>
+
+<!-- ===== 2. 网络安全控制 ===== -->
+<section id="security">
+<h2>二、网络安全控制</h2>
+<p class="lead">VPC 提供两层安全控制：Security Group（实例级别）和 Network ACL（子网级别），两者配合使用实现纵深防御。</p>
+
+<h3>Security Group（安全组）</h3>
+<p>安全组是实例（ENI）级别的虚拟防火墙。</p>
+<ul>
+  <li><b>有状态（Stateful）：</b>允许入站流量后，对应的出站响应流量自动允许，无需单独配置出站规则</li>
+  <li><b>只能配置允许规则：</b>无法显式拒绝某个 IP（需要拒绝时使用 NACL）</li>
+  <li><b>默认规则：</b>默认拒绝所有入站流量；默认允许所有出站流量</li>
+  <li>可以引用其他安全组作为来源（而不仅是 CIDR），适合微服务之间的访问控制</li>
+  <li>一个实例可绑定最多 5 个安全组（默认配额）</li>
+  <li>规则变更实时生效，无需重启实例</li>
+</ul>
+
+<pre><span class="comment"># Security Group 规则示例（入站）</span>
+Type       Protocol  Port Range  Source
+HTTP       TCP       80          0.0.0.0/0         <span class="comment"># 允许所有 HTTP 入站</span>
+HTTPS      TCP       443         0.0.0.0/0         <span class="comment"># 允许所有 HTTPS 入站</span>
+SSH        TCP       22          10.0.1.0/24       <span class="comment"># 仅允许堡垒机子网 SSH</span>
+All Traffic  All     All         sg-0abc123def     <span class="comment"># 允许来自另一 SG 的所有流量</span></pre>
+
+<h3>Network ACL（NACL）</h3>
+<p>NACL 是子网级别的防火墙，对进出子网的所有流量生效。</p>
+<ul>
+  <li><b>无状态（Stateless）：</b>入站和出站规则互相独立，响应流量必须单独配置出站规则</li>
+  <li><b>支持允许和拒绝规则：</b>可以显式拒绝特定 IP 或端口</li>
+  <li><b>规则按编号顺序评估：</b>从最小编号开始，匹配到第一条规则即停止，不再继续评估</li>
+  <li>默认 NACL 允许所有进出流量；自定义 NACL 默认拒绝所有流量</li>
+  <li>每条规则包含：规则编号、类型、协议、端口范围、来源/目标、允许/拒绝</li>
+</ul>
+
+<pre><span class="comment"># NACL 入站规则示例（无状态！需要同时配置出站）</span>
+Rule #   Type      Protocol  Port     Source          Action
+100      HTTP      TCP       80       0.0.0.0/0       ALLOW
+110      HTTPS     TCP       443      0.0.0.0/0       ALLOW
+120      SSH       TCP       22       203.0.113.0/24  ALLOW
+*        ALL       ALL       ALL      0.0.0.0/0       DENY   <span class="comment"># 默认拒绝</span>
+
+<span class="comment"># NACL 出站规则示例（响应流量使用临时端口 1024-65535）</span>
+Rule #   Type      Protocol  Port         Dest            Action
+100      HTTP      TCP       80           0.0.0.0/0       ALLOW
+110      HTTPS     TCP       443          0.0.0.0/0       ALLOW
+120      Custom    TCP       1024-65535   0.0.0.0/0       ALLOW  <span class="comment"># 临时端口</span>
+*        ALL       ALL       ALL          0.0.0.0/0       DENY</pre>
+
+<div class="callout red"><b>SAP 必考陷阱 — NACL 无状态：</b>NACL 是无状态的，HTTP 请求进来时使用 80 端口，但响应时服务器向客户端发出的数据使用<b>临时端口（Ephemeral Ports，1024–65535）</b>。如果 NACL 出站规则没有允许这些端口，连接将失败。这是 NACL 排错的首要检查点。</div>
+
+<h3>Security Group vs Network ACL 详细对比</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>特性</th><th>Security Group（SG）</th><th>Network ACL（NACL）</th></tr></thead>
+  <tbody>
+    <tr><td>操作层级</td><td>实例（ENI）级别</td><td>子网级别</td></tr>
+    <tr><td>状态性</td><td>有状态（Stateful）</td><td>无状态（Stateless）</td></tr>
+    <tr><td>规则类型</td><td>仅允许规则（无拒绝）</td><td>允许 + 拒绝规则</td></tr>
+    <tr><td>规则评估顺序</td><td>所有规则汇总后评估</td><td>按规则编号从小到大，首次匹配即停止</td></tr>
+    <tr><td>默认入站行为</td><td>拒绝所有</td><td>默认 NACL 允许所有；自定义 NACL 拒绝所有</td></tr>
+    <tr><td>默认出站行为</td><td>允许所有</td><td>默认 NACL 允许所有；自定义 NACL 拒绝所有</td></tr>
+    <tr><td>响应流量</td><td>自动允许（有状态）</td><td>需单独配置出站规则允许临时端口</td></tr>
+    <tr><td>来源/目标</td><td>CIDR 或其他安全组</td><td>仅 CIDR</td></tr>
+    <tr><td>作用范围</td><td>绑定到实例，同子网不同实例可用不同 SG</td><td>应用于子网内所有实例</td></tr>
+    <tr><td>典型用途</td><td>控制实例访问权限、微服务间通信</td><td>子网级别的 IP 封锁、DDoS 临时拦截</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="callout"><b>如何选择：</b>优先使用 SG 进行精细化访问控制（因为有状态，配置简单）；NACL 用于子网级别的粗粒度封锁，特别是需要显式<b>拒绝</b>某些 IP 时（SG 做不到拒绝）。</div>
+</section>
+
+<!-- ===== 3. 网络地址转换 ===== -->
+<section id="nat">
+<h2>三、网络地址转换（NAT）</h2>
+<p class="lead">私有子网中的实例需要访问互联网（如更新软件包、调用外部 API），但又不能被外部主动访问，此时需要 NAT。</p>
+
+<h3>NAT Gateway（推荐）</h3>
+<p>AWS 托管的 NAT 服务，按使用量计费，无需管理底层基础设施。</p>
+<ul>
+  <li><b>部署位置：</b>必须部署在<b>公有子网</b>，并绑定一个弹性 IP（EIP）</li>
+  <li><b>AZ 级别资源：</b>NAT Gateway 仅为同一 AZ 的资源提供路由；私有子网路由应指向<b>同 AZ 的 NAT Gateway</b></li>
+  <li><b>高可用架构：</b>每个 AZ 各部署一个 NAT Gateway，每个 AZ 的私有子网路由表指向本 AZ 的 NAT Gateway</li>
+  <li>带宽：默认 5 Gbps，自动扩展至 45 Gbps</li>
+  <li><b>不支持端口转发：</b>无法将外部流量转发到私有实例</li>
+  <li>不支持作为堡垒机（Bastion Host）</li>
+  <li>支持 TCP、UDP、ICMP</li>
+</ul>
+
+<div class="diagram">
+  <div class="node orange"><b>Private Subnet AZ-a</b><br><small>EC2 → 路由表</small></div>
+  <span class="arrow">→</span>
+  <div class="node green"><b>NAT GW (AZ-a)</b><br><small>公有子网 + EIP</small></div>
+  <span class="arrow">→</span>
+  <div class="node"><b>IGW</b></div>
+  <span class="arrow">→</span>
+  <div class="node"><b>Internet</b></div>
+</div>
+
+<div class="callout orange"><b>高可用关键：</b>如果所有私有子网都指向同一个 AZ 的 NAT Gateway，当该 AZ 故障时，其他 AZ 的实例也失去互联网访问。正确做法是每个 AZ 一个 NAT Gateway，各自独立。</div>
+
+<h3>NAT Instance（遗留方案）</h3>
+<p>使用特殊 AMI（<code>amzn-ami-vpc-nat</code>）的 EC2 实例，手动充当 NAT 设备。</p>
+<ul>
+  <li>需要<b>关闭 Source/Destination Check</b>（实例默认只处理自己的流量，关闭后才能转发流量）</li>
+  <li>性能受 EC2 实例规格限制，需手动扩展</li>
+  <li>可以兼作<b>堡垒机（Bastion Host）</b></li>
+  <li>支持端口转发</li>
+  <li>需要配置安全组和路由</li>
+  <li>SAP-C02 考试中 NAT Instance 通常作为干扰项，除非题目特别强调"作为堡垒机"或"端口转发"</li>
+</ul>
+
+<h3>Egress-Only Internet Gateway</h3>
+<ul>
+  <li>专为 <b>IPv6</b> 设计的单向出站网关（IPv4 使用 NAT Gateway）</li>
+  <li>允许 IPv6 实例主动访问互联网，但外部无法主动连接</li>
+  <li>高可用（AWS 托管），无需配置冗余</li>
+  <li>在路由表中配置 <code>::/0 → eigw-xxxx</code></li>
+</ul>
+
+<h3>NAT Gateway vs NAT Instance 对比</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>特性</th><th>NAT Gateway</th><th>NAT Instance</th></tr></thead>
+  <tbody>
+    <tr><td>管理方式</td><td>AWS 完全托管</td><td>用户自行管理</td></tr>
+    <tr><td>高可用</td><td>AZ 内高可用（需每 AZ 部署一个）</td><td>需要 ASG + 脚本实现HA</td></tr>
+    <tr><td>带宽</td><td>5–45 Gbps（自动扩展）</td><td>受 EC2 实例规格限制</td></tr>
+    <tr><td>堡垒机功能</td><td>❌ 不支持</td><td>✅ 可以</td></tr>
+    <tr><td>端口转发</td><td>❌ 不支持</td><td>✅ 支持</td></tr>
+    <tr><td>Source/Dest Check</td><td>自动处理</td><td>必须手动关闭</td></tr>
+    <tr><td>弹性 IP</td><td>必须绑定</td><td>可以绑定</td></tr>
+    <tr><td>成本</td><td>按小时 + 数据量计费</td><td>EC2 实例费用</td></tr>
+    <tr><td>推荐场景</td><td>生产环境</td><td>成本敏感 / 需要端口转发或堡垒机</td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
+<!-- ===== 4. VPC Endpoints ===== -->
+<section id="endpoints">
+<h2>四、VPC Endpoints</h2>
+<p class="lead">VPC Endpoints 允许 VPC 内的资源通过 AWS 私有网络访问 AWS 服务，无需经过公共互联网或 NAT Gateway，提升安全性并降低数据传输成本。</p>
+
+<h3>Gateway Endpoint</h3>
+<ul>
+  <li><b>仅支持：S3 和 DynamoDB</b>（SAP 必记）</li>
+  <li><b>完全免费</b>（不额外收费）</li>
+  <li>通过修改<b>路由表</b>来引导流量（而不是在子网中创建 ENI）</li>
+  <li>不占用 IP 地址，不创建 ENI</li>
+  <li><b>Region 级别资源</b>，一个 Gateway Endpoint 服务整个 VPC</li>
+  <li>不支持通过 VPN 或 Direct Connect 从本地访问（因为它只修改路由表，本地网络没有这些路由）</li>
+  <li>不支持跨 Region 访问</li>
+</ul>
+
+<pre><span class="comment"># Gateway Endpoint 路由表（自动添加）</span>
+Destination        Target
+10.0.0.0/16        local
+0.0.0.0/0          nat-0x1y2z3w
+pl-xxxxxxxx        vpce-0a1b2c3d    <span class="comment"># S3/DynamoDB 前缀列表 → Gateway Endpoint</span></pre>
+
+<div class="callout green"><b>考试关键：Gateway Endpoint 是免费的首选方案，用于私有子网访问 S3/DynamoDB，无需 NAT Gateway，节省成本。</b></div>
+
+<h3>Interface Endpoint（AWS PrivateLink）</h3>
+<ul>
+  <li>支持<b>大多数 AWS 服务</b>（EC2 API、SSM、STS、CloudWatch、Kinesis、SNS、SQS 等）以及 AWS Marketplace 的第三方服务</li>
+  <li>在指定子网中创建一个或多个 <b>ENI（弹性网络接口）</b>，分配私有 IP</li>
+  <li><b>收费：</b>按 ENI 小时数 + 数据处理量计费</li>
+  <li>可通过 VPN 或 Direct Connect 从<b>本地（On-Premises）</b>访问</li>
+  <li>支持 VPC Endpoint Policies（通过 IAM 策略控制访问权限）</li>
+  <li>支持跨账号共享（通过 PrivateLink）</li>
+  <li>高可用：建议在多个 AZ 创建 ENI</li>
+</ul>
+
+<pre><span class="comment"># Interface Endpoint DNS 示例</span>
+<span class="comment"># 创建后自动生成私有 DNS 名称</span>
+vpce-0a1b2c3d-xy5678ab.s3.ap-northeast-1.vpce.amazonaws.com
+<span class="comment"># 启用 Private DNS 后，访问 s3.amazonaws.com 自动解析到 ENI 私有 IP</span></pre>
+
+<div class="callout red"><b>SAP 关键陷阱：On-Premises 通过 DX/VPN 访问 S3</b><br>
+• 如果 On-Premises 需要通过 Direct Connect 或 VPN 私有访问 S3，必须使用 <b>Interface Endpoint（PrivateLink）</b>，不能用 Gateway Endpoint。<br>
+• Gateway Endpoint 只修改 VPC 路由表，本地网络无法利用这条路由。<br>
+• Interface Endpoint 创建的 ENI 有私有 IP，本地可以通过 DX/VPN 路由到该 IP。</div>
+
+<h3>Gateway vs Interface Endpoint 对比</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>特性</th><th>Gateway Endpoint</th><th>Interface Endpoint (PrivateLink)</th></tr></thead>
+  <tbody>
+    <tr><td>支持服务</td><td>仅 S3 和 DynamoDB</td><td>大多数 AWS 服务 + 第三方服务</td></tr>
+    <tr><td>实现方式</td><td>修改路由表（前缀列表）</td><td>子网中创建 ENI（私有 IP）</td></tr>
+    <tr><td>费用</td><td>免费</td><td>按小时 + 数据量收费</td></tr>
+    <tr><td>占用 IP</td><td>❌ 不占用</td><td>✅ 每个 AZ 的 ENI 占用一个 IP</td></tr>
+    <tr><td>On-Premises 访问（DX/VPN）</td><td>❌ 不支持</td><td>✅ 支持</td></tr>
+    <tr><td>跨 Region 访问</td><td>❌ 不支持</td><td>✅ 支持（通过 PrivateLink）</td></tr>
+    <tr><td>DNS 解析</td><td>不涉及（路由表）</td><td>支持 Private DNS（覆盖公有 DNS）</td></tr>
+    <tr><td>安全策略</td><td>Endpoint Policy（S3 存储桶策略）</td><td>Endpoint Policy + Security Group</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="callout"><b>选择决策树：</b>访问 S3/DynamoDB + 纯 VPC 内部 → <b>Gateway Endpoint（免费优先）</b>；访问 S3/DynamoDB + 需要 On-Premises 通过 DX/VPN 访问 → <b>Interface Endpoint</b>；访问其他 AWS 服务 → <b>Interface Endpoint</b>。</div>
+</section>
+
+<!-- ===== 5. VPC Peering ===== -->
+<section id="peering">
+<h2>五、VPC Peering</h2>
+<p class="lead">VPC Peering 在两个 VPC 之间建立私有网络连接，流量通过 AWS 骨干网传输，不经过公共互联网。</p>
+
+<h3>核心特性</h3>
+<ul>
+  <li>可跨<b>账号</b>（Cross-Account）和跨<b>Region</b>（Cross-Region Peering）</li>
+  <li>连接建立后，两端 VPC 内的资源可通过私有 IP 互相访问</li>
+  <li>需要双方各自更新路由表，并确保安全组/NACL 允许对应流量</li>
+  <li>一对一连接：一个 Peering 连接只能连接两个 VPC</li>
+</ul>
+
+<h3>关键限制（SAP 超高频考点）</h3>
+<div class="callout red"><b>🔥 VPC Peering 不可传递（Non-Transitive）</b><br>
+如果 VPC-A 与 VPC-B 有 Peering，VPC-B 与 VPC-C 有 Peering，<b>VPC-A 不能通过 VPC-B 访问 VPC-C</b>。每对 VPC 之间必须单独建立 Peering 连接。这是 SAP-C02 最常考的 VPC 陷阱之一。</div>
+
+<div class="diagram">
+  <div class="node red"><b>VPC-A</b></div>
+  <span class="arrow">⟷</span>
+  <div class="node"><b>VPC-B</b></div>
+  <span class="arrow">⟷</span>
+  <div class="node orange"><b>VPC-C</b></div>
+</div>
+<p style="text-align:center;color:var(--red);font-weight:600">❌ A 无法通过 B 访问 C！需要 A-C 单独 Peering</p>
+
+<ul>
+  <li><b>CIDR 不能重叠：</b>两端 VPC 的 IP 地址范围不得有任何重叠</li>
+  <li><b>不支持边缘到边缘路由：</b>不能通过 Peering 共享 VPN、Direct Connect、IGW 或 NAT Gateway</li>
+  <li>没有带宽上限限制（受底层网络约束）</li>
+  <li>每个 VPC 默认最多 125 个 Peering 连接（软限制）</li>
+</ul>
+
+<h3>配置步骤</h3>
+<ol>
+  <li>发起方创建 Peering 请求</li>
+  <li>接受方接受请求</li>
+  <li>双方各自更新路由表（添加对端 CIDR → Peering 连接）</li>
+  <li>更新 Security Group 规则（允许来自对端 CIDR 的流量）</li>
+</ol>
+
+<pre><span class="comment"># VPC-A 路由表（添加到 VPC-B 的路由）</span>
+Destination        Target
+10.0.0.0/16        local       <span class="comment"># VPC-A 自身</span>
+172.16.0.0/16      pcx-0abc123 <span class="comment"># VPC-B CIDR → Peering 连接</span>
+
+<span class="comment"># VPC-B 路由表（添加到 VPC-A 的路由）</span>
+Destination        Target
+172.16.0.0/16      local       <span class="comment"># VPC-B 自身</span>
+10.0.0.0/16        pcx-0abc123 <span class="comment"># VPC-A CIDR → Peering 连接</span></pre>
+
+<h3>VPC Peering vs Transit Gateway 选择</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>场景</th><th>推荐方案</th><th>理由</th></tr></thead>
+  <tbody>
+    <tr><td>2–3 个 VPC 互联</td><td>VPC Peering</td><td>配置简单，无额外费用（免流量处理费）</td></tr>
+    <tr><td>4 个以上 VPC 互联</td><td>Transit Gateway</td><td>N 个 VPC 用 Peering 需 N*(N-1)/2 个连接，TGW 是 Hub-and-Spoke 模型</td></tr>
+    <tr><td>需要传递性路由</td><td>Transit Gateway</td><td>TGW 支持传递路由，Peering 不支持</td></tr>
+    <tr><td>跨账号网络中心化管理</td><td>Transit Gateway（RAM 共享）</td><td>统一管理，路由集中</td></tr>
+    <tr><td>On-Premises 与多 VPC</td><td>Transit Gateway</td><td>一个 TGW 连接 VPN/DX，所有 VPC 共享</td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
+<!-- ===== 6. VPC Flow Logs ===== -->
+<section id="flowlogs">
+<h2>六、VPC Flow Logs</h2>
+<p class="lead">Flow Logs 捕获 VPC、子网或 ENI 级别的网络流量<b>元数据</b>，是网络排错、安全审计和合规的重要工具。</p>
+
+<h3>基本概念</h3>
+<ul>
+  <li>可以在三个层级启用：<b>VPC 级别</b>（捕获所有子网）、<b>子网级别</b>、<b>ENI 级别</b></li>
+  <li>目标存储：<b>CloudWatch Logs</b> 或 <b>S3</b>（推荐 S3，成本低）</li>
+  <li><b>不是实时的：</b>有几分钟的聚合延迟，不能用于实时入侵检测</li>
+  <li><b>只捕获元数据，不捕获内容：</b>只记录 IP 地址、端口、协议、字节数、是否被允许，不记录数据包内容</li>
+  <li>默认格式为固定字段；自定义格式可选择需要的字段</li>
+</ul>
+
+<h3>Flow Log 字段解析</h3>
+<pre><span class="comment"># 默认 Flow Log 格式（14 个字段）</span>
+<span class="key">version</span>  <span class="key">account-id</span>  <span class="key">interface-id</span>  <span class="key">srcaddr</span>    <span class="key">dstaddr</span>     <span class="key">srcport</span>  <span class="key">dstport</span>  <span class="key">protocol</span>  <span class="key">packets</span>  <span class="key">bytes</span>  <span class="key">start</span>  <span class="key">end</span>   <span class="key">action</span>  <span class="key">log-status</span>
+2        123456789012  eni-0a1b2c3d    10.0.1.5   52.94.133.0  43210    443      6         20       5000   ...    ...   ACCEPT  OK
+2        123456789012  eni-0a1b2c3d    10.0.1.5   1.2.3.4      55001    3389     6         1        44     ...    ...   REJECT  OK
+
+<span class="comment"># ACCEPT → 流量被 SG/NACL 允许</span>
+<span class="comment"># REJECT → 流量被 SG/NACL 拒绝</span>
+<span class="comment"># NODATA → 该时间窗口没有流量</span>
+<span class="comment"># SKIPDATA → 因容量限制跳过了某些记录</span></pre>
+
+<h3>重要字段</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>字段</th><th>含义</th><th>用途</th></tr></thead>
+  <tbody>
+    <tr><td><code>srcaddr</code></td><td>源 IP 地址</td><td>识别访问来源，发现扫描/攻击 IP</td></tr>
+    <tr><td><code>dstaddr</code></td><td>目标 IP 地址</td><td>追踪数据流向</td></tr>
+    <tr><td><code>srcport / dstport</code></td><td>源/目标端口</td><td>识别服务类型</td></tr>
+    <tr><td><code>action</code></td><td>ACCEPT 或 REJECT</td><td>排查 SG/NACL 拦截问题</td></tr>
+    <tr><td><code>bytes</code></td><td>传输字节数</td><td>流量分析、异常检测</td></tr>
+    <tr><td><code>protocol</code></td><td>6=TCP, 17=UDP, 1=ICMP</td><td>协议过滤</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>常见使用场景</h3>
+<ul>
+  <li><b>安全审计：</b>查看 REJECT 记录，找出被拦截的可疑连接</li>
+  <li><b>异常流量分析：</b>识别端口扫描、DDoS 攻击来源 IP</li>
+  <li><b>合规要求：</b>PCI DSS、HIPAA 等合规框架要求记录网络访问日志</li>
+  <li><b>排查连接故障：</b>实例 A 无法连接实例 B，通过 Flow Log 查看流量是 REJECT 还是根本没有到达</li>
+  <li><b>数据传输成本分析：</b>分析跨 AZ 或跨 Region 的数据传输量</li>
+</ul>
+
+<div class="callout"><b>Flow Logs 不捕获以下流量：</b>Amazon DNS 服务器的流量、DHCP 流量、Windows 激活流量、169.254.169.254（实例元数据服务）的流量、169.254.169.123（NTP 服务）的流量。</div>
+</section>
+
+<!-- ===== 7. DNS 解析 ===== -->
+<section id="dns">
+<h2>七、DNS 解析</h2>
+<p class="lead">VPC DNS 配置控制 VPC 内实例如何解析 AWS 内部域名，以及 Route 53 私有托管区的工作方式。</p>
+
+<h3>VPC DNS 两个核心设置</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>属性</th><th>含义</th><th>默认值</th><th>注意事项</th></tr></thead>
+  <tbody>
+    <tr><td><code>enableDnsSupport</code></td><td>启用 AWS 内置 DNS 解析器（169.254.169.253 或 VPC CIDR + 2）</td><td>✅ 开启</td><td>关闭后 VPC 内所有 DNS 解析失效</td></tr>
+    <tr><td><code>enableDnsHostnames</code></td><td>为具有公有 IP 的实例分配公有 DNS 主机名</td><td>默认 VPC: ✅；自定义 VPC: ❌</td><td>必须同时开启 enableDnsSupport 才能生效</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="callout orange"><b>Interface Endpoint 私有 DNS：</b>使用 Interface Endpoint 时，需要开启 <code>enableDnsSupport</code> 和 <code>enableDnsHostnames</code>，才能使 VPC 内的 DNS 查询自动解析到 Endpoint 的私有 IP（而不是服务的公有 IP）。</div>
+
+<h3>Route 53 私有托管区（Private Hosted Zone）</h3>
+<ul>
+  <li>为 VPC 内部提供自定义域名解析（如 <code>db.internal.example.com</code>）</li>
+  <li>私有托管区只对关联的 VPC 可见，外部无法查询</li>
+  <li>同一个私有托管区可以关联<b>多个 VPC</b>（包括跨账号的 VPC）</li>
+  <li>VPC 也可以关联多个私有托管区</li>
+</ul>
+
+<h3>跨账号 VPC DNS 关联</h3>
+<p>Account A 的私有托管区需要为 Account B 的 VPC 提供 DNS 解析：</p>
+<ol>
+  <li>Account A 在私有托管区上<b>创建 VPC 关联授权</b>（Authorization）</li>
+  <li>Account B 将本账号的 VPC <b>关联到</b> Account A 的私有托管区</li>
+  <li>关联建立后，Account A 可以删除授权（已关联的不受影响）</li>
+</ol>
+
+<pre><span class="comment"># AWS CLI 跨账号私有托管区关联（示例）</span>
+<span class="comment"># Step 1: Account A 创建授权</span>
+aws route53 create-vpc-association-authorization \
+  --hosted-zone-id Z1234567890 \
+  --vpc VPCRegion=ap-northeast-1,VPCId=vpc-0abc123def
+
+<span class="comment"># Step 2: Account B 关联 VPC</span>
+aws route53 associate-vpc-with-hosted-zone \
+  --hosted-zone-id Z1234567890 \
+  --vpc VPCRegion=ap-northeast-1,VPCId=vpc-0xyz987654</pre>
+
+<h3>DNS 解析层级（完整流程）</h3>
+<ol>
+  <li>实例向 <code>169.254.169.253</code>（或 VPC 基地址 +2）发送 DNS 查询</li>
+  <li>Route 53 Resolver 检查<b>解析规则（Resolver Rules）</b></li>
+  <li>如果匹配私有托管区 → 返回私有记录</li>
+  <li>如果匹配 Forwarding Rule → 转发到指定 DNS 服务器（如本地 DNS）</li>
+  <li>都不匹配 → 转发到公共 DNS 递归解析</li>
+</ol>
+
+<div class="callout green"><b>Route 53 Resolver Endpoints（混合云 DNS）：</b><br>
+• <b>Inbound Endpoint：</b>本地 DNS 服务器可以将 AWS 域名查询转发到 VPC<br>
+• <b>Outbound Endpoint + Forwarding Rule：</b>VPC 内实例可以将本地域名查询转发到本地 DNS 服务器<br>
+这是实现混合云统一 DNS 解析的标准方案。</div>
+</section>
+
+<!-- ===== 8. 高级特性 ===== -->
+<section id="advanced">
+<h2>八、高级特性</h2>
+
+<h3>DHCP Option Sets</h3>
+<p>控制 VPC 内 DHCP 分配的配置参数。</p>
+<ul>
+  <li><code>domain-name-servers</code>：指定自定义 DNS 服务器（默认 AmazonProvidedDNS）</li>
+  <li><code>domain-name</code>：指定实例的域名搜索后缀</li>
+  <li><code>ntp-servers</code>：指定 NTP 服务器</li>
+  <li>创建后不可修改；需要修改时，创建新的 DHCP Option Set 并关联到 VPC</li>
+  <li>典型使用：企业需要实例使用内部 DNS 服务器</li>
+</ul>
+
+<h3>弹性 IP（Elastic IP / EIP）</h3>
+<ul>
+  <li>静态的公有 IPv4 地址，与账号关联（而非实例）</li>
+  <li>可在实例之间移动，实现快速故障切换</li>
+  <li>绑定到正在运行的实例时<b>免费</b>；实例停止或 EIP 未绑定时<b>收费</b>（每小时约 $0.005）</li>
+  <li>每个账号默认 5 个 EIP（软限制，可申请提升）</li>
+</ul>
+
+<h3>ENI（Elastic Network Interface）</h3>
+<ul>
+  <li>虚拟网络接口，可以独立创建、附加、分离到实例</li>
+  <li>每个 ENI 可以绑定多个私有 IP（主 IP + 辅助 IP）</li>
+  <li>每个私有 IP 可以关联一个 EIP</li>
+  <li>绑定安全组（安全组绑定在 ENI 上，不是实例）</li>
+  <li><b>应用场景：</b>多网卡架构（一个 ENI 面向公网，一个 ENI 面向私有管理网络）、故障切换（将 ENI 从故障实例移到备用实例）</li>
+</ul>
+
+<h3>VPC Sharing（RAM 资源共享）</h3>
+<ul>
+  <li>使用 <b>AWS Resource Access Manager（RAM）</b> 将 VPC 内的<b>子网</b>共享给同一 Organizations 中的其他账号</li>
+  <li>资源所有者账号（Owner）创建和管理 VPC 及子网；参与者账号（Participant）在共享子网中创建自己的资源</li>
+  <li>不同账号的资源共享同一 VPC 底层网络，无需 Peering</li>
+  <li>典型场景：中央 IT 团队管理网络，各业务团队在共享子网中部署应用</li>
+</ul>
+<div class="callout"><b>VPC Sharing vs Peering：</b>Sharing 是让多个账号共用同一个 VPC 的子网（一个 VPC，多个账号）；Peering 是连接两个独立的 VPC（两个 VPC，互相访问）。</div>
+
+<h3>Traffic Mirroring（流量镜像）</h3>
+<ul>
+  <li>复制 ENI 的入站/出站流量，发送到目标 ENI 或 Network Load Balancer</li>
+  <li>目标通常是运行 IDS/IPS（入侵检测/防御系统）或深度包检测工具的实例</li>
+  <li>不影响原始流量（镜像是复制，不是重定向）</li>
+  <li>可以设置过滤规则（只镜像特定端口/协议）</li>
+  <li>收费：按处理的流量数据量计费</li>
+</ul>
+
+<h3>VPC Reachability Analyzer</h3>
+<ul>
+  <li>无需发送实际流量，即可分析两个端点之间的网络可达性</li>
+  <li>输出：可达 or 不可达，不可达时指出阻断原因（哪条 SG/NACL 规则、哪个路由表）</li>
+  <li>典型用途：排查网络配置问题（比 Flow Logs 更直接）</li>
+</ul>
+
+<h3>AWS Network Firewall</h3>
+<ul>
+  <li>托管式网络防火墙，部署在 VPC 内，支持有状态和无状态规则</li>
+  <li>支持基于域名的过滤（防止访问特定域名）、IDS/IPS 规则集</li>
+  <li>通常部署在专用的 Firewall 子网，所有流量经过防火墙转发</li>
+  <li>适合需要七层过滤（URL/域名过滤）的场景，NACL 和 SG 只能做四层过滤</li>
+</ul>
+</section>
+
+<!-- ===== 9. 场景题解析 ===== -->
+<section id="scenarios">
+<h2>九、场景题解析</h2>
+<p class="small">以下场景题基于 SAP-C02 考试的典型出题模式，包含完整的分析思路和排错逻辑。</p>
+
+<div class="scenario">
+<div class="scenario-title">🧩 场景一：VPC Peering 传递性问题</div>
+<p><b>场景描述：</b>某公司在 AWS 上有三个 VPC：VPC-A（生产）、VPC-B（共享服务，如 AD、DNS）、VPC-C（开发）。公司已配置 VPC-A ↔ VPC-B Peering 和 VPC-B ↔ VPC-C Peering，并更新了所有路由表。但工程师发现 VPC-A 中的实例仍然无法与 VPC-C 中的实例通信。应如何解决？</p>
+<div class="analysis">
+<b>分析思路：</b><br>
+这是经典的 VPC Peering 传递性问题。VPC Peering 是非传递的（Non-Transitive）。即使 A-B 有 Peering，B-C 有 Peering，AWS 也不会将 A 到 C 的流量通过 B 转发——这在网络层面就被阻断了，不是路由表或安全组的问题。
+</div>
+<div class="answer-box">
+<b>正确答案：</b>在 VPC-A 和 VPC-C 之间直接创建一个新的 VPC Peering 连接（pcx-A-C），然后在两端各自添加路由。<br>
+如果公司有许多 VPC，考虑使用 <b>Transit Gateway</b>，它原生支持传递路由，且只需一个中心节点。
+</div>
+<div class="trap">
+<b>错误选项排除：</b><br>
+❌ 在 VPC-B 中配置 EC2 作为中间路由器 → 可行但不推荐，增加运维复杂度和单点故障风险<br>
+❌ 修改 VPC-B 的路由表使其转发流量 → VPC Peering 本身不支持传递路由，路由表无法解决此问题<br>
+❌ 更新安全组规则 → 不是安全组问题，是架构问题
+</div>
+</div>
+
+<div class="scenario">
+<div class="scenario-title">🧩 场景二：On-Premises 通过 Direct Connect 私有访问 S3</div>
+<p><b>场景描述：</b>某金融公司将核心数据存储在 S3，合规要求所有访问 S3 的流量不得经过公共互联网（包括来自本地数据中心的访问）。公司已通过 Direct Connect 连接到 AWS，VPC 内已创建 S3 Gateway Endpoint。但本地服务器访问 S3 仍经过公共互联网，应如何修复？</p>
+<div class="analysis">
+<b>分析思路：</b><br>
+Gateway Endpoint 的工作原理是在 VPC 路由表中添加前缀列表条目，将目标为 S3 的流量路由到 Endpoint。但 Direct Connect 连接的本地网络无法使用这些路由——本地网络的路由表不受 VPC 路由表管理。<br>
+要让本地通过 DX 私密访问 S3，需要一个在 VPC 内有私有 IP 的端点，这样本地才能通过 DX 路由到该私有 IP。
+</div>
+<div class="answer-box">
+<b>正确答案：</b>在 VPC 中为 S3 创建 <b>Interface Endpoint（PrivateLink）</b>，并启用 Private DNS。本地服务器通过 Direct Connect 连接到 VPC，DNS 解析到 Interface Endpoint 的私有 IP，流量全程不经过公网。
+</div>
+<div class="trap">
+<b>错误选项排除：</b><br>
+❌ 使用现有的 Gateway Endpoint → Gateway Endpoint 不能被 DX/VPN 连接的本地网络使用，这是最常见的陷阱<br>
+❌ 配置 S3 Transfer Acceleration → 这是加速功能，仍然走公共互联网<br>
+❌ 在本地配置 S3 VPC Endpoint DNS → Gateway Endpoint 不生成私有 IP，无法被路由
+</div>
+</div>
+
+<div class="scenario">
+<div class="scenario-title">🧩 场景三：私有子网实例需要访问互联网但不能被外部访问</div>
+<p><b>场景描述：</b>公司将应用服务器部署在私有子网中，实例需要访问互联网以下载安全补丁（apt-get update / yum update）和调用第三方 API。但出于安全要求，实例不能被外部直接访问。架构师应如何设计？</p>
+<div class="analysis">
+<b>分析思路：</b><br>
+需要单向出站（实例主动发起 → 互联网），阻止外部入站（互联网主动 → 实例）。这是 NAT 的核心功能。私有子网 + NAT Gateway 是标准方案。
+</div>
+<div class="answer-box">
+<b>正确答案：</b><br>
+1. 在每个 AZ 的<b>公有子网</b>中部署 <b>NAT Gateway</b>（绑定 EIP）<br>
+2. 在每个 AZ 的私有子网<b>路由表</b>中添加 <code>0.0.0.0/0 → 本 AZ 的 NAT Gateway</code><br>
+3. 确保 IGW 已附加到 VPC，公有子网路由表有 <code>0.0.0.0/0 → IGW</code><br>
+4. 安全组只配置必要的出站规则（默认允许所有出站，可收紧）
+</div>
+<div class="trap">
+<b>错误选项排除：</b><br>
+❌ 将实例移到公有子网并分配公有 IP → 公有 IP 意味着可被外部直接访问，违反安全要求<br>
+❌ 使用 Egress-Only IGW → 这是 IPv6 专用，IPv4 不适用<br>
+❌ 只在一个 AZ 部署 NAT Gateway，其他 AZ 共用 → 如果该 AZ 故障，其他 AZ 实例也无法访问互联网（单点故障）<br>
+❌ 使用 VPC Gateway Endpoint 代替 NAT → Gateway Endpoint 只服务 S3 和 DynamoDB，不能替代 NAT 进行通用互联网访问
+</div>
+</div>
+
+<div class="scenario">
+<div class="scenario-title">🧩 场景四：跨账号 VPC 共享子网</div>
+<p><b>场景描述：</b>某大型企业采用多账号策略（AWS Organizations）。中央 IT 团队（Account A）负责管理所有网络基础设施；各业务团队（Account B、C、D）各自拥有 AWS 账号，需要在统一的网络环境中部署应用。要求：各账号的资源共享同一底层 VPC，无需配置 Peering，中央 IT 团队统一管控网络，业务团队不能修改 VPC 配置。如何实现？</p>
+<div class="analysis">
+<b>分析思路：</b><br>
+核心需求：1) 多账号共享同一 VPC 子网；2) 网络控制权在中央团队；3) 业务团队只能使用子网部署资源，不能修改网络。这正是 VPC Sharing（通过 RAM）的设计目标。
+</div>
+<div class="answer-box">
+<b>正确答案：</b><br>
+使用 <b>AWS Resource Access Manager（RAM）</b> 实现 VPC 共享：<br>
+1. Account A（网络所有者）创建 VPC 和子网<br>
+2. 通过 RAM 将特定子网共享给 Account B、C、D<br>
+3. Account B/C/D 可以在共享子网中创建 EC2、RDS 等资源<br>
+4. 子网的路由表、NACL、VPC 配置由 Account A 统一管理，参与者账号无权修改
+</div>
+<div class="trap">
+<b>错误选项排除：</b><br>
+❌ 为每个账号建立 VPC Peering → 多账号 Peering 管理复杂，非传递性限制互相访问，需要配置大量 Peering 和路由<br>
+❌ 使用 Transit Gateway 互连各账号 VPC → TGW 连接独立 VPC，每个账号仍有自己的 VPC，网络分散，不是"共享"模型<br>
+❌ 将所有资源部署到同一账号 → 违反多账号隔离原则，不符合企业安全要求
+</div>
+</div>
+
+<div class="scenario">
+<div class="scenario-title">🧩 场景五：安全组配置后 ping 不通的排查</div>
+<p><b>场景描述：</b>工程师在 EC2 实例 A（公有子网，已分配公有 IP）的安全组中添加了入站规则：允许来自 <code>0.0.0.0/0</code> 的 All TCP 流量。但从本地工作站 ping 该实例仍然超时，而 curl 测试的 HTTP 端口可以正常连通。原因是什么？</p>
+<div class="analysis">
+<b>分析思路：</b><br>
+curl HTTP = TCP（端口 80）；ping = ICMP（不是 TCP，也不是 UDP）。<br>
+工程师只允许了 "All TCP"，ICMP 协议没有被包含在 TCP 规则中。安全组对协议是精确匹配的，TCP 规则不覆盖 ICMP。
+</div>
+<div class="answer-box">
+<b>正确答案：</b>在安全组入站规则中单独添加 <b>ICMP - IPv4</b> 类型的规则，允许来自 <code>0.0.0.0/0</code>（或特定 IP）的 ICMP 流量。<br>
+由于 SG 是有状态的，出站响应的 ICMP 流量会自动允许，无需添加出站规则。
+</div>
+<div class="trap">
+<b>错误选项排除：</b><br>
+❌ 检查 NACL → 如果 curl 能通，NACL 基本没问题（NACL 是无状态的，如果 NACL 拦截了 TCP 80 的响应，curl 也应该失败）<br>
+❌ 检查路由表 → curl 能通说明路由正确<br>
+❌ 检查 IAM 权限 → IAM 不控制网络连通性<br>
+<b>延伸陷阱：</b>如果 curl 也无法连通，则检查顺序应为：SG入站规则 → NACL入站规则 → NACL出站规则（临时端口）→ 路由表 → 实例操作系统防火墙
+</div>
+</div>
+</section>
+
+<!-- ===== 10. 快速答题关键词表 ===== -->
+<section id="quick">
+<h2>十、考试快速答题：关键词 → 功能</h2>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>题目关键词</th><th>优先考虑</th></tr></thead>
+  <tbody>
+    <tr><td>私有子网访问 S3/DynamoDB，最低成本</td><td>Gateway Endpoint（免费）</td></tr>
+    <tr><td>On-Premises 通过 DX/VPN 私密访问 S3</td><td>Interface Endpoint（PrivateLink）</td></tr>
+    <tr><td>私有子网访问大多数 AWS 服务（非 S3/DDB）</td><td>Interface Endpoint</td></tr>
+    <tr><td>VPC Peering 无法连通，3 个 VPC</td><td>VPC Peering 不可传递 → 需直接 A-C Peering 或改用 TGW</td></tr>
+    <tr><td>多个 VPC（≥4）需互通</td><td>Transit Gateway</td></tr>
+    <tr><td>私有实例访问互联网（出站），不能被外部访问</td><td>NAT Gateway（公有子网 + EIP + 路由表）</td></tr>
+    <tr><td>NAT + 堡垒机 / 端口转发</td><td>NAT Instance</td></tr>
+    <tr><td>IPv6 单向出站互联网访问</td><td>Egress-Only Internet Gateway</td></tr>
+    <tr><td>子网级别显式拒绝某个 IP</td><td>NACL（SG 不支持拒绝规则）</td></tr>
+    <tr><td>响应流量被拦截，连接不稳定</td><td>NACL 无状态 → 检查出站临时端口规则（1024-65535）</td></tr>
+    <tr><td>多账号共享同一 VPC 子网</td><td>VPC Sharing（RAM）</td></tr>
+    <tr><td>网络流量审计、异常检测、合规日志</td><td>VPC Flow Logs → CloudWatch Logs 或 S3</td></tr>
+    <tr><td>深度包检测、IDS/IPS</td><td>Traffic Mirroring → 镜像到检测实例</td></tr>
+    <tr><td>七层过滤（域名过滤）</td><td>AWS Network Firewall</td></tr>
+    <tr><td>实例 A 无法连 B，需排查网络配置原因</td><td>VPC Reachability Analyzer</td></tr>
+    <tr><td>实例静态公网 IP，可快速迁移</td><td>Elastic IP（EIP）</td></tr>
+    <tr><td>本地 DNS 查询 AWS 域名</td><td>Route 53 Resolver Inbound Endpoint</td></tr>
+    <tr><td>VPC 内查询本地私有域名</td><td>Route 53 Resolver Outbound Endpoint + Forwarding Rule</td></tr>
+    <tr><td>跨账号私有托管区 DNS 解析</td><td>Route 53 Private Hosted Zone + VPC Association Authorization</td></tr>
+    <tr><td>自定义 DNS 服务器 for VPC 实例</td><td>DHCP Option Sets</td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
+<!-- ===== 11. 易混淆概念 ===== -->
+<section id="compare">
+<h2>十一、最容易混淆的概念对比</h2>
+<table>
+  <thead><tr><th>概念 A</th><th>概念 B</th><th>核心区别</th></tr></thead>
+  <tbody>
+    <tr><td>Security Group（有状态）</td><td>Network ACL（无状态）</td><td>SG 自动允许响应流量；NACL 需手动配置双向规则（特别是临时端口）</td></tr>
+    <tr><td>Gateway Endpoint</td><td>Interface Endpoint</td><td>免费/仅 S3+DDB/路由表/不支持 On-Prem vs 收费/大多数服务/ENI/支持 On-Prem</td></tr>
+    <tr><td>NAT Gateway</td><td>NAT Instance</td><td>托管高可用/不支持端口转发 vs 自管/支持端口转发和堡垒机</td></tr>
+    <tr><td>VPC Peering</td><td>Transit Gateway</td><td>点对点/非传递 vs Hub-Spoke/支持传递路由/适合大规模</td></tr>
+    <tr><td>VPC Sharing（RAM）</td><td>VPC Peering</td><td>多账号共享同一 VPC 子网 vs 两个独立 VPC 互相连通</td></tr>
+    <tr><td>IGW</td><td>NAT Gateway</td><td>双向互联网（公有子网实例主动接受入站） vs 单向出站（私有子网实例不接受外部入站）</td></tr>
+    <tr><td>Flow Logs</td><td>Traffic Mirroring</td><td>记录元数据（IP、端口、action）/有延迟 vs 复制完整数据包内容/实时/用于深度检测</td></tr>
+    <tr><td>Egress-Only IGW</td><td>NAT Gateway</td><td>IPv6 专用单向出站 vs IPv4 NAT，也可用于 IPv6 但有 NAT</td></tr>
+    <tr><td>enableDnsSupport</td><td>enableDnsHostnames</td><td>启用 DNS 解析功能（必须开） vs 为实例分配 DNS 主机名（两者都需开才生效）</td></tr>
+    <tr><td>NACL 默认（自动创建）</td><td>NACL 自定义（新建）</td><td>允许所有进出流量 vs 拒绝所有流量</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ===== 12. 考前速记卡 ===== -->
+<section id="memory">
+<h2>十二、考前速记卡（可勾选）</h2>
+<p>复习时勾选已经掌握的项目。进度仅保存在当前页面打开期间。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 20</p>
+<ul class="checklist" id="memoryList">
+  <li><input type="checkbox"><span><b>VPC 是 Region 级别资源；子网是 AZ 级别资源</b></span></li>
+  <li><input type="checkbox"><span><b>公有子网：</b>路由表有 <code>0.0.0.0/0 → IGW</code></span></li>
+  <li><input type="checkbox"><span><b>私有子网访问互联网：</b>NAT Gateway（公有子网 + EIP）</span></li>
+  <li><input type="checkbox"><span><b>NAT Gateway 高可用：</b>每个 AZ 部署一个，私有子网路由指向同 AZ 的 NAT GW</span></li>
+  <li><input type="checkbox"><span><b>Security Group 有状态：</b>响应流量自动允许，无需出站规则</span></li>
+  <li><input type="checkbox"><span><b>NACL 无状态：</b>必须同时配置入站和出站（响应使用临时端口 1024-65535）</span></li>
+  <li><input type="checkbox"><span><b>NACL 按规则编号评估：</b>数字小的优先，首次匹配即停止</span></li>
+  <li><input type="checkbox"><span><b>SG 只能允许，不能拒绝；NACL 支持显式拒绝</b></span></li>
+  <li><input type="checkbox"><span><b>Gateway Endpoint：</b>仅 S3 + DynamoDB，免费，修改路由表，不支持 On-Prem</span></li>
+  <li><input type="checkbox"><span><b>Interface Endpoint (PrivateLink)：</b>大多数服务，创建 ENI，收费，支持 On-Prem（DX/VPN）</span></li>
+  <li><input type="checkbox"><span><b>On-Prem 通过 DX 私密访问 S3：必须用 Interface Endpoint，不是 Gateway Endpoint</b></span></li>
+  <li><input type="checkbox"><span><b>VPC Peering 不可传递：</b>A-B-C Peering，A 不能通过 B 访问 C</span></li>
+  <li><input type="checkbox"><span><b>VPC Peering CIDR 不能重叠</b></span></li>
+  <li><input type="checkbox"><span><b>4+ VPC 互联选 Transit Gateway；≤3 个可用 Peering</b></span></li>
+  <li><input type="checkbox"><span><b>VPC Sharing（RAM）：</b>多账号共享同一 VPC 子网（非 Peering）</span></li>
+  <li><input type="checkbox"><span><b>Egress-Only IGW：</b>IPv6 单向出站，类似 IPv4 的 NAT Gateway</span></li>
+  <li><input type="checkbox"><span><b>Flow Logs：</b>记录元数据（不含内容），有延迟，action 字段 ACCEPT/REJECT</span></li>
+  <li><input type="checkbox"><span><b>Traffic Mirroring：</b>复制完整数据包，用于深度检测（IDS/IPS）</span></li>
+  <li><input type="checkbox"><span><b>Route 53 Resolver Inbound/Outbound Endpoint：</b>混合云双向 DNS 解析</span></li>
+  <li><input type="checkbox"><span><b>NAT Instance 必须关闭 Source/Destination Check</b></span></li>
+</ul>
+</section>
+
+<!-- ===== 13. 快速自测 ===== -->
+<section id="quiz">
+<h2>十三、快速自测</h2>
+<p class="small">先独立选择，再点击"查看解析"。概念练习题，不代表真实考试题。</p>
+
+<div class="quiz">
+ <b>1. 公司需要本地数据中心通过 Direct Connect 私密访问 Amazon S3，不经过公共互联网。VPC 内已存在 S3 Gateway Endpoint。下一步应该做什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',false)">A. 在本地路由器上添加 S3 前缀列表路由，指向 Direct Connect</button>
+ <button class="secondary" onclick="showAnswer('q1',true)">B. 在 VPC 中为 S3 创建 Interface Endpoint（PrivateLink），启用 Private DNS</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. 使用 S3 Transfer Acceleration</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. 在 Direct Connect 连接上启用 Public VIF，访问 S3 公有端点</button>
+ <div class="answer" id="q1"><b>正确答案：B。</b>Gateway Endpoint 只修改 VPC 路由表，无法被 DX 本地网络使用。Interface Endpoint 在 VPC 内创建 ENI（有私有 IP），本地可通过 DX 路由到该私有 IP 访问 S3。选项 D 的 Public VIF 走公共互联网，不符合"不经过公共互联网"的要求。</div>
+</div>
+
+<div class="quiz">
+ <b>2. 公司有 VPC-A、VPC-B、VPC-C 三个 VPC，已配置 A-B 和 B-C 的 Peering，但 A 无法连接 C。在不增加 Transit Gateway 的前提下，最简单的解决方案是什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 在 VPC-B 中添加路由条目，将 A 的流量转发到 C</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. 在 VPC-A 和 VPC-C 之间创建新的 VPC Peering 连接</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 修改 VPC-B 的 NACL，允许来自 VPC-A 去往 VPC-C 的流量</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. 删除 A-B 和 B-C 的 Peering，重新配置</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>VPC Peering 是非传递的，无论如何配置路由表和 NACL，流量都不能经 B 转发从 A 到 C。唯一解决方案是直接在 A 和 C 之间建立 Peering。</div>
+</div>
+
+<div class="quiz">
+ <b>3. 私有子网中的实例安全组入站规则：允许 TCP 80（HTTP）来自 0.0.0.0/0。但从公有子网的实例向该私有实例发送 HTTP 请求，响应没有收到。该子网的自定义 NACL 配置了：入站规则 100 允许 TCP 80，出站规则 100 允许 TCP 80。问题最可能是什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',false)">A. 安全组没有配置出站规则允许 HTTP 80</button>
+ <button class="secondary" onclick="showAnswer('q3',true)">B. NACL 出站规则未允许临时端口（1024-65535）</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. 路由表缺少到公有子网的路由</td></tr></button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. 需要在私有子网关联 IGW</button>
+ <div class="answer" id="q3"><b>正确答案：B。</b>NACL 是无状态的。HTTP 请求进入时用 80 端口（NACL 入站规则 100 允许），但服务器响应时源端口是 80，目标端口是客户端的<b>临时端口（1024-65535）</b>。NACL 出站规则只允许了 TCP 80，没有允许临时端口范围，响应被拦截。安全组是有状态的，不存在此问题（选项 A 错误）。</div>
+</div>
+
+<div class="quiz">
+ <b>4. 企业使用 AWS Organizations 多账号架构。中央 IT 账号（Account A）负责管理所有 VPC 和子网；10 个业务团队账号需要在统一的 VPC 环境中部署资源，且不能修改 VPC/子网配置。最合适的方案是什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q4',false)">A. 为每个业务账号创建 VPC，通过 Transit Gateway 互连</button>
+ <button class="secondary" onclick="showAnswer('q4',true)">B. 使用 AWS RAM 将 Account A 的子网共享给各业务账号</button>
+ <button class="secondary" onclick="showAnswer('q4',false)">C. 为每个业务账号创建 VPC，通过 Peering 连接到中央 VPC</button>
+ <button class="secondary" onclick="showAnswer('q4',false)">D. 所有业务团队使用同一个 AWS 账号</button>
+ <div class="answer" id="q4"><b>正确答案：B。</b>RAM VPC Sharing 正是为此场景设计：网络所有者账号通过 RAM 共享子网，参与者账号可以在共享子网中部署资源，但无法修改 VPC/子网配置，满足题目所有要求。选项 A/C 每个账号各自有 VPC，网络分散，管理复杂，不是"统一 VPC 环境"。</div>
+</div>
+
+<div class="quiz">
+ <b>5. 公司需要对某个 EC2 实例进行深度入侵检测，要求检测工具能够看到完整的网络数据包内容（而非仅元数据）。应该使用哪个 AWS 服务？</b><br>
+ <button class="secondary" onclick="showAnswer('q5',false)">A. VPC Flow Logs，发送到 CloudWatch Logs</button>
+ <button class="secondary" onclick="showAnswer('q5',false)">B. AWS CloudTrail</button>
+ <button class="secondary" onclick="showAnswer('q5',true)">C. VPC Traffic Mirroring</button>
+ <button class="secondary" onclick="showAnswer('q5',false)">D. AWS GuardDuty</button>
+ <div class="answer" id="q5"><b>正确答案：C。</b>Flow Logs 只记录流量元数据（IP、端口、action），不含数据包内容（选项 A 错误）。Traffic Mirroring 会将 ENI 的完整数据包复制到目标 ENI 或 NLB，供 IDS/IPS 工具进行深度检测。GuardDuty 是 AWS 托管的威胁检测服务，使用 VPC Flow Logs/DNS logs 等作为数据源，不提供原始数据包。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料与复习说明</h2>
+<ul>
+  <li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html" target="_blank" rel="noopener">Amazon VPC 用户指南</a></li>
+  <li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Security.html" target="_blank" rel="noopener">VPC Security Groups and Network ACLs</a></li>
+  <li><a href="https://docs.aws.amazon.com/vpc/latest/privatelink/privatelink-access-aws-services.html" target="_blank" rel="noopener">AWS PrivateLink（Interface Endpoint）</a></li>
+  <li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html" target="_blank" rel="noopener">NAT Gateway 用户指南</a></li>
+  <li><a href="https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html" target="_blank" rel="noopener">VPC Peering 指南</a></li>
+  <li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html" target="_blank" rel="noopener">VPC Flow Logs</a></li>
+  <li><a href="https://aws.amazon.com/certification/certified-solutions-architect-professional/" target="_blank" rel="noopener">AWS Certified Solutions Architect – Professional</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>考试版本、考试日期、服务功能和支持范围可能变化。请以 AWS 官方考试指南和最新服务文档为准。本文是复习提纲，不是官方考试题库。</div>
+</section>
+
+</main>
+</div>
+
+<footer class="container">AWS SAP-C02 Amazon VPC 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+  const boxes=[...document.querySelectorAll('#memoryList input')];
+  const done=boxes.filter(x=>x.checked).length;
+  document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+  document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+
+function showAnswer(id,correct){
+  const el=document.getElementById(id);
+  el.style.display='block';
+  if(!correct){el.classList.add('wrong');}
+}
+
+// 导航高亮：滚动时自动高亮当前章节
+const sections=document.querySelectorAll('section[id]');
+const navLinks=document.querySelectorAll('#mainNav a');
+function highlightNav(){
+  let current='';
+  sections.forEach(sec=>{
+    const top=sec.getBoundingClientRect().top;
+    if(top<=80) current=sec.id;
+  });
+  navLinks.forEach(a=>{
+    a.classList.toggle('active',a.getAttribute('href')==='#'+current);
+  });
+}
+window.addEventListener('scroll',highlightNav,{passive:true});
+highlightNav();
+</script>
+</body>
+</html>

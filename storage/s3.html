@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Amazon S3 考点整理、存储类别、访问控制、加密与场景题解析">
+<title>AWS SAP-C02｜Amazon S3 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.orange{background:var(--orange-soft);color:var(--orange)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+pre{overflow:auto;background:#0f172a;color:#e2e8f0;padding:16px;border-radius:10px}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:130px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff}
+.card b{display:block;margin-bottom:5px}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}.cards{grid-template-columns:1fr}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>Amazon S3<br>Simple Storage Service — SAP-C02 核心考点</h1>
+  <p>存储类别、生命周期、版本控制、跨区域复制、访问控制、加密与性能优化的全面备考指南。以"功能边界 → 场景判断 → 易错陷阱"为主线，适合系统复习和考前速查。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">对象存储</span>
+   <span class="pill">可打印 / 可勾选</span>
+  </div>
+  <div class="toolbar no-print">
+   <a href="index.html" style="color:#bfdbfe;font-size:14px;align-self:center;">← 返回存储模块</a>
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#storage-classes">一、存储类别</a>
+ <a href="#lifecycle">二、生命周期策略</a>
+ <a href="#versioning">三、版本控制与 MFA Delete</a>
+ <a href="#replication">四、跨区域复制 CRR/SRR</a>
+ <a href="#access-control">五、访问控制</a>
+ <a href="#encryption">六、加密</a>
+ <a href="#performance">七、性能优化</a>
+ <a href="#events">八、事件通知</a>
+ <a href="#static-website">九、静态网站托管</a>
+ <a href="#other-features">十、其他重要特性</a>
+ <a href="#scenarios">十一、场景题解析</a>
+ <a href="#quick">十二、关键词速查</a>
+ <a href="#memory">十三、考前速记卡</a>
+ <a href="#priority">十四、复习优先级</a>
+ <a href="#quiz">十五、快速自测</a>
+</nav>
+
+<main>
+
+<!-- ===== 1. 存储类别 ===== -->
+<section id="storage-classes">
+<h2>一、S3 存储类别（Storage Classes）</h2>
+<p class="lead">SAP-C02 高频考点，核心是根据访问频率、成本、恢复时间和合规要求选择正确的存储类别。</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>存储类别</th><th>适用场景</th><th>最短存储期</th><th>检索时间</th><th>检索费用</th><th>可用性</th><th>AZ 数量</th></tr>
+</thead>
+<tbody>
+<tr>
+ <td><b>S3 Standard</b></td>
+ <td>频繁访问的通用数据，如网站内容、移动应用</td>
+ <td>无</td>
+ <td>毫秒级</td>
+ <td>无</td>
+ <td>99.99%</td>
+ <td>≥3</td>
+</tr>
+<tr>
+ <td><b>S3 Standard-IA</b><br><small>（Infrequent Access）</small></td>
+ <td>不频繁访问但需快速检索，如备份、灾难恢复</td>
+ <td>30 天</td>
+ <td>毫秒级</td>
+ <td>有（按检索量计费）</td>
+ <td>99.9%</td>
+ <td>≥3</td>
+</tr>
+<tr>
+ <td><b>S3 One Zone-IA</b></td>
+ <td>不频繁访问、可重新创建的数据，如缩略图副本</td>
+ <td>30 天</td>
+ <td>毫秒级</td>
+ <td>有（按检索量计费）</td>
+ <td>99.5%</td>
+ <td>1（单 AZ）</td>
+</tr>
+<tr>
+ <td><b>S3 Intelligent-Tiering</b></td>
+ <td>访问模式未知或不断变化的数据，自动在层级间移动</td>
+ <td>无</td>
+ <td>毫秒级（频繁/不频繁层）<br>数分钟（归档层）</td>
+ <td>无（监控/自动化费用）</td>
+ <td>99.9%</td>
+ <td>≥3</td>
+</tr>
+<tr>
+ <td><b>Glacier Instant Retrieval</b></td>
+ <td>极少访问，但需毫秒级检索，如医疗影像、新闻媒体</td>
+ <td>90 天</td>
+ <td>毫秒级</td>
+ <td>有（较高）</td>
+ <td>99.99%</td>
+ <td>≥3</td>
+</tr>
+<tr>
+ <td><b>Glacier Flexible Retrieval</b><br><small>（原 Glacier）</small></td>
+ <td>每年访问 1-2 次，可接受数分钟至数小时检索</td>
+ <td>90 天</td>
+ <td>加急：1-5 分钟<br>标准：3-5 小时<br>批量：5-12 小时</td>
+ <td>有（加急最贵）</td>
+ <td>99.99%</td>
+ <td>≥3</td>
+</tr>
+<tr>
+ <td><b>Glacier Deep Archive</b></td>
+ <td>合规归档，每年访问不足一次，最低成本</td>
+ <td>180 天</td>
+ <td>标准：12 小时<br>批量：48 小时</td>
+ <td>有（最低）</td>
+ <td>99.99%</td>
+ <td>≥3</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout orange"><b>考试必记：</b>Standard-IA 和 One Zone-IA 最短存储 <b>30 天</b>；Glacier Instant Retrieval 和 Glacier Flexible Retrieval 最短存储 <b>90 天</b>；Glacier Deep Archive 最短存储 <b>180 天</b>。提前删除仍按最短存储期收费。</div>
+<div class="callout green"><b>选择口诀：</b>频繁访问 → Standard；不频繁但快速 → Standard-IA；单 AZ 可接受 → One Zone-IA；模式未知 → Intelligent-Tiering；毫秒级 Glacier → Glacier Instant；小时级归档 → Glacier Flexible；长期合规 → Deep Archive。</div>
+<h3>One Zone-IA 的风险</h3>
+<p>数据仅存储在单个可用区。如果该 AZ 发生灾难性故障，数据将永久丢失。因此只适合可重新生成的数据（如缩略图、中间处理结果），不适合唯一的业务数据。</p>
+</section>
+
+<!-- ===== 2. 生命周期策略 ===== -->
+<section id="lifecycle">
+<h2>二、生命周期策略（Lifecycle Policies）</h2>
+<p class="lead">自动化对象的存储类别转换和过期删除，降低成本，无需手动管理。</p>
+<div class="cards">
+ <div class="card">
+  <b>转换操作（Transition Actions）</b>
+  <p>将对象从一种存储类别转换到另一种。例如：对象创建 30 天后从 Standard 转换到 Standard-IA，90 天后转换到 Glacier Flexible Retrieval。</p>
+ </div>
+ <div class="card">
+  <b>过期操作（Expiration Actions）</b>
+  <p>在指定时间后永久删除对象或删除标记（Delete Marker）。例如：日志文件保留 365 天后自动删除；或清理版本控制中过时的旧版本。</p>
+ </div>
+</div>
+<h3>存储类别转换限制（单向，不可逆）</h3>
+<p>S3 生命周期转换是单向的，只能从更"热"的层向更"冷"的层转换，不能反向操作。</p>
+<div class="diagram">
+ <div class="node"><b>Standard</b></div>
+ <span class="arrow">→ 30天</span>
+ <div class="node"><b>Standard-IA</b><br><small>或 One Zone-IA</small></div>
+ <span class="arrow">→ 90天</span>
+ <div class="node"><b>Glacier Instant /<br>Flexible Retrieval</b></div>
+ <span class="arrow">→ 180天</span>
+ <div class="node"><b>Glacier<br>Deep Archive</b></div>
+</div>
+<div class="callout orange"><b>转换限制：</b>Standard → Standard-IA 最少等待 <b>30 天</b>；Standard-IA → Glacier 最少等待 <b>30 天</b>（即对象在 Standard-IA 中至少保存 30 天）。不能从 Glacier 转换回 Standard-IA。Intelligent-Tiering 可以作为目标，但有其自动管理逻辑。</div>
+<h3>与版本控制结合</h3>
+<p>启用版本控制后，可以对当前版本和非当前版本（Noncurrent versions）分别设置策略：</p>
+<ul>
+ <li>当前版本（Current）：正常的转换和过期规则</li>
+ <li>非当前版本（Noncurrent）：可设置保留 N 天后转换或删除旧版本</li>
+ <li>删除标记（Delete Markers）：配置何时清理孤立的删除标记</li>
+</ul>
+<h3>Multipart Upload 未完成的清理</h3>
+<p>分段上传（Multipart Upload）中途中断后，已上传的分段会在存储桶中占用空间并持续计费。可以通过生命周期策略设置规则，自动中止超过指定天数（如 7 天）仍未完成的分段上传，释放存储空间。</p>
+<div class="callout"><b>典型场景：</b>设置"中止未完成的 Multipart Upload（7 天）"是 S3 成本优化的常见做法，在 SAP-C02 中经常出现在成本优化题型中。</div>
+</section>
+
+<!-- ===== 3. 版本控制 ===== -->
+<section id="versioning">
+<h2>三、版本控制（Versioning）与 MFA Delete</h2>
+<h3>版本控制的三种状态</h3>
+<table>
+<thead><tr><th>状态</th><th>描述</th><th>效果</th></tr></thead>
+<tbody>
+<tr><td><b>未启用（Unversioned）</b></td><td>默认状态，从未启用过版本控制</td><td>上传同名对象会覆盖，无法恢复旧版本</td></tr>
+<tr><td><b>已启用（Enabled）</b></td><td>版本控制处于激活状态</td><td>每次上传创建新版本 ID，可恢复任意历史版本</td></tr>
+<tr><td><b>已暂停（Suspended）</b></td><td>曾启用过，现已暂停</td><td>不再为新上传创建版本，历史版本保留。新上传的对象版本 ID 为 null</td></tr>
+</tbody>
+</table>
+<div class="callout orange"><b>重要：</b>一旦启用版本控制，<b>无法回到"未启用"状态</b>，只能"暂停"。这是高频陷阱题考点。</div>
+<h3>删除操作的行为</h3>
+<div class="cards">
+ <div class="card">
+  <b>不指定版本 ID 的删除</b>
+  <p>S3 不会真正删除对象，而是在最新位置放置一个<b>删除标记（Delete Marker）</b>。对象看起来消失了，但历史版本都在，可以通过删除"删除标记"来恢复。</p>
+ </div>
+ <div class="card">
+  <b>指定版本 ID 的删除</b>
+  <p>S3 会<b>永久删除</b>该特定版本，无法通过 S3 本身恢复。需要指定版本 ID 才能彻底清除某个版本。</p>
+ </div>
+</div>
+<h3>MFA Delete</h3>
+<p>MFA Delete 为 S3 版本控制增加了额外的安全层，防止误删或恶意删除：</p>
+<ul>
+ <li>只有<b>桶拥有者（root 账户）</b>可以启用或禁用 MFA Delete</li>
+ <li>启用后，永久删除某个版本或更改版本控制状态，都需要在请求中包含 MFA 验证码</li>
+ <li>必须通过 <b>AWS CLI</b> 配置（控制台不支持直接启用）</li>
+ <li>适用场景：保护关键业务数据，防止勒索软件删除版本历史</li>
+</ul>
+<div class="callout green"><b>记忆：</b>MFA Delete ≠ MFA 登录控制台。它是 S3 API 层面的额外验证，要删除版本必须带 MFA Token。</div>
+<h3>版本控制与复制的关系</h3>
+<p>S3 跨区域复制（CRR）和同区域复制（SRR）都<b>必须启用版本控制</b>才能工作。源桶和目标桶都需要启用版本控制。</p>
+</section>
+
+<!-- ===== 4. CRR / SRR ===== -->
+<section id="replication">
+<h2>四、跨区域复制（CRR / SRR）</h2>
+<p class="lead">S3 复制允许将对象异步地自动复制到另一个桶，分为跨区域复制（CRR）和同区域复制（SRR）。</p>
+<h3>CRR vs SRR 对比</h3>
+<table>
+<thead><tr><th>对比维度</th><th>CRR（Cross-Region Replication）</th><th>SRR（Same-Region Replication）</th></tr></thead>
+<tbody>
+<tr><td>目标桶位置</td><td>不同 AWS 区域</td><td>同一 AWS 区域</td></tr>
+<tr><td>典型场景</td><td>灾难恢复、降低读取延迟、合规数据主权</td><td>日志聚合、生产与测试账号之间的同步</td></tr>
+<tr><td>数据传输费用</td><td>有（跨区域传输）</td><td>无（同区域传输免费）</td></tr>
+<tr><td>合规用途</td><td>在特定地理区域保存数据副本</td><td>在同一区域内多账号之间同步</td></tr>
+</tbody>
+</table>
+<h3>复制的前提条件</h3>
+<ul>
+ <li>源桶和目标桶都必须<b>启用版本控制</b></li>
+ <li>源桶需要有 IAM 角色授权 S3 访问目标桶</li>
+ <li>可以跨账号复制，但需要在目标桶的 Bucket Policy 中授予源账号权限</li>
+</ul>
+<h3>复制范围与限制</h3>
+<div class="callout orange"><b>重要陷阱：</b>启用复制规则<b>之前</b>已存在的对象<b>不会</b>被自动复制。如果需要复制现有对象，必须使用 <b>S3 Batch Operations</b> 配合 <code>CopyObject</code> 操作来补全。</div>
+<ul>
+ <li><b>删除标记的复制：</b>默认<b>不复制</b>删除标记，可选择启用"Replicate delete markers"</li>
+ <li><b>指定版本 ID 的删除：</b>永远不会被复制（防止恶意删除传播）</li>
+ <li><b>加密对象的复制：</b>需要配置 KMS Key 权限（目标区域的 KMS CMK），并在 IAM 角色中添加 KMS 相关权限</li>
+ <li><b>不支持链式复制：</b>A 桶复制到 B 桶，B 桶不会自动将内容复制到 C 桶</li>
+</ul>
+<h3>S3 Replication Time Control（S3 RTC）</h3>
+<p>标准复制是尽力而为的异步复制。S3 RTC 提供 99.99% 的对象在 15 分钟内完成复制的 SLA，并附带监控指标，适用于对复制时效有严格要求的场景。</p>
+<div class="callout green"><b>场景判断：</b>题目提到"灾难恢复、多区域可用性" → CRR；题目提到"日志聚合、多账户数据同步、同一区域" → SRR；题目提到"确保 15 分钟内复制" → S3 RTC。</div>
+</section>
+
+<!-- ===== 5. 访问控制 ===== -->
+<section id="access-control">
+<h2>五、访问控制</h2>
+<p class="lead">S3 访问控制是 SAP-C02 的核心考点，需要理解不同访问控制机制的优先级和适用场景。</p>
+<h3>访问控制机制对比</h3>
+<table>
+<thead><tr><th>机制</th><th>类型</th><th>适用场景</th><th>跨账号支持</th></tr></thead>
+<tbody>
+<tr><td><b>Bucket Policy</b></td><td>资源基础策略（Resource-based）</td><td>为整个桶或特定前缀设置访问规则；强制加密；跨账号访问</td><td>✅ 支持</td></tr>
+<tr><td><b>IAM Policy</b></td><td>身份基础策略（Identity-based）</td><td>控制 IAM 用户/角色/服务对 S3 的访问权限</td><td>需结合 Bucket Policy</td></tr>
+<tr><td><b>ACL（访问控制列表）</b></td><td>遗留机制</td><td>AWS 已逐渐弃用，建议使用 Bucket Policy 替代</td><td>有限支持</td></tr>
+<tr><td><b>S3 Access Points</b></td><td>访问点策略</td><td>为不同应用/团队创建独立命名空间和访问策略</td><td>✅ 支持</td></tr>
+</tbody>
+</table>
+<h3>Block Public Access（阻止公共访问）</h3>
+<p>Block Public Access 是 S3 的账号级和桶级安全控制，包含四个独立设置：</p>
+<ul>
+ <li><code>BlockPublicAcls</code>：阻止通过 ACL 授予的公共访问</li>
+ <li><code>IgnorePublicAcls</code>：忽略所有公共 ACL 设置</li>
+ <li><code>BlockPublicPolicy</code>：阻止新的公共 Bucket Policy</li>
+ <li><code>RestrictPublicBuckets</code>：限制现有公共 Bucket Policy 的访问</li>
+</ul>
+<div class="callout green"><b>最佳实践：</b>默认情况下，新桶的四个 Block Public Access 选项全部开启。除非明确需要公开访问（如静态网站或公开文件分发），否则保持全部开启。</div>
+<h3>S3 Access Points（访问点）</h3>
+<p>当多个应用程序、用户或团队需要访问同一个 S3 桶，并且每组有不同的访问权限时，直接在单个 Bucket Policy 中管理会变得复杂。Access Points 为每个应用提供独立的访问端点和独立的权限策略，大幅简化管理。</p>
+<ul>
+ <li>每个 Access Point 有独立的 hostname 和 ARN</li>
+ <li>可以限制 Access Point 只能从特定 VPC 访问（VPC Origin）</li>
+ <li>Access Point Policy + Bucket Policy 共同决定最终权限</li>
+</ul>
+<h3>预签名 URL（Presigned URL）</h3>
+<p>允许无 AWS 账号的用户临时访问指定对象：</p>
+<ul>
+ <li>由拥有该对象访问权限的 IAM 身份生成</li>
+ <li>预签名 URL 中包含签名信息，服务端验证</li>
+ <li>有效期可配置，过期后自动失效</li>
+ <li>典型场景：为用户提供私有对象的临时下载链接；用户直接上传文件到 S3 而无需暴露 AWS 凭证</li>
+</ul>
+<h3>跨账号访问</h3>
+<p>从账号 B 访问账号 A 的 S3 桶需要双重授权：</p>
+<div class="diagram">
+ <div class="node"><b>账号 B</b><br><small>IAM 用户/角色</small></div>
+ <span class="arrow">需要→</span>
+ <div class="node"><b>账号 B</b><br><small>IAM Policy：允许访问账号 A 的桶</small></div>
+ <span class="arrow">+</span>
+ <div class="node"><b>账号 A</b><br><small>Bucket Policy：允许账号 B 的主体</small></div>
+</div>
+<div class="callout red"><b>安全提示：</b>跨账号 S3 访问需要<b>两边同时授权</b>。只有 Bucket Policy 允许，但账号 B 的 IAM Policy 不允许，访问仍然被拒绝；反之亦然。两者缺一不可。</div>
+</section>
+
+<!-- ===== 6. 加密 ===== -->
+<section id="encryption">
+<h2>六、加密</h2>
+<p class="lead">S3 加密分为服务端加密（SSE）和客户端加密（CSE），SAP-C02 重点考察不同 SSE 模式的区别和使用场景。</p>
+<h3>服务端加密（Server-Side Encryption，SSE）</h3>
+<table>
+<thead><tr><th>加密类型</th><th>密钥管理</th><th>特点</th><th>适用场景</th></tr></thead>
+<tbody>
+<tr>
+ <td><b>SSE-S3</b></td>
+ <td>S3 自动管理（AES-256）</td>
+ <td>默认加密方式，无额外成本，无需配置。请求 Header：<code>x-amz-server-side-encryption: AES256</code></td>
+ <td>通用场景，不需要自定义密钥管理</td>
+</tr>
+<tr>
+ <td><b>SSE-KMS</b></td>
+ <td>AWS KMS 管理 CMK</td>
+ <td>有审计日志（CloudTrail），可控制密钥访问权限；KMS API 有调用速率限制（5500-30000 QPS）。Header：<code>x-amz-server-side-encryption: aws:kms</code></td>
+ <td>合规要求，需要密钥审计，需要跨账号密钥控制</td>
+</tr>
+<tr>
+ <td><b>SSE-C</b></td>
+ <td>客户自提供密钥</td>
+ <td>AWS 不存储密钥；客户在每次请求时提供密钥；只支持 HTTPS。AWS 加密后立即丢弃密钥。</td>
+ <td>客户需要完全控制密钥，不希望密钥存入 AWS</td>
+</tr>
+<tr>
+ <td><b>CSE</b><br><small>（客户端加密）</small></td>
+ <td>客户端完全自主管理</td>
+ <td>对象在离开客户端前已加密；S3 只存储密文；AWS 不参与加密过程</td>
+ <td>极高安全要求，AWS 完全无法访问数据内容</td>
+</tr>
+</tbody>
+</table>
+<h3>传输加密（Encryption in Transit）</h3>
+<p>S3 支持 HTTPS，可通过 Bucket Policy 强制要求所有请求使用 HTTPS：</p>
+<pre><code>{
+  "Effect": "Deny",
+  "Principal": "*",
+  "Action": "s3:*",
+  "Resource": ["arn:aws:s3:::my-bucket/*"],
+  "Condition": {
+    "Bool": {
+      "aws:SecureTransport": "false"
+    }
+  }
+}</code></pre>
+<div class="callout orange"><b>考试陷阱：</b>SSE-KMS 存在 KMS API 的调用速率限制（Throttling）。如果应用有极高的 S3 读写 QPS，SSE-KMS 可能导致 KMS 限速，影响性能。解决方案：使用 S3 Bucket Keys（减少 KMS 调用次数）或申请提高 KMS 配额。</div>
+<h3>S3 Bucket Keys</h3>
+<p>启用 S3 Bucket Keys 后，S3 在桶级别生成一个短期数据密钥，用于加密对象，减少直接调用 KMS 的次数，降低成本，同时缓解 KMS 限速问题。</p>
+<div class="callout green"><b>记忆：</b>SSE-S3 = AWS 全管，最简单；SSE-KMS = 有审计有控制，稍贵；SSE-C = 客户管密钥，AWS 只加密不存钥；CSE = 客户全权，AWS 只存密文。</div>
+</section>
+
+<!-- ===== 7. 性能优化 ===== -->
+<section id="performance">
+<h2>七、性能优化</h2>
+<h3>多部分上传（Multipart Upload）</h3>
+<ul>
+ <li><b>&gt;100MB</b>：官方建议使用</li>
+ <li><b>&gt;5GB</b>：<b>必须</b>使用多部分上传（单次 PUT 最大 5GB）</li>
+ <li>单个对象最大 <b>5TB</b></li>
+ <li>每个分段大小：5MB 到 5GB（最后一个分段可以更小）</li>
+ <li>优势：并行上传加速、断点续传、大对象上传失败只需重传失败的分段</li>
+</ul>
+<h3>字节范围获取（Byte-Range Fetches）</h3>
+<p>通过在 GET 请求中指定字节范围，并行下载对象的不同部分，显著提升大对象下载速度。也可以用于只下载对象的特定部分（如文件头部元数据）。</p>
+<h3>S3 Transfer Acceleration</h3>
+<p>利用 AWS CloudFront 全球边缘节点网络（Edge Locations）加速对 S3 的上传和下载：</p>
+<ul>
+ <li>用户上传到最近的 CloudFront Edge 节点，内部走 AWS 骨干网到目标桶</li>
+ <li>适合地理位置分散的用户上传数据到特定区域的桶</li>
+ <li>启用后桶会获得独立的 Transfer Acceleration Endpoint：<code>bucketname.s3-accelerate.amazonaws.com</code></li>
+ <li>有额外费用，仅在比直连 S3 更快时才收费</li>
+</ul>
+<h3>请求率与前缀性能</h3>
+<table>
+<thead><tr><th>操作类型</th><th>每个前缀每秒请求上限</th></tr></thead>
+<tbody>
+<tr><td>PUT / COPY / POST / DELETE</td><td>3,500 QPS</td></tr>
+<tr><td>GET / HEAD</td><td>5,500 QPS</td></tr>
+</tbody>
+</table>
+<p><b>前缀分散：</b>S3 性能限制是<b>每个前缀</b>的限制。通过将对象分散到不同的前缀，可以成倍提升总吞吐量。例如使用随机哈希前缀（<code>a3b2/image.jpg</code>）而非顺序日期前缀（<code>2024/01/01/image.jpg</code>），避免热点前缀成为瓶颈。</p>
+<div class="callout"><b>过去的经验：</b>早期 S3 建议在键名中加入随机哈希前缀来分散请求。自 2018 年后，S3 分区算法已优化，支持任意键名达到高吞吐，但了解前缀性能限制仍是 SAP-C02 考点。</div>
+</section>
+
+<!-- ===== 8. 事件通知 ===== -->
+<section id="events">
+<h2>八、事件通知（Event Notifications）</h2>
+<p class="lead">S3 事件通知允许在特定对象操作发生时自动触发下游处理，是构建数据处理流水线的常见模式。</p>
+<h3>支持的目标服务</h3>
+<div class="cards">
+ <div class="card">
+  <b>Amazon SNS</b>
+  <p>发布到 SNS Topic，可通过订阅将消息扇出到多个 SQS 队列、Lambda 或 HTTP Endpoint。</p>
+ </div>
+ <div class="card">
+  <b>Amazon SQS</b>
+  <p>将事件消息放入队列，下游消费者按需处理，适合削峰填谷。</p>
+ </div>
+ <div class="card">
+  <b>AWS Lambda</b>
+  <p>直接触发 Lambda 函数，无服务器处理，适合图像处理、数据转换等场景。</p>
+ </div>
+ <div class="card">
+  <b>Amazon EventBridge</b>
+  <p>将所有 S3 事件路由到 EventBridge，支持更丰富的过滤规则和多目标路由。</p>
+ </div>
+</div>
+<h3>支持的事件类型</h3>
+<ul>
+ <li><b>对象创建：</b>PUT、POST、COPY、CompleteMultipartUpload</li>
+ <li><b>对象删除：</b>DELETE、DeleteMarkerCreated</li>
+ <li><b>对象还原：</b>从 Glacier 恢复的完成通知</li>
+ <li><b>对象复制：</b>复制操作状态</li>
+ <li><b>生命周期转换：</b>对象转换到不同存储类别</li>
+</ul>
+<h3>直接通知 vs EventBridge 的对比</h3>
+<table>
+<thead><tr><th>维度</th><th>S3 直接通知（SNS/SQS/Lambda）</th><th>EventBridge</th></tr></thead>
+<tbody>
+<tr><td>过滤能力</td><td>只能按前缀/后缀过滤</td><td>支持丰富的事件内容过滤规则</td></tr>
+<tr><td>多目标路由</td><td>需要借助 SNS 扇出</td><td>原生支持多个目标</td></tr>
+<tr><td>跨账号路由</td><td>有限</td><td>支持发送到其他账号的事件总线</td></tr>
+<tr><td>事件归档/重放</td><td>不支持</td><td>支持事件归档和重放</td></tr>
+<tr><td>配置复杂度</td><td>简单</td><td>略复杂，但功能更强</td></tr>
+</tbody>
+</table>
+<div class="callout green"><b>场景选择：</b>简单触发一个 Lambda → S3 直接通知；需要多个目标、复杂过滤、事件重放 → EventBridge；需要解耦并缓冲 → S3 → SQS → Lambda。</div>
+</section>
+
+<!-- ===== 9. 静态网站托管 ===== -->
+<section id="static-website">
+<h2>九、静态网站托管</h2>
+<p>S3 可以作为静态网站的托管平台，提供高可用、低成本的 HTML/CSS/JS 文件服务。</p>
+<h3>基本配置</h3>
+<ul>
+ <li>在桶属性中启用"Static website hosting"</li>
+ <li>指定索引文档（Index document）：如 <code>index.html</code></li>
+ <li>指定错误文档（Error document）：如 <code>error.html</code></li>
+ <li>启用后获得 Endpoint URL：<code>bucketname.s3-website-region.amazonaws.com</code></li>
+ <li>注意：网站端点（s3-website）和 REST API 端点（s3.amazonaws.com）是不同的 URL</li>
+</ul>
+<h3>与 CloudFront 结合（推荐生产环境配置）</h3>
+<div class="diagram">
+ <div class="node"><b>用户</b></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>CloudFront</b><br><small>全球分发、HTTPS、缓存</small></div>
+ <span class="arrow">→ OAC</span>
+ <div class="node"><b>S3 桶</b><br><small>私有，只允许 CF 访问</small></div>
+</div>
+<p><b>OAC（Origin Access Control）</b>是 OAI 的后继方案，用于确保 S3 桶内容只能通过 CloudFront 访问，不能直接通过 S3 URL 访问：</p>
+<ul>
+ <li>S3 桶设为<b>私有</b>（Block Public Access 全开）</li>
+ <li>Bucket Policy 只允许 CloudFront 的服务主体（<code>service-principal: cloudfront.amazonaws.com</code>）访问</li>
+ <li>OAC 比 OAI 支持更多 AWS 区域，支持 SSE-KMS 加密桶，是推荐方案</li>
+</ul>
+<h3>与 Route 53 结合</h3>
+<ul>
+ <li>使用 Route 53 别名记录（Alias Record）将自定义域名指向 CloudFront 分发或 S3 网站端点</li>
+ <li>S3 桶名必须与域名<b>完全一致</b>（如域名是 <code>example.com</code>，桶名必须是 <code>example.com</code>）</li>
+ <li>HTTPS 需要 CloudFront + ACM 证书，S3 网站端点本身只支持 HTTP</li>
+</ul>
+<div class="callout orange"><b>注意：</b>S3 静态网站不支持 HTTPS。要实现 HTTPS，必须在前面加 CloudFront 并配置 ACM 证书。</div>
+</section>
+
+<!-- ===== 10. 其他重要特性 ===== -->
+<section id="other-features">
+<h2>十、其他重要特性</h2>
+<h3>Object Lock（对象锁定，WORM）</h3>
+<p>Object Lock 实现 Write Once Read Many（WORM）合规存储，防止对象在指定时期内被删除或覆盖。必须在创建桶时启用，之后无法关闭。</p>
+<div class="cards">
+ <div class="card">
+  <b>Compliance Mode（合规模式）</b>
+  <p>锁定期间内，任何人（包括 root 账户）都无法删除或修改对象；也无法缩短保留期或更改为其他模式。适合强合规要求，如金融、医疗行业监管。</p>
+ </div>
+ <div class="card">
+  <b>Governance Mode（治理模式）</b>
+  <p>普通用户无法删除或修改；但具有特殊权限（<code>s3:BypassGovernanceRetention</code>）的管理员可以覆盖或删除。适合内部管控，比 Compliance Mode 灵活。</p>
+ </div>
+</div>
+<p><b>Legal Hold（合法保留）：</b>不设定到期时间，只要 Legal Hold 处于激活状态，对象就不能被删除。独立于保留期，可随时由有权限的用户开启或关闭。</p>
+<h3>Requester Pays（请求方付费）</h3>
+<p>默认情况下，桶拥有者支付所有数据下载费用。启用 Requester Pays 后，请求方（下载者）需要承担数据传输费用，桶拥有者只付存储费。典型场景：共享大规模公开数据集。</p>
+<div class="callout orange"><b>注意：</b>匿名访问者不能访问启用了 Requester Pays 的桶，因为无法追踪费用归属。</div>
+<h3>S3 Select</h3>
+<p>在 S3 服务端对 CSV、JSON 或 Parquet 格式的对象执行 SQL 查询，只返回过滤后的数据，而不是整个对象。显著减少网络传输量和客户端处理量，降低成本并提升速度。</p>
+<h3>Intelligent-Tiering 自动分层</h3>
+<p>S3 Intelligent-Tiering 会监控访问模式，自动将对象在以下层级间移动：</p>
+<ul>
+ <li><b>Frequent Access（频繁访问层）：</b>默认层，成本同 Standard</li>
+ <li><b>Infrequent Access（不频繁访问层）：</b>30 天未访问自动移入，成本同 Standard-IA</li>
+ <li><b>Archive Instant Access（即时归档层）：</b>90 天未访问自动移入</li>
+ <li><b>Archive Access（归档层，可选）：</b>90-730 天未访问，需手动配置，检索需数小时</li>
+ <li><b>Deep Archive Access（深度归档层，可选）：</b>180-730 天未访问，成本最低</li>
+</ul>
+<div class="callout green"><b>场景：</b>题目出现"访问模式不可预测"、"不确定访问频率"、"自动优化存储成本"等关键词 → Intelligent-Tiering。</div>
+<h3>S3 Inventory</h3>
+<p>定期生成桶内对象的清单报告（CSV / ORC / Parquet 格式），包含加密状态、复制状态、存储类别等元数据，支持配合 S3 Select 或 Athena 进行分析。</p>
+</section>
+
+<!-- ===== 11. 场景题解析 ===== -->
+<section id="scenarios">
+<h2>十一、场景题解析</h2>
+<p class="small">以下为典型 SAP-C02 场景题，先思考再展开分析。</p>
+
+<div class="quiz">
+ <b>场景 1：金融公司要求所有交易记录上传到 S3 后，7 年内任何人（包括管理员）都不能删除或修改。如何满足这一合规要求？</b>
+ <button class="secondary" onclick="showAnswer('s1',true)">查看解析</button>
+ <div class="answer" id="s1">
+  <b>答案：S3 Object Lock — Compliance Mode（合规模式）</b><br><br>
+  <b>分析：</b>"任何人包括管理员都不能删除"是 Compliance Mode 的核心特征。Governance Mode 允许有特殊权限的管理员绕过锁定，不满足"任何人都不能"的要求。配置方式：创建桶时启用 Object Lock，在上传对象时设置 Compliance Mode 保留期为 7 年。<br><br>
+  <b>关键词映射：</b>合规要求 + 任何人不可删 + 固定保留期 → <b>Object Lock Compliance Mode</b>
+ </div>
+</div>
+
+<div class="quiz">
+ <b>场景 2：公司有 PB 级历史数据存在 S3，部分数据被频繁访问，部分很少被访问，但访问模式会随时间变化且难以预测。希望在不影响可用性的前提下自动优化存储成本。</b>
+ <button class="secondary" onclick="showAnswer('s2',true)">查看解析</button>
+ <div class="answer" id="s2">
+  <b>答案：S3 Intelligent-Tiering</b><br><br>
+  <b>分析：</b>访问模式不确定且会变化，是 Intelligent-Tiering 的最佳适用场景。它自动监控访问并在层级间迁移对象，不需要手动配置生命周期规则，也不会因预测错误导致额外检索费用。如果访问模式是已知的固定规律（如超过 90 天后永远不访问），则用生命周期策略直接转换更经济。<br><br>
+  <b>关键词映射：</b>访问模式不确定/变化 + 自动优化 + 不影响可用性 → <b>Intelligent-Tiering</b>
+ </div>
+</div>
+
+<div class="quiz">
+ <b>场景 3：账号 A 的应用需要从账号 B 的 S3 桶读取对象。安全团队要求遵循最小权限原则。需要在两端各做什么配置？</b>
+ <button class="secondary" onclick="showAnswer('s3',true)">查看解析</button>
+ <div class="answer" id="s3">
+  <b>答案：账号 B Bucket Policy + 账号 A IAM Policy（双重授权）</b><br><br>
+  <b>分析：</b>跨账号 S3 访问必须双向授权：<br>
+  1. <b>账号 B（资源侧）：</b>在 S3 桶的 Bucket Policy 中，添加 Principal 为账号 A 的 IAM 角色 ARN，Effect 为 Allow，Action 为 <code>s3:GetObject</code>，Resource 为桶中对应对象路径。<br>
+  2. <b>账号 A（请求侧）：</b>给发起请求的 IAM 角色附加 IAM Policy，允许对账号 B 的 S3 桶执行 <code>s3:GetObject</code>。<br><br>
+  如果账号 A 不需要在自己侧有 IAM 限制（信任所有账号 A 的主体），可以只配置 Bucket Policy，但最小权限原则要求两边都配置。<br><br>
+  <b>关键词映射：</b>跨账号 S3 访问 → Bucket Policy（资源侧）+ IAM Policy（身份侧）
+ </div>
+</div>
+
+<div class="quiz">
+ <b>场景 4：安全团队要求所有发送到 S3 桶的数据必须通过加密连接传输，HTTP 明文请求必须被拒绝。如何通过桶策略实现？</b>
+ <button class="secondary" onclick="showAnswer('s4',true)">查看解析</button>
+ <div class="answer" id="s4">
+  <b>答案：Bucket Policy 使用 <code>aws:SecureTransport</code> 条件</b><br><br>
+  <b>分析：</b>在 Bucket Policy 中添加 Deny 语句，条件为 <code>"aws:SecureTransport": "false"</code>，Effect 为 Deny，Principal 为 "*"，Action 为 "s3:*"，Resource 为桶和桶中所有对象。这样所有非 HTTPS 的请求都会被拒绝，无论请求方是谁。<br><br>
+  <pre style="font-size:12px">{
+  "Effect": "Deny",
+  "Principal": "*",
+  "Action": "s3:*",
+  "Resource": [
+    "arn:aws:s3:::my-bucket",
+    "arn:aws:s3:::my-bucket/*"
+  ],
+  "Condition": {
+    "Bool": {"aws:SecureTransport": "false"}
+  }
+}</pre>
+  <b>关键词映射：</b>强制 HTTPS + 拒绝 HTTP → Bucket Policy + <code>aws:SecureTransport: false</code> + Deny
+ </div>
+</div>
+
+<div class="quiz">
+ <b>场景 5：公司刚刚为一个已有 100 万个对象的 S3 桶启用了跨区域复制（CRR）规则，但发现目标桶中没有任何对象。如何将现有对象同步到目标桶？</b>
+ <button class="secondary" onclick="showAnswer('s5',true)">查看解析</button>
+ <div class="answer" id="s5">
+  <b>答案：S3 Batch Operations + CopyObject</b><br><br>
+  <b>分析：</b>CRR 规则只对启用后<b>新上传</b>的对象生效，历史存量对象不会自动复制。要复制已有对象，需要使用 <b>S3 Batch Operations</b>，创建一个批处理任务，对所有现有对象执行 <code>CopyObject</code> 操作，将其复制到目标桶。Batch Operations 支持从 S3 Inventory 报告或 Manifest 文件指定要操作的对象列表，并提供任务完成报告。<br><br>
+  <b>关键词映射：</b>CRR 启用前已有对象 / 存量数据同步 → <b>S3 Batch Operations + CopyObject</b>
+ </div>
+</div>
+</section>
+
+<!-- ===== 12. 关键词速查 ===== -->
+<section id="quick">
+<h2>十二、考试快速答题：关键词 → 功能</h2>
+<table>
+<thead><tr><th>题目关键词</th><th>优先考虑</th></tr></thead>
+<tbody>
+<tr><td>不可删除 / WORM / 合规保留 / 任何人包括 root 不能删</td><td>Object Lock — Compliance Mode</td></tr>
+<tr><td>管理员可绕过 / 内部合规 / 灵活保留</td><td>Object Lock — Governance Mode</td></tr>
+<tr><td>访问模式不确定 / 自动优化成本</td><td>Intelligent-Tiering</td></tr>
+<tr><td>日志 / 备份，30天后不频繁访问，需快速取回</td><td>Standard-IA 或生命周期转换</td></tr>
+<tr><td>数据可重新生成 / 非关键副本 / 单 AZ 可接受</td><td>One Zone-IA</td></tr>
+<tr><td>长期归档 / 毫秒级取回 / 每年访问1次</td><td>Glacier Instant Retrieval</td></tr>
+<tr><td>长期归档 / 分钟到小时取回</td><td>Glacier Flexible Retrieval</td></tr>
+<tr><td>最低成本 / 合规归档 / 12小时取回可接受</td><td>Glacier Deep Archive</td></tr>
+<tr><td>强制 HTTPS / 拒绝 HTTP</td><td>Bucket Policy + aws:SecureTransport</td></tr>
+<tr><td>密钥审计 / 密钥访问控制 / CloudTrail KMS 日志</td><td>SSE-KMS</td></tr>
+<tr><td>客户自管密钥 / AWS 不存储密钥</td><td>SSE-C 或 CSE</td></tr>
+<tr><td>KMS 限速 / 高 QPS + KMS</td><td>S3 Bucket Keys（减少 KMS 调用）</td></tr>
+<tr><td>跨账号访问 S3</td><td>Bucket Policy（资源侧）+ IAM Policy（身份侧）</td></tr>
+<tr><td>多个应用独立权限 / 大桶多租户访问</td><td>S3 Access Points</td></tr>
+<tr><td>临时访问 / 无 AWS 账号的用户下载</td><td>Presigned URL</td></tr>
+<tr><td>S3 静态网站 + HTTPS + 自定义域名</td><td>S3 + CloudFront + ACM + Route 53</td></tr>
+<tr><td>只允许通过 CloudFront 访问 S3</td><td>OAC（Origin Access Control）</td></tr>
+<tr><td>大文件上传 / &gt;5GB</td><td>Multipart Upload（必须）</td></tr>
+<tr><td>加速上传，用户分散在全球</td><td>S3 Transfer Acceleration</td></tr>
+<tr><td>CRR 启用前的存量对象同步</td><td>S3 Batch Operations</td></tr>
+<tr><td>删除标记跨区域复制</td><td>CRR + 启用 Replicate delete markers</td></tr>
+<tr><td>S3 触发事件 + 复杂过滤 + 多目标</td><td>S3 → EventBridge</td></tr>
+<tr><td>查询 S3 对象内部数据，减少传输</td><td>S3 Select</td></tr>
+<tr><td>请求方付流量费 / 公开数据集</td><td>Requester Pays</td></tr>
+<tr><td>Multipart Upload 遗留碎片 / 成本浪费</td><td>生命周期策略：中止未完成 Multipart Upload</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- ===== 13. 速记卡 ===== -->
+<section id="memory">
+<h2>十三、考前速记卡（可勾选）</h2>
+<p>复习时勾选已经掌握的项目。进度仅保存在当前页面打开期间；刷新后会重置。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 20</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>Standard-IA / One Zone-IA 最短存储期：</b>30 天</span></li>
+<li><input type="checkbox"><span><b>Glacier Instant / Flexible Retrieval 最短存储期：</b>90 天</span></li>
+<li><input type="checkbox"><span><b>Glacier Deep Archive 最短存储期：</b>180 天</span></li>
+<li><input type="checkbox"><span><b>访问模式不确定，自动优化：</b>Intelligent-Tiering</span></li>
+<li><input type="checkbox"><span><b>版本控制状态：</b>未启用 → 启用 → 暂停（不可回到未启用）</span></li>
+<li><input type="checkbox"><span><b>普通删除：</b>添加删除标记；指定版本 ID 删除：永久删除</span></li>
+<li><input type="checkbox"><span><b>MFA Delete：</b>只有 root 可启用，防止版本被永久删除</span></li>
+<li><input type="checkbox"><span><b>CRR / SRR 前提：</b>两端都必须启用版本控制</span></li>
+<li><input type="checkbox"><span><b>CRR 启用前存量对象：</b>不会自动复制，需 S3 Batch Operations</span></li>
+<li><input type="checkbox"><span><b>跨账号 S3 访问：</b>Bucket Policy（资源侧）+ IAM Policy（身份侧）双重授权</span></li>
+<li><input type="checkbox"><span><b>SSE-KMS：</b>有审计，有 KMS 限速风险，使用 Bucket Keys 缓解</span></li>
+<li><input type="checkbox"><span><b>强制 HTTPS：</b>Bucket Policy 中 aws:SecureTransport = false 时 Deny</span></li>
+<li><input type="checkbox"><span><b>Object Lock Compliance Mode：</b>任何人（含 root）不可删，满足强合规</span></li>
+<li><input type="checkbox"><span><b>Object Lock Governance Mode：</b>有特殊权限的管理员可绕过</span></li>
+<li><input type="checkbox"><span><b>大文件上传 &gt;5GB：</b>必须使用 Multipart Upload</span></li>
+<li><input type="checkbox"><span><b>S3 静态网站 HTTPS：</b>必须用 CloudFront + ACM，S3 原生只支持 HTTP</span></li>
+<li><input type="checkbox"><span><b>CloudFront 只允许 CF 访问 S3：</b>OAC（推荐，替代旧版 OAI）</span></li>
+<li><input type="checkbox"><span><b>未完成 Multipart Upload 清理：</b>生命周期策略 → 中止未完成上传</span></li>
+<li><input type="checkbox"><span><b>S3 请求率：</b>每个前缀 3500 PUT / 5500 GET per second</span></li>
+<li><input type="checkbox"><span><b>S3 事件 + 复杂路由：</b>S3 → EventBridge（比直接通知更灵活）</span></li>
+</ul>
+</section>
+
+<!-- ===== 14. 复习优先级 ===== -->
+<section id="priority">
+<h2>十四、复习优先级</h2>
+<table>
+<thead><tr><th>优先级</th><th>知识点</th><th>建议掌握程度</th></tr></thead>
+<tbody>
+<tr>
+ <td><span class="tag red">P1</span></td>
+ <td>存储类别选择（含最短存储期）、生命周期策略转换路径、访问控制（Bucket Policy / IAM / 跨账号）、SSE 加密类型对比、Object Lock（Compliance vs Governance）</td>
+ <td>熟练掌握，能判断场景，能辨别易错陷阱</td>
+</tr>
+<tr>
+ <td><span class="tag orange">P2</span></td>
+ <td>版本控制与 MFA Delete、CRR/SRR 前提与限制、Intelligent-Tiering 自动分层、S3 Access Points、预签名 URL、Multipart Upload 限制</td>
+ <td>理解区别，掌握使用场景</td>
+</tr>
+<tr>
+ <td><span class="tag">P3</span></td>
+ <td>S3 Transfer Acceleration、Byte-Range Fetches、S3 Select、Requester Pays、S3 Inventory、EventBridge vs 直接通知、S3 RTC</td>
+ <td>理解用途和边界，能快速识别关键词</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<!-- ===== 15. 自测 ===== -->
+<section id="quiz">
+<h2>十五、快速自测</h2>
+<p class="small">先独立选择，再点击"查看解析"。这些是概念练习题，不代表真实考试题。</p>
+
+<div class="quiz">
+ <b>1. 公司需要将日志数据在 S3 中保存，访问频率极低（每年 1-2 次），但一旦需要访问，必须在 1 分钟内完成检索。应选择哪种存储类别？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',false)">A. S3 Glacier Flexible Retrieval</button>
+ <button class="secondary" onclick="showAnswer('q1',true)">B. S3 Glacier Instant Retrieval</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. S3 Glacier Deep Archive</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. S3 Standard-IA</button>
+ <div class="answer" id="q1"><b>正确答案：B。</b>Glacier Instant Retrieval 提供毫秒级检索，适合极少访问但需要快速取回的数据，最短存储期 90 天。Glacier Flexible Retrieval 检索需要数分钟到数小时，不满足"1 分钟内"的要求。</div>
+</div>
+
+<div class="quiz">
+ <b>2. 安全审计发现某 S3 桶中的对象可以被 HTTP 明文访问。以下哪个操作可以正确地强制所有访问使用 HTTPS？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 在 IAM Policy 中添加 Deny HTTP 的条件</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. 在 Bucket Policy 中添加 Condition: aws:SecureTransport = false 时 Deny</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 启用 Block Public Access 的所有选项</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. 启用 SSE-S3 加密</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>Bucket Policy 配合 <code>aws:SecureTransport: false</code> 条件可以拒绝所有非 HTTPS 请求。SSE-S3 是静态加密（at rest），不影响传输协议。Block Public Access 控制公共访问，不控制传输协议。IAM Policy 虽然也可以添加条件，但无法覆盖匿名请求或其他账号。</div>
+</div>
+
+<div class="quiz">
+ <b>3. 公司在账号 A 和账号 B 之间配置了 S3 CRR，已成功启用规则。但运营团队反映，账号 A 桶中启用复制规则之前上传的 50 万个对象，在账号 B 的目标桶中不存在。应如何解决？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',false)">A. 重新创建 CRR 规则并勾选"复制现有对象"</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">B. 删除并重新上传所有对象</button>
+ <button class="secondary" onclick="showAnswer('q3',true)">C. 使用 S3 Batch Operations 对现有对象执行 CopyObject 操作</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. 等待 CRR 规则传播，现有对象会在 24 小时后自动同步</button>
+ <div class="answer" id="q3"><b>正确答案：C。</b>CRR 规则仅对配置后新上传的对象生效，对历史存量对象不会自动复制，也不会"等待后自动同步"。必须使用 S3 Batch Operations 配合 CopyObject 操作来补全存量数据的复制。</div>
+</div>
+
+<div class="quiz">
+ <b>4. 以下哪种 S3 加密方式可以通过 AWS CloudTrail 查看每次密钥使用记录，并且可以为特定 IAM 角色撤销解密权限？</b><br>
+ <button class="secondary" onclick="showAnswer('q4',false)">A. SSE-S3</button>
+ <button class="secondary" onclick="showAnswer('q4',true)">B. SSE-KMS</button>
+ <button class="secondary" onclick="showAnswer('q4',false)">C. SSE-C</button>
+ <button class="secondary" onclick="showAnswer('q4',false)">D. 客户端加密（CSE）</button>
+ <div class="answer" id="q4"><b>正确答案：B。</b>SSE-KMS 使用 KMS 托管的 CMK，每次加解密操作都记录在 CloudTrail 中，可以通过修改 KMS Key Policy 撤销特定主体的密钥使用权限。SSE-S3 的密钥由 S3 完全管理，无法控制密钥权限；SSE-C 密钥由客户管理但 AWS 不存储，没有审计。</div>
+</div>
+
+<div class="quiz">
+ <b>5. 合规要求规定某类对象在 S3 中必须保留至少 3 年，且包括 AWS root 账号在内的任何人都不能在保留期内删除这些对象。以下哪个配置满足要求？</b><br>
+ <button class="secondary" onclick="showAnswer('q5',false)">A. 启用 Object Lock，使用 Governance Mode，设置保留期 3 年</button>
+ <button class="secondary" onclick="showAnswer('q5',true)">B. 启用 Object Lock，使用 Compliance Mode，设置保留期 3 年</button>
+ <button class="secondary" onclick="showAnswer('q5',false)">C. 启用 MFA Delete，设置桶策略禁止删除</button>
+ <button class="secondary" onclick="showAnswer('q5',false)">D. 启用版本控制，设置生命周期策略保留 3 年</button>
+ <div class="answer" id="q5"><b>正确答案：B。</b>Compliance Mode 保证保留期内任何人（包括 root 账户）都无法删除或修改对象，也不能缩短保留期，是唯一能满足"任何人都不能删除"强合规要求的选项。Governance Mode 允许有特殊权限的管理员绕过限制；MFA Delete 只增加额外验证步骤，并非完全阻止删除；生命周期策略不能防止主动删除。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料与复习说明</h2>
+<ul>
+ <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html" target="_blank" rel="noopener">Amazon S3 用户指南</a></li>
+ <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html" target="_blank" rel="noopener">S3 存储类别介绍</a></li>
+ <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html" target="_blank" rel="noopener">S3 生命周期管理</a></li>
+ <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication.html" target="_blank" rel="noopener">S3 复制（CRR/SRR）</a></li>
+ <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html" target="_blank" rel="noopener">S3 Object Lock</a></li>
+ <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/serv-side-encryption.html" target="_blank" rel="noopener">S3 服务端加密</a></li>
+ <li><a href="https://aws.amazon.com/certification/certified-solutions-architect-professional/" target="_blank" rel="noopener">AWS Certified Solutions Architect – Professional</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>考试版本、服务功能和支持范围可能变化。请以 AWS 官方考试指南和最新服务文档为准。本文是复习提纲，不是官方考试题库。</div>
+</section>
+
+</main>
+</div>
+<footer class="container">AWS SAP-C02 Amazon S3 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

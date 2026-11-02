@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 IAM 核心考点整理，涵盖 Policy 深度解析、AssumeRole、权限边界、STS、联合认证与场景题。">
+<title>AWS SAP-C02｜IAM Identity and Access Management 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:#bfdbfe;font-size:14px;margin-bottom:18px}
+.back-link:hover{color:#fff;text-decoration:none}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.callout.blue{background:#eff6ff;border-color:#2563eb}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.orange{background:var(--orange-soft);color:var(--orange)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+pre{overflow:auto;background:#0f172a;color:#e2e8f0;padding:16px;border-radius:10px;font-size:13px;line-height:1.6}
+pre code{background:none;padding:0;font-size:inherit}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:130px}
+.diagram .arrow{color:#64748b;font-weight:700;font-size:18px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff}
+.card b{display:block;margin-bottom:5px}
+.card.highlight{border-color:#bfdbfe;background:#eff6ff}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+.eval-flow{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.eval-step{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:9px;background:#f8fafc;border:1px solid var(--line)}
+.eval-step .step-num{font-size:13px;font-weight:700;min-width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.eval-step.deny .step-num{background:#fef2f2;color:var(--red)}
+.eval-step.allow .step-num{background:#f0fdf4;color:var(--green)}
+.eval-step.default .step-num{background:#f1f5f9;color:#64748b}
+.venn{display:flex;align-items:center;justify-content:center;gap:0;margin:14px 0;flex-wrap:wrap}
+.venn-circle{width:150px;height:80px;border-radius:40px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;text-align:center;line-height:1.3}
+.json-comment{color:#6b7280;font-style:italic}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}.cards{grid-template-columns:1fr}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow,.back-link{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <a class="back-link" href="index.html">← 返回安全模块</a>
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>AWS IAM<br>Identity and Access Management — SAP-C02 核心考点</h1>
+  <p>深度覆盖 IAM Policy 评估逻辑、权限边界、AssumeRole、STS、联合身份认证与 ABAC，以"场景需求 → 正确配置 → 易错边界"为主线，适合系统复习与考前速查。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">安全身份</span>
+   <span class="pill">可打印 / 可勾选</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#core">一、IAM 核心组件</a>
+ <a href="#policy">二、IAM Policy 深度解析</a>
+ <a href="#roles">三、IAM Roles 与 AssumeRole</a>
+ <a href="#boundary">四、权限边界</a>
+ <a href="#sts">五、STS 安全令牌服务</a>
+ <a href="#federation">六、联合身份认证</a>
+ <a href="#advanced">七、IAM 高级特性</a>
+ <a href="#writing">八、Policy 编写规范</a>
+ <a href="#scenarios">九、场景题解析</a>
+ <a href="#quick">十、关键词速查</a>
+ <a href="#compare">十一、易混淆概念</a>
+ <a href="#memory">十二、考前速记卡</a>
+ <a href="#priority">十三、复习优先级</a>
+ <a href="#quiz">十四、快速自测</a>
+</nav>
+
+<main>
+
+<!-- ===== 一、核心组件 ===== -->
+<section id="core">
+<h2>一、IAM 核心组件</h2>
+<p class="lead">IAM 是 AWS 权限管理的基石，控制"谁能对什么资源做什么操作"。SAP-C02 要求深刻理解各组件的区别与协同。</p>
+
+<h3>四大核心实体</h3>
+<div class="table-wrap">
+<table><thead><tr><th>实体</th><th>定义</th><th>特点</th><th>常见场景</th></tr></thead><tbody>
+<tr><td><b>User（用户）</b></td><td>代表一个人或服务，拥有永久凭证</td><td>有用户名/密码；可有 Access Key；直接绑定策略或加入 Group</td><td>开发人员、运维账号</td></tr>
+<tr><td><b>Group（组）</b></td><td>用户的集合，不能嵌套，不能直接被 AssumeRole</td><td>策略附加到 Group，Group 中所有 User 继承策略</td><td>将 Dev 组赋予开发权限</td></tr>
+<tr><td><b>Role（角色）</b></td><td>可被 AWS 服务、用户或外部身份扮演的身份，使用临时凭证</td><td>无永久密码/密钥；通过 STS 获取临时凭证；支持跨账号</td><td>EC2 实例角色、Lambda 执行角色、跨账号访问</td></tr>
+<tr><td><b>Policy（策略）</b></td><td>定义权限的 JSON 文档，描述允许或拒绝的操作</td><td>附加到 User/Group/Role/Resource；分多种类型</td><td>赋予 S3 只读权限</td></tr>
+</tbody></table>
+</div>
+
+<h3>根账户（Root Account）</h3>
+<p>使用邮箱+密码登录的账户，拥有对所有 AWS 资源的完全控制权，无法被 IAM 策略限制。</p>
+<div class="callout red"><b>考试记忆：</b>Root Account 是 AWS 账户中最高权限实体。应立即启用 MFA，禁止日常使用，仅用于少数必须 root 才能完成的操作（如更改账户联系信息、关闭账户、更改支持计划）。</div>
+
+<h3>Best Practice 速查表</h3>
+<table><thead><tr><th>最佳实践</th><th>说明</th><th>重要程度</th></tr></thead><tbody>
+<tr><td>不使用 Root 日常操作</td><td>创建 IAM Admin 用户代替，Root 仅用于账户级别操作</td><td><span class="tag red">必须</span></td></tr>
+<tr><td>为 Root 和特权用户启用 MFA</td><td>防止凭证泄露导致账户被控制</td><td><span class="tag red">必须</span></td></tr>
+<tr><td>使用角色而非长期访问密钥</td><td>EC2/Lambda 应使用 Instance Profile/执行角色，避免在代码中硬编码 Key</td><td><span class="tag red">必须</span></td></tr>
+<tr><td>最小权限原则（Least Privilege）</td><td>只授予完成任务所需的最小权限，定期回顾</td><td><span class="tag red">必须</span></td></tr>
+<tr><td>定期轮换访问密钥</td><td>启用 IAM Access Analyzer 检测未使用的密钥；对无法替换为角色的场景强制轮换</td><td><span class="tag orange">强烈建议</span></td></tr>
+<tr><td>使用 IAM Access Analyzer</td><td>持续检测外部可访问的资源策略</td><td><span class="tag orange">强烈建议</span></td></tr>
+<tr><td>利用 Organizations SCP 设置护栏</td><td>从组织层面限制账户级别操作，防止成员账户绕过治理策略</td><td><span class="tag orange">强烈建议</span></td></tr>
+</tbody></table>
+</section>
+
+<!-- ===== 二、Policy 深度解析 ===== -->
+<section id="policy">
+<h2>二、IAM Policy 深度解析</h2>
+<p class="lead">SAP-C02 最高频的 IAM 考点。必须理解 6 种策略类型的作用域，以及策略评估的优先级逻辑。</p>
+
+<h3>策略类型对比</h3>
+<div class="table-wrap">
+<table><thead><tr><th>#</th><th>策略类型</th><th>附加对象</th><th>作用</th><th>典型例子</th></tr></thead><tbody>
+<tr><td>1</td><td><b>身份策略（Identity-based）</b><br><small>托管策略 / 内联策略</small></td><td>User / Group / Role</td><td>定义身份能做什么</td><td>允许 EC2 读取 S3；AWS 托管策略 <code>AdministratorAccess</code></td></tr>
+<tr><td>2</td><td><b>资源策略（Resource-based）</b></td><td>资源本身（S3、SNS、KMS…）</td><td>定义谁能访问该资源，支持跨账号授权</td><td>S3 Bucket Policy、SNS Topic Policy、KMS Key Policy</td></tr>
+<tr><td>3</td><td><b>权限边界（Permissions Boundary）</b></td><td>User / Role</td><td>限制身份策略能赋予的最大权限上限，不直接授权</td><td>委托开发者创建角色，但不能提权超过自身权限</td></tr>
+<tr><td>4</td><td><b>组织 SCP（Service Control Policy）</b></td><td>Organizations 账户 / OU</td><td>设置组织级护栏，限制成员账户可用的最大权限</td><td>禁止成员账户创建 IAM User；强制所有 S3 开启加密</td></tr>
+<tr><td>5</td><td><b>会话策略（Session Policy）</b></td><td>AssumeRole / GetFederationToken 调用时传入</td><td>进一步限制本次会话的权限，不能超过角色自身策略</td><td>开发者 AssumeRole 时，额外限制只能操作特定 S3 前缀</td></tr>
+<tr><td>6</td><td><b>ACL（Access Control List）</b></td><td>S3 对象/存储桶、VPC 子网（网络 ACL）</td><td>旧型跨账号访问控制，功能有限</td><td>S3 Object ACL 授予其他账号读取权限（现已不推荐，推荐 Bucket Policy）</td></tr>
+</tbody></table>
+</div>
+
+<h4>托管策略 vs 内联策略</h4>
+<table><thead><tr><th>对比</th><th>AWS 托管策略</th><th>客户托管策略</th><th>内联策略（Inline）</th></tr></thead><tbody>
+<tr><td>维护方</td><td>AWS 维护</td><td>用户维护</td><td>嵌入在实体中，与实体同生命周期</td></tr>
+<tr><td>复用性</td><td>可附加多个实体</td><td>可附加多个实体</td><td>只属于一个实体</td></tr>
+<tr><td>推荐场景</td><td>通用权限</td><td>定制化权限</td><td>严格绑定到特定实体，不希望被重用</td></tr>
+</tbody></table>
+
+<h3>🔑 Policy 评估逻辑（重点！）</h3>
+<p>当一个 API 调用到达 AWS，权限评估按以下顺序进行：</p>
+<div class="eval-flow">
+ <div class="eval-step default"><div class="step-num">1</div><div><b>默认拒绝（Implicit Deny）</b> — 没有任何策略明确允许时，请求被隐式拒绝</div></div>
+ <div class="eval-step deny"><div class="step-num">2</div><div><b>SCP 检查</b> — 如果账户在 Organizations 下，检查 SCP 是否明确拒绝。SCP 拒绝 → 直接拒绝，不再检查后续策略</div></div>
+ <div class="eval-step deny"><div class="step-num">3</div><div><b>资源策略检查</b> — 如果资源有 Resource-based Policy，且明确 Deny，则直接拒绝</div></div>
+ <div class="eval-step deny"><div class="step-num">4</div><div><b>权限边界检查</b> — 如果身份有权限边界，且操作不在边界允许范围内，则拒绝</div></div>
+ <div class="eval-step deny"><div class="step-num">5</div><div><b>会话策略检查</b> — 如果是会话，且会话策略不允许该操作，则拒绝</div></div>
+ <div class="eval-step deny"><div class="step-num">6</div><div><b>显式拒绝（Explicit Deny）</b> — 身份策略中有明确 Deny → 始终优先，无论是否有 Allow</div></div>
+ <div class="eval-step allow"><div class="step-num">7</div><div><b>显式允许（Explicit Allow）</b> — 上述所有检查均未拒绝，且有明确 Allow → 请求被允许</div></div>
+</div>
+
+<div class="callout orange"><b>核心规则：Explicit Deny 始终优先于 Explicit Allow。</b>只有"有 Allow 且无任何 Deny"时请求才被允许。同账号内，同时有身份策略 Allow 和资源策略 Allow，两者满足其一即可（OR 关系）。跨账号时，必须两者都 Allow（AND 关系）。</div>
+<div class="callout orange"><b>SCP + 权限边界 + 身份策略的交集才是最终有效权限。</b>三者的权限集合取交集，即使身份策略 Allow，SCP 或权限边界未 Allow，请求也会被拒绝。</div>
+
+<h3>同账号 vs 跨账号权限评估</h3>
+<table><thead><tr><th>场景</th><th>身份策略</th><th>资源策略</th><th>结果</th></tr></thead><tbody>
+<tr><td>同账号访问 S3</td><td>Allow</td><td>无（或也 Allow）</td><td>✅ 允许</td></tr>
+<tr><td>同账号访问 S3</td><td>无 Allow</td><td>Allow</td><td>✅ 允许（资源策略可独立授权）</td></tr>
+<tr><td>跨账号访问 S3</td><td>账户 A 中 Allow sts:AssumeRole + s3:GetObject</td><td>账户 B S3 Bucket Policy Allow 账户 A</td><td>✅ 允许（两侧都需 Allow）</td></tr>
+<tr><td>跨账号访问 S3</td><td>账户 A Allow</td><td>账户 B 无 Allow</td><td>❌ 拒绝（缺少资源侧授权）</td></tr>
+</tbody></table>
+</section>
+
+<!-- ===== 三、Roles 与 AssumeRole ===== -->
+<section id="roles">
+<h2>三、IAM Roles 与 AssumeRole</h2>
+<p class="lead">Role 是 SAP-C02 中最核心的权限机制，几乎所有跨服务、跨账号、联合身份场景都依赖 Role。</p>
+
+<h3>Role 的组成</h3>
+<div class="cards">
+ <div class="card highlight">
+  <b>Trust Policy（信任策略）</b>
+  <p>定义"谁能扮演这个角色（AssumeRole）"。这是 Role 上的资源策略，Principal 字段声明允许的调用者（AWS Service、账号、用户、角色、SAML/OIDC 提供商）。</p>
+ </div>
+ <div class="card highlight">
+  <b>权限策略（Permission Policy）</b>
+  <p>定义"扮演这个角色后能做什么"。一个 Role 可以附加多个托管策略和内联策略，决定角色的有效权限集合。</p>
+ </div>
+</div>
+
+<h3>常见 Role 类型</h3>
+<table><thead><tr><th>Role 类型</th><th>Principal（信任方）</th><th>用途</th></tr></thead><tbody>
+<tr><td><b>EC2 实例角色（Instance Profile）</b></td><td><code>ec2.amazonaws.com</code></td><td>EC2 实例通过 IMDS 获取临时凭证，代码无需硬编码密钥</td></tr>
+<tr><td><b>Lambda 执行角色</b></td><td><code>lambda.amazonaws.com</code></td><td>Lambda 函数调用 AWS 服务所需的权限</td></tr>
+<tr><td><b>跨账号角色（Cross-Account Role）</b></td><td>另一个 AWS 账号 ID 或 ARN</td><td>账户 A 的用户/服务扮演账户 B 中的角色，获取 B 的临时凭证</td></tr>
+<tr><td><b>联合身份角色（Federated Identity）</b></td><td>SAML IdP / OIDC Provider</td><td>企业 AD 用户或 Web 应用用户通过联合身份获取 AWS 访问权限</td></tr>
+<tr><td><b>服务链接角色（Service-Linked Role）</b></td><td>特定 AWS 服务</td><td>由 AWS 服务自动创建，预定义权限，不可修改信任策略</td></tr>
+</tbody></table>
+
+<h3>AssumeRole 流程</h3>
+<div class="diagram">
+ <div class="node"><b>主体</b><br><small>User / Role / Service</small></div>
+ <span class="arrow">①<br>sts:AssumeRole →</span>
+ <div class="node"><b>STS</b><br><small>验证信任策略</small></div>
+ <span class="arrow">② 返回<br>临时凭证 →</span>
+ <div class="node"><b>调用方</b><br><small>使用临时凭证</small></div>
+ <span class="arrow">③<br>API 调用 →</span>
+ <div class="node"><b>AWS 资源</b><br><small>校验权限策略</small></div>
+</div>
+<ol>
+ <li>调用方执行 <code>sts:AssumeRole</code>，指定目标 Role ARN。STS 检查 Role 的 Trust Policy 是否允许此调用方。</li>
+ <li>验证通过后，STS 返回三元组临时凭证：<code>AccessKeyId</code>、<code>SecretAccessKey</code>、<code>SessionToken</code>。</li>
+ <li>调用方使用临时凭证发起 AWS API 请求，API 端验证凭证有效性和权限策略。</li>
+ <li>临时凭证到期后自动失效，需重新 AssumeRole。</li>
+</ol>
+
+<h3>跨账号角色配置（详细步骤）</h3>
+<table><thead><tr><th>步骤</th><th>操作账户</th><th>操作内容</th></tr></thead><tbody>
+<tr><td>1</td><td><b>账户 B（资源账户）</b></td><td>创建 IAM Role，设置 Trust Policy 信任账户 A（或账户 A 中的特定角色/用户）</td></tr>
+<tr><td>2</td><td><b>账户 B（资源账户）</b></td><td>为该 Role 附加权限策略（如 s3:GetObject）</td></tr>
+<tr><td>3</td><td><b>账户 A（调用账户）</b></td><td>为需要跨账号访问的用户/角色授予 <code>sts:AssumeRole</code> 权限，指定账户 B 中 Role 的 ARN</td></tr>
+<tr><td>4</td><td><b>调用方</b></td><td>执行 <code>aws sts assume-role --role-arn arn:aws:iam::B_ACCOUNT:role/RoleName --role-session-name session</code></td></tr>
+</tbody></table>
+
+<h4>Trust Policy JSON 示例</h4>
+<pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        <span class="json-comment">// 信任账户 A (123456789012) 中的任何实体</span>
+        "AWS": "arn:aws:iam::123456789012:root"
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        <span class="json-comment">// 可选：要求调用方已通过 MFA</span>
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "true"
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+<div class="callout green"><b>记忆口诀：</b>Trust Policy = 谁能"进门"（AssumeRole）；Permission Policy = 进门后能做什么。两者缺一不可。</div>
+</section>
+
+<!-- ===== 四、权限边界 ===== -->
+<section id="boundary">
+<h2>四、权限边界（Permissions Boundary）</h2>
+<p class="lead">权限边界是 SAP-C02 的高频难点，考察对"限制上限"与"直接授权"的理解。</p>
+
+<h3>核心概念</h3>
+<ul>
+ <li>权限边界是附加到 IAM User 或 Role 上的托管策略，定义该身份<b>最多能被赋予什么权限</b>。</li>
+ <li>权限边界<b>不直接授予</b>任何权限，它只是设定上限。</li>
+ <li><b>有效权限 = 身份策略（Identity-based Policy）∩ 权限边界（Permissions Boundary）</b></li>
+ <li>权限边界不影响资源策略（Resource-based Policy）对身份的直接授权。</li>
+</ul>
+
+<div class="diagram">
+ <div class="node" style="background:#fef9c3;border-color:#facc15"><b>身份策略</b><br><small>实际被赋予的权限</small></div>
+ <span class="arrow" style="font-size:24px">∩</span>
+ <div class="node" style="background:#fce7f3;border-color:#ec4899"><b>权限边界</b><br><small>允许的最大权限</small></div>
+ <span class="arrow" style="font-size:24px">=</span>
+ <div class="node" style="background:#dcfce7;border-color:#16a34a"><b>有效权限</b><br><small>实际可执行的操作</small></div>
+</div>
+
+<h3>主要用途</h3>
+<div class="cards">
+ <div class="card">
+  <b>委托管理（Delegated Administration）</b>
+  <p>允许开发团队为自己的应用创建 IAM 角色，但不能创建超出自身权限范围的角色（防止权限提升）。管理员设置权限边界作为约束条件。</p>
+ </div>
+ <div class="card">
+  <b>防止提权（Privilege Escalation Prevention）</b>
+  <p>即使开发者有 <code>iam:CreateRole</code> 和 <code>iam:AttachRolePolicy</code> 权限，因为权限边界限制，他们无法创建比自己权限更大的角色，从而无法通过创建新角色来提升自身权限。</p>
+ </div>
+</div>
+
+<h3>实际场景示例</h3>
+<table><thead><tr><th>场景</th><th>配置</th></tr></thead><tbody>
+<tr><td>开发者拥有 S3、DynamoDB、Lambda 的完整权限</td><td>身份策略：Allow S3/DynamoDB/Lambda <code>*</code></td></tr>
+<tr><td>管理员希望限制开发者只能操作 S3</td><td>权限边界：Allow S3 <code>*</code></td></tr>
+<tr><td>有效权限</td><td>S3（身份策略∩权限边界 = S3）；DynamoDB 和 Lambda 实际不可用</td></tr>
+</tbody></table>
+
+<div class="callout blue"><b>区分两个"限制"概念：</b><br>
+• <b>权限边界（Permissions Boundary）</b>：附加到 User/Role，长期有效，限制该身份在任何会话中的最大权限上限。<br>
+• <b>会话策略（Session Policy）</b>：在 AssumeRole 时临时传入，仅限制本次会话的权限，不影响 Role 本身的永久配置。<br>
+两者都不能扩展权限，只能缩减。</div>
+</section>
+
+<!-- ===== 五、STS ===== -->
+<section id="sts">
+<h2>五、STS（Security Token Service）</h2>
+<p class="lead">STS 是 AWS 颁发临时安全凭证的服务。理解各 API 的适用场景是考试重点。</p>
+
+<h3>STS 主要 API 对比</h3>
+<div class="table-wrap">
+<table><thead><tr><th>API</th><th>适用场景</th><th>有效期</th><th>关键特点</th></tr></thead><tbody>
+<tr><td><code>AssumeRole</code></td><td>扮演 IAM Role（同账号或跨账号）</td><td>15 分钟 ~ 12 小时（默认 1 小时）</td><td>最通用的 STS API；需要 Trust Policy 允许调用方</td></tr>
+<tr><td><code>AssumeRoleWithWebIdentity</code></td><td>使用 OIDC Token（如 Cognito、Google、Facebook）</td><td>15 分钟 ~ 1 小时</td><td>Web 应用 / 移动端联合；推荐使用 Cognito 封装</td></tr>
+<tr><td><code>AssumeRoleWithSAML</code></td><td>使用 SAML 2.0 断言（企业 Active Directory）</td><td>15 分钟 ~ 12 小时（默认 1 小时）</td><td>企业联合；需要配置 SAML Identity Provider</td></tr>
+<tr><td><code>GetSessionToken</code></td><td>IAM User 在 MFA 验证后获取临时凭证</td><td>15 分钟 ~ 36 小时</td><td>为 IAM User 提供短期凭证；常用于 MFA 保护的 API 调用</td></tr>
+<tr><td><code>GetFederationToken</code></td><td>为自定义联合代理（Federation Broker）颁发临时凭证</td><td>15 分钟 ~ 36 小时</td><td>旧有联合模式；新场景推荐用 AssumeRole 替代</td></tr>
+</tbody></table>
+</div>
+
+<div class="callout green"><b>快速记忆：</b>企业 AD / SAML → <code>AssumeRoleWithSAML</code>；Web/移动端 OIDC / Cognito → <code>AssumeRoleWithWebIdentity</code>；MFA 之后操作 → <code>GetSessionToken</code>；跨账号 / 服务间 → <code>AssumeRole</code>。</div>
+
+<h3>临时凭证组成</h3>
+<div class="cards">
+ <div class="card"><b>AccessKeyId</b><p>临时访问密钥 ID，以 <code>ASIA</code> 开头（永久密钥以 <code>AKIA</code> 开头，可快速区分）。</p></div>
+ <div class="card"><b>SecretAccessKey</b><p>临时访问密钥，配合 AccessKeyId 使用，签名 AWS API 请求。</p></div>
+ <div class="card"><b>SessionToken</b><p>会话令牌，必须随每次 API 请求一起发送，是临时凭证的关键特征。</p></div>
+ <div class="card"><b>Expiration</b><p>凭证过期时间戳，到期后自动失效，需重新调用 STS 获取新凭证。</p></div>
+</div>
+
+<div class="callout"><b>考试注意：</b>临时凭证不能手动撤销（Revoke）。若需要提前失效，需要修改 Role 的 Trust Policy 或删除 Role（影响所有使用该 Role 的主体）。AWS 也支持通过向 Role 附加内联策略添加 <code>aws:TokenIssueTime</code> 条件拒绝旧令牌（Revoke Sessions 功能）。</div>
+</section>
+
+<!-- ===== 六、联合身份认证 ===== -->
+<section id="federation">
+<h2>六、联合身份认证（Federation）</h2>
+<p class="lead">企业用户不需要单独的 IAM User 账号，通过已有的身份系统（AD、OIDC）获取临时 AWS 访问权限。SAP-C02 重点考察各联合方案的适用场景。</p>
+
+<h3>SAML 2.0 联合（企业 Active Directory）</h3>
+<div class="diagram">
+ <div class="node"><b>用户</b><br><small>企业员工</small></div>
+ <span class="arrow">→ 登录</span>
+ <div class="node"><b>AD FS</b><br><small>SAML Identity Provider</small></div>
+ <span class="arrow">→ SAML<br>Assertion</span>
+ <div class="node"><b>STS</b><br><small>AssumeRoleWithSAML</small></div>
+ <span class="arrow">→ 临时<br>凭证</span>
+ <div class="node"><b>AWS 资源</b><br><small>Console / API</small></div>
+</div>
+<ul>
+ <li>用户向企业 IdP（AD FS / Okta / PingFederate）认证，获取 SAML Assertion。</li>
+ <li>IdP 将 SAML Token 发送给 AWS STS（<code>AssumeRoleWithSAML</code>）。</li>
+ <li>STS 验证 SAML Assertion，返回临时凭证，用户被映射到对应的 IAM Role。</li>
+ <li>需要在 IAM 中配置 SAML Identity Provider（上传 IdP 的元数据 XML）。</li>
+</ul>
+<div class="callout green"><b>与 IAM Identity Center 的关系：</b>AWS IAM Identity Center（原 AWS SSO）是现代推荐方案，底层依然使用 SAML/OIDC 联合，但提供了统一的访问门户、权限集合（Permission Sets）和 AWS Organizations 集成，大幅简化多账号 SSO 配置。SAP-C02 场景：多账号 SSO + AD → 优先推荐 IAM Identity Center。</div>
+
+<h3>Web Identity Federation</h3>
+<table><thead><tr><th>方案</th><th>流程</th><th>推荐程度</th></tr></thead><tbody>
+<tr><td><b>Amazon Cognito Identity Pool（推荐）</b></td><td>用户 → Cognito（聚合 Google/FB/Apple/OIDC）→ Cognito 颁发 Token → STS <code>AssumeRoleWithWebIdentity</code> → 临时凭证</td><td><span class="tag red">强烈推荐</span>，SAP-C02 标准答案</td></tr>
+<tr><td>直接 Web Identity（不经 Cognito）</td><td>用户 → 直接向 Google/FB 获取 Token → STS <code>AssumeRoleWithWebIdentity</code></td><td>遗留方案，新应用不推荐</td></tr>
+</tbody></table>
+<p>Cognito 提供了用户池（User Pool，认证）和身份池（Identity Pool，授权）：</p>
+<ul>
+ <li><b>User Pool</b>：负责用户注册、登录、MFA，返回 JWT Token（IdToken、AccessToken、RefreshToken）。</li>
+ <li><b>Identity Pool</b>：将外部身份（User Pool、Google、Facebook 等）映射到 IAM Role，调用 STS 获取 AWS 临时凭证。</li>
+</ul>
+
+<h3>OIDC 联合 — EKS IRSA（Service Account 级别权限）</h3>
+<p>Kubernetes Pod 通过 OIDC 绑定 IAM Role，实现 Pod 级别的细粒度权限控制：</p>
+<ul>
+ <li>EKS 集群配置 OIDC Provider → IAM 中创建对应 OIDC Identity Provider。</li>
+ <li>为 Kubernetes Service Account 关联 IAM Role（IRSA：IAM Roles for Service Accounts）。</li>
+ <li>Pod 使用该 Service Account 运行 → 通过 Token 自动获取 IAM Role 临时凭证。</li>
+ <li>优势：Pod 级别最小权限，不同服务使用不同 Role，无需在 Node 上挂载 Instance Profile。</li>
+</ul>
+</section>
+
+<!-- ===== 七、高级特性 ===== -->
+<section id="advanced">
+<h2>七、IAM 高级特性</h2>
+
+<h3>IAM Access Analyzer</h3>
+<p>持续分析资源策略，识别对外部实体（其他账号、互联网）开放访问路径的资源。</p>
+<table><thead><tr><th>功能</th><th>说明</th></tr></thead><tbody>
+<tr><td>外部访问分析</td><td>发现 S3 Bucket、KMS Key、IAM Role、Lambda、SQS、SNS 等资源是否存在公开或跨账号访问路径</td></tr>
+<tr><td>未使用的访问（Unused Access）</td><td>识别 IAM User/Role 中长期未使用的权限和访问密钥，支持最小权限治理</td></tr>
+<tr><td>策略验证</td><td>在创建/编辑策略时，检查策略语法错误和安全建议</td></tr>
+<tr><td>与 Organizations 集成</td><td>设置信任区（Zone of Trust）为整个 Organizations，跨账号访问视为内部，只有互联网访问才告警</td></tr>
+</tbody></table>
+
+<h3>条件键（Condition Keys）— 高频考点</h3>
+<div class="table-wrap">
+<table><thead><tr><th>条件键</th><th>用途</th><th>示例场景</th></tr></thead><tbody>
+<tr><td><code>aws:RequestedRegion</code></td><td>限制 API 调用只能发生在指定区域</td><td>只允许在 us-east-1 创建资源</td></tr>
+<tr><td><code>aws:PrincipalTag/&lt;TagKey&gt;</code></td><td>基于调用方身份标签控制权限（ABAC）</td><td>拥有 <code>Team=backend</code> 标签的 Role 才能访问 backend 资源</td></tr>
+<tr><td><code>aws:ResourceTag/&lt;TagKey&gt;</code></td><td>基于资源标签控制访问（ABAC）</td><td>只允许操作带有 <code>Environment=prod</code> 标签的 EC2</td></tr>
+<tr><td><code>aws:SourceIp</code></td><td>限制请求来源 IP 或 CIDR</td><td>只有公司网络 IP 可以调用 API</td></tr>
+<tr><td><code>aws:SourceVpc</code></td><td>限制请求必须来自指定 VPC</td><td>S3 只能从特定 VPC 访问（配合 VPC Endpoint）</td></tr>
+<tr><td><code>aws:MultiFactorAuthPresent</code></td><td>要求调用方已通过 MFA 认证</td><td>删除 S3 对象必须使用 MFA 凭证</td></tr>
+<tr><td><code>aws:MultiFactorAuthAge</code></td><td>MFA 认证经过的时间（秒）</td><td>MFA 认证超过 1 小时（3600 秒）拒绝敏感操作</td></tr>
+<tr><td><code>sts:ExternalId</code></td><td>跨账号 AssumeRole 时验证外部 ID，防止 Confused Deputy 攻击</td><td>第三方服务扮演你账号中的 Role 时，要求提供约定的 External ID</td></tr>
+<tr><td><code>aws:CalledVia</code></td><td>请求是否通过特定 AWS 服务发起</td><td>只允许通过 CloudFormation 调用某个 IAM 操作</td></tr>
+</tbody></table>
+</div>
+
+<h3>ABAC vs RBAC</h3>
+<table><thead><tr><th>对比</th><th>ABAC（基于属性的访问控制）</th><th>RBAC（基于角色的访问控制）</th></tr></thead><tbody>
+<tr><td>核心机制</td><td>使用标签（Tag）条件键，匹配主体标签与资源标签</td><td>使用预定义的 IAM Role 和策略控制权限</td></tr>
+<tr><td>优势</td><td>大规模动态场景；新增资源或用户无需修改策略，只需打标签</td><td>权限清晰可审计；适合稳定权限结构</td></tr>
+<tr><td>典型场景</td><td>多团队 / 多应用；用户能操作与自己 Team 标签相同的资源</td><td>固定权限结构；开发者、运维、只读审计等明确角色划分</td></tr>
+<tr><td>策略数量</td><td>少量通用策略，靠标签区分</td><td>可能需要大量策略，每类权限一个策略</td></tr>
+<tr><td>SAP-C02 关键词</td><td>"基于标签"、"减少策略数量"、"动态权限"</td><td>"预定义角色"、"稳定权限"、"明确职责分离"</td></tr>
+</tbody></table>
+
+<h3>Service Control Policies（SCP）补充说明</h3>
+<ul>
+ <li>SCP 附加到 Organizations 根、OU 或成员账户，限制成员账户内<b>所有主体</b>（包括 Root User）的最大可用权限。</li>
+ <li>SCP 本身不授予权限，只起"护栏"（Guardrail）作用。成员账户还需要 IAM 策略明确 Allow。</li>
+ <li>管理账户（Management Account）不受 SCP 限制。</li>
+ <li>SCP 影响成员账户中的 Root User，这是 SCP 与其他策略的重大区别。</li>
+</ul>
+<div class="callout orange"><b>SCP 常见误区：</b>SCP 不直接授权，只限制上限。成员账户的用户需要同时满足：SCP 允许 + IAM 身份策略允许，才能执行操作。即使 SCP Allow，没有身份策略也无法操作。</div>
+</section>
+
+<!-- ===== 八、Policy 编写规范 ===== -->
+<section id="writing">
+<h2>八、IAM Policy 编写规范</h2>
+<p class="lead">理解 Policy JSON 的每个字段含义，是正确分析和编写权限策略的基础。</p>
+
+<h3>Policy 结构字段解析</h3>
+<pre><code>{
+  "Version": "2012-10-17",  <span class="json-comment">// 策略语言版本，固定使用 2012-10-17，支持策略变量</span>
+  "Statement": [            <span class="json-comment">// 语句数组，一个 Policy 可包含多条语句</span>
+    {
+      "Sid": "AllowCostQueryWithMFA",  <span class="json-comment">// Statement ID，可选的唯一标识符，便于管理和调试</span>
+      "Effect": "Allow",               <span class="json-comment">// 效果：Allow（允许）或 Deny（拒绝）</span>
+      "Principal": {                   <span class="json-comment">// 适用主体（资源策略/Trust Policy 中使用，身份策略中省略）</span>
+        "AWS": "arn:aws:iam::123456789012:user/Alice"
+      },
+      "Action": [                      <span class="json-comment">// 操作列表，支持通配符 * 和 ?</span>
+        "ce:GetCostAndUsage",
+        "ce:GetUsageForecast"
+      ],
+      "Resource": "*",                 <span class="json-comment">// 资源 ARN；* 表示所有资源；应尽量精确指定</span>
+      "Condition": {                   <span class="json-comment">// 条件块（可选），所有条件为 AND 关系，同一键多值为 OR</span>
+        "StringEquals": {
+          "aws:RequestedRegion": "us-east-1"  <span class="json-comment">// 限制只能访问 us-east-1 区域</span>
+        },
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "true"  <span class="json-comment">// 要求调用方已完成 MFA 认证</span>
+        }
+      }
+    }
+  ]
+}</code></pre>
+
+<h3>字段详解</h3>
+<table><thead><tr><th>字段</th><th>必填</th><th>说明</th></tr></thead><tbody>
+<tr><td><code>Version</code></td><td>推荐</td><td>固定写 <code>"2012-10-17"</code>，不写则默认旧版本，不支持策略变量 <code>${aws:username}</code> 等</td></tr>
+<tr><td><code>Sid</code></td><td>否</td><td>Statement 标识符，唯一（同一 Policy 内），字母数字，便于调试和审计</td></tr>
+<tr><td><code>Effect</code></td><td>是</td><td><code>Allow</code> 或 <code>Deny</code>。Deny 始终优先于 Allow</td></tr>
+<tr><td><code>Principal</code></td><td>资源策略中必填</td><td>身份策略（附加到 User/Role）中省略；资源策略中指定 AWS 账号、用户、角色或服务</td></tr>
+<tr><td><code>Action</code></td><td>是</td><td>服务前缀:操作名，如 <code>s3:GetObject</code>；可用 <code>*</code> 通配，如 <code>s3:*</code></td></tr>
+<tr><td><code>NotAction</code></td><td>否</td><td>指定不在列表中的所有操作（反向匹配），配合 Deny 可实现"除这些操作外全部拒绝"</td></tr>
+<tr><td><code>Resource</code></td><td>是（部分服务）</td><td>AWS 资源 ARN；不支持资源级权限的服务用 <code>*</code></td></tr>
+<tr><td><code>Condition</code></td><td>否</td><td>条件键+运算符+值，多个键为 AND 关系；同一键多个值为 OR 关系</td></tr>
+</tbody></table>
+
+<h3>常用 Condition 运算符</h3>
+<table><thead><tr><th>运算符</th><th>适用类型</th><th>示例</th></tr></thead><tbody>
+<tr><td><code>StringEquals</code></td><td>字符串精确匹配</td><td><code>{"aws:RequestedRegion": "us-east-1"}</code></td></tr>
+<tr><td><code>StringLike</code></td><td>字符串通配符匹配（* 和 ?）</td><td><code>{"s3:prefix": ["home/${aws:username}/*"]}</code></td></tr>
+<tr><td><code>Bool</code></td><td>布尔值</td><td><code>{"aws:MultiFactorAuthPresent": "true"}</code></td></tr>
+<tr><td><code>NumericLessThan</code></td><td>数值比较</td><td><code>{"aws:MultiFactorAuthAge": "3600"}</code></td></tr>
+<tr><td><code>IpAddress</code></td><td>IP 地址/CIDR</td><td><code>{"aws:SourceIp": ["203.0.113.0/24"]}</code></td></tr>
+<tr><td><code>ArnLike</code></td><td>ARN 模式匹配</td><td><code>{"aws:SourceArn": "arn:aws:s3:::my-bucket"}</code></td></tr>
+<tr><td><code>Null</code></td><td>检查键是否存在</td><td><code>{"aws:TokenIssueTime": "false"}</code>（确认不是临时凭证）</td></tr>
+</tbody></table>
+</section>
+
+<!-- ===== 九、场景题解析 ===== -->
+<section id="scenarios">
+<h2>九、场景题解析</h2>
+<p class="small">以下 6 道典型场景题覆盖 SAP-C02 最常见的 IAM 考察方向，配有分析思路和关键答案。</p>
+
+<div class="quiz">
+<b>场景 1：用户能访问 S3 但不能删除对象</b>
+<p>某用户有 IAM 策略 Allow <code>s3:*</code>，但 S3 Bucket Policy 中有一条 Deny <code>s3:DeleteObject</code>。用户能删除该 Bucket 中的对象吗？</p>
+<button class="secondary" onclick="showAnswer('s1',false)">A. 可以，因为身份策略允许</button>
+<button class="secondary" onclick="showAnswer('s1',true)">B. 不能，显式 Deny 优先</button>
+<button class="secondary" onclick="showAnswer('s1',false)">C. 取决于 Bucket Policy 的优先级设置</button>
+<div class="answer" id="s1"><b>答案：B。</b>显式 Deny（Explicit Deny）始终优先于任何 Allow，无论 Deny 来自身份策略还是资源策略。只要有任何一条策略 Deny，请求就被拒绝。</div>
+</div>
+
+<div class="quiz">
+<b>场景 2：跨账号 EC2 访问另一账号的 DynamoDB</b>
+<p>账户 A 中的 EC2 实例需要读取账户 B 中的 DynamoDB 表。最低权限的正确配置是什么？</p>
+<button class="secondary" onclick="showAnswer('s2',false)">A. 在账户 A EC2 上配置账户 B 的 Access Key</button>
+<button class="secondary" onclick="showAnswer('s2',true)">B. 账户 B 创建 Role，Trust Policy 信任账户 A；账户 A EC2 实例角色有 sts:AssumeRole 权限；EC2 启动时 AssumeRole 获取临时凭证</button>
+<button class="secondary" onclick="showAnswer('s2',false)">C. 在账户 B DynamoDB 的资源策略中直接允许账户 A 访问</button>
+<div class="answer" id="s2"><b>答案：B。</b>跨账号访问应使用 IAM Role 和临时凭证，永远不要在 EC2 配置其他账户的长期 Access Key。DynamoDB 不支持资源策略（选项 C 错误）。步骤：账户 B 建 Role + Trust Policy 信任账户 A → 账户 A EC2 实例角色允许 <code>sts:AssumeRole</code> → EC2 代码 AssumeRole 获取临时凭证 → 使用临时凭证访问账户 B 的 DynamoDB。</div>
+</div>
+
+<div class="quiz">
+<b>场景 3：开发者可以创建 IAM 角色但不能提权</b>
+<p>公司希望允许开发团队为自己的应用创建 IAM Role 并附加策略，但必须确保他们无法创建权限超过自身的 Role（防止权限提升）。如何实现？</p>
+<button class="secondary" onclick="showAnswer('s3',false)">A. 不给开发者 iam:CreateRole 权限</button>
+<button class="secondary" onclick="showAnswer('s3',false)">B. 要求开发者创建角色时必须提交申请审批</button>
+<button class="secondary" onclick="showAnswer('s3',true)">C. 使用权限边界（Permissions Boundary），要求开发者创建角色时必须附加管理员预定义的权限边界策略</button>
+<div class="answer" id="s3"><b>答案：C。</b>权限边界是解决委托管理和防提权的标准方案。管理员预定义一个权限边界策略（如只允许 S3、DynamoDB、Lambda），要求开发者在 <code>iam:CreateRole</code> 条件中必须附加该权限边界（<code>iam:PermissionsBoundary</code> 条件键）。开发者创建的 Role 有效权限 = 角色策略 ∩ 权限边界，无法超越权限边界范围。</div>
+</div>
+
+<div class="quiz">
+<b>场景 4：企业 AD 用户通过 SSO 访问 AWS 多账号</b>
+<p>一家拥有 50 个 AWS 账户的企业，希望员工使用企业 Active Directory 账号登录，通过统一门户访问不同账户的控制台，并能以不同角色操作。最佳方案是什么？</p>
+<button class="secondary" onclick="showAnswer('s4',false)">A. 在每个账户分别配置 SAML Federation</button>
+<button class="secondary" onclick="showAnswer('s4',true)">B. 使用 AWS IAM Identity Center（原 AWS SSO），连接企业 AD，在各账户配置权限集合（Permission Sets）</button>
+<button class="secondary" onclick="showAnswer('s4',false)">C. 在每个账户创建对应 IAM User</button>
+<div class="answer" id="s4"><b>答案：B。</b>IAM Identity Center 是多账号 SSO 的现代推荐方案。它与 AWS Organizations 集成，连接一个 AD 源（AD Connector 或 AWS Managed Microsoft AD），通过"权限集合"（Permission Sets）统一配置各账号的角色，提供统一 SSO 门户。50 个账户分别配置 SAML（选项 A）运维复杂度极高，不推荐。</div>
+</div>
+
+<div class="quiz">
+<b>场景 5：Lambda 函数需要访问 S3 和 DynamoDB</b>
+<p>一个 Lambda 函数需要读取特定 S3 Bucket 中的文件，并写入特定 DynamoDB 表。如何配置最小权限？</p>
+<button class="secondary" onclick="showAnswer('s5',false)">A. 在 Lambda 代码中硬编码 Access Key</button>
+<button class="secondary" onclick="showAnswer('s5',true)">B. 创建 Lambda 执行角色，附加仅允许 s3:GetObject（指定 Bucket）和 dynamodb:PutItem（指定表）的策略</button>
+<button class="secondary" onclick="showAnswer('s5',false)">C. 给 Lambda 执行角色附加 AdministratorAccess</button>
+<div class="answer" id="s5"><b>答案：B。</b>Lambda 应使用执行角色（Execution Role），Trust Policy 信任 <code>lambda.amazonaws.com</code>。权限策略应精确到具体操作和资源 ARN（最小权限）：<code>"Action": ["s3:GetObject"]</code> + <code>"Resource": "arn:aws:s3:::my-bucket/*"</code>；<code>"Action": ["dynamodb:PutItem"]</code> + <code>"Resource": "arn:aws:dynamodb:region:account:table/my-table"</code>。绝不应硬编码密钥或使用 AdministratorAccess。</div>
+</div>
+
+<div class="quiz">
+<b>场景 6：限制只有来自特定 IP 的请求才能访问</b>
+<p>公司要求 IAM 用户只能从公司办公网络（IP CIDR 203.0.113.0/24）调用敏感 API。如何配置？</p>
+<button class="secondary" onclick="showAnswer('s6',false)">A. 在 Security Group 中限制 IP（Security Group 不能限制 IAM API 调用）</button>
+<button class="secondary" onclick="showAnswer('s6',true)">B. 在 IAM Policy 的 Condition 中使用 aws:SourceIp 条件键限制来源 IP</button>
+<button class="secondary" onclick="showAnswer('s6',false)">C. 创建 Network ACL 阻止其他 IP</button>
+<div class="answer" id="s6"><b>答案：B。</b>IP 限制要通过 IAM Policy 的 Condition 实现：<code>"Condition": {"IpAddress": {"aws:SourceIp": ["203.0.113.0/24"]}}</code>。Security Group 和 NACL 是网络层控制，不能限制 IAM API 调用。注意：若用户通过 VPN/NAT 出口 IP 是动态的，需结合 <code>aws:SourceVpc</code> 或 <code>aws:SourceVpce</code> 使用。</div>
+</div>
+</section>
+
+<!-- ===== 十、关键词速查 ===== -->
+<section id="quick">
+<h2>十、考试快速答题：关键词 → 正确答案</h2>
+<table><thead><tr><th>题目关键词</th><th>优先考虑</th></tr></thead><tbody>
+<tr><td>跨账号访问、其他账户资源</td><td>IAM 跨账号 Role + sts:AssumeRole</td></tr>
+<tr><td>临时凭证、短期访问</td><td>STS (AssumeRole / GetSessionToken)</td></tr>
+<tr><td>EC2 访问 AWS 服务（无 Key）</td><td>EC2 Instance Profile（实例角色）</td></tr>
+<tr><td>Lambda 访问 AWS 服务</td><td>Lambda 执行角色（Execution Role）</td></tr>
+<tr><td>企业 Active Directory / SAML / 单点登录</td><td>IAM Identity Center（多账号）或 AssumeRoleWithSAML</td></tr>
+<tr><td>移动应用 / Web 应用 / OIDC 联合</td><td>Cognito Identity Pool + AssumeRoleWithWebIdentity</td></tr>
+<tr><td>MFA 之后操作 / 要求 MFA</td><td>GetSessionToken 或 Condition: aws:MultiFactorAuthPresent</td></tr>
+<tr><td>开发者创建角色但不能提权</td><td>权限边界（Permissions Boundary）</td></tr>
+<tr><td>有效权限上限 / 限制最大权限</td><td>权限边界（Permissions Boundary）</td></tr>
+<tr><td>会话级临时限制 / AssumeRole 时额外约束</td><td>会话策略（Session Policy）</td></tr>
+<tr><td>组织级护栏 / 禁止成员账户操作</td><td>SCP（Service Control Policy）</td></tr>
+<tr><td>分析外部可访问资源 / 发现公开 S3</td><td>IAM Access Analyzer</td></tr>
+<tr><td>基于标签控制访问 / 减少策略数量</td><td>ABAC（aws:PrincipalTag + aws:ResourceTag）</td></tr>
+<tr><td>限制请求来源 IP</td><td>Condition: aws:SourceIp / IpAddress 运算符</td></tr>
+<tr><td>只允许从特定 VPC 访问</td><td>Condition: aws:SourceVpc / aws:SourceVpce</td></tr>
+<tr><td>第三方服务扮演你的 Role / 防 Confused Deputy</td><td>External ID（sts:ExternalId Condition）</td></tr>
+<tr><td>EKS Pod 级别权限 / Service Account IAM</td><td>IRSA（IAM Roles for Service Accounts）+ OIDC</td></tr>
+<tr><td>AccessKey 以 ASIA 开头</td><td>STS 颁发的临时凭证（对比 AKIA 是永久密钥）</td></tr>
+<tr><td>未使用的 IAM 权限 / 最小权限审计</td><td>IAM Access Analyzer（Unused Access 分析）</td></tr>
+<tr><td>多账号 SSO 统一门户</td><td>AWS IAM Identity Center</td></tr>
+</tbody></table>
+</section>
+
+<!-- ===== 十一、易混淆概念 ===== -->
+<section id="compare">
+<h2>十一、最容易混淆的概念对比</h2>
+<table><thead><tr><th>概念 A</th><th>概念 B</th><th>核心区别</th></tr></thead><tbody>
+<tr><td>权限边界（Permissions Boundary）</td><td>会话策略（Session Policy）</td><td>长期限制 User/Role 最大权限 vs 仅限制本次 AssumeRole 会话</td></tr>
+<tr><td>权限边界（Permissions Boundary）</td><td>SCP（Service Control Policy）</td><td>限制单个 User/Role vs 限制整个 AWS 账户内所有主体</td></tr>
+<tr><td>IAM Role Trust Policy</td><td>IAM Role Permission Policy</td><td>谁能扮演这个角色（AssumeRole 授权）vs 扮演后能做什么</td></tr>
+<tr><td>身份策略（Identity-based）</td><td>资源策略（Resource-based）</td><td>附加在 User/Role 上，控制"我能做什么" vs 附加在资源上，控制"谁能访问我"</td></tr>
+<tr><td>同账号访问（S3）</td><td>跨账号访问（S3）</td><td>身份策略或资源策略满足其一即可 vs 必须两侧都 Allow</td></tr>
+<tr><td>AssumeRole</td><td>AssumeRoleWithSAML</td><td>IAM 实体/服务扮演角色 vs 企业 SAML IdP 用户获取 AWS 凭证</td></tr>
+<tr><td>Cognito User Pool</td><td>Cognito Identity Pool</td><td>负责认证（登录/注册/JWT）vs 负责授权（获取 AWS 临时凭证）</td></tr>
+<tr><td>IAM Identity Center</td><td>直接 SAML Federation</td><td>多账号统一 SSO 门户（现代推荐）vs 单账号 SAML 配置（运维复杂）</td></tr>
+<tr><td>ABAC</td><td>RBAC</td><td>基于标签动态授权（大规模、灵活）vs 基于预定义 Role（稳定、清晰）</td></tr>
+<tr><td>托管策略（Managed Policy）</td><td>内联策略（Inline Policy）</td><td>可复用，独立生命周期，可附加多个实体 vs 嵌入实体，与实体同生命周期，不可复用</td></tr>
+<tr><td>临时凭证（ASIA 前缀）</td><td>永久访问密钥（AKIA 前缀）</td><td>STS 颁发，自动过期，需 SessionToken vs 手动创建，长期有效，需手动轮换/删除</td></tr>
+<tr><td>SCP</td><td>Resource Policy</td><td>护栏（限制账户内最大权限，不直接授权）vs 直接在资源上授权特定主体</td></tr>
+</tbody></table>
+</section>
+
+<!-- ===== 十二、速记卡 ===== -->
+<section id="memory">
+<h2>十二、考前速记卡（可勾选）</h2>
+<p>复习时勾选已掌握的项目，进度仅在当前页面会话中保留。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 20</p>
+<ul class="checklist" id="memoryList">
+ <li><input type="checkbox"><span><b>Root Account：</b>立即启用 MFA，不用于日常操作，SCP 无法限制管理账户的 Root</span></li>
+ <li><input type="checkbox"><span><b>Explicit Deny 优先：</b>任何 Deny 优先于所有 Allow，无论策略类型</span></li>
+ <li><input type="checkbox"><span><b>有效权限公式：</b>SCP ∩ 权限边界 ∩ 身份策略（取交集）</span></li>
+ <li><input type="checkbox"><span><b>同账号 S3：</b>身份策略 OR 资源策略，满足其一即允许</span></li>
+ <li><input type="checkbox"><span><b>跨账号 S3：</b>调用方身份策略 AND 目标资源策略，两者都需 Allow</span></li>
+ <li><input type="checkbox"><span><b>Trust Policy：</b>定义谁能 AssumeRole；Permission Policy：定义扮演后能做什么</span></li>
+ <li><input type="checkbox"><span><b>权限边界：</b>限制 User/Role 的最大权限上限，不直接授权，有效权限 = 身份策略 ∩ 边界</span></li>
+ <li><input type="checkbox"><span><b>会话策略：</b>AssumeRole 时临时传入，只限制本次会话，不改变 Role 本身</span></li>
+ <li><input type="checkbox"><span><b>防提权：</b>权限边界 + iam:PermissionsBoundary 条件，要求创建角色时必须附加边界</span></li>
+ <li><input type="checkbox"><span><b>STS 临时凭证：</b>AccessKeyId（ASIA）+ SecretAccessKey + SessionToken，有 Expiration</span></li>
+ <li><input type="checkbox"><span><b>AssumeRoleWithSAML：</b>企业 AD/SAML IdP 用户获取 AWS 临时凭证</span></li>
+ <li><input type="checkbox"><span><b>AssumeRoleWithWebIdentity：</b>OIDC Token 获取临时凭证，新应用推荐经 Cognito Identity Pool 封装</span></li>
+ <li><input type="checkbox"><span><b>Cognito User Pool vs Identity Pool：</b>认证（JWT）vs 授权（AWS 临时凭证）</span></li>
+ <li><input type="checkbox"><span><b>IAM Identity Center：</b>多账号 SSO + AD/OIDC 集成，权限集合（Permission Sets）统一管理</span></li>
+ <li><input type="checkbox"><span><b>IRSA：</b>EKS Pod 级别权限，Service Account 绑定 IAM Role，通过 OIDC 获取临时凭证</span></li>
+ <li><input type="checkbox"><span><b>IAM Access Analyzer：</b>检测外部可访问资源 + 未使用权限分析</span></li>
+ <li><input type="checkbox"><span><b>SCP 护栏：</b>限制成员账户内所有主体（含 Root）的最大权限，管理账户不受限</span></li>
+ <li><input type="checkbox"><span><b>ABAC 关键词：</b>基于标签、减少策略数量、大规模动态 → aws:PrincipalTag + aws:ResourceTag</span></li>
+ <li><input type="checkbox"><span><b>aws:SourceIp：</b>限制请求来源 IP（用于 IAM Policy Condition，不是 SG/NACL）</span></li>
+ <li><input type="checkbox"><span><b>External ID：</b>跨账号 AssumeRole 防 Confused Deputy 攻击，第三方服务必须提供约定的 ExternalId</span></li>
+</ul>
+</section>
+
+<!-- ===== 十三、复习优先级 ===== -->
+<section id="priority">
+<h2>十三、复习优先级</h2>
+<table><thead><tr><th>优先级</th><th>知识点</th><th>建议掌握程度</th></tr></thead><tbody>
+<tr><td><span class="tag red">P1</span></td><td>Policy 评估逻辑（Explicit Deny 优先 / 交集规则）、跨账号 Role（Trust Policy + AssumeRole）、权限边界（有效权限公式 + 防提权）、SCP 作用域</td><td>熟练掌握，能独立分析场景</td></tr>
+<tr><td><span class="tag red">P1</span></td><td>STS API 区分（AssumeRole / WithSAML / WithWebIdentity / GetSessionToken）、临时凭证三要素（ASIA前缀、SessionToken）</td><td>能根据场景选择正确 API</td></tr>
+<tr><td><span class="tag orange">P2</span></td><td>IAM Identity Center（多账号 SSO）、Cognito User Pool vs Identity Pool、SAML 联合流程、IRSA</td><td>理解流程，掌握场景选择</td></tr>
+<tr><td><span class="tag orange">P2</span></td><td>IAM Access Analyzer、条件键（aws:SourceIp / PrincipalTag / MultiFactorAuthPresent / ExternalId）、ABAC vs RBAC</td><td>理解用途，掌握条件键写法</td></tr>
+<tr><td><span class="tag">P3</span></td><td>Policy 字段细节（Version/Sid/NotAction）、Condition 运算符、Service-Linked Role、GetFederationToken</td><td>了解概念，能识别关键词</td></tr>
+</tbody></table>
+</section>
+
+<!-- ===== 十四、快速自测 ===== -->
+<section id="quiz">
+<h2>十四、快速自测</h2>
+<p class="small">先独立作答，再点击选项查看解析。概念练习题，不代表真实考题。</p>
+
+<div class="quiz">
+ <b>1. 一个 IAM User 的身份策略允许 <code>s3:DeleteObject</code>，但其权限边界中没有 <code>s3:DeleteObject</code>。该用户能删除 S3 对象吗？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',false)">A. 能，身份策略 Allow 优先</button>
+ <button class="secondary" onclick="showAnswer('q1',true)">B. 不能，有效权限 = 身份策略 ∩ 权限边界</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. 取决于资源策略</button>
+ <div class="answer" id="q1"><b>正确答案：B。</b>有效权限是身份策略与权限边界的交集。权限边界中不包含 <code>s3:DeleteObject</code>，该操作被权限边界排除在外，即使身份策略 Allow 也无法执行。</div>
+</div>
+
+<div class="quiz">
+ <b>2. 企业有 30 个 AWS 账户，要求所有账户无法在非 us-east-1 区域创建 EC2 实例。应使用哪种方式？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 在每个账户的 IAM 用户策略中添加 Deny 条件</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. 通过 AWS Organizations 对目标 OU 或根节点附加 SCP，Deny 非 us-east-1 的 ec2:RunInstances</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 使用 AWS Config 规则检测并自动删除非指定区域的实例</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>SCP 是组织级护栏，一条 SCP 即可覆盖所有成员账户的所有主体（含 Root User）。Config 是检测和修复，而非预防性控制。分别配置各账户（选项 A）运维复杂度极高。</div>
+</div>
+
+<div class="quiz">
+ <b>3. 移动 App 用户通过 Google 账号登录，需要获取临时 AWS 凭证访问用户专属的 S3 文件夹。推荐架构是什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',false)">A. 直接调用 sts:AssumeRoleWithWebIdentity（不经 Cognito）</button>
+ <button class="secondary" onclick="showAnswer('q3',true)">B. Cognito User Pool（认证）→ Cognito Identity Pool → STS 临时凭证，配合 ABAC（aws:PrincipalTag）限制只能访问自己的 S3 前缀</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. 为每个用户创建 IAM User，分配 Access Key</button>
+ <div class="answer" id="q3"><b>正确答案：B。</b>Cognito Identity Pool 是 Web/移动端联合的推荐方案，可聚合多个社交 IdP（Google/Facebook/Apple），通过 ABAC 配合 <code>aws:PrincipalTag</code> 实现用户只能访问自己的 S3 路径（如 <code>s3://bucket/users/${cognito:username}/</code>）。为每个用户创建 IAM User 不可扩展。</div>
+</div>
+
+<div class="quiz">
+ <b>4. 调试时发现 AccessKeyId 以 <code>ASIA</code> 开头，但 API 调用总是返回 InvalidClientTokenId 错误。最可能的原因是？</b><br>
+ <button class="secondary" onclick="showAnswer('q4',false)">A. 该用户没有权限</button>
+ <button class="secondary" onclick="showAnswer('q4',true)">B. 临时凭证已过期，或 API 请求中缺少 SessionToken</button>
+ <button class="secondary" onclick="showAnswer('q4',false)">C. 用户被锁定</button>
+ <div class="answer" id="q4"><b>正确答案：B。</b><code>ASIA</code> 开头说明是 STS 临时凭证。临时凭证由 AccessKeyId + SecretAccessKey + SessionToken 三部分组成，缺少 SessionToken 或凭证过期都会导致认证失败。检查 SessionToken 是否一并提交，以及凭证是否在有效期内。</div>
+</div>
+
+<div class="quiz">
+ <b>5. 一个第三方安全审计服务需要 AssumeRole 访问你账户中的只读角色。如何防止"困惑的代理人"（Confused Deputy）攻击？</b><br>
+ <button class="secondary" onclick="showAnswer('q5',false)">A. 在 Trust Policy 中只允许第三方的账户 ID</button>
+ <button class="secondary" onclick="showAnswer('q5',true)">B. 在 Trust Policy 中添加 sts:ExternalId 条件，要求第三方传入与你约定的唯一 External ID</button>
+ <button class="secondary" onclick="showAnswer('q5',false)">C. 给 Role 设置权限边界</button>
+ <div class="answer" id="q5"><b>正确答案：B。</b>External ID 是解决 Confused Deputy 攻击的标准方案。只允许账户 ID（选项 A）不足够，因为第三方服务的其他客户可能诱导该服务扮演你的角色。External ID 作为双方约定的秘密令牌，第三方不知道 External ID 就无法 AssumeRole。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料与复习说明</h2>
+<ul>
+ <li><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html" target="_blank" rel="noopener">AWS IAM 用户指南</a></li>
+ <li><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html" target="_blank" rel="noopener">IAM Policy 评估逻辑（官方文档）</a></li>
+ <li><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html" target="_blank" rel="noopener">IAM 权限边界</a></li>
+ <li><a href="https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html" target="_blank" rel="noopener">AWS STS API 参考</a></li>
+ <li><a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html" target="_blank" rel="noopener">AWS IAM Identity Center 用户指南</a></li>
+ <li><a href="https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html" target="_blank" rel="noopener">Amazon Cognito 开发者指南</a></li>
+ <li><a href="https://aws.amazon.com/certification/certified-solutions-architect-professional/" target="_blank" rel="noopener">AWS Certified Solutions Architect – Professional</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>考试内容、功能边界和推荐架构会随 AWS 服务更新而变化。请以 AWS 官方考试指南和最新服务文档为准。本文档为复习提纲，不代表官方考试题库。</div>
+</section>
+
+</main>
+</div>
+
+<footer class="container">AWS SAP-C02 IAM 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

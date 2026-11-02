@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>分析 – AWS SAP-C02 备考</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --paper: #fff;
+      --ink: #172033;
+      --muted: #627089;
+      --line: #e3e9f2;
+      --blue: #2457c5;
+      --blue-soft: #eaf1ff;
+      --shadow: 0 8px 28px rgba(25, 45, 85, .07);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(120deg, #10264d, #2457c5);
+      color: #fff;
+      padding: 0 2rem;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.2rem 0 2.4rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      color: rgba(255,255,255,.78);
+      text-decoration: none;
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .02em;
+      margin-bottom: 1.4rem;
+      transition: color .18s;
+    }
+    .back-link:hover { color: #fff; }
+    .back-link::before { content: "←"; font-size: .95rem; }
+
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      color: rgba(255,255,255,.9);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .25rem .75rem;
+      border-radius: 99px;
+      border: 1px solid rgba(255,255,255,.25);
+      margin-bottom: .85rem;
+    }
+
+    header h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      margin-bottom: .3rem;
+    }
+
+    header .subtitle {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,.65);
+      font-weight: 400;
+      margin-bottom: 1.3rem;
+    }
+
+    header .intro {
+      max-width: 760px;
+      font-size: .95rem;
+      line-height: 1.75;
+      color: rgba(255,255,255,.82);
+      background: rgba(255,255,255,.08);
+      border-left: 3px solid rgba(255,255,255,.4);
+      padding: .9rem 1.2rem;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.8rem 2rem 4rem;
+    }
+
+    .section-label {
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.4rem;
+    }
+
+    /* ── Card Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 1.4rem;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 1.55rem 1.6rem 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: .85rem;
+      transition: transform .18s, box-shadow .18s, border-color .18s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(25,45,85,.12);
+      border-color: #c5d5f5;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: .8rem;
+    }
+
+    .card-icon-title {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+
+    .icon {
+      font-size: 1.7rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.25;
+    }
+
+    /* ── Frequency badges ── */
+    .freq {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: .28rem;
+      font-size: .72rem;
+      font-weight: 700;
+      padding: .28rem .7rem;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+    .freq-high {
+      background: #fff1f1;
+      color: #c0392b;
+      border: 1px solid #f5c6c6;
+    }
+    .freq-mid {
+      background: #fff8ee;
+      color: #b45309;
+      border: 1px solid #f5dbb0;
+    }
+
+    .card-desc {
+      font-size: .875rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Tag list ── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+    }
+
+    .tag {
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: .72rem;
+      font-weight: 600;
+      padding: .22rem .65rem;
+      border-radius: 6px;
+      line-height: 1.5;
+    }
+
+    /* ── Cross-link note ── */
+    .card-note {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: -.2rem;
+    }
+    .card-note a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+    .card-note a:hover {
+      text-decoration: underline;
+    }
+
+    /* ── Callout ── */
+    .callout {
+      margin-top: 2.8rem;
+      background: linear-gradient(135deg, #f0f5ff 0%, #e8f0fd 100%);
+      border: 1px solid #c5d5f5;
+      border-left: 4px solid var(--blue);
+      border-radius: 12px;
+      padding: 1.35rem 1.6rem;
+      font-size: .92rem;
+      line-height: 1.8;
+      color: #1e3a6e;
+    }
+    .callout strong {
+      display: block;
+      font-size: .95rem;
+      margin-bottom: .45rem;
+      color: var(--blue);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.7rem; }
+      .grid { grid-template-columns: 1fr; }
+      main { padding: 2rem 1.1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html" class="back-link">返回首页</a>
+    <div class="header-badge">SAP-C02 · Analytics</div>
+    <h1>分析</h1>
+    <p class="subtitle">Analytics</p>
+    <p class="intro">
+      SAP-C02 分析模块考察大数据处理管道的服务选型，从实时流处理到批量 ETL、从数据湖到 BI 可视化，核心在于理解数据流转路径并选择最合适的工具组合。
+    </p>
+  </div>
+</header>
+
+<main>
+  <p class="section-label">服务导航 · 8 个核心服务</p>
+
+  <div class="grid">
+
+    <!-- 1. Amazon Kinesis -->
+    <a href="kinesis.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">🌊</span>
+          <span class="card-title">Amazon Kinesis</span>
+        </div>
+        <span class="freq freq-high">🔥 高频</span>
+      </div>
+      <p class="card-desc">实时数据流处理（Data Streams / Firehose / Analytics）</p>
+      <div class="tags">
+        <span class="tag">KDS vs Firehose vs Analytics</span>
+        <span class="tag">分片(Shard)</span>
+        <span class="tag">Enhanced Fan-Out</span>
+        <span class="tag">与 Lambda 集成</span>
+        <span class="tag">数据保留期</span>
+      </div>
+    </a>
+
+    <!-- 2. Amazon EMR -->
+    <a href="emr.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">🔬</span>
+          <span class="card-title">Amazon EMR</span>
+        </div>
+        <span class="freq freq-mid">🟡 中频</span>
+      </div>
+      <p class="card-desc">托管大数据处理集群（Hadoop/Spark/Hive）</p>
+      <div class="tags">
+        <span class="tag">集群类型</span>
+        <span class="tag">Spot 集成</span>
+        <span class="tag">与 S3 作为数据湖</span>
+        <span class="tag">实例类型选型</span>
+        <span class="tag">安全配置</span>
+      </div>
+    </a>
+
+    <!-- 3. AWS Glue -->
+    <a href="glue.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">🧩</span>
+          <span class="card-title">AWS Glue</span>
+        </div>
+        <span class="freq freq-high">🔥 高频</span>
+      </div>
+      <p class="card-desc">无服务器 ETL 服务与数据目录</p>
+      <div class="tags">
+        <span class="tag">Data Catalog</span>
+        <span class="tag">ETL Job</span>
+        <span class="tag">Glue Crawler</span>
+        <span class="tag">与 Athena/S3 集成</span>
+        <span class="tag">Bookmark</span>
+      </div>
+    </a>
+
+    <!-- 4. Amazon Athena -->
+    <a href="athena.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">🔍</span>
+          <span class="card-title">Amazon Athena</span>
+        </div>
+        <span class="freq freq-high">🔥 高频</span>
+      </div>
+      <p class="card-desc">基于 S3 的无服务器交互式 SQL 查询</p>
+      <div class="tags">
+        <span class="tag">与 Glue 集成</span>
+        <span class="tag">分区优化</span>
+        <span class="tag">压缩格式</span>
+        <span class="tag">Federated Query</span>
+        <span class="tag">成本优化</span>
+      </div>
+    </a>
+
+    <!-- 5. Amazon OpenSearch Service -->
+    <a href="opensearch.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">🔎</span>
+          <span class="card-title">Amazon OpenSearch Service</span>
+        </div>
+        <span class="freq freq-mid">🟡 中频</span>
+      </div>
+      <p class="card-desc">托管搜索与日志分析（原 Elasticsearch）</p>
+      <div class="tags">
+        <span class="tag">与 CloudWatch/Kinesis 集成</span>
+        <span class="tag">跨集群搜索</span>
+        <span class="tag">访问控制</span>
+        <span class="tag">日志分析架构</span>
+      </div>
+    </a>
+
+    <!-- 6. Amazon MSK -->
+    <a href="msk.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">📡</span>
+          <span class="card-title">Amazon MSK</span>
+        </div>
+        <span class="freq freq-mid">🟡 中频</span>
+      </div>
+      <p class="card-desc">托管 Apache Kafka 流处理平台</p>
+      <div class="tags">
+        <span class="tag">与 Kinesis 对比</span>
+        <span class="tag">使用场景</span>
+        <span class="tag">MSK Serverless</span>
+        <span class="tag">Connect 集成</span>
+      </div>
+    </a>
+
+    <!-- 7. Amazon Redshift（交叉链接） -->
+    <a href="../database/redshift.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">📊</span>
+          <span class="card-title">Amazon Redshift</span>
+        </div>
+        <span class="freq freq-mid">🟡 中频</span>
+      </div>
+      <p class="card-desc">云原生数据仓库，用于大规模分析查询</p>
+      <div class="tags">
+        <span class="tag">Redshift Spectrum</span>
+        <span class="tag">与 S3 集成</span>
+        <span class="tag">RA3 节点</span>
+        <span class="tag">Concurrency Scaling</span>
+      </div>
+      <p class="card-note">🔗 详细内容见<a href="../database/redshift.html">数据库模块</a></p>
+    </a>
+
+    <!-- 8. QuickSight & Lake Formation -->
+    <a href="quicksight-lake-formation.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">📈</span>
+          <span class="card-title">QuickSight &amp; Lake Formation</span>
+        </div>
+        <span class="freq freq-mid">🟡 中频</span>
+      </div>
+      <p class="card-desc">BI 可视化与数据湖权限管理</p>
+      <div class="tags">
+        <span class="tag">QuickSight SPICE</span>
+        <span class="tag">Lake Formation 列级权限</span>
+        <span class="tag">与 Glue/Athena 集成</span>
+        <span class="tag">跨账号数据共享</span>
+      </div>
+    </a>
+
+  </div><!-- /grid -->
+
+  <!-- Callout -->
+  <div class="callout">
+    <strong>💡 考试提示</strong>
+    Kinesis Data Streams vs Kinesis Firehose 的区别（KDS 需自管消费者，Firehose 全托管直接投递到目标）是经典考题。Glue + S3 + Athena 构成的无服务器数据湖查询架构在架构设计题中频繁出现。注意 MSK 适合已有 Kafka 工作负载的迁移场景。
+  </div>
+
+</main>
+
+</body>
+</html>

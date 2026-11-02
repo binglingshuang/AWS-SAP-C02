@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DevOps 与开发者工具 – AWS SAP-C02 备考</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --paper: #fff;
+      --ink: #172033;
+      --muted: #627089;
+      --line: #e3e9f2;
+      --blue: #2457c5;
+      --blue-soft: #eaf1ff;
+      --shadow: 0 8px 28px rgba(25, 45, 85, .07);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(120deg, #10264d, #2457c5);
+      color: #fff;
+      padding: 0 2rem;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.2rem 0 2.4rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      color: rgba(255,255,255,.78);
+      text-decoration: none;
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .02em;
+      margin-bottom: 1.4rem;
+      transition: color .18s;
+    }
+    .back-link:hover { color: #fff; }
+    .back-link::before { content: "←"; font-size: .95rem; }
+
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      color: rgba(255,255,255,.9);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .25rem .75rem;
+      border-radius: 99px;
+      border: 1px solid rgba(255,255,255,.25);
+      margin-bottom: .85rem;
+    }
+
+    header h1 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      margin-bottom: .3rem;
+    }
+
+    header .subtitle {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,.65);
+      font-weight: 400;
+      margin-bottom: 1.3rem;
+    }
+
+    header .intro {
+      max-width: 760px;
+      font-size: .95rem;
+      line-height: 1.75;
+      color: rgba(255,255,255,.82);
+      background: rgba(255,255,255,.08);
+      border-left: 3px solid rgba(255,255,255,.4);
+      padding: .9rem 1.2rem;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.8rem 2rem 4rem;
+    }
+
+    .section-label {
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.4rem;
+    }
+
+    /* ── Card Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 1.4rem;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 1.55rem 1.6rem 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: .85rem;
+      transition: transform .18s, box-shadow .18s, border-color .18s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(25,45,85,.12);
+      border-color: #c5d5f5;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: .8rem;
+    }
+
+    .card-icon-title {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+
+    .icon {
+      font-size: 1.7rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.25;
+    }
+
+    /* ── Frequency badges ── */
+    .freq {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: .28rem;
+      font-size: .72rem;
+      font-weight: 700;
+      padding: .28rem .7rem;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+    .freq-high {
+      background: #fff1f1;
+      color: #c0392b;
+      border: 1px solid #f5c6c6;
+    }
+    .freq-mid {
+      background: #fff8ee;
+      color: #b45309;
+      border: 1px solid #f5dbb0;
+    }
+
+    .card-desc {
+      font-size: .875rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Tag list ── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+    }
+
+    .tag {
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: .72rem;
+      font-weight: 600;
+      padding: .22rem .65rem;
+      border-radius: 6px;
+      line-height: 1.5;
+    }
+
+    /* ── Callout ── */
+    .callout {
+      margin-top: 2.8rem;
+      background: linear-gradient(135deg, #f0f5ff 0%, #e8f0fd 100%);
+      border: 1px solid #c5d5f5;
+      border-left: 4px solid var(--blue);
+      border-radius: 12px;
+      padding: 1.35rem 1.6rem;
+      font-size: .92rem;
+      line-height: 1.8;
+      color: #1e3a6e;
+    }
+    .callout strong {
+      display: block;
+      font-size: .95rem;
+      margin-bottom: .45rem;
+      color: var(--blue);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.7rem; }
+      .grid { grid-template-columns: 1fr; }
+      main { padding: 2rem 1.1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html" class="back-link">返回首页</a>
+    <div class="header-badge">SAP-C02 · DevOps</div>
+    <h1>DevOps 与开发者工具</h1>
+    <p class="subtitle">DevOps &amp; Developer Tools</p>
+    <p class="intro">
+      SAP-C02 DevOps 模块考察 CI/CD 流水线设计、部署策略选择和应用可观测性，核心在于理解不同部署策略的权衡及 AWS Code 系列工具的协作方式。
+    </p>
+  </div>
+</header>
+
+<main>
+  <p class="section-label">服务导航 · 4 个核心服务</p>
+
+  <div class="grid">
+
+    <!-- 1. CodePipeline -->
+    <a href="codepipeline.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">🔁</span>
+          <span class="card-title">AWS CodePipeline</span>
+        </div>
+        <span class="freq freq-high">🔥 高频</span>
+      </div>
+      <p class="card-desc">全托管 CI/CD 流水线编排</p>
+      <div class="tags">
+        <span class="tag">Stage 与 Action 类型</span>
+        <span class="tag">跨账号部署</span>
+        <span class="tag">手动审批</span>
+        <span class="tag">与 CodeBuild/CodeDeploy 集成</span>
+        <span class="tag">Artifact 存储</span>
+      </div>
+    </a>
+
+    <!-- 2. CodeDeploy -->
+    <a href="codedeploy.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">🚀</span>
+          <span class="card-title">AWS CodeDeploy</span>
+        </div>
+        <span class="freq freq-high">🔥 高频</span>
+      </div>
+      <p class="card-desc">自动化应用部署到 EC2/ECS/Lambda</p>
+      <div class="tags">
+        <span class="tag">部署类型(蓝/绿/原地)</span>
+        <span class="tag">EC2 vs ECS vs Lambda</span>
+        <span class="tag">AppSpec 文件</span>
+        <span class="tag">回滚机制</span>
+        <span class="tag">部署配置</span>
+      </div>
+    </a>
+
+    <!-- 3. CodeBuild / CodeCommit / CodeArtifact -->
+    <a href="codecommit-build.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">🔨</span>
+          <span class="card-title">AWS CodeBuild / CodeCommit / CodeArtifact</span>
+        </div>
+        <span class="freq freq-mid">🟡 中频</span>
+      </div>
+      <p class="card-desc">源代码管理、构建服务与制品仓库</p>
+      <div class="tags">
+        <span class="tag">buildspec.yml</span>
+        <span class="tag">环境变量</span>
+        <span class="tag">缓存策略</span>
+        <span class="tag">CodeCommit 分支策略</span>
+        <span class="tag">CodeArtifact 依赖管理</span>
+      </div>
+    </a>
+
+    <!-- 4. X-Ray -->
+    <a href="xray.html" class="card">
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="icon">🔬</span>
+          <span class="card-title">AWS X-Ray</span>
+        </div>
+        <span class="freq freq-mid">🟡 中频</span>
+      </div>
+      <p class="card-desc">分布式追踪，定位微服务性能瓶颈</p>
+      <div class="tags">
+        <span class="tag">Trace &amp; Segment</span>
+        <span class="tag">采样规则</span>
+        <span class="tag">Service Map</span>
+        <span class="tag">与 Lambda/ECS 集成</span>
+        <span class="tag">Groups &amp; Insights</span>
+      </div>
+    </a>
+
+  </div><!-- /grid -->
+
+  <!-- Callout -->
+  <div class="callout">
+    <strong>💡 考试提示</strong>
+    CodeDeploy 的蓝/绿部署策略在 SAP 中是高频考点，特别是 ECS 蓝/绿部署（使用 CodeDeployHook）。滚动更新（Rolling）vs 蓝绿（Blue/Green）vs 金丝雀（Canary）的场景选型需要熟记。CodePipeline 跨账号部署涉及 IAM 角色的配置方式也经常出现。
+  </div>
+
+</main>
+
+</body>
+</html>
