@@ -13,14 +13,14 @@
 |---|---|
 | 根导航页 | 已完成；各分类卡片已标注完成进度，未创建的 `architecture-patterns.html` 入口已禁用，无断链 |
 | 分类入口页 | 12 个已完成（根导航挂了 11 个，`hybrid-edge` 未挂载） |
-| 服务正文 | **已完成 24 篇 / 导航规划 78 篇（去重）＝ 30.8%** |
-| 未创建正文 | **54 篇**（78 篇规划减去已完成 24 篇；含已禁用入口的 `architecture-patterns.html` 与 `app-runner.html`） |
+| 服务正文 | **已完成 26 篇 / 导航规划 78 篇（去重）＝ 33.3%** |
+| 未创建正文 | **52 篇**（78 篇规划减去已完成 26 篇；含已禁用入口的 `architecture-patterns.html` 与 `app-runner.html`） |
 | 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
-| 正文内场景题 | 24 篇正文共内嵌 **136 道手写场景题**，不是 529 道 |
+| 正文内场景题 | 26 篇正文共内嵌 **148 道手写场景题**，不是 529 道 |
 | 推荐下一篇 | `application-integration/sqs-sns.html`（P0；从零编写） |
 | 最大阻塞 | 剩余正文量大，且 529 题尚未按服务归类、题库化；导航/命名旧规范已清理 |
 
-**一句话：站点骨架和 24 篇高频核心服务正文已经成形，剩余 54 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
+**一句话：站点骨架和 26 篇高频核心服务正文已经成形，剩余 52 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
 
 ---
 
@@ -30,7 +30,7 @@
 |---|---|---:|---|
 | 根导航页 | `index.html` | 1 | 手工维护的 11 分类卡片入口，设计完成 |
 | 分类入口页 | `<category>/index.html` | 12 | 11 个已挂到根页，`hybrid-edge/index.html` 未挂载 |
-| 服务正文 | `<category>/*.html` | **24** | VPC、CloudFront、Direct Connect、VPN、Transit Gateway、Route 53、ELB、EC2、Auto Scaling、Lambda、ECS/Fargate、RDS/Aurora、DynamoDB、S3、EBS、EFS、IAM、KMS/CloudHSM、Organizations/SCP、IAM Identity Center、CloudFormation、CloudWatch、CloudTrail、AWS Config |
+| 服务正文 | `<category>/*.html` | **26** | VPC、CloudFront、Direct Connect、VPN、Transit Gateway、Route 53、ELB、PrivateLink、Global Accelerator、EC2、Auto Scaling、Lambda、ECS/Fargate、RDS/Aurora、DynamoDB、S3、EBS、EFS、IAM、KMS/CloudHSM、Organizations/SCP、IAM Identity Center、CloudFormation、CloudWatch、CloudTrail、AWS Config |
 | 参考考题库 | `input/exam.csv` | **529 题** | 含题干、选项、答案、中文解析；只读参考，未加工成页面 |
 | 历史归档正文 | `old/**/*.html` | 10 篇（1 篇 0 字节） | **历史归档，禁止读取或作为续写素材** |
 | 历史归档架构图 | `old/Draw.io/*.drawio` | 4 张 | **历史归档，不读取、不复用** |
@@ -47,6 +47,8 @@
 | `networking/vpn.html` | 网络 | 45 KB | 11,500 | 6 | 18 | 有 |
 | `networking/transit-gateway.html` | 网络 | 44 KB | 11,100 | 6 | 18 | 有 |
 | `networking/route53.html` | 网络 | — | 约 14,000 | 6 | 18 | 有 |
+| `networking/privatelink.html` | 网络 | 35.6 KB | — | 6 | 18 | 有 |
+| `networking/global-accelerator.html` | 网络 | — | — | 6 | 18 | 有 |
 | `compute/ec2.html` | 计算 | 30 KB | 7,800 | 4 | 14 | 有 |
 | `storage/s3.html` | 存储 | 52 KB | 16,300 | 5 | 20 | 有 |
 | `security/iam.html` | 安全 | 62 KB | 19,800 | 6 | 20 | 有 |
@@ -66,7 +68,7 @@
 | `management/cloudtrail.html` | 管理 | — | — | 6 | 18 | 有 |
 | `management/config.html` | 管理 | — | — | 6 | 18 | 有 |
 
-这 24 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
+这 26 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
 
 ---
 
@@ -76,7 +78,7 @@
 
 | 分类 | 入口页 | 已完成 | 规划 | 缺失 | 完成率 | 优先级 |
 |---|---|---:|---:|---:|---:|---|
-| 网络与内容分发 | `networking/index.html` | 7 | 9 | 2 | 77.8% | P0 |
+| 网络与内容分发 | `networking/index.html` | 9 | 9 | 0 | 100% | P0 |
 | 计算 | `compute/index.html` | 4 | 9 | 5 | 44.4% | P0 |
 | 存储 | `storage/index.html` | 3 | 7 | 4 | 42.9% | P0 |
 | 数据库 | `database/index.html` | 2 | 6 | 4 | 33.3% | P0 |
@@ -89,7 +91,7 @@
 | 机器学习与 AI | `ml/index.html` | 0 | 2 | 2 | 0% | P3 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 0 | 3 | 3 | 0% | P3 |
 | 综合专题 | 根页直达 | 0 | 1 | 1 | 0% | P1 |
-| **合计** |  | **24** | **78** | **54** | **30.8%** |  |
+| **合计** |  | **26** | **78** | **52** | **33.3%** |  |
 
 > 根页写的“74 个文档”是旧口径 / 合并页口径；按当前导航实际目标去重后是 78 篇。完成全部正文后再统一校准首页数字。
 
@@ -99,7 +101,7 @@
 
 图例：`[x]` 已完成，`[ ]` 未开始，`[!]` 需先做决策，`[~]` 草稿 / 待补完。
 
-### 3.1 网络与内容分发（7 / 9）
+### 3.1 网络与内容分发（9 / 9）
 
 - [x] `networking/vpc.html`
 - [x] `networking/direct-connect.html`
@@ -108,10 +110,10 @@
 - [x] `networking/transit-gateway.html` — 完成日期：2026-11-02；字数约 11,100；场景题 6 道；覆盖附件、路由域、RAM、Peering、Multicast、集中出口
 - [x] `networking/route53.html` — 完成日期：2026-11-02；字数约 14,000；场景题 6 道；覆盖七种路由策略、健康检查、Public/Private 托管区、Resolver 混合云 DNS、Traffic Flow 与 AWS 服务集成
 - [x] `networking/elb.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 ALB/NLB/GWLB、Listener/Target Group、健康检查、跨区负载与 TLS 终止
-- [ ] P1 `networking/privatelink.html` — Interface Endpoint、端点服务、与 Peering 对比
-- [ ] P1 `networking/global-accelerator.html` — Anycast IP、端点组、与 CloudFront 对比
+- [x] P1 `networking/privatelink.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Interface Endpoint、Endpoint Service、DNS、连接治理与 Peering 对比
+- [x] P1 `networking/global-accelerator.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖静态 Anycast IP、Standard / Custom Routing、端点组、流量拨盘、健康检查与 CloudFront 对比
 
-备注：根页写“10 个服务”，分类页实际是 9 项，需要校准文案。
+备注：根页服务数已校准为 9 项，与分类页一致。
 
 ### 3.2 计算（4 / 9）
 
@@ -263,12 +265,14 @@
 | `networking/vpn.html` | 6 |
 | `networking/transit-gateway.html` | 6 |
 | `networking/route53.html` | 6 |
+| `networking/global-accelerator.html` | 6 |
 | `compute/auto-scaling.html` | 6 |
 | `compute/lambda.html` | 6 |
 | `compute/fargate-ecs.html` | 6 |
 | `storage/ebs.html` | 6 |
 | `storage/efs.html` | 6 |
 | `networking/elb.html` | 6 |
+| `networking/privatelink.html` | 6 |
 | `database/rds-aurora.html` | 6 |
 | `database/dynamodb.html` | 6 |
 | `security/kms-cloudhsm.html` | 6 |
@@ -278,9 +282,9 @@
 | `management/cloudwatch.html` | 6 |
 | `management/cloudtrail.html` | 6 |
 | `management/config.html` | 6 |
-| **合计** | **约 136** |
+| **合计** | **约 148** |
 
-> “136 道”是根据页面内场景题标题统计的手写场景题，不是 CSV 中的 529 道。首页“529 道题库待整理”目前只是数据储备，不是已完成状态。
+> “148 道”是根据页面内场景题标题统计的手写场景题，不是 CSV 中的 529 道。首页“529 道题库待整理”目前只是数据储备，不是已完成状态。
 
 ### 题库化前需要补的元数据
 
@@ -329,7 +333,7 @@ CSV 没有“服务 / 分类”标签。要把 529 题挂到对应服务页或�
 
 1. 先看 `git status`，确认第 7 节的工作区状态。
 2. 打开本文件第 3 节，从 P0 且 `[ ]` 的第一项开始。
-3. 不要读取 `old/` 历史归档；所有正文从零编写，只参考现有 24 篇正文的结构与写法。
+3. 不要读取 `old/` 历史归档；所有正文从零编写，只参考现有 26 篇正文的结构与写法。
 4. 新建正文后，确认分类页已有同名链接；如果链接写错（如 App Runner），顺手修正入口页。
 5. 完成后更新本文件，再继续下一篇。
 6. 每完成 3–5 篇，跑一次断链检查并提交一次 Git。
@@ -375,16 +379,17 @@ PY
 
 ## 7. 当前 Git 工作区状态（重要）
 
-本次新增 EBS 正文后的工作区状态：
+当前工作区状态：
 
 ```text
  M PROGRESS.md
  M index.html
- M storage/index.html
-?? storage/ebs.html
+ M networking/index.html
+?? networking/global-accelerator.html
+?? networking/privatelink.html
 ```
 
-含义：EBS 正文、存储分类卡片、首页完成数和本进度文档尚未提交。继续写作前可提交这些变更，或继续新增正文。
+含义：Global Accelerator / PrivateLink 正文、网络分类卡片、首页统计和本进度文档尚未提交。继续写作前可提交这些变更，或继续新增正文。
 
 ---
 
@@ -427,14 +432,14 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 ### 8.6 P2：首页统计与事实不符
 
-- 首页写“74 个文档”，实际 24 篇正文 + 12 个分类入口 + 根页。
-- 首页写“529 道真题”，实际只有 CSV 原料，页面内约 136 道手写场景题。
+- 首页写“74 个文档”，实际 26 篇正文 + 12 个分类入口 + 根页。
+- 首页写“529 道真题”，实际只有 CSV 原料，页面内约 148 道手写场景题。
 - 首页写“11 大类”，实际有 12 个分类入口页（`hybrid-edge` 未挂载）。
-- `networking` 首页写“10 个服务”，分类页实际 9 项。
+- `networking` 首页服务数与分类页数量不一致。**已处理（2026-11-02）：** 根页和分类页统一为 9 项。
 
-建议：在内容未完成前改为“24 篇已上线 / 54 篇待补 / 529 道题库待整理”，或完成后再恢复宣传数字。
+建议：在内容未完成前改为“26 篇已上线 / 52 篇待补 / 529 道题库待整理”，或完成后再恢复宣传数字。
 
-**已处理（2026-11-02）：** 首页统计已改为“24 / 78 篇正文已完成”“529 道题库待整理”，页脚同步调整。
+**已处理（2026-11-02）：** 首页统计已改为“26 / 78 篇正文已完成”“529 道题库待整理”，页脚同步调整；网络分类进度同步为 9 / 9，根页服务数同步为 9。
 
 ### 8.7 P2：历史归档与部署
 
@@ -474,7 +479,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 ## 10. 历史归档说明
 
-`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。新正文一律基于现有 24 篇正文的模板从零编写。
+`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。新正文一律基于现有 26 篇正文的模板从零编写。
 
 是否保留、删除或从 Pages 构建中排除，见第 8.7 节。
 
@@ -493,5 +498,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-02 | 新增 `compute/lambda.html`：10 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖调用模式、事件源映射、并发、失败处理、冷启动、VPC 网络、权限、版本发布及 Lambda@Edge；`compute/index.html` 卡片改为已完成 | `compute/lambda.html`、`compute/index.html`、`PROGRESS.md` | 下一篇 `storage/ebs.html` |
 | 2026-11-02 | 新增 `storage/ebs.html`：8 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖卷型、性能、快照、加密、扩容、Multi-Attach、备份与灾备；`storage/index.html` 卡片改为已完成 | `storage/ebs.html`、`storage/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `storage/efs.html` |
 | 2026-11-02 | 新增 `management/config.html`：12 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖配置记录、Rules、修复、Conformance Pack、Aggregator；管理分类卡片及首页统计更新，正文完成数校准为 24 / 78 | `management/config.html`、`management/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `application-integration/sqs-sns.html`（P0） |
+| 2026-11-02 | 新增 `networking/privatelink.html`：11 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖 Interface Endpoint、Endpoint Service、DNS、连接治理及 PrivateLink / Peering 选型；网络模块进度更新至 8 / 9，正文完成数校准为 25 / 78 | `networking/privatelink.html`、`networking/index.html`、`PROGRESS.md` | 按用户要求继续 P1：`networking/global-accelerator.html` |
+| 2026-11-02 | 新增 `networking/global-accelerator.html`：12 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖静态 Anycast IP、Standard / Custom Routing、端点组、流量拨盘、健康检查及 CloudFront 对比；网络模块完成 9 / 9，正文完成数校准为 26 / 78 | `networking/global-accelerator.html`、`networking/index.html`、`index.html`、`PROGRESS.md` | P0：`application-integration/sqs-sns.html` |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。

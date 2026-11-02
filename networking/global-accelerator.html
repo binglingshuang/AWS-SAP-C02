@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Global Accelerator 考点速查：静态 Anycast IP、端点组、流量拨盘、健康检查，以及与 CloudFront、Route 53 的区别。">
+<title>AWS SAP-C02｜AWS Global Accelerator 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:130px}
+.diagram .arrow{color:#64748b;font-weight:700;font-size:18px}
+.scenario{border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0;background:#fafcff}
+.scenario-title{font-weight:700;font-size:15px;margin-bottom:10px;color:#1e3a5f}
+.analysis{background:var(--green-soft);border-left:3px solid var(--green);padding:10px 14px;border-radius:6px;margin:10px 0}
+.answer-box{background:var(--primary-soft);border-left:3px solid var(--primary);padding:10px 14px;border-radius:6px;margin:10px 0}
+.trap{background:var(--orange-soft);border-left:3px solid var(--orange);padding:10px 14px;border-radius:6px;margin:10px 0}
+.small{font-size:13px;color:var(--muted)}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow"><a href="index.html" style="color:#bfdbfe">← 返回网络模块</a></div>
+  <h1>AWS Global Accelerator<br><span style="font-size:0.65em;font-weight:400;color:#93c5fd">全球网络流量加速与高可用入口 — SAP-C02 核心考点</span></h1>
+  <p>通过全球 Anycast 静态 IP 接收用户流量，并尽早将流量送入 AWS 全球网络，再路由到健康的区域端点。重点掌握 Standard / Custom Routing、端点组、流量拨盘、健康检查，以及与 CloudFront 的分工。</p>
+  <div class="header-meta">
+   <span class="pill">⚡ 中高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">网络 / 全球可用性</span>
+   <span class="pill">Anycast IP · Endpoint Group · CloudFront</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回网络分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav id="mainNav">
+ <strong>页面目录</strong>
+ <a href="#overview">一、服务定位与流量路径</a>
+ <a href="#components">二、核心组件</a>
+ <a href="#standard">三、Standard Accelerator</a>
+ <a href="#custom">四、Custom Routing</a>
+ <a href="#health">五、健康检查与故障切换</a>
+ <a href="#traffic">六、流量调度与发布</a>
+ <a href="#comparison">七、Global Accelerator vs CloudFront</a>
+ <a href="#architecture">八、架构设计与边界</a>
+ <a href="#scenarios">九、场景题解析</a>
+ <a href="#quick">十、关键词速查</a>
+ <a href="#memory">十一、考前速记卡</a>
+ <a href="#quiz">十二、快速自测</a>
+</nav>
+
+<main>
+<section id="overview">
+<h2>一、服务定位与流量路径</h2>
+<p class="lead">AWS Global Accelerator 是全球网络层服务。它为应用提供固定的 Anycast 入口 IP，将用户流量从就近的 AWS 边缘接入点送入 AWS 全球网络，再转发到一个或多个区域中的应用端点，改善全球访问的网络路径稳定性与可用性。</p>
+<div class="diagram">
+ <div class="node"><b>全球用户</b><br><small>TCP / UDP 客户端</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>静态 Anycast IP</b><br><small>就近 AWS Edge 接入</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>AWS 全球网络</b><br><small>健康与策略选路</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>区域端点</b><br><small>ALB / NLB / EC2 / EIP</small></div>
+</div>
+<div class="callout"><b>核心价值：</b>用户使用稳定的静态 IP；流量更早进入 AWS 全球网络；Standard Accelerator 可根据端点健康状态和配置将新连接导向可用端点。它不会缓存应用内容，也不会替代应用自身的区域级容错和数据复制。</div>
+<div class="table-wrap"><table>
+<thead><tr><th>组件</th><th>职责</th><th>考试中的关键词</th></tr></thead>
+<tbody>
+<tr><td>Accelerator</td><td>提供静态入口 IP 与全球流量路由能力。</td><td>稳定 IP、Anycast、跨区域入口。</td></tr>
+<tr><td>Listener</td><td>定义客户端流量使用的协议与端口或端口范围。</td><td>TCP / UDP 流量入口。</td></tr>
+<tr><td>Endpoint Group</td><td>按 AWS Region 建立端点组，设置区域级流量拨盘和健康检查参数。</td><td>区域端点、Traffic Dial。</td></tr>
+<tr><td>Endpoint</td><td>实际承载应用流量的区域资源；Standard 与 Custom Routing 支持不同。</td><td>ALB / NLB / EC2 / EIP 或 VPC 子网。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="components">
+<h2>二、核心组件与静态 IP</h2>
+<h3>静态 Anycast IP</h3>
+<ul>
+ <li>默认 IPv4 Accelerator 分配两个静态 IPv4 地址；双栈 Accelerator 使用两个静态 IPv4 和两个静态 IPv6 地址。</li>
+ <li>同一组入口地址可用于全球用户访问多个区域端点，不必让客户端跟随区域负载均衡器地址变化。</li>
+ <li>IPv4 场景可按服务支持条件使用 BYOIP 地址范围；需核对具体配置限制。</li>
+ <li>只要 Accelerator 仍存在，分配给它的静态 IP 就保留；停用 Accelerator 会停止接收 / 路由流量，但不会仅因停用而释放地址。删除 Accelerator 后地址会失去关联，不能假设可重新取回。</li>
+</ul>
+<h3>Standard 与 Custom Routing 的端点</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Accelerator 类型</th><th>端点类型</th><th>目标选择方式</th></tr></thead>
+<tbody>
+<tr><td>Standard</td><td>Network Load Balancer、Application Load Balancer、EC2 实例、Elastic IP 地址。</td><td>Global Accelerator 按客户端位置、端点健康和配置策略选择区域及健康端点。</td></tr>
+<tr><td>Custom Routing</td><td>VPC 子网。</td><td>仅支持 IPv4；通过 Accelerator 静态 IP 与 Listener 端口映射到子网中的特定私有 IP / EC2 端口。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>边界：</b>端点类型、双栈要求、客户端 IP 保留和协议支持取决于 Accelerator 类型及端点配置。设计前按官方 endpoint requirements 核实，不要把一种端点的能力推广到所有端点。</div>
+</section>
+
+<section id="standard">
+<h2>三、Standard Accelerator：多区域应用的常用模式</h2>
+<p>Standard Accelerator 适用于需要稳定全球入口、智能路由和区域故障切换的互联网应用。一个 Accelerator 可以设置 Listener，每个 Listener 可关联多个区域 Endpoint Group，每个端点组可包含一个或多个受支持端点。</p>
+<h3>工作机制</h3>
+<ol>
+ <li>客户端连接 Accelerator 静态 IP 和 Listener 支持的端口。</li>
+ <li>Global Accelerator 根据客户端位置、端点组配置与健康状态，选择目标区域。</li>
+ <li>端点组中的权重影响端点间流量分配；Traffic Dial 控制发往该区域端点组的流量比例。</li>
+ <li>标准端点组持续执行健康检查；端点不健康时，新的流量连接会转向其他健康端点 / 区域（需有可用且符合配置的目标）。</li>
+</ol>
+<div class="callout green"><b>适合：</b>全球用户访问多区域 API / 游戏 / 实时应用；需要稳定 IP 白名单；想用区域级流量切换做蓝绿发布、演练或灾备。</div>
+<div class="callout red"><b>不要误解：</b>Global Accelerator 不复制数据库、不同步文件，也不自动保证两个 Region 的应用数据一致。跨区域状态复制、写入冲突和恢复策略仍由应用及数据服务架构解决。</div>
+</section>
+
+<section id="custom">
+<h2>四、Custom Routing Accelerator：定向到特定目的地</h2>
+<p>Custom Routing 面向需要由客户端连接信息或应用逻辑选定具体后端的场景。端点是 VPC 子网，Global Accelerator 将指定 Listener 端口映射到子网内私有地址和端口；典型用例是多人游戏、媒体会话等，需要把用户分配到特定服务器。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>能力</th><th>Custom Routing 行为</th><th>设计影响</th></tr></thead>
+<tbody>
+<tr><td>流量映射</td><td>外部静态 IP + Listener 端口映射至具体子网目的地 IP / 端口。</td><td>应用需要了解端口映射并将分配结果提供给客户端。</td></tr>
+<tr><td>端点类型</td><td>VPC 子网。</td><td>与 Standard 的 ALB / NLB / EC2 / EIP 端点模型不同。</td></tr>
+<tr><td>健康检查</td><td>不使用 Standard 端点组的健康检查机制。</td><td>需由应用或自有控制面判断目的地可用性，不要依赖 GA 自动健康故障切换。</td></tr>
+<tr><td>目标选择</td><td>按端口映射定向，不由 GA 在多个健康后端间做普通负载均衡。</td><td>调用方需选择可用的目标与端口。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>选型判断：</b>题目若要求“用户 A 必须连到指定游戏服务器及其 UDP 端口”，考虑 Custom Routing；若只要求 GA 在多个区域的负载均衡器 / 实例间按健康度分配，使用 Standard。</div>
+</section>
+
+<section id="health">
+<h2>五、健康检查与故障切换</h2>
+<h3>Standard Accelerator 的健康判定</h3>
+<ul>
+ <li>Standard Accelerator 默认自动执行健康检查。EC2 / EIP 端点的相关设置在 Global Accelerator 配置；ALB / NLB 端点则通过负载均衡器的健康检查设置管理。</li>
+ <li>需保证目标实际监听并允许探测流量；新加入的 Standard 端点需通过健康检查后才会被视为健康。</li>
+ <li>端点健康会影响 Global Accelerator 是否把新的连接路由到该端点。已有连接是否存续还取决于协议、连接状态和故障本身。</li>
+ <li>健康检查失败时，要同时检查端点的服务状态、负载均衡器目标健康、网络 ACL / 安全组和探测端口配置。</li>
+ <li>为区域故障切换准备真正可承载流量的备用端点及足够容量；只创建空的 Endpoint Group 并不构成灾备。</li>
+</ul>
+<h3>Custom Routing 的故障处理</h3>
+<p>Custom Routing 不使用 Standard 的端点健康检查，也没有由 GA 根据健康检查自动切换目的地的同类机制。若业务要避免分配到故障服务器，需在应用分配逻辑或外部控制面中维护目的地健康状态。</p>
+<h3>连接空闲超时</h3>
+<p>Global Accelerator 的连接空闲超时不可自定义：TCP 为 340 秒，UDP 为 30 秒。超时窗口内需要有至少 1 字节的业务数据进出；仅发送 TCP keep-alive 不能维持连接。既有连接可在端点标记为不健康或被移除后继续指向原端点，直到空闲超时；因此故障切换主要影响新连接，长连接应用应设计重连与会话恢复。</p>
+<div class="callout orange"><b>全端点不健康：</b>若 Standard Accelerator 没有任何健康端点可供路由，Global Accelerator 会将流量路由到所有端点。健康检查不是“无健康目标时绝不发送流量”的绝对安全闸门。</div>
+<div class="callout"><b>考试排障顺序：</b>检查 Accelerator / Listener 状态 → Endpoint Group 与区域流量拨盘 → 端点健康检查 → 后端目标与容量 → 安全组及监听端口 → 应用与数据层区域容灾。</div>
+</section>
+
+<section id="traffic">
+<h2>六、流量调度、蓝绿发布与客户端 IP</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>控制项</th><th>作用</th><th>典型用途</th></tr></thead>
+<tbody>
+<tr><td>Traffic Dial</td><td>限制已经被选中发往该区域 Endpoint Group 的流量百分比；未被该组接受的流量会转向其他区域端点组。</td><td>区域级蓝绿发布、演练、维护或灾备切换。</td></tr>
+<tr><td>Endpoint Weight</td><td>控制同一端点组内不同端点之间的相对流量分配。</td><td>同 Region 的端点权重路由和渐进迁移。</td></tr>
+<tr><td>健康状态</td><td>Standard Accelerator 对不健康端点停止新流量路由，选择其他可用端点。</td><td>区域 / 端点故障切换。</td></tr>
+<tr><td>客户端 IP 保留</td><td>部分 Standard 端点类型与配置支持保留客户端源 IP；Custom Routing 会保留客户端 IP。</td><td>源 IP 访问控制、审计或应用层策略。</td></tr>
+</tbody></table></div>
+<ul>
+ <li>Traffic Dial 是区域级比例控制，应用在基于其他因素（如用户位置）已被导向该区域组的流量上，不是对 Listener 全部流量的绝对百分比；Endpoint Weight 控制的是端点组内端点的相对分配。</li>
+ <li>客户端 IP 保留有适用条件，且会影响源地址呈现、安全组和连接行为；逐个验证端点类型、区域与资源配置支持。</li>
+ <li>对于安全组规则，要根据应用看到的源 IP / 代理路径准确设计；不要无条件假定目标一定看到客户端原始地址。</li>
+ <li>流量调低到 0 不等于删除资源或完成数据切换；确认应用、依赖服务、缓存和连接排空策略。</li>
+</ul>
+</section>
+
+<section id="comparison">
+<h2>七、Global Accelerator vs CloudFront vs Route 53</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>维度</th><th>Global Accelerator</th><th>CloudFront</th><th>Route 53</th></tr></thead>
+<tbody>
+<tr><td>主要层次 / 目标</td><td>网络层全球流量加速与区域端点可用性。</td><td>HTTP(S) 内容分发、边缘缓存与应用层处理。</td><td>权威 DNS 与 DNS 路由策略。</td></tr>
+<tr><td>入口</td><td>固定 Anycast 静态 IP；支持 TCP / UDP Listener（按配置）。</td><td>CloudFront 分发域名及自定义域名，面向 Web 内容 / HTTP(S)。</td><td>DNS 名称解析为目标记录。</td></tr>
+<tr><td>缓存</td><td>不缓存应用内容。</td><td>可在边缘缓存静态 / 动态内容，按 Cache Policy 控制。</td><td>不缓存应用响应；DNS 记录有 TTL。</td></tr>
+<tr><td>客户端连接与路径</td><td>连接到稳定 IP，流量从就近边缘进入 AWS 全球网络，转至区域端点。</td><td>在边缘处理请求并可从缓存响应；未命中时访问 Origin。</td><td>客户端解析 DNS 后直接连接所解析的服务端点；故障切换受 DNS 缓存和 TTL 等因素影响。</td></tr>
+<tr><td>典型场景</td><td>非 HTTP 应用、实时 TCP / UDP、静态 IP 白名单、多区域快速切换。</td><td>网站、API 加速与缓存、边缘认证 / 请求处理。</td><td>域名路由、基于 DNS 的区域选择、健康检查集成。</td></tr>
+<tr><td>是否互斥</td><td colspan="3">不互斥。可按需组合 DNS 与 GA 固定入口，或将 CloudFront 用于 Web 内容分发、GA 用于其他实时流量；避免为缓存场景误选纯网络加速。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>记忆口诀：</b>“要固定 IP、TCP/UDP、迅速切区域”→ Global Accelerator；“要 HTTP(S) 缓存、边缘函数、WAF / 内容分发”→ CloudFront；“要域名解析和 DNS 策略”→ Route 53。</div>
+</section>
+
+<section id="architecture">
+<h2>八、架构设计与常见陷阱</h2>
+<h3>多区域入口设计</h3>
+<ol>
+ <li>按客户端协议和端口定义 Listener，确认端点资源支持这些流量。</li>
+ <li>在需要承载业务的每个 Region 创建 Endpoint Group，并配置该区域的负载均衡器 / 实例端点。</li>
+ <li>为端点组配置健康检查，确保探测路径能反映业务服务而非仅仅主机存活。</li>
+ <li>通过 Traffic Dial 和 Endpoint Weight 执行区域级与区域内的流量管理。</li>
+ <li>验证备用 Region 的数据就绪、容量、依赖项和客户端 IP / 安全组要求，再做故障演练。</li>
+</ol>
+<div class="table-wrap"><table>
+<thead><tr><th>常见误区</th><th>正确理解</th></tr></thead>
+<tbody>
+<tr><td>Global Accelerator 是全球 CDN。</td><td>不是。它不提供 CloudFront 式的内容缓存。</td></tr>
+<tr><td>静态 Anycast IP 保证应用必然可用。</td><td>静态入口稳定，但后端健康、应用容量、数据复制仍需自行设计。</td></tr>
+<tr><td>GA 会在创建 Accelerator 后自动复制应用和数据库。</td><td>不会。GA 负责流量入口与路由，不负责跨区域数据复制。</td></tr>
+<tr><td>Custom Routing 自动检测服务器健康并避开故障服务器。</td><td>Custom Routing 不使用 Standard 的健康检查 / 自动故障切换机制。</td></tr>
+<tr><td>只把主区域的流量拨盘调低就完成灾备。</td><td>备用区域必须有健康端点、足够容量和可用数据；并验证连接及依赖。</td></tr>
+<tr><td>所有后端都一定看到客户端源 IP。</td><td>客户端 IP 保留依端点类型与配置而异，需查对应 endpoint requirements。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="scenarios">
+<h2>九、场景题解析</h2>
+<div class="scenario">
+ <div class="scenario-title">场景 1：全球 TCP 游戏服务需要固定 IP 和快速区域切换</div>
+ <p>玩家使用 TCP 连接游戏服务，客户端网络策略只允许固定 IP；应用部署在两个 Region，需在一个区域故障时尽快将新连接导向另一区域。</p>
+ <div class="answer-box"><b>正确方向：</b>使用 Standard Global Accelerator，为区域端点配置 Listener、Endpoint Group 与健康检查。</div>
+ <div class="analysis"><b>分析：</b>GA 提供静态 Anycast 入口并按端点健康在区域间路由，适合 TCP 实时服务和固定 IP 需求。确认备用 Region 端点和应用数据已就绪。</div>
+ <div class="trap"><b>排除：</b>CloudFront 面向 HTTP(S) 内容分发，不是通用 TCP 入口；Route 53 DNS 故障切换会受 DNS 缓存与 TTL 影响，也不提供同类固定 Anycast IP 入口。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景 2：网站需要全球静态资源缓存并降低源站负载</div>
+ <p>企业网站以图片、脚本和可缓存页面为主，目标是由全球边缘节点缓存内容，并可使用缓存策略控制命中率。</p>
+ <div class="answer-box"><b>正确方向：</b>使用 CloudFront。</div>
+ <div class="analysis"><b>分析：</b>CloudFront 是 CDN，可缓存对象并在缓存命中时直接响应用户。若另有非 HTTP 流量或固定 IP 需求，再评估与 GA 组合。</div>
+ <div class="trap"><b>排除：</b>GA 优化网络路径但不缓存内容；只使用 GA 不会减少静态对象回源请求。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景 3：多区域发布需要逐步把用户流量切到新 Region</div>
+ <p>新 Region 已准备好应用端点，团队希望先少量放量，再逐步提高流量，期间可快速回切。</p>
+ <div class="answer-box"><b>正确方向：</b>使用 Standard Accelerator 的区域 Endpoint Group Traffic Dial 进行区域级流量调整；端点组内需要细分时配置 endpoint weights。</div>
+ <div class="analysis"><b>分析：</b>Traffic Dial 控制到某区域端点组的流量比例；Endpoint Weight 控制同一组内不同端点的相对流量。先验证新区域容量、数据和健康检查，再逐步放量。</div>
+ <div class="trap"><b>排除：</b>不要把两个流量控制层级混为一谈，也不要只修改 DNS TTL 来满足快速、可控的 GA 流量迁移目标。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景 4：在线游戏要把每个玩家连接到指定媒体服务器和端口</div>
+ <p>应用需要按会话分配逻辑将玩家连接到一个具体的 EC2 服务器及 UDP 端口，而不是由负载均衡器随机分配后端。</p>
+ <div class="answer-box"><b>正确方向：</b>评估 Custom Routing Accelerator，并由应用根据端口映射把用户分配到具体子网目的地。</div>
+ <div class="analysis"><b>分析：</b>Custom Routing 可将外部 Listener 端口映射到 VPC 子网中的特定私有 IP 和端口，适合由应用逻辑控制目标的实时游戏 / 媒体工作负载。</div>
+ <div class="trap"><b>排除：</b>Standard Accelerator 面向健康端点间的常规流量分配；Custom Routing 不提供 Standard 的健康检查自动故障切换，应用需处理目的地健康。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景 5：不改变客户端 IP 白名单，但后端看到的来源地址需要核实</div>
+ <p>迁移到 Global Accelerator 后，安全团队要求后端继续按照客户端原始 IP 做访问控制和审计。</p>
+ <div class="answer-box"><b>正确方向：</b>先确认所用 Standard 端点类型和配置是否支持客户端 IP 保留，再配置端点与安全组并验证实际源地址。</div>
+ <div class="analysis"><b>分析：</b>客户端 IP 保留并非所有 endpoint 的通用默认行为。应按 AWS 的 endpoint requirements 检查端点类型、区域支持和资源配置，并用日志 / 测试流量验证。</div>
+ <div class="trap"><b>排除：</b>不能仅因使用 GA 的静态 IP，就推断后端一定看到用户原始 IP；也不能把 GA 的入口 IP 当作用户地址。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景 6：区域灾备演练中主区域故障，但备用区域没有准备数据</div>
+ <p>团队计划将主区域流量拨盘调至零，切到备用区域；检查发现备用应用虽然运行，但数据库尚未复制完成。</p>
+ <div class="answer-box"><b>正确方向：</b>先建立并验证数据复制 / 恢复、应用依赖和备用容量，再通过健康检查与 Traffic Dial 执行流量切换。</div>
+ <div class="analysis"><b>分析：</b>GA 管理网络入口和流量路由，不会复制或保证数据库一致性。健康端点也不能说明数据已经满足 RPO / RTO。</div>
+ <div class="trap"><b>排除：</b>仅调整 GA 流量拨盘会把用户送到可能返回旧数据或错误的应用；必须将数据层灾备作为切换前置条件。</div>
+</div>
+</section>
+
+<section id="quick">
+<h2>十、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>容易混淆</th></tr></thead>
+<tbody>
+<tr><td>固定静态公网 IP、全球 TCP / UDP</td><td>Global Accelerator</td><td>CloudFront 不是通用 TCP / UDP 加速入口</td></tr>
+<tr><td>Anycast、从就近 Edge 进入 AWS 网络</td><td>GA 静态 IP + AWS 全球网络</td><td>不是内容缓存</td></tr>
+<tr><td>Standard 多区域健康路由</td><td>Listener + Endpoint Group + Endpoint Health</td><td>灾备区域仍需准备应用与数据</td></tr>
+<tr><td>区域级渐进放量</td><td>Endpoint Group Traffic Dial</td><td>与端点权重的控制范围不同</td></tr>
+<tr><td>同一区域多个后端按比例分流</td><td>Endpoint Weight</td><td>权重不是区域流量拨盘</td></tr>
+<tr><td>指定用户到特定 EC2 私有 IP / 端口</td><td>Custom Routing Accelerator</td><td>无 Standard 的健康检查自动故障切换</td></tr>
+<tr><td>全球静态网站缓存、减少回源</td><td>CloudFront</td><td>GA 不缓存内容</td></tr>
+<tr><td>DNS 策略与域名解析</td><td>Route 53</td><td>DNS TTL 故障切换与固定 Anycast IP 不是一回事</td></tr>
+<tr><td>备用 Region 快速接管</td><td>GA + 健康端点 + 数据层灾备</td><td>GA 不负责复制数据库</td></tr>
+<tr><td>后端需要客户端源 IP</td><td>核实 Endpoint 类型与 IP preservation 配置</td><td>不能默认所有端点均保留源 IP</td></tr>
+<tr><td>停用后仍要保留固定地址</td><td>保留 Accelerator 资源</td><td>删除后不能保证重新获得原地址</td></tr>
+<tr><td>双栈客户端</td><td>Dual-stack Accelerator 与兼容端点</td><td>检查端点本身的双栈要求</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>十一、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>GA 定位：</b>全球网络层加速与可用性服务</span></li>
+<li><input type="checkbox"><span><b>Anycast：</b>固定静态入口 IP，从就近 AWS Edge 接入</span></li>
+<li><input type="checkbox"><span><b>IPv4 Accelerator：</b>默认两个静态 IPv4 地址</span></li>
+<li><input type="checkbox"><span><b>Dual-stack：</b>两个 IPv4 + 两个 IPv6 静态地址</span></li>
+<li><input type="checkbox"><span><b>Standard 端点：</b>NLB、ALB、EC2、EIP</span></li>
+<li><input type="checkbox"><span><b>Standard：</b>按位置、健康和配置路由新连接</span></li>
+<li><input type="checkbox"><span><b>Listener：</b>定义协议与端口 / 端口范围</span></li>
+<li><input type="checkbox"><span><b>Endpoint Group：</b>按 Region 分组端点</span></li>
+<li><input type="checkbox"><span><b>Traffic Dial：</b>控制区域组的流量比例</span></li>
+<li><input type="checkbox"><span><b>Endpoint Weight：</b>控制同组端点的相对分配</span></li>
+<li><input type="checkbox"><span><b>Standard Health：</b>健康检查影响端点选路与新连接</span></li>
+<li><input type="checkbox"><span><b>Custom Routing：</b>VPC 子网端点，按映射定向到 IP / 端口</span></li>
+<li><input type="checkbox"><span><b>Custom Routing：</b>不使用 Standard 健康检查自动切换</span></li>
+<li><input type="checkbox"><span><b>GA 不缓存：</b>缓存与 HTTP 边缘处理用 CloudFront</span></li>
+<li><input type="checkbox"><span><b>TCP / UDP：</b>GA 适合非 HTTP 实时流量和固定 IP</span></li>
+<li><input type="checkbox"><span><b>Route 53：</b>DNS 路由与域名解析，受 DNS 缓存 / TTL 影响</span></li>
+<li><input type="checkbox"><span><b>灾备：</b>GA 不复制数据，备用 Region 必须真正就绪</span></li>
+<li><input type="checkbox"><span><b>客户端 IP：</b>是否保留取决于端点类型和配置</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十二、快速自测</h2>
+<p class="small">先独立作答，再点击选项查看解析。</p>
+<div class="quiz">
+ <b>1. 全球 UDP 游戏客户端要求固定公网入口，并且应用需要按会话连接指定后端服务器与端口，应优先评估哪种方案？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',false)">A. CloudFront Distribution</button>
+ <button class="secondary" onclick="showAnswer('q1',true)">B. Global Accelerator Custom Routing</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. Route 53 简单路由</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. S3 Transfer Acceleration</button>
+ <div class="answer" id="q1"><b>正确答案：B。</b>Custom Routing 提供固定入口并按端口映射到子网里的特定目的地，适合会话必须指定后端的应用。它不负责 Standard 的健康检查自动故障切换。</div>
+</div>
+<div class="quiz">
+ <b>2. 一个 Web 应用需要缓存静态图片、减少源站请求并在边缘执行请求处理，应选择什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. Global Accelerator</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. CloudFront</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. VPC Peering</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. Transit Gateway</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>CloudFront 支持 HTTP(S) 内容分发与边缘缓存；GA 提供全球网络路径加速但不缓存应用对象。</div>
+</div>
+<div class="quiz">
+ <b>3. 需要先将 10% 用户切到新 Region，稳定后逐步提高该区域流量；应使用哪项 GA 控制？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',true)">A. 新 Region Endpoint Group 的 Traffic Dial</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">B. 只调整该区域某个 Endpoint 的 Weight</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. 修改 Listener 的协议</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. 只降低 DNS TTL</button>
+ <div class="answer" id="q3"><b>正确答案：A。</b>Traffic Dial 用于区域 Endpoint Group 流量比例；Endpoint Weight 用于同一端点组内的端点相对分配。切流前还要确认新区域健康、数据与容量就绪。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+ <li><a href="https://docs.aws.amazon.com/global-accelerator/latest/dg/what-is-global-accelerator.html" target="_blank" rel="noopener">AWS Global Accelerator 概览</a></li>
+ <li><a href="https://docs.aws.amazon.com/global-accelerator/latest/dg/introduction-how-it-works.html" target="_blank" rel="noopener">Global Accelerator 工作原理</a></li>
+ <li><a href="https://docs.aws.amazon.com/global-accelerator/latest/dg/about-endpoints.html" target="_blank" rel="noopener">Standard Accelerator 端点</a></li>
+ <li><a href="https://docs.aws.amazon.com/global-accelerator/latest/dg/about-endpoints-caveats.html" target="_blank" rel="noopener">端点要求与客户端 IP 保留限制</a></li>
+ <li><a href="https://docs.aws.amazon.com/global-accelerator/latest/dg/about-endpoint-groups-health-check-options.html" target="_blank" rel="noopener">端点组健康检查选项</a></li>
+ <li><a href="https://docs.aws.amazon.com/global-accelerator/latest/dg/introduction-components.html" target="_blank" rel="noopener">Accelerator 组件</a></li>
+ <li><a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank" rel="noopener">Amazon CloudFront 概览</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>端点支持、客户端 IP 保留、区域可用性、配额和计费可能因配置而异；实施前核对最新 AWS 文档与定价。本页为非官方备考笔记，不代表 AWS 官方题库或认证机构。</div>
+<p><a href="index.html">← 返回网络与内容分发分类页</a></p>
+</section>
+</main>
+</div>
+<footer class="container">AWS SAP-C02 Global Accelerator 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

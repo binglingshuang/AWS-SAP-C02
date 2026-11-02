@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 AWS PrivateLink 考点速查：Interface Endpoint、Endpoint Service、私有 DNS、权限控制与 VPC Peering 选型。">
+<title>AWS SAP-C02｜AWS PrivateLink 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:130px}
+.diagram .arrow{color:#64748b;font-weight:700;font-size:18px}
+.scenario{border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0;background:#fafcff}
+.scenario-title{font-weight:700;font-size:15px;margin-bottom:10px;color:#1e3a5f}
+.analysis{background:var(--green-soft);border-left:3px solid var(--green);padding:10px 14px;border-radius:6px;margin:10px 0}
+.answer-box{background:var(--primary-soft);border-left:3px solid var(--primary);padding:10px 14px;border-radius:6px;margin:10px 0}
+.trap{background:var(--orange-soft);border-left:3px solid var(--orange);padding:10px 14px;border-radius:6px;margin:10px 0}
+.small{font-size:13px;color:var(--muted)}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow"><a href="index.html" style="color:#bfdbfe">← 返回网络模块</a></div>
+  <h1>AWS PrivateLink<br><span style="font-size:0.65em;font-weight:400;color:#93c5fd">私有服务连接与端点服务 — SAP-C02 核心考点</span></h1>
+  <p>让消费者 VPC 通过私有 IP 访问 AWS 服务、合作伙伴 SaaS 或其他账号发布的服务，而无需开放公网入口或建立 VPC 全网互通。掌握 Interface Endpoint、Endpoint Service、DNS、安全边界，以及它与 VPC Peering 的取舍。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">网络 / 私有连接</span>
+   <span class="pill">Interface Endpoint · Endpoint Service · Peering</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回网络分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav id="mainNav">
+ <strong>页面目录</strong>
+ <a href="#overview">一、架构与角色</a>
+ <a href="#consumer">二、消费者端点</a>
+ <a href="#provider">三、服务提供方</a>
+ <a href="#dns">四、DNS 与可用区</a>
+ <a href="#security">五、安全与连接治理</a>
+ <a href="#peering">六、PrivateLink vs Peering</a>
+ <a href="#patterns">七、常见架构与边界</a>
+ <a href="#scenarios">八、场景题解析</a>
+ <a href="#quick">九、关键词速查</a>
+ <a href="#memory">十、考前速记卡</a>
+ <a href="#quiz">十一、快速自测</a>
+</nav>
+
+<main>
+<section id="overview">
+<h2>一、架构与角色</h2>
+<p class="lead">PrivateLink 是一组通过 AWS 网络私下访问服务的能力。消费者在自己的 VPC 建立端点，服务提供方把服务放在负载均衡器后并发布为 Endpoint Service；两端不需要互相宣布 VPC CIDR，也不因此获得对方 VPC 的通用路由。</p>
+<div class="diagram">
+ <div class="node"><b>消费者 VPC</b><br><small>应用 / 客户端</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Interface Endpoint</b><br><small>一个或多个 ENI 私有 IP</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Endpoint Service</b><br><small>连接请求与服务授权</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>提供方 NLB</b><br><small>后端目标 / 应用</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>角色 / 资源</th><th>由谁创建</th><th>职责与记忆点</th></tr></thead>
+<tbody>
+<tr><td>Interface Endpoint</td><td>消费者</td><td>在所选子网创建 endpoint network interface（ENI）；应用通过私有 DNS 名称或端点 DNS 名称连接。</td></tr>
+<tr><td>Endpoint Service</td><td>服务提供方</td><td>将受支持的负载均衡器作为服务入口，设置允许的主体、连接接受策略及可用区。</td></tr>
+<tr><td>Network Load Balancer</td><td>服务提供方</td><td>传统 PrivateLink Endpoint Service 的服务前端；接收来自端点的流量并转发至健康目标。</td></tr>
+<tr><td>Endpoint Connection</td><td>消费者发起</td><td>建立消费者端点与提供方服务之间的连接；可配置需不需要提供方人工接受。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>一眼识别：</b>题目强调“只向合作伙伴开放某个服务，不暴露整个 VPC”“CIDR 重叠”“无需公网”，优先考虑 PrivateLink；如果需要跨 VPC 的广泛 IP 互通，再考虑 Peering 或 Transit Gateway。</div>
+</section>
+
+<section id="consumer">
+<h2>二、消费者端点：Interface Endpoint</h2>
+<p>Interface Endpoint 让消费者在 VPC 子网中获得服务入口 ENI。可按需要在一个或多个可用区创建端点网络接口；客户端访问服务时，流量经 AWS 网络抵达服务提供方，不要求为消费者 VPC 配置指向提供方 CIDR 的路由。</p>
+<h3>创建与连接流程</h3>
+<ol>
+ <li>确认目标服务、区域和可用区支持；选择 AWS 服务或服务提供方发布的 Endpoint Service。</li>
+ <li>选择消费者 VPC、一个或多个子网，并配置端点 ENI 的安全组。</li>
+ <li>若为第三方端点服务，确认允许的主体；如果服务要求接受连接，等待提供方批准连接。</li>
+ <li>应用使用 Private DNS 名称，或端点提供的区域 / 可用区 DNS 名称访问服务。</li>
+ <li>验证 DNS、端点安全组、提供方目标健康状态和服务自身的认证授权。</li>
+</ol>
+<h3>与其他 VPC Endpoint 的区别</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>类型</th><th>主要用途</th><th>网络实现</th><th>考试注意</th></tr></thead>
+<tbody>
+<tr><td>Interface Endpoint</td><td>大多数 AWS 服务、合作伙伴或自建 Endpoint Service</td><td>子网中的 ENI；PrivateLink</td><td>按端点 / 可用区及数据处理等计费，具体以服务和区域价格为准。</td></tr>
+<tr><td>Gateway Endpoint</td><td>Amazon S3、DynamoDB</td><td>将前缀列表路由加入所选路由表</td><td>不创建 ENI；不使用 PrivateLink；不按小时收取端点费用。</td></tr>
+<tr><td>Gateway Load Balancer Endpoint</td><td>将流量送入 GWLB 后方的网络虚拟设备集群</td><td>消费者子网中的 GWLBe，通过路由表透明转发</td><td>不是普通应用调用服务的 Interface Endpoint；常用于防火墙 / 检测设备插入。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>别把“VPC Endpoint”当成同一种实现：</b>S3 / DynamoDB 的 Gateway Endpoint 通常是简洁且无端点小时费的选择；若需要经本地网络访问、使用 PrivateLink 私有 IP 或连接第三方 Endpoint Service，则评估 Interface Endpoint。具体服务支持方式需查官方列表。</div>
+</section>
+
+<section id="provider">
+<h2>三、服务提供方：Endpoint Service</h2>
+<p>提供方通过 Endpoint Service 将私有服务暴露给消费者。传统服务入口使用 Network Load Balancer；面向 GWLB appliance 流量的服务则使用 Gateway Load Balancer。消费者只访问被发布的服务入口，不会因此获得提供方 VPC 的全网路由。</p>
+<h3>发布服务的关键步骤</h3>
+<ol>
+ <li>在提供方 VPC 部署服务目标，并创建跨所需可用区的负载均衡器与健康检查。</li>
+ <li>基于负载均衡器创建 Endpoint Service，检查可用区覆盖及服务名称。</li>
+ <li>按最小权限配置允许的 AWS 主体；如适用，开启连接请求接受流程。</li>
+ <li>如使用自定义 Private DNS 名称，按 AWS 流程证明对该域名的所有权，并在验证完成后供消费者启用。</li>
+ <li>消费者请求连接后，提供方按接受策略批准或拒绝；连接建立后仍由应用认证和授权具体用户 / 请求。</li>
+</ol>
+<div class="table-wrap"><table>
+<thead><tr><th>控制点</th><th>作用</th><th>不能替代什么</th></tr></thead>
+<tbody>
+<tr><td>Allowed principals</td><td>限制哪些 AWS 主体可请求连接该服务。</td><td>不等于业务用户认证，也不代表连接请求已被接受。</td></tr>
+<tr><td>Acceptance required</td><td>要求提供方审查并接受新的端点连接。</td><td>不自动撤销业务层权限；已建立连接也仍需应用控制。</td></tr>
+<tr><td>负载均衡器健康检查</td><td>筛除异常目标，控制新流量的目标选择。</td><td>不检查消费者是否有权调用应用中的特定操作。</td></tr>
+<tr><td>Private DNS 验证</td><td>证明服务提供方控制自定义私有 DNS 域名。</td><td>不等于消费者已启用端点 Private DNS 或应用 DNS 已正确解析。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>SaaS 多租户常见模式：</b>每个客户在自己的 VPC 建立端点，服务商控制服务入口与后端；客户可独立撤销自己的端点连接，服务商不必把整段 VPC 网络开放给客户。</div>
+</section>
+
+<section id="dns">
+<h2>四、DNS、可用区与连接可用性</h2>
+<h3>DNS 选项</h3>
+<ul>
+ <li><b>端点 DNS 名称：</b>创建 Interface Endpoint 后提供区域级及可用区级 DNS 名称，可用于验证或显式定位端点。</li>
+ <li><b>Private DNS：</b>对支持的 AWS 服务，消费者可启用 Private DNS，让服务的标准 DNS 名称在 VPC 内解析到端点 ENI。</li>
+ <li><b>自定义私有域名：</b>Endpoint Service 可关联已验证的私有 DNS 名称；消费者启用前仍要满足服务状态和 VPC DNS 配置要求。</li>
+ <li><b>混合 DNS：</b>本地客户端通过 DX / VPN 到达 VPC 时，需规划 Route 53 Resolver、条件转发和名称解析路径；端点存在并不自动替本地环境配置 DNS。</li>
+</ul>
+<div class="callout"><b>常见排查顺序：</b>DNS 是否解析至端点私有地址 → 客户端到端点 ENI 的路由与安全组 / NACL → endpoint connection 状态 → 提供方负载均衡器与目标健康 → 服务认证、授权和应用响应。</div>
+<h3>可用区设计</h3>
+<ul>
+ <li>消费者在需承载流量的可用区创建端点网络接口，以减少单 AZ 依赖；实际可用区名称映射应以双方可用的 AZ ID / 服务列表为准。</li>
+ <li>提供方需在 Endpoint Service 中启用相应可用区，并确保负载均衡器及后端容量覆盖预期故障域。</li>
+ <li>跨可用区能力和费用取决于端点、负载均衡器和区域配置；不要仅凭“服务是多 AZ”推断每条路径都没有跨 AZ 流量。</li>
+ <li>为故障切换保留健康的端点与目标容量，并通过应用重试、超时和幂等设计处理连接中断。</li>
+</ul>
+<div class="callout orange"><b>考点：</b>端点 DNS 正常不代表后端服务健康；单 AZ Endpoint 也不会因 PrivateLink 自动变成多 AZ 高可用架构。</div>
+</section>
+
+<section id="security">
+<h2>五、安全、策略与可观测性</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>层次</th><th>应检查的控制</th><th>职责边界</th></tr></thead>
+<tbody>
+<tr><td>消费者网络入口</td><td>Interface Endpoint ENI 上的安全组入站规则、子网 NACL 与客户端路由。</td><td>安全组允许客户端到端点的目标端口；它不授予 AWS API 权限。</td></tr>
+<tr><td>端点连接</td><td>允许的主体、服务策略、连接接受状态。</td><td>控制哪些账号 / 主体可以建立连接；不负责业务请求级鉴权。</td></tr>
+<tr><td>AWS 服务调用</td><td>IAM 身份策略、服务资源策略、端点策略（仅限支持的服务和端点）。</td><td>端点策略是附加边界，不替代 IAM / 资源策略；不是所有 Endpoint Service 都有通用端点策略。</td></tr>
+<tr><td>提供方网络与应用</td><td>NLB / GWLB、目标安全组、应用认证与授权、速率限制和审计。</td><td>仅仅“私有连接”不代表请求可信，也不自动加密或鉴别应用层身份。</td></tr>
+<tr><td>审计与故障定位</td><td>CloudTrail（适用的 API 管理事件）、VPC Flow Logs、负载均衡器 / 应用日志与指标。</td><td>根据服务类型及日志能力组合使用；先定位是控制面、网络面还是应用面。</td></tr>
+</tbody></table></div>
+<div class="callout red"><b>安全原则：</b>PrivateLink 降低暴露面，不是零信任的替代品。仍需最小权限、TLS / 应用认证、端点连接生命周期管理，以及提供方对租户数据的隔离。</div>
+</section>
+
+<section id="peering">
+<h2>六、PrivateLink vs VPC Peering</h2>
+<p>两者解决的问题不同：Peering 让两个 VPC 通过私有 IP 路由互通；PrivateLink 把一个服务作为消费者可连接的私有入口。题干要求“连接一个服务”时不必为整个网段建立连接。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>维度</th><th>PrivateLink</th><th>VPC Peering</th></tr></thead>
+<tbody>
+<tr><td>暴露范围</td><td>面向指定服务 / 端点，服务提供方控制发布面。</td><td>提供双方 VPC CIDR 间的 IP 路由；由路由和安全组细化允许流量。</td></tr>
+<tr><td>CIDR 重叠</td><td>通常适合重叠网段的服务级连接场景。</td><td>对等 VPC 的 IPv4 CIDR 不可重叠。</td></tr>
+<tr><td>路由可传递性</td><td>不是通用 VPC 路由，也不提供对端 VPC 的传递路由。</td><td>非传递：不能经一个 Peering 连接访问另一个 Peering 后的网络。</td></tr>
+<tr><td>消费者发起</td><td>消费者为服务创建端点连接；不获得提供方任意地址的路由。</td><td>双方按路由表和安全策略配置可达地址。</td></tr>
+<tr><td>典型用途</td><td>共享 API、第三方 SaaS、集中服务端点、AWS 服务私有访问。</td><td>少量 VPC 之间需要广泛私有 IP 通信。</td></tr>
+<tr><td>扩展与治理</td><td>适合将服务逐个发布给许多消费者，需管理每个服务及端点连接。</td><td>大量全互联时连接与路由管理复杂；可评估 Transit Gateway。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>选型口诀：</b>“只给我用这个服务”→ PrivateLink；“两个网段需要互相访问多种资源”→ Peering；“许多 VPC 需要中心化路由与分段”→ Transit Gateway。题目中的规模、CIDR、传递性和管理要求优先于口诀。</div>
+</section>
+
+<section id="patterns">
+<h2>七、常见架构与易混边界</h2>
+<h3>高频组合</h3>
+<ul>
+ <li><b>消费者私有子网访问 AWS API：</b>按服务支持情况选 Interface Endpoint；S3 / DynamoDB 可比较 Gateway Endpoint 的能力与费用。</li>
+ <li><b>合作伙伴提供 SaaS：</b>服务商发布 Endpoint Service，客户创建 Interface Endpoint；按需启用私有 DNS 与连接接受。</li>
+ <li><b>多账号共享内部 API：</b>提供方发布服务并限制允许主体，消费者逐个创建端点；结合 Organizations / IAM 与应用层身份验证。</li>
+ <li><b>本地网络私有访问：</b>本地经 DX / VPN 到达消费者 VPC 的 Interface Endpoint 私有 IP；另行配置 DNS Resolver、路由、端口和策略。</li>
+ <li><b>集中式网络检查：</b>若目标是插入透明防火墙而非调用应用 API，评估 GWLB / GWLBe；使用 PrivateLink 端点服务并不能自动改写现有 VPC 的所有路由。</li>
+</ul>
+<h3>不要混淆的能力</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>误区</th><th>正确判断</th></tr></thead>
+<tbody>
+<tr><td>PrivateLink 会创建到对端 VPC 的 Peering。</td><td>不会。端点连接是服务级私有访问，不是两端 VPC CIDR 全互通。</td></tr>
+<tr><td>只要创建端点，本地 DNS 就会自动解析。</td><td>不会。混合 DNS 仍需 Route 53 Resolver / 条件转发等配置。</td></tr>
+<tr><td>端点连接成功就可调用服务中的所有 API。</td><td>不一定。IAM、资源策略、应用认证与授权仍生效。</td></tr>
+<tr><td>Gateway Endpoint 也是 PrivateLink 的 Interface Endpoint。</td><td>不是。Gateway Endpoint 用路由表；Interface Endpoint 才创建 ENI 并使用 PrivateLink。</td></tr>
+<tr><td>PrivateLink 一定比 Peering 更便宜。</td><td>不能一概而论。比较端点小时数、数据处理、跨 AZ 流量、数据传输及运维成本。</td></tr>
+<tr><td>服务提供方必须手动接受每个连接。</td><td>只有在启用 acceptance required 时需要；根据信任边界与运营流程决定。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="scenarios">
+<h2>八、场景题解析</h2>
+<div class="scenario">
+ <div class="scenario-title">场景 1：多租户 API，租户 VPC CIDR 可能重叠</div>
+ <p>一家 SaaS 厂商要让数百个客户从私有网络调用其 API。客户只应访问该 API，不能访问厂商其他子网；客户 CIDR 由各自管理，可能互相重叠。</p>
+ <div class="answer-box"><b>正确方向：</b>厂商创建 NLB 并发布 Endpoint Service；客户在各自 VPC 创建 Interface Endpoint。</div>
+ <div class="analysis"><b>分析：</b>PrivateLink 暴露具体服务，不要求客户与服务商交换 VPC 路由，适合大量消费者、CIDR 重叠和服务级隔离。配置允许主体与连接接受策略，并在应用层认证租户。</div>
+ <div class="trap"><b>排除：</b>Peering 要求 CIDR 不重叠且暴露面更宽；Transit Gateway 用于网络路由中枢，不是发布单个 SaaS API 的最小方案。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景 2：两个 VPC 要双向访问多种私有资源</div>
+ <p>两个 VPC 的 CIDR 不重叠，应用需访问对方多个子网中的数据库、文件服务和内部管理接口，团队希望保持简单的点对点网络连接。</p>
+ <div class="answer-box"><b>正确方向：</b>评估 VPC Peering，并配置双方路由表与安全组。</div>
+ <div class="analysis"><b>分析：</b>需求是多种资源间的私有 IP 路由，而不是仅调用一个被发布的服务。Peering 可满足点对点互通，但不是传递路由。</div>
+ <div class="trap"><b>排除：</b>PrivateLink 需要把所需服务逐个发布，不能提供通用 CIDR 路由；如果连接规模持续增长或需要中心化检查，再评估 Transit Gateway。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景 3：消费者和提供方 CIDR 重叠</div>
+ <p>收购后的两个业务 VPC 地址段重复，但消费者只需要调用提供方的订单查询 API，不能重新编号网络。</p>
+ <div class="answer-box"><b>正确方向：</b>将订单 API 作为 Endpoint Service 发布，消费者通过 Interface Endpoint 访问。</div>
+ <div class="analysis"><b>分析：</b>服务级连接避免建立重叠 CIDR 间的路由互通。验证服务支持的区域和 AZ，并在应用侧限制可访问的租户与 API。</div>
+ <div class="trap"><b>排除：</b>Peering 不能用于 CIDR 重叠的 VPC；PrivateLink 并不解决双方所有网段的地址冲突，只隔离并暴露服务入口。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景 4：私有子网访问 S3，要求控制端点成本</div>
+ <p>EC2 仅需访问同区域 S3，网络与 DNS 要求采用标准服务名，且没有通过本地网络访问该端点的需求。</p>
+ <div class="answer-box"><b>正确方向：</b>优先评估 S3 Gateway Endpoint，并将其关联到所需路由表。</div>
+ <div class="analysis"><b>分析：</b>Gateway Endpoint 不创建 ENI，且没有端点小时费用；其策略可作为额外控制（具体能力以服务支持为准）。</div>
+ <div class="trap"><b>排除：</b>不要因为题干出现“私有子网”就默认选择 Interface Endpoint。若必须让本地经 DX / VPN 访问 S3 私有端点，或需要 Interface Endpoint 能力，再选择并核算 Interface Endpoint。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景 5：开发者通过 DX 从本地访问私有服务</div>
+ <p>本地构建系统通过 Direct Connect 连接到 VPC，需要调用一个合作伙伴发布的私有 API，不能经公网；API 服务本身已通过 PrivateLink 提供。</p>
+ <div class="answer-box"><b>正确方向：</b>在连接到本地网络的消费者 VPC 创建 Interface Endpoint；配置本地到端点 ENI 的私有路由与 DNS 解析。</div>
+ <div class="analysis"><b>分析：</b>端点 ENI 提供 VPC 内私有地址，可经 DX / VPN 到达；Route 53 Resolver 与本地条件转发负责名称解析，安全组和策略负责放行所需端口与请求。</div>
+ <div class="trap"><b>排除：</b>Gateway Endpoint 的路由表机制不等同于可从本地直接访问的 ENI；单有 DX 连接也不会自动配置私有 DNS。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景 6：限制未知消费者接入，并保留提供方审批</div>
+ <p>服务只允许指定企业账号连接。每个新端点还需服务团队核准，但已连接的客户仍须按业务角色授权。</p>
+ <div class="answer-box"><b>正确方向：</b>限制 Endpoint Service 的 allowed principals，并启用连接接受要求；保留应用层认证授权。</div>
+ <div class="analysis"><b>分析：</b>允许主体控制谁可以请求连接；人工接受用于审批连接本身。应用层鉴权决定已连接客户可执行哪些操作，应单独实施与审计。</div>
+ <div class="trap"><b>排除：</b>不要把连接批准等同于授予业务权限；也不要用宽泛的主体列表代替最小权限。</div>
+</div>
+</section>
+
+<section id="quick">
+<h2>九、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>只开放一个服务 / API，不开放 VPC</td><td>PrivateLink + Interface Endpoint</td><td>不是 Peering 或通用网络路由</td></tr>
+<tr><td>服务提供方发布私有服务</td><td>Endpoint Service + NLB</td><td>消费者在自己的 VPC 创建 endpoint</td></tr>
+<tr><td>客户 CIDR 重叠</td><td>PrivateLink 服务级连接</td><td>不意味着整个重叠网段可路由</td></tr>
+<tr><td>允许哪些账号请求连接</td><td>Allowed principals</td><td>和连接接受、应用鉴权是不同控制</td></tr>
+<tr><td>每个连接都要服务团队审批</td><td>Acceptance required</td><td>批准连接不代表业务授权</td></tr>
+<tr><td>服务标准域名解析至端点私有 IP</td><td>Private DNS</td><td>检查服务支持及 VPC DNS 配置</td></tr>
+<tr><td>S3 / DynamoDB，控制端点费用</td><td>Gateway Endpoint</td><td>路由表方式；没有端点小时费</td></tr>
+<tr><td>消费者经 DX / VPN 访问端点 ENI</td><td>Interface Endpoint + 混合 DNS</td><td>本地 DNS / 路由需单独设计</td></tr>
+<tr><td>两 VPC 多资源私有 IP 互通</td><td>VPC Peering</td><td>CIDR 不得重叠，路由不可传递</td></tr>
+<tr><td>大量 VPC 中心化路由</td><td>Transit Gateway</td><td>和发布单个服务的 PrivateLink 目标不同</td></tr>
+<tr><td>集中插入虚拟防火墙</td><td>GWLB / GWLBe</td><td>不是普通 Interface Endpoint 的应用调用模式</td></tr>
+<tr><td>端点可连但 API 返回拒绝</td><td>IAM / 资源策略 / 应用授权</td><td>网络可达不等于有权操作</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>十、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>PrivateLink：</b>以服务为单位建立私有连接，不是 VPC Peering</span></li>
+<li><input type="checkbox"><span><b>消费者：</b>创建 Interface Endpoint</span></li>
+<li><input type="checkbox"><span><b>传统提供方：</b>NLB 后端 + Endpoint Service</span></li>
+<li><input type="checkbox"><span><b>消费者端点：</b>子网内 ENI，具有私有 IP</span></li>
+<li><input type="checkbox"><span><b>CIDR：</b>适合重叠 CIDR 的服务级互联场景</span></li>
+<li><input type="checkbox"><span><b>暴露范围：</b>只暴露所发布服务，不授予对端 VPC 全网路由</span></li>
+<li><input type="checkbox"><span><b>Allowed principals：</b>限制可请求连接的主体</span></li>
+<li><input type="checkbox"><span><b>Acceptance required：</b>可要求提供方人工接受连接</span></li>
+<li><input type="checkbox"><span><b>应用授权：</b>连接获批不等于业务请求获授权</span></li>
+<li><input type="checkbox"><span><b>Private DNS：</b>名称解析与端点连接是两项独立检查</span></li>
+<li><input type="checkbox"><span><b>混合云：</b>DX / VPN 到达 ENI 仍需设计本地 DNS 与路由</span></li>
+<li><input type="checkbox"><span><b>Gateway Endpoint：</b>S3 / DynamoDB，路由表方式，无小时端点费</span></li>
+<li><input type="checkbox"><span><b>GWLB Endpoint：</b>网络虚拟设备流量插入，不等同普通 API 端点</span></li>
+<li><input type="checkbox"><span><b>Peering：</b>适用于 CIDR 不重叠的点对点网络互通</span></li>
+<li><input type="checkbox"><span><b>Peering：</b>非传递，不能借一个 Peering 访问第三个 VPC</span></li>
+<li><input type="checkbox"><span><b>高可用：</b>端点 AZ、提供方 AZ 和后端容量需共同设计</span></li>
+<li><input type="checkbox"><span><b>成本：</b>比较端点小时、数据处理、跨 AZ 和网络传输</span></li>
+<li><input type="checkbox"><span><b>最小权限：</b>端点、安全策略、IAM 与应用授权各司其职</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十一、快速自测</h2>
+<p class="small">先独立作答，再点击选项查看解析。</p>
+<div class="quiz">
+ <b>1. 客户与服务商 VPC CIDR 重叠，客户只需调用服务商的一个 API，优先使用什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',false)">A. VPC Peering</button>
+ <button class="secondary" onclick="showAnswer('q1',true)">B. PrivateLink Endpoint Service 与 Interface Endpoint</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. 两边都配置相同的静态路由</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. S3 Gateway Endpoint</button>
+ <div class="answer" id="q1"><b>正确答案：B。</b>PrivateLink 暴露服务级入口，不需要重叠 VPC 之间建立 CIDR 路由。Peering 不支持 CIDR 重叠，S3 Gateway Endpoint 仅针对 S3。</div>
+</div>
+<div class="quiz">
+ <b>2. EC2 在私有子网中仅需访问同区域 S3，题目强调低成本且不需要本地接入。优先选择什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',true)">A. S3 Gateway Endpoint 并关联路由表</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">B. 每个子网创建 NAT Gateway</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. VPC Peering</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. Endpoint Service</button>
+ <div class="answer" id="q2"><b>正确答案：A。</b>Gateway Endpoint 不创建 ENI，并且没有端点小时费用；它通过路由表提供到 S3 的私有访问。若题目增加从本地访问或 Interface Endpoint 特定要求，再比较其他方案。</div>
+</div>
+<div class="quiz">
+ <b>3. Endpoint Service 只允许指定账号，并要求每个端点连接先经团队审批，应配置什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',false)">A. 仅在提供方 NLB 上开启跨区负载</button>
+ <button class="secondary" onclick="showAnswer('q3',true)">B. Allowed principals 与 acceptance required</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. 只创建 Route 53 公有托管区</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. 在客户 VPC 添加 Peering 路由</button>
+ <div class="answer" id="q3"><b>正确答案：B。</b>Allowed principals 限制可请求连接的主体，acceptance required 让提供方审查连接请求。服务调用权限仍需单独管理。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+ <li><a href="https://docs.aws.amazon.com/vpc/latest/privatelink/what-is-privatelink.html" target="_blank" rel="noopener">AWS PrivateLink 概览</a></li>
+ <li><a href="https://docs.aws.amazon.com/vpc/latest/privatelink/create-endpoint-service.html" target="_blank" rel="noopener">创建 Endpoint Service</a></li>
+ <li><a href="https://docs.aws.amazon.com/vpc/latest/privatelink/create-interface-endpoint.html" target="_blank" rel="noopener">创建 Interface Endpoint</a></li>
+ <li><a href="https://docs.aws.amazon.com/vpc/latest/privatelink/privatelink-share-your-services.html" target="_blank" rel="noopener">共享 Endpoint Service</a></li>
+ <li><a href="https://docs.aws.amazon.com/vpc/latest/privatelink/privatelink-access-aws-services.html" target="_blank" rel="noopener">通过 PrivateLink 访问 AWS 服务</a></li>
+ <li><a href="https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html" target="_blank" rel="noopener">VPC Endpoint 类型与功能</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>PrivateLink 支持的服务、区域、可用区、跨区域选项、策略能力与费用会随服务和配置变化。实施前核对目标服务的最新 AWS 文档与定价。本页为非官方备考笔记，不代表 AWS 官方题库或认证机构。</div>
+<p><a href="index.html">← 返回网络与内容分发分类页</a></p>
+</section>
+</main>
+</div>
+<footer class="container">AWS SAP-C02 PrivateLink 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>
