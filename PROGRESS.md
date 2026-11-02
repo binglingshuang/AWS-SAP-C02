@@ -91,7 +91,7 @@
 |---|---|---:|---:|---:|---:|---|
 | 网络与内容分发 | `networking/index.html` | 9 | 9 | 0 | 100% | P0 |
 | 计算 | `compute/index.html` | 9 | 9 | 0 | 100% | P0 |
-| 存储 | `storage/index.html` | 3 | 7 | 4 | 42.9% | P0 |
+| 存储 | `storage/index.html` | 7 | 7 | 0 | 100% | P0 |
 | 数据库 | `database/index.html` | 2 | 6 | 4 | 33.3% | P0 |
 | 安全、身份与合规 | `security/index.html` | 4 | 11 | 7 | 36.4% | P0 |
 | 管理与治理 | `management/index.html` | 4 | 9 | 5 | 44.4% | P0 |
@@ -102,7 +102,7 @@
 | 机器学习与 AI | `ml/index.html` | 0 | 2 | 2 | 0% | P3 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 0 | 3 | 3 | 0% | P3 |
 | 综合专题 | 根页直达 | 0 | 1 | 1 | 0% | P1 |
-| **合计** |  | **37** | **78** | **41** | **47.4%** |  |
+| **合计** |  | **41** | **78** | **37** | **52.6%** |  |
 
 > 根页写的“74 个文档”是旧口径 / 合并页口径；按当前导航实际目标去重后是 78 篇。完成全部正文后再统一校准首页数字。
 
@@ -138,15 +138,15 @@
 - [x] P2 `compute/batch.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Job Definition / Queue / Compute Environment、EC2/Fargate/Spot、数组作业、依赖、重试与幂等
 - [x] P2 `compute/outposts-wavelength.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；作为唯一正文覆盖 Outposts、Local Zones、Wavelength 的部署位置、网络边界、服务支持与场景选型；避免与 `hybrid-edge` 重复编写
 
-### 3.3 存储（3 / 7）
+### 3.3 存储（7 / 7）
 
 - [x] `storage/s3.html`
 - [x] `storage/ebs.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖卷型、性能、快照、加密、扩容、Multi-Attach 与灾备
 - [x] `storage/efs.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Regional / One Zone、性能与吞吐模式、生命周期、Mount Target、NFS 网络、Access Point、加密与灾备
-- [ ] P1 `storage/storage-gateway.html` — File / Volume / Tape Gateway、缓存模式
-- [ ] P1 `storage/backup.html` — 备份计划、跨区/跨账号、合规
-- [ ] P2 `storage/fsx.html` — Windows / Lustre / NetApp / OpenZFS
-- [ ] P2 `storage/snow-family.html` — Snowcone / Snowball / Snowmobile、数据量决策
+- [x] P1 `storage/storage-gateway.html` — 完成日期：2026-11-02；场景题 4 道；速记卡 8 条；覆盖 File / Volume / Tape Gateway、缓存模式与混合云选型
+- [x] P1 `storage/backup.html` — 完成日期：2026-11-02；场景题 3 道；速记卡 8 条；覆盖备份计划、跨区/跨账号、Vault Lock 与合规治理
+- [x] P2 `storage/fsx.html` — 完成日期：2026-11-02；场景题 3 道；速记卡 8 条；覆盖 Windows / Lustre / NetApp / OpenZFS 选型
+- [x] P2 `storage/snow-family.html` — 完成日期：2026-11-02；场景题 3 道；速记卡 7 条；覆盖 Snowcone / Snowball / Snowmobile、边缘计算与数据量决策
 
 ### 3.4 数据库（2 / 6）
 

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 AWS Storage Gateway 考点速查：File Gateway、Volume Gateway、Tape Gateway、缓存模式、存储模式、混合云和数据迁移选型。">
+<title>AWS SAP-C02｜AWS Storage Gateway 考试速查手册</title>
+<style>
+:root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;--green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;--red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06)}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif} a{color:var(--primary);text-decoration:none} a:hover{text-decoration:underline} .container{width:min(1120px,calc(100% - 32px));margin:auto} header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px} header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe} header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0} header p{color:#dbeafe;max-width:760px;margin:0} .header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px} .pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px} .layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px} nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto} nav strong{display:block;margin-bottom:10px} nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px} nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none} main{min-width:0} section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px} h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)} h3{font-size:19px;margin:26px 0 10px} h4{font-size:16px;margin:18px 0 8px} p{margin:9px 0} ul,ol{padding-left:23px} li{margin:5px 0} .lead{font-size:17px;color:#334155} .callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0} .callout.green{background:var(--green-soft);border-color:var(--green)} .callout.orange{background:var(--orange-soft);border-color:var(--orange)} .callout.red{background:var(--red-soft);border-color:var(--red)} table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px} th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top} th{background:#f8fafc;color:#334155;font-weight:700} tr:last-child td{border-bottom:0} .table-wrap{overflow-x:auto} code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em} .diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0} .diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px} .diagram .arrow{color:#64748b;font-weight:700} .checklist{list-style:none;padding:0} .checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0} .checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto} .progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px} .progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s} .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px} button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer} button.secondary{background:#e2e8f0;color:#334155} .quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0} .quiz button{margin:5px 6px 5px 0} .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px} footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px} .small{font-size:13px;color:var(--muted)} @media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}} @media print{body{background:#fff;font-size:12px} header{background:#fff;color:#111;padding:20px 0} header p,.eyebrow{color:#444!important} .pill{border:1px solid #aaa;color:#333} .layout{display:block;padding:10px 0} nav,.toolbar,.no-print{display:none!important} section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px} a{color:#111;text-decoration:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>AWS Storage Gateway<br>混合云数据网关</h1>
+  <p>适用于本地应用需要访问 AWS 云端存储，同时保留现有文件协议、块设备接口或归档流程。核心是判断网关类型、缓存模式是否满足低延迟和容量要求，再检查私网和安全策略。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">存储 / 混合云</span>
+   <span class="pill">关键词：File · Volume · Tape · Cached</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回存储分类</button>
+  </div>
+ </div>
+</header>
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#overview">一、网关定位</a>
+ <a href="#types">二、三种网关类型</a>
+ <a href="#modes">三、缓存/存储模式</a>
+ <a href="#security">四、安全与网络</a>
+ <a href="#selection">五、选型判断</a>
+ <a href="#scenarios">六、场景题解析</a>
+ <a href="#quick">七、关键词速查</a>
+ <a href="#memory">八、考前速记卡</a>
+ <a href="#quiz">九、快速自测</a>
+</nav>
+<main>
+<section id="overview">
+<h2>一、网关定位</h2>
+<p class="lead">AWS Storage Gateway 不是云原生存储服务，而是“本地应用到 AWS 云存储之间的桥接层”。它让企业在不大改业务应用的前提下，继续使用现有的 SMB/NFS 或 iSCSI 语义，同时将数据放入 S3、EBS、Glacier 等 AWS 目标。</p>
+<div class="diagram">
+ <div class="node"><b>本地应用/VM</b><br><small>SMB / NFS / iSCSI</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Storage Gateway</b><br><small>File / Volume / Tape</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>AWS S3 / EBS / Glacier</b><br><small>云端对象或快照</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>关键点</th><th>说明</th><th>答题提示</th></tr></thead>
+<tbody>
+<tr><td>适用场景</td><td>企业数据中心、分支办公室、混合云环境与备份策略。</td><td>如果题目涉及“本地文件共享仍要保留使用习惯、又要上云”，优先考虑 Storage Gateway。</td></tr>
+<tr><td>核心价值</td><td>保留现有协议和流程，减少应用改造成本。</td><td>不是替代 S3、EBS 或 Glacier，而是连接层。</td></tr>
+<tr><td>网络要求</td><td>通常需要与 VPC 或 Direct Connect/VPN 之间有安全路径。</td><td>跨VPC 访问、私网路径、NACL/安全组仍然是关键。</td></tr>
+<tr><td>数据一致性</td><td>云端同步与缓存需要关注更新时机和恢复点。</td><td>“存储模式”和“缓存模式”分别影响本地副本与云端数据生命周期。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="types">
+<h2>二、三种网关类型</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>类型</th><th>接口与语义</th><th>典型场景</th><th>云端落点</th></tr></thead>
+<tbody>
+<tr><td>File Gateway</td><td>以 NFS/SMB 作为本地接口，像共享文件夹一样使用。</td><td>企业文件共享、备份、内容库、媒体存档。</td><td>S3</td></tr>
+<tr><td>Volume Gateway</td><td>提供 iSCSI 目标，适合块存储备份或本地应用卷镜像。</td><td>Windows / Linux 服务器的备份、异地恢复、低改造迁移。</td><td>S3 + EBS 快照、卷缓存</td></tr>
+<tr><td>Tape Gateway</td><td>虚拟磁带库（VTL）和带库接口，兼容备份软件。</td><td>传统备份体系、归档、超长保留。</td><td>Glacier / Glacier Deep Archive</td></tr>
+</tbody></table></div>
+<div class="callout">
+<b>判断口诀：</b>需要“文件共享”选 File Gateway；需要“块设备 / iSCSI”的本地卷保留选 Volume Gateway；想“保留原有备份磁带流程”选 Tape Gateway。
+</div>
+</section>
+
+<section id="modes">
+<h2>三、缓存模式与存储模式</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>模式</th><th>本地副本</th><th>适合场景</th><th>注意事项</th></tr></thead>
+<tbody>
+<tr><td>Cached volumes</td><td>缓存热点数据本地，云端保存全量副本</td><td>本地读取高频、云端作为主存储</td><td>本地磁盘容量有限，缓存命中率决定性能。</td></tr>
+<tr><td>Stored volumes</td><td>本地保存全部数据，云端异步备份快照</td><td>有本地低延迟要求、需要本地数据完整保留</td><td>本地容量滞留，灾难恢复依赖云端快照。</td></tr>
+<tr><td>File Gateway</td><td>本地通常缓存最近访问数据，S3 承载对象存储</td><td>文件共享、简单文件备份</td><td>本地更多是缓存层，不是传统文件服务器的全部数据源。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>最关键差别：</b>Cached volumes 让“热点在本地”，Stored volumes 让“全部数据在本地而云端做备份”；两者都不是“只存云端”的模式，题目一旦看到“本地应用仍需低延迟”，应先考虑本地副本策略。</div>
+</section>
+
+<section id="security">
+<h2>四、安全、网络与运维</h2>
+<ul>
+<li><b>网络路径：</b>最常见问题是网关实例不能访问 VPC、Internet 受限或 Direct Connect/VPN 路由不合法。确认本地数据中心与 AWS 之间的网络可达性。</li>
+<li><b>安全组 / NACL：</b>网关实例通常需要端口允许和出站权限；本地客户端和 AWS 端的规则都需要检查，而不是仅看其中一侧。</li>
+<li><b>IAM 与角色：</b>File Gateway 与 Volume Gateway 需要适当的 IAM 权限连通 S3 或快照相关服务；备份和治理要求需与 AWS Backup / KMS 配置结合。</li>
+<li><b>加密：</b>KMS 可用于加密文件网关或卷快照等敏感存储内容；注意密钥策略与跨账户权限。</li>
+<li><b>恢复与演练：</b>网关是混合云扩展，不是自动故障切换平台；需在云端验证恢复、快照回放和应用切换流程。</li>
+</ul>
+</section>
+
+<section id="selection">
+<h2>五、选型判断</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>需求</th><th>优先方案</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>本地仍需 SMB/NFS 共享并把文件下沉到 S3</td><td>File Gateway</td><td>最接近“云端对象存储 + 文件协议兼容”的混合方案。</td></tr>
+<tr><td>本地应用需要 iSCSI 卷，但希望云端保留快照/备份</td><td>Volume Gateway</td><td>支持块设备接入和备份恢复流程。</td></tr>
+<tr><td>传统磁带备份软件（VTL）仍在使用</td><td>Tape Gateway</td><td>保留现有备份软件而不必直接改造为 S3 架构。</td></tr>
+<tr><td>更换为云原生对象存储和直接文件系统能力</td><td>S3 / EFS / FSx</td><td>如果不需要本地协议兼容，优先考虑原生 AWS 服务。</td></tr>
+<tr><td>大规模离线迁移</td><td>Snow Family</td><td>网关更偏“持续同步/混合访问”，Snow 更偏“物理数据搬运”。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>一句话记忆：</b>Storage Gateway = “让旧应用继续工作”；Snow Family = “让巨量数据搬到云里”；S3/EFS/FSx = “云原生的真正存储服务”。</div>
+</section>
+
+<section id="scenarios">
+<h2>六、场景题解析</h2>
+<div class="quiz">
+ <h3>场景一：本地文件服务器逐步迁移到 S3</h3>
+ <p>企业保留 SMB 文件共享，且希望文件不必全部迁移到传统 NAS，还需要支持跨分支的备份和归档。</p>
+ <p><b>正确方向：</b>使用 File Gateway，并通过 SMB/NFS 接口让本地应用继续访问，后端写入 S3。</p>
+ <p><b>分析思路：</b>本题的关键是“仍保留文件共享协议”而不是“把本地服务器直接替换成云端文件系统”，因此 File Gateway 最贴切。</p>
+ <p><b>排除：</b>Volume Gateway 面向 iSCSI 块设备，不是文件共享协议；Tape Gateway 适合备份磁带流程，不是文件共享主流接口。</p>
+</div>
+<div class="quiz">
+ <h3>场景二：本地应用必须使用 iSCSI 卷，却希望保留云端快照</h3>
+ <p>数据库备份和恢复仍由已部署的 Linux/Windows 主机执行，且希望灾难恢复时不需要重建整个卷。</p>
+ <p><b>正确方向：</b>Volume Gateway，通常用于 iSCSI 方式挂载卷并把备份/快照保存到 AWS。</p>
+ <p><b>分析思路：</b>本地应用要求“块设备接口”，而不是 NFS/SMB 文件共享；同时还需要云端恢复点。</p>
+ <p><b>排除：</b>File Gateway 不能直接表现为 iSCSI 块设备，Tape Gateway 也不适合实时卷使用场景。</p>
+</div>
+<div class="quiz">
+ <h3>场景三：企业仍有磁带库备份软件</h3>
+ <p>备份客户端和备份软件要求 VTL（Virtual Tape Library）接口，目标是把旧有归档流程迁移到云，不想全面重构。</p>
+ <p><b>正确方向：</b>选择 Tape Gateway，保留传统备份软件与归档流程。</p>
+ <p><b>分析思路：</b>题目明确出现“磁带库 / VTL”常用描述，这是 Tape Gateway 的典型特征。</p>
+ <p><b>排除：</b>File Gateway 和 Volume Gateway 都不提供基于磁带库的接口语义。</p>
+</div>
+<div class="quiz">
+ <h3>场景四：需要本地低延迟访问热点数据，但又不想存满本地磁盘</h3>
+ <p>顶层应用需求高频读写少量热点文件；云端存储有完整副本，且本地资源有限。</p>
+ <p><b>正确方向：</b>Cached volumes，保持热点在本地，云端提供完整数据复制。</p>
+ <p><b>分析思路：</b>“本地热点低延迟 + 云端全量副本”最符合 Cached volumes 的设计目标。</p>
+ <p><b>排除：</b>Stored volumes 更偏“全部本地保留 + 云端快照”，而非高频热点缓存场景。</p>
+</div>
+</section>
+
+<section id="quick">
+<h2>七、关键词速查</h2>
+<ul>
+<li><b>File Gateway</b> = SMB/NFS to S3，适合文件共享与对象化归档。</li>
+<li><b>Volume Gateway</b> = iSCSI to S3/EBS snapshot，适合块设备和备份恢复。</li>
+<li><b>Tape Gateway</b> = VTL to Glacier，适合磁带备份迁移。</li>
+<li><b>Cached volumes</b> = 热点本地缓存，云端保留主数据副本。</li>
+<li><b>Stored volumes</b> = 本地存全部，云端保快照。</li>
+<li><b>Hybrid</b> = 让本地应用不改造，继续和云端无缝对接。</li>
+</ul>
+</section>
+
+<section id="memory">
+<h2>八、考前速记卡</h2>
+<ul class="checklist" id="memory-list">
+<li><input type="checkbox"><span><b>File Gateway</b>：文件共享接口，目标 S3，适合 NFS/SMB</span></li>
+<li><input type="checkbox"><span><b>Volume Gateway</b>：iSCSI 接口，目标 S3 + 快照，适合块/备份</span></li>
+<li><input type="checkbox"><span><b>Tape Gateway</b>：VTL 接口，目标 Glacier/Deep Archive</span></li>
+<li><input type="checkbox"><span><b>Cached volumes</b>：热点在本地，云端保留主副本</span></li>
+<li><input type="checkbox"><span><b>Stored volumes</b>：本地保全部数据，云端仅保快照</span></li>
+<li><input type="checkbox"><span><b>混合云</b>：用网关降低应用改造成本，通常配合 Direct Connect/VPN</span></li>
+<li><input type="checkbox"><span><b>恢复演练</b>：网关本身不是自动故障切换方案</span></li>
+<li><input type="checkbox"><span><b>网关不是替代品</b>：它是 S3/EBS/Glacier 旁路接入层</span></li>
+</ul>
+<div class="progress"><span id="progress-fill"></span></div>
+</section>
+
+<section id="quiz">
+<h2>九、快速自测</h2>
+<div class="quiz">
+ <p>问题 1：下列哪种场景最适合 File Gateway？</p>
+ <button onclick="showAnswer('q1',true)">A. 本地 Windows 服务器需要 iSCSI 卷</button>
+ <button onclick="showAnswer('q1',false)">B. 客户希望通过 SMB/NFS 共享文件并写入 S3</button>
+ <button onclick="showAnswer('q1',false)">C. 需要把传统磁带库备份迁移到 Glacier</button>
+ <div class="answer" id="q1-answer">正确答案：B。File Gateway 提供 SMB/NFS 接口，后端保留到 S3，对文件共享应用最友好。</div>
+</div>
+<div class="quiz">
+ <p>问题 2：下列哪一种说法最准确？</p>
+ <button onclick="showAnswer('q2',false)">A. Volume Gateway 只能用于 S3 对象存储</button>
+ <button onclick="showAnswer('q2',true)">B. Volume Gateway 可提供 iSCSI 块设备接口并将数据快照保存在 AWS</button>
+ <button onclick="showAnswer('q2',false)">C. Tape Gateway 仅支持 NFS 文件系统接口</button>
+ <div class="answer" id="q2-answer">正确答案：B。Volume Gateway 的核心价值是 iSCSI 块设备兼容和云端备份快照。</div>
+</div>
+</section>
+</main>
+</div>
+<footer>AWS SAP-C02 备考笔记 · Storage Gateway</footer>
+<script>
+const progressFill=document.getElementById('progress-fill');
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memory-list input')];
+ const done=boxes.filter(x=>x.checked).length;
+ const pct=(done/boxes.length)*100;
+ progressFill.style.width=pct+'%';
+}
+document.querySelectorAll('#memory-list input').forEach(input=>input.addEventListener('change', updateProgress));
+updateProgress();
+function showAnswer(id, correct){
+ const answer=document.getElementById(id+'-answer');
+ answer.style.display='block';
+ if(correct){ answer.style.background='#ecfdf5'; }
+ else { answer.style.background='#fef2f2'; }
+}
+</script>
+</body>
+</html>

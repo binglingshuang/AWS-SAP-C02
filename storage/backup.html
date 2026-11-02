@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 AWS Backup 考点速查：备份计划、生命周期、跨区跨账号复制、加密、合规锁定与资源恢复。">
+<title>AWS SAP-C02｜AWS Backup 考试速查手册</title>
+<style>
+:root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;--green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;--red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06)}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif} a{color:var(--primary);text-decoration:none} a:hover{text-decoration:underline} .container{width:min(1120px,calc(100% - 32px));margin:auto} header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px} header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe} header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0} header p{color:#dbeafe;max-width:760px;margin:0} .header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px} .pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px} .layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px} nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto} nav strong{display:block;margin-bottom:10px} nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px} nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none} main{min-width:0} section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px} h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)} h3{font-size:19px;margin:26px 0 10px} h4{font-size:16px;margin:18px 0 8px} p{margin:9px 0} ul,ol{padding-left:23px} li{margin:5px 0} .lead{font-size:17px;color:#334155} .callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0} .callout.green{background:var(--green-soft);border-color:var(--green)} .callout.orange{background:var(--orange-soft);border-color:var(--orange)} .callout.red{background:var(--red-soft);border-color:var(--red)} table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px} th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top} th{background:#f8fafc;color:#334155;font-weight:700} tr:last-child td{border-bottom:0} .table-wrap{overflow-x:auto} code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em} .diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0} .diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px} .diagram .arrow{color:#64748b;font-weight:700} .checklist{list-style:none;padding:0} .checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0} .checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto} .progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px} .progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s} .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px} button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer} button.secondary{background:#e2e8f0;color:#334155} .quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0} .quiz button{margin:5px 6px 5px 0} .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px} footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px} .small{font-size:13px;color:var(--muted)} @media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}} @media print{body{background:#fff;font-size:12px} header{background:#fff;color:#111;padding:20px 0} header p,.eyebrow{color:#444!important} .pill{border:1px solid #aaa;color:#333} .layout{display:block;padding:10px 0} nav,.toolbar,.no-print{display:none!important} section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px} a{color:#111;text-decoration:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>AWS Backup<br>统一备份治理平台</h1>
+  <p>用于在多服务、多账号、多区域的云环境中统一创建备份计划、设置保留周期、控制生命周期和恢复策略。重点不是“单个服务怎么备份”，而是“如何把备份作为企业治理能力统一施行”。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">存储 / 灾备</span>
+   <span class="pill">关键词：Backup Plan · Vault Lock · Cross-Region</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回存储分类</button>
+  </div>
+ </div>
+</header>
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#overview">一、定位与核心能力</a>
+ <a href="#plans">二、备份计划</a>
+ <a href="#vaults">三、Vault / 生命周期 / Lock</a>
+ <a href="#governance">四、跨区跨账号治理</a>
+ <a href="#restore">五、恢复与演练</a>
+ <a href="#scenarios">六、场景题解析</a>
+ <a href="#quick">七、关键词速查</a>
+ <a href="#memory">八、考前速记卡</a>
+ <a href="#quiz">九、快速自测</a>
+</nav>
+<main>
+<section id="overview">
+<h2>一、定位与核心能力</h2>
+<p class="lead">AWS Backup 是集中管理各种 AWS 资源备份和恢复的服务。它的优势不只是“可以备份”，而是能够按服务、账户、区域统一定义保留策略、恢复点、跨区域复制和合规锁定。</p>
+<div class="diagram">
+ <div class="node"><b>EC2 / RDS / EFS</b><br><small>受管资源</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>AWS Backup</b><br><small>策略统一入口</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Backup Vault</b><br><small>保留 / 生命周期 / 加密</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>能力</th><th>关键含义</th><th>适用场景</th></tr></thead>
+<tbody>
+<tr><td>统一备份计划</td><td>按标签或资源类型批量绑定保留策略。</td><td>多服务统一治理，减少漏备份。</td></tr>
+<tr><td>跨区域复制</td><td>备份副本可复制到其他区域，提升灾难恢复能力。</td><td>RPO / RTO 需求高，灾备区域存在。</td></tr>
+<tr><td>跨账号管理</td><td>通过组织级策略或管理账户集中控制备份。</td><td>多账号中台架构或企业审计场景。</td></tr>
+<tr><td>Vault Lock</td><td>受控地锁定保留期和删除动作。</td><td>合规、审计、不可篡改需求。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="plans">
+<h2>二、备份计划</h2>
+<ul>
+<li><b>Backup plan</b>：定义备份频率、保留期限和生命周期，例如每天备份、保留 30 天、按周/月归档。</li>
+<li><b>资源选择</b>：可按资源类型、标签、账号或组织单元绑定，并持续覆盖新资源。</li>
+<li><b>资源标签</b>：是最常见的批量管理入口；考试中经常考“添加标签后，备份计划生效”的题目。</li>
+<li><b>生命周期</b>：可决定备份的分层保留，例如当前 30 天标准存储，之后转到低成本存储或更久保留。</li>
+<li><b>恢复点</b>：恢复时基于备份点；实际恢复目标和窗口要和 RPO / RTO 要求匹配。</li>
+</ul>
+<div class="callout orange"><b>记忆重点：</b>备份计划不是“单个实例点备份”，而是“企业级策略”，尤其在多资源、多账号、多区域中极其常见。</div>
+</section>
+
+<section id="vaults">
+<h2>三、Vault、生命周期与 Vault Lock</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>能力</th><th>作用</th><th>答题提示</th></tr></thead>
+<tbody>
+<tr><td>Backup Vault</td><td>存放恢复点的容器，可绑定 KMS、日志和访问控制。</td><td>Vault 本身就是备份的安全边界。</td></tr>
+<tr><td>Lifecycle</td><td>定义从当前备份到低成本存储的转换策略。</td><td>总容量增长时，生命周期能显著降低成本。</td></tr>
+<tr><td>Vault Lock</td><td>锁定删除与保留窗口，适合不可篡改要求。</td><td>题目一旦出现“合规/审计/不可删除”，第一时间想到 Vault Lock。</td></tr>
+<tr><td>加密</td><td>备份可使用 AWS 管理密钥或客户管理密钥（CMK）。</td><td>密钥策略要和 KMS、账号权限一起看。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>合规常考点：</b>Vault Lock 可确保备份不被提前删除，适合金融、医疗、审计场景；但它也要求先规划清楚保留期和删除权限边界，否则后续难以调整。</div>
+</section>
+
+<section id="governance">
+<h2>四、跨区跨账号治理</h2>
+<ul>
+<li><b>跨区域复制</b>：用于灾难恢复和多区域一致性；常见需求是“备份在主区域以外的备用区域保留”。</li>
+<li><b>跨账号备份</b>：管理账号可集中控制成员账号的恢复点、保留规则和审计权限。</li>
+<li><b>组织级策略</b>：允许企业统一要求所有账户启用备份计划、KMS 密钥策略或 Vault 几个安全要求。</li>
+<li><b>审计与可见性</b>：通过 AWS Backup 控制台、CloudTrail、Config 等辅助验证备份状态和合规策略是否真正生效。</li>
+<li><b>标签与策略</b>：企业中最常见的做法是“按应用或环境标签统一应用备份规则”，避免手工逐资源配置。</li>
+</ul>
+</section>
+
+<section id="restore">
+<h2>五、恢复、演练与 RTO/RPO</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>要素</th><th>设计重点</th><th>注意事项</th></tr></thead>
+<tbody>
+<tr><td>恢复点</td><td>恢复点越近，RPO 越小，业务恢复风险越低。</td><td>频率和保留策略不仅影响成本，也影响恢复粒度。</td></tr>
+<tr><td>恢复目标</td><td>要符合 RTO：从故障到恢复操作时间的业务要求。</td><td>恢复演练必须有明确的切换步骤，不可只在意备份完成。</td></tr>
+<tr><td>资源类型</td><td>不同服务有不同的恢复方式：RDS、EBS、EFS、EC2、DynamoDB 等各有差异。</td><td>不要想当然地把所有服务都按“整实例恢复”理解。</td></tr>
+<tr><td>演练</td><td>验证恢复过程、恢复点是否可信、KMS 配置与权限是否正常。</td><td>数据恢复最容易出问题的是“权限 + 密钥 + 依赖网络”三类。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>简短判断：</b>业务要求“低 RPO/低 RTO”时，单纯保留备份不够，还要看复制、恢复窗口和演练过程是否存在缺口。</div>
+</section>
+
+<section id="scenarios">
+<h2>六、场景题解析</h2>
+<div class="quiz">
+ <h3>场景一：多账号环境如何统一管理备份</h3>
+ <p>企业在多个账号中部署了 RDS、EFS 和 EC2，要求备份策略统一，并且审计部门要求查看备份状态。</p>
+ <p><b>正确方向：</b>使用 AWS Backup 的跨账号管理/组织级治理，将备份计划统一应用到资源，并结合 Vault 和 KMS 策略提升审计能力。</p>
+ <p><b>分析思路：</b>题目强调“多个账号 + 统一策略”，这正是 AWS Backup 管理中心的优势。</p>
+ <p><b>排除：</b>单机配置备份计划无法覆盖批量多账号治理；手工逐资源设置明显不符合企业化要求。</p>
+</div>
+<div class="quiz">
+ <h3>场景二：要求“无法删除、不能提前失效”</h3>
+ <p>监管要求备份保留时间不能被误删，恢复点需保留到合规窗口结束。</p>
+ <p><b>正确方向：</b>启用 Vault Lock，并结合保留期限和删除限制。</p>
+ <p><b>分析思路：</b>“不能删除、不能提前失效”是 Vault Lock 的最典型应用场景。</p>
+ <p><b>排除：</b>普通备份计划的保留规则只能控制标准生命周期，不能像 Vault Lock 一样提供强约束。</p>
+</div>
+<div class="quiz">
+ <h3>场景三：公司要求 RPO 1 天、RTO 10 分钟</h3>
+ <p>灾备环境需要做到在灾难发生后尽快恢复，并且副本保存在其他区域。</p>
+ <p><b>正确方向：</b>定义恢复点 + 跨区域复制 + 演练切换流程。AWS Backup 可支持跨区域复制并保证恢复点可用。</p>
+ <p><b>分析思路：</b>题目中最关键的非功能要求是“恢复点”和“跨区域副本”，而不是普通保留周期。</p>
+ <p><b>排除：</b>只保留本地备份或没有演练流程，无法满足严格 RTO / RPO 要求。</p>
+</div>
+</section>
+
+<section id="quick">
+<h2>七、关键词速查</h2>
+<ul>
+<li><b>Backup plan</b> = 统一备份策略，控制频率和保留期限。</li>
+<li><b>Vault</b> = 备份容器，负责保留点与访问控制。</li>
+<li><b>Vault Lock</b> = 强制锁定保留期和删除动作，适合合规要求。</li>
+<li><b>Cross-region copy</b> = 复制到其他 AWS 区域，支持灾备。</li>
+<li><b>Cross-account</b> = 在多账号中统一治理备份。</li>
+<li><b>Lifecycle</b> = 会随着时间推移转换到更低成本存储层。</li>
+</ul>
+</section>
+
+<section id="memory">
+<h2>八、考前速记卡</h2>
+<ul class="checklist" id="memory-list">
+<li><input type="checkbox"><span><b>统一入口</b>：AWS Backup 管理 EC2、EFS、RDS、DynamoDB 等备份</span></li>
+<li><input type="checkbox"><span><b>标签驱动</b>：按标签为资源分配备份计划，适合企业批量治理</span></li>
+<li><input type="checkbox"><span><b>跨区域副本</b>：提升灾难恢复能力，利于 RPO/RTO 目标</span></li>
+<li><input type="checkbox"><span><b>跨账号管理</b>：管理账号统一控制成员账号信息</span></li>
+<li><input type="checkbox"><span><b>Vault Lock</b>：强制锁定保留期和删除动作，合规审计常见</span></li>
+<li><input type="checkbox"><span><b>生命周期策略</b>：从标准存储逐步转换到低成本长期保留</span></li>
+<li><input type="checkbox"><span><b>恢复测试</b>：备份不要只看创建是否成功，必须验证恢复有效</span></li>
+<li><input type="checkbox"><span><b>成本与合规平衡</b>：备份策略必须同时满足恢复要求与审计要求</span></li>
+</ul>
+<div class="progress"><span id="progress-fill"></span></div>
+</section>
+
+<section id="quiz">
+<h2>九、快速自测</h2>
+<div class="quiz">
+ <p>问题 1：如果要求“不能删除且保留期不能被提前修改”，最合适的能力是？</p>
+ <button onclick="showAnswer('q1',true)">A. Vault Lock</button>
+ <button onclick="showAnswer('q1',false)">B. Backup plan</button>
+ <button onclick="showAnswer('q1',false)">C. Lifecycle</button>
+ <div class="answer" id="q1-answer">正确答案：A。Vault Lock 能对备份恢复点设置更强的保留和删除约束。</div>
+</div>
+<div class="quiz">
+ <p>问题 2：以下哪项最符合企业统一备份治理？</p>
+ <button onclick="showAnswer('q2',false)">A. 手工给每台 EC2 实例单独创建备份计划</button>
+ <button onclick="showAnswer('q2',true)">B. 用标签 + Backup plan + 组织级管理统一按策略应用</button>
+ <button onclick="showAnswer('q2',false)">C. 只在本地机房保留副本</button>
+ <div class="answer" id="q2-answer">正确答案：B。企业化备份治理的关键是“统一策略 + 批量标签 + 多账号管理”。</div>
+</div>
+</section>
+</main>
+</div>
+<footer>AWS SAP-C02 备考笔记 · AWS Backup</footer>
+<script>
+const progressFill=document.getElementById('progress-fill');
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memory-list input')];
+ const done=boxes.filter(x=>x.checked).length;
+ const pct=(done/boxes.length)*100;
+ progressFill.style.width=pct+'%';
+}
+document.querySelectorAll('#memory-list input').forEach(input=>input.addEventListener('change', updateProgress));
+updateProgress();
+function showAnswer(id, correct){
+ const answer=document.getElementById(id+'-answer');
+ answer.style.display='block';
+ if(correct){ answer.style.background='#ecfdf5'; }
+ else { answer.style.background='#fef2f2'; }
+}
+</script>
+</body>
+</html>
