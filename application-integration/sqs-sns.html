@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 SQS 与 SNS 考点速查：标准与 FIFO 队列、可见性超时、死信队列、发布订阅、Fan-out 与消息过滤。">
+<title>AWS SAP-C02｜Amazon SQS / SNS 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:780px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:130px}
+.diagram .arrow{color:#64748b;font-weight:700;font-size:18px}
+.scenario{border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0;background:#fafcff}
+.scenario-title{font-weight:700;font-size:15px;margin-bottom:10px;color:#1e3a5f}
+.analysis{background:var(--green-soft);border-left:3px solid var(--green);padding:10px 14px;border-radius:6px;margin:10px 0}
+.answer-box{background:var(--primary-soft);border-left:3px solid var(--primary);padding:10px 14px;border-radius:6px;margin:10px 0}
+.trap{background:var(--orange-soft);border-left:3px solid var(--orange);padding:10px 14px;border-radius:6px;margin:10px 0}
+.small{font-size:13px;color:var(--muted)}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow"><a href="index.html" style="color:#bfdbfe">← 返回应用集成模块</a></div>
+  <h1>Amazon SQS / SNS<br><span style="font-size:0.65em;font-weight:400;color:#93c5fd">托管消息队列与发布/订阅 — SAP-C02 核心考点</span></h1>
+  <p>用 SQS 在生产者与消费者之间缓冲工作，用 SNS 将一次发布分发给多个订阅者。掌握标准与 FIFO 语义、可见性超时、DLQ、Fan-out、过滤策略，以及跨服务授权与端到端幂等。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">应用集成 / 消息服务</span>
+   <span class="pill">SQS · SNS · FIFO · DLQ · Fan-out</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回应用集成分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav id="mainNav">
+ <strong>页面目录</strong>
+ <a href="#overview">一、解耦模型与服务定位</a>
+ <a href="#sqs">二、SQS 队列与消息生命周期</a>
+ <a href="#delivery">三、投递、可见性与长轮询</a>
+ <a href="#fifo">四、标准队列与 FIFO 队列</a>
+ <a href="#sns">五、SNS Topic 与订阅</a>
+ <a href="#fanout">六、Fan-out、过滤与顺序</a>
+ <a href="#reliability">七、失败处理、DLQ 与幂等</a>
+ <a href="#security">八、安全、策略与加密</a>
+ <a href="#patterns">九、架构选型与常见陷阱</a>
+ <a href="#scenarios">十、场景题解析</a>
+ <a href="#quick">十一、关键词速查</a>
+ <a href="#memory">十二、考前速记卡</a>
+ <a href="#quiz">十三、快速自测</a>
+ <a href="#references">官方资料</a>
+</nav>
+
+<main>
+<section id="overview">
+<h2>一、解耦模型与服务定位</h2>
+<p class="lead">SQS 是拉取式消息队列，适合把工作交给一个或多个消费者异步处理；SNS 是发布/订阅服务，适合把同一事件推送到多个订阅端。它们常组合使用：SNS 负责广播，多个 SQS 队列分别缓冲下游工作。</p>
+<div class="diagram">
+ <div class="node"><b>生产者</b><br><small>发布任务或事件</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>SNS Topic</b><br><small>发布 / 过滤 / 扇出</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>SQS 队列</b><br><small>缓冲 / 拉取 / 重试</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>消费者</b><br><small>按自身速率处理</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>需求特征</th><th>优先考虑</th><th>核心语义</th></tr></thead>
+<tbody>
+<tr><td>任务需要排队，消费者自行控制处理速率</td><td>SQS</td><td>消息留在队列供消费者轮询；消息通常由一个消费者成功处理后删除。</td></tr>
+<tr><td>一个事件需要通知多个不同系统</td><td>SNS</td><td>发布到 Topic 后向订阅者推送；每个订阅者独立接收。</td></tr>
+<tr><td>广播同时需要缓冲、独立重试和积压隔离</td><td>SNS → 多个 SQS</td><td>每个下游有自己的队列、消费速率、权限和 DLQ。</td></tr>
+<tr><td>需要事件匹配、跨账户路由或 AWS 服务事件总线</td><td>比较 EventBridge</td><td>SNS 是主题发布订阅；EventBridge 更偏事件规则、内容匹配和事件总线路由。</td></tr>
+<tr><td>必须兼容现有 Apache ActiveMQ / RabbitMQ 应用</td><td>比较 Amazon MQ</td><td>SQS/SNS 是云原生托管服务，不是 AMQP/JMS 消息代理的直接替代品。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>先选模式，再选服务：</b>“工作分配/缓冲”对应队列；“一对多通知”对应发布订阅；“一对多且下游需独立吸收积压”通常是 SNS + SQS，而不是让所有消费者争抢同一条队列消息。</div>
+</section>
+
+<section id="sqs">
+<h2>二、SQS 队列与消息生命周期</h2>
+<p>SQS 队列托管消息存储与消费者轮询。生产者发送消息后，消费者使用短轮询或长轮询接收；收到消息不等于已完成处理，成功后应显式删除。若未删除且可见性超时到期，消息会重新变为可见，可被再次接收。</p>
+<h3>消息生命周期的关键状态</h3>
+<ol>
+<li><b>发送：</b>生产者将消息写入队列。应用应处理发送超时导致的“不确定是否成功”，避免将一次请求失败误判成消息一定未入队。</li>
+<li><b>可见并接收：</b>消费者调用 ReceiveMessage 获取消息；收到后开始可见性超时倒计时。</li>
+<li><b>处理中：</b>消息在可见性超时期间对其他消费者暂不可见，但仍留在队列中。此机制不是锁，也不保证业务只执行一次。</li>
+<li><b>确认删除：</b>处理成功后使用该次接收返回的 ReceiptHandle 删除消息。不能把 ReceiptHandle 当作永久消息 ID 复用。</li>
+<li><b>重新投递：</b>若处理失败、消费者崩溃或未及时删除，超时后消息重新可见；因此消费者必须容忍重复。</li>
+</ol>
+<div class="table-wrap"><table>
+<thead><tr><th>属性 / 操作</th><th>作用</th><th>设计注意</th></tr></thead>
+<tbody>
+<tr><td>Message retention period</td><td>控制消息在队列中最长保留多久</td><td>保留期不是可见性超时；超过保留期消息会被删除，需与最大故障恢复时间匹配。</td></tr>
+<tr><td>Visibility timeout</td><td>接收后暂时隐藏消息，减少并发消费者重复领取</td><td>需覆盖正常处理时长及波动；过短增加重复，过长延迟失败消息重试。</td></tr>
+<tr><td>Delay queue / message timer</td><td>延迟消息对消费者可见</td><td>用于延后任务，不是替代消息保留期或可见性超时的机制。</td></tr>
+<tr><td>Receive count</td><td>跟踪消息被接收的次数，可参与 DLQ 转移判断</td><td>重复投递可能发生；不要把接收次数当成业务处理成功次数。</td></tr>
+<tr><td>Long polling</td><td>等待消息到达后再返回，减少空响应与轮询成本</td><td>可通过队列属性或单次接收参数配置；等待时长要与客户端 HTTP 超时协调。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>Exactly-once 不是默认语义：</b>SQS 标准队列提供至少一次投递，偶尔可能重复；即使使用 FIFO，也不能自动保证外部数据库写入、付款等副作用只发生一次。业务端仍需幂等。</div>
+</section>
+
+<section id="delivery">
+<h2>三、投递、可见性与长轮询</h2>
+<h3>可见性超时的调优</h3>
+<p>把可见性超时设得远小于任务处理时间，消息会在消费者仍处理中重新出现，导致并行重复执行。反过来，若设置过长，消费者崩溃后需要等待更久才能重试。以真实处理时长分布为依据，设置合理余量，并在确有需要时延长单条消息的可见性。</p>
+<ul>
+<li>处理成功：完成工作后删除消息，避免再次处理。</li>
+<li>确定可重试的暂时故障：不要删除消息，让它在可见性超时后重新投递；应限制重试并配合 DLQ。</li>
+<li>长任务：检查处理时间是否可能超出可见性超时，使用适当延长策略；同时评估消息保留期和任务幂等。</li>
+<li>批量消费：默认情况下，批次中失败可能使整批重新处理；消费者应保证已成功项可安全重复，或使用来源支持的部分批次失败能力。</li>
+</ul>
+<h3>短轮询与长轮询</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>方式</th><th>行为</th><th>适合场景</th></tr></thead>
+<tbody>
+<tr><td>短轮询</td><td>请求后快速返回，可能得到空响应；频繁轮询会带来更多空请求。</td><td>需要快速返回，或客户端不便等待；通常要接受空响应与更高请求频率。</td></tr>
+<tr><td>长轮询</td><td>在等待窗口内有消息则返回，无消息才在等待结束时返回；减少空响应。</td><td>大多数异步消费场景；降低无效轮询和成本，同时保持较及时的消息接收。</td></tr>
+</tbody></table></div>
+<p>长轮询可通过 <code>ReceiveMessageWaitTimeSeconds</code> 配置在队列级别，也可在接收请求中使用 <code>WaitTimeSeconds</code>。等待值最高可设为 20 秒。配置客户端读取超时时，应大于长轮询等待时间并留有网络余量，否则客户端可能先超时重试。</p>
+<div class="callout"><b>不是推送：</b>SQS 长轮询仍由消费者发起请求；若要求服务把通知推给端点，考虑 SNS 订阅或其他事件触发方式。Lambda 连接 SQS 时由 Event Source Mapping 管理轮询。</div>
+</section>
+
+<section id="fifo">
+<h2>四、标准队列与 FIFO 队列</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>维度</th><th>Standard</th><th>FIFO</th></tr></thead>
+<tbody>
+<tr><td>排序</td><td>尽力排序，不保证严格顺序</td><td>在同一 Message Group 内按顺序处理；不同组可并行</td></tr>
+<tr><td>投递与重复</td><td>至少一次投递；消费者应去重/幂等</td><td>支持 FIFO 队列的去重能力，但不能把它理解为端到端业务副作用的绝对恰好一次</td></tr>
+<tr><td>吞吐与扩展</td><td>适合高吞吐和大规模并行处理</td><td>吞吐受队列类型、分组、区域配额与高吞吐配置影响</td></tr>
+<tr><td>命名</td><td>普通队列名</td><td>队列名以 <code>.fifo</code> 结尾</td></tr>
+<tr><td>典型用途</td><td>可容忍乱序且希望最大弹性扩展的工作队列</td><td>订单状态转换、账户事件等必须保序的业务分区</td></tr>
+</tbody></table></div>
+<h3>FIFO 的分组与去重</h3>
+<ul>
+<li><b>MessageGroupId：</b>定义顺序边界。同一组内消息按顺序处理；不同组之间可并行。把所有消息放进同一组会限制并行度。</li>
+<li><b>MessageDeduplicationId：</b>用于识别重复发送；也可启用内容型去重，由消息体计算去重标识。去重窗口有限，并不代替持久业务幂等记录。</li>
+<li><b>处理失败：</b>FIFO 组内顺序会受失败消息影响；需谨慎设计重试、DLQ 和消息重放，避免后续事件越过未完成的前序状态。</li>
+<li><b>吞吐：</b>根据消息分组分布选择吞吐设计。热点 MessageGroupId 会形成串行瓶颈；精确配额以对应区域的 AWS 文档为准。</li>
+</ul>
+<div class="callout red"><b>顺序范围：</b>FIFO 只保证队列和消息组内的顺序语义；SNS、SQS、消费者并行度、重试和业务副作用组成的整条链路都要符合顺序设计，不能仅凭“用了 FIFO”就假设所有下游全局有序。</div>
+<p>FIFO 适用于业务确实要求顺序或去重的场景。若只需防止并发重复副作用，标准队列加幂等处理通常更简单、吞吐弹性也更好。用业务实体（如订单 ID）生成稳定的 MessageGroupId，可在保序与跨实体并行之间取得平衡。</p>
+</section>
+
+<section id="sns">
+<h2>五、SNS Topic 与订阅</h2>
+<p>SNS Topic 是发布者与订阅者之间的逻辑广播点。发布者向 Topic 发布消息，SNS 根据订阅配置将消息推送到订阅端；不同协议的可用能力、重试方式和权限要求不同。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Topic / 订阅端</th><th>用途与特征</th><th>关键考点</th></tr></thead>
+<tbody>
+<tr><td>Standard Topic</td><td>高吞吐的一对多发布订阅</td><td>投递可能重复或乱序；订阅端应处理重试与幂等。</td></tr>
+<tr><td>FIFO Topic</td><td>有序发布订阅，并提供 FIFO 去重能力</td><td>顺序依据消息组；需要匹配支持的 FIFO 订阅端（常见为 SQS FIFO）；并非所有协议均支持。</td></tr>
+<tr><td>Amazon SQS</td><td>将推送消息持久化到队列，消费者独立拉取</td><td>队列访问策略必须允许对应 Topic 发送；FIFO 顺序链路需匹配 FIFO Topic 与 FIFO Queue。</td></tr>
+<tr><td>AWS Lambda</td><td>推送事件并触发函数处理</td><td>Lambda 资源策略需允许 SNS 调用；函数处理失败的重试/失败目标需按 Lambda 与 SNS 的投递模式分别配置。</td></tr>
+<tr><td>HTTP/S、电子邮件等</td><td>向外部 Web 端点或用户通知</td><td>端点确认订阅；投递重试与端点可用性相关，适用于通知而非需要应用端精确控制拉取的工作队列。</td></tr>
+</tbody></table></div>
+<p>推送订阅的端点可用性会影响投递成功。对于需要持久缓冲和独立消费速率的内部微服务，SNS 通常先推到 SQS，再由服务自行拉取。对于 Lambda 处理 SQS 的方案，消费的批次、并发与错误处理还需在 Lambda Event Source Mapping 配置。</p>
+<div class="callout orange"><b>确认订阅：</b>HTTP/S、邮件等协议可能需要端点确认；未确认的订阅不会按预期开始投递。跨账号订阅还需分别核对 Topic 侧和订阅资源侧的授权。</div>
+</section>
+
+<section id="fanout">
+<h2>六、Fan-out、过滤与顺序</h2>
+<h3>SNS + SQS Fan-out</h3>
+<p>把 Topic 订阅到多个 SQS 队列，每个系统消费自己的副本。订单服务可处理履约，分析服务可落数据湖，通知服务可发送消息；某个订阅者变慢时，只增加它自己的积压，不必阻塞其他队列。</p>
+<ol>
+<li>生产者向 SNS Topic 发布一条业务事件。</li>
+<li>SNS 为每个匹配的 SQS 订阅投递消息。</li>
+<li>每个队列拥有独立的访问策略、加密配置、保留期、DLQ 和消费端。</li>
+<li>订阅端通过消息属性过滤，只接收与自身相关的事件类型。</li>
+</ol>
+<h3>消息过滤策略</h3>
+<ul>
+<li>过滤策略配置在 SNS 订阅上，不是 SQS 消费者端的队列过滤器；未匹配的消息不会投递到该订阅端。</li>
+<li>默认基于消息属性匹配；可配置基于消息正文的过滤范围。需保证发布者发送的字段和策略的数据类型一致。</li>
+<li>过滤策略适合减少不需要的下游投递与处理；它不是授权边界。安全控制仍由 IAM、Topic Policy、Queue Policy 等负责。</li>
+<li>变更策略后注意策略传播与投递行为；为每个订阅维护清楚的事件契约和测试样例。</li>
+</ul>
+<div class="table-wrap"><table>
+<thead><tr><th>需求</th><th>推荐组合</th><th>需同时验证</th></tr></thead>
+<tbody>
+<tr><td>订单状态事件供履约、分析、通知分别处理</td><td>SNS Standard + 多个 SQS Standard</td><td>订阅过滤、队列策略、各自 DLQ 与消费延迟</td></tr>
+<tr><td>同一业务分组内要求事件顺序</td><td>SNS FIFO + SQS FIFO</td><td>Topic/Queue 类型匹配、MessageGroupId 透传、下游处理顺序</td></tr>
+<tr><td>多个服务只需要即时通知，不需要队列积压</td><td>SNS 直接订阅合适的目标</td><td>目标协议支持、重试、授权、端点可用性</td></tr>
+<tr><td>不同服务需独立故障隔离与积压恢复</td><td>为每个消费者创建单独队列</td><td>避免多个消费者共用一个队列造成消息被竞争消费</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>多消费者陷阱：</b>多个服务直接消费同一个 SQS 队列，是竞争消费而不是广播；每条消息通常只被其中一个消费者成功处理。需要每个服务都获得事件副本时，使用 SNS Fan-out 到多个队列。</div>
+</section>
+
+<section id="reliability">
+<h2>七、失败处理、DLQ 与幂等</h2>
+<p>DLQ 用于隔离多次处理失败的消息，便于排障与受控重放。SQS Redrive Policy 通常设置接收次数阈值（<code>maxReceiveCount</code>）和目标 DLQ；DLQ 的 Redrive Allow Policy 决定哪些源队列可将消息转入该 DLQ。阈值应允许合理的暂时性故障重试，同时阻止毒消息无限循环。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>配置 / 机制</th><th>解决的问题</th><th>常见误用</th></tr></thead>
+<tbody>
+<tr><td>SQS Redrive Policy</td><td>消息接收失败超过阈值后转移到 DLQ</td><td>源队列和 DLQ 类型需匹配；不设置合理阈值可能导致过早隔离或反复失败。</td></tr>
+<tr><td>DLQ Redrive Allow Policy</td><td>控制哪些源队列可使用该 DLQ</td><td>它与源队列的 Redrive Policy 作用不同，二者不可混为一项。</td></tr>
+<tr><td>可观测性</td><td>监控队列积压、最老消息年龄、DLQ 消息数和处理错误</td><td>只看队列深度可能忽略少量消息长时间卡住或毒消息反复处理。</td></tr>
+<tr><td>人工 / 自动重放</td><td>排除根因后将消息重新送回源队列或安全处理</td><td>重放会再次触发副作用；先确认幂等、消息版本和下游状态。</td></tr>
+</tbody></table></div>
+<h3>至少一次投递与幂等</h3>
+<p>消费者可能在完成数据库写入后、删除 SQS 消息前崩溃；消息随后重投时，副作用可能重复。可使用业务事件 ID 建立幂等记录、数据库唯一约束或幂等写入，并将“执行业务操作”和“记录已处理”设计成原子或可恢复流程。</p>
+<ul>
+<li>用稳定事件 ID 判断是否处理过；不要只依赖每次接收都会变化的 ReceiptHandle。</li>
+<li>对于付款、发券等操作，先定义重复请求的业务语义，避免把“消息去重”误当成业务事务。</li>
+<li>对于 Lambda + SQS，合理设置可见性超时、批次大小和最大并发；有批次部分失败需求时使用部分批次响应，避免成功项重复工作。</li>
+<li>DLQ 只隔离失败，不自动修复数据、重试业务或保证恢复；告警与处理流程也必须配套。</li>
+</ul>
+<div class="callout"><b>层次要分清：</b>SQS DLQ 处理队列消费失败；SNS 订阅 DLQ 处理 SNS 向订阅端投递失败；Lambda 异步调用 DLQ/失败目的地处理 Lambda 异步执行失败。按失败发生在哪一跳选择配置。</div>
+</section>
+
+<section id="security">
+<h2>八、安全、策略与加密</h2>
+<p>跨服务投递不是“网络可达就能成功”。生产者能否发布、SNS 能否写入队列、消费者能否读取删除消息，以及加密密钥是否允许相关主体使用，都需要分别授权。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>控制面</th><th>典型策略 / 权限</th><th>检查重点</th></tr></thead>
+<tbody>
+<tr><td>生产者发布到 SNS</td><td>身份策略与 Topic Resource Policy</td><td>允许必要的 Topic ARN、操作和来源账号；避免宽泛的主体与资源通配符。</td></tr>
+<tr><td>SNS 推送到 SQS</td><td>SQS Queue Policy</td><td>允许指定 SNS 服务主体执行 <code>sqs:SendMessage</code>，并限制 <code>aws:SourceArn</code> / SourceAccount 到预期 Topic。</td></tr>
+<tr><td>消费者读取 SQS</td><td>消费者身份策略 + 队列资源策略（跨账号时尤其重要）</td><td>通常需发送、接收、查看属性、删除及相关队列属性操作；遵循最小权限。</td></tr>
+<tr><td>SNS 加密队列消息</td><td>KMS Key Policy / IAM 权限</td><td>除队列访问外，还需允许相应 SNS 服务路径使用密钥；排查投递失败时同时检查 KMS 权限。</td></tr>
+<tr><td>SQS / SNS 静态加密与传输</td><td>SSE-SQS 或 SSE-KMS；TLS</td><td>按合规、密钥控制和跨账户要求选择；密钥策略、轮换及访问审计应纳入设计。</td></tr>
+</tbody></table></div>
+<p>访问问题可按链路逐跳排查：发布者到 Topic、SNS 到订阅端、消费者到 Queue、加密服务到 KMS。确认资源 ARN、区域、账号、显式 Deny、条件键、密钥策略与服务支持情况，不要只给角色添加管理员权限来“验证”。</p>
+<div class="callout orange"><b>策略不等价：</b>Topic Policy 控制对 Topic 的访问；Queue Policy 控制谁能对队列操作；KMS Key Policy 控制谁能使用密钥。增加其中一项不会自动授予另外两项权限。</div>
+</section>
+
+<section id="patterns">
+<h2>九、架构选型与常见陷阱</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>业务问题</th><th>候选设计</th><th>为什么 / 需留意</th></tr></thead>
+<tbody>
+<tr><td>流量突增，后端处理能力固定</td><td>SQS 缓冲，消费者按容量扩缩</td><td>队列吸收短时峰值；需监控积压年龄并确保保留期足以覆盖恢复窗口。</td></tr>
+<tr><td>一条业务事件由多个系统分别处理</td><td>SNS Topic → 每个系统一个 SQS</td><td>独立队列形成故障与扩展边界；过滤策略可减少无关投递。</td></tr>
+<tr><td>任务必须按实体顺序处理</td><td>SQS FIFO，以实体 ID 分组</td><td>同组保序、不同组并发；热点实体仍会串行。</td></tr>
+<tr><td>跨账户事件通知</td><td>SNS Topic Policy + 订阅端资源策略</td><td>两边都要授权；确认区域、账号、订阅协议与加密密钥配置。</td></tr>
+<tr><td>需要路由多种 AWS 事件并匹配事件内容</td><td>比较 EventBridge</td><td>SNS 擅长 Topic 发布订阅；不要把消息总线、事件规则和队列缓冲视作同一个功能。</td></tr>
+</tbody></table></div>
+<h3>题目中的高频误区</h3>
+<ul>
+<li>将 Standard Queue 误认为严格 FIFO；它的顺序是尽力而为。</li>
+<li>将 FIFO 的去重窗口理解成永久业务去重，或认为它能让数据库副作用恰好执行一次。</li>
+<li>把 SNS Fan-out 和多个消费者共用一条 SQS 队列混淆；后者是竞争消费。</li>
+<li>把可见性超时与消息保留期混淆：前者决定何时再次可见，后者决定消息最多保留多久。</li>
+<li>只为 Lambda 配置权限，却漏掉 SNS 到 SQS 的队列策略；或只放通 SQS 却漏 KMS Key Policy。</li>
+<li>把 DLQ 当作自动重试队列，或者在未修复根因时将毒消息反复 redrive。</li>
+<li>认为 SNS 过滤策略能实现安全隔离；过滤用于投递选择，授权仍依赖策略。</li>
+<li>为所有消息设置相同 FIFO 分组 ID，随后发现吞吐被单一顺序通道限制。</li>
+</ul>
+<div class="callout green"><b>考场决策顺序：</b>先判断队列还是广播，再判断是否严格保序，再规划失败隔离和重复处理，最后核对 Topic/Queue/KMS 权限与可观测性。</div>
+</section>
+
+<section id="scenarios">
+<h2>十、场景题解析</h2>
+<div class="scenario">
+ <div class="scenario-title">场景一：促销流量让订单处理系统过载</div>
+ <p>订单 API 的流量会短时激增，下游库存系统处理能力有限。订单必须可靠地排队，库存服务可按自身能力逐步消费。</p>
+ <div class="answer-box"><b>正确方向：</b>将订单处理请求写入 SQS，由库存消费者异步拉取；监控积压与最老消息年龄，并按处理能力扩展消费者。</div>
+ <div class="analysis"><b>分析思路：</b>队列隔离生产速率与消费速率，并吸收短时突发。应定义同步 API 的确认语义、失败重试和幂等，避免调用方误以为写入失败后重复创建订单。</div>
+ <div class="trap"><b>排除：</b>直接同步调用所有下游会把峰值压力传导到库存服务；仅延长数据库超时不能缓冲积压；SNS 单独广播不提供消费者自行拉取的队列缓冲。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景二：三个独立系统都必须处理每笔订单事件</div>
+ <p>履约、分析和通知服务都要接收每笔订单创建事件。服务应独立扩容，某一系统停机时不能阻止其他系统。</p>
+ <div class="answer-box"><b>正确方向：</b>SNS Topic Fan-out 到三个独立的 SQS 队列，每个服务消费自己的队列。</div>
+ <div class="analysis"><b>分析思路：</b>SNS 负责广播事件，独立 SQS 负责隔离积压和消费故障。每个订阅可以采用自己的过滤策略、DLQ、保留期与权限。</div>
+ <div class="trap"><b>排除：</b>让三个消费者读取同一条 SQS 队列会竞争消息，不是每个服务都收到副本；SNS 直接触发所有消费者会减少各服务对缓冲和拉取速率的控制。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景三：订单事件必须按每个订单的状态顺序应用</div>
+ <p>同一订单会产生“已付款、已发货、已完成”等事件，不同订单可以并行处理，但不能颠倒单个订单的状态顺序。</p>
+ <div class="answer-box"><b>正确方向：</b>使用 SQS FIFO，并以订单 ID 作为 MessageGroupId；设计幂等消费者与失败消息处置。</div>
+ <div class="analysis"><b>分析思路：</b>MessageGroupId 划定顺序域，单订单内保序，不同订单可并行。若前序消息失败，必须明确后续消息是等待、隔离还是经业务修复后重放。</div>
+ <div class="trap"><b>排除：</b>Standard Queue 不提供严格顺序；把所有订单放在一个 FIFO 分组会造成全局串行；FIFO 的发送去重不能代替消费端对外部副作用的幂等。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景四：少量坏消息反复失败，阻塞正常处理</div>
+ <p>消费者对部分消息持续报错，队列接收计数持续增长，运维需要隔离坏消息并在修复后分析或重放。</p>
+ <div class="answer-box"><b>正确方向：</b>配置 SQS Redrive Policy，将超过合理 maxReceiveCount 的消息转入 DLQ；为 DLQ 设置监控、告警和受控 redrive 流程。</div>
+ <div class="analysis"><b>分析思路：</b>暂时故障允许有限重试，持续失败消息被隔离。分析 DLQ 中消息后先修复原因，再评估重复副作用和重放顺序。</div>
+ <div class="trap"><b>排除：</b>无限增加可见性超时只是延迟再次投递；删除坏消息会丢失事件；仅创建一个 DLQ 而没有在源队列配置 Redrive Policy 不会自动转移消息。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景五：高频空轮询增加成本</div>
+ <p>消费者不断请求队列，但多数请求没有消息；系统仍需在新消息到达后尽快唤醒消费者。</p>
+ <div class="answer-box"><b>正确方向：</b>启用 SQS 长轮询，合理配置队列等待时间或 ReceiveMessage 的 WaitTimeSeconds，并调高客户端读取超时以覆盖等待。</div>
+ <div class="analysis"><b>分析思路：</b>长轮询等待窗口内没有消息才返回空响应，可减少空请求；它仍由消费者发起，并非推送。</div>
+ <div class="trap"><b>排除：</b>降低轮询间隔会增加空请求；SNS 是推送订阅模式，不是 SQS 消费者轮询的替代配置；客户端超时短于长轮询会引发不必要的失败重试。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景六：SNS 无法把消息写入加密 SQS 队列</div>
+ <p>Topic 与队列订阅已创建，但发布后队列收不到消息。队列启用了 KMS 加密，访问日志显示投递授权失败。</p>
+ <div class="answer-box"><b>正确方向：</b>检查 SQS Queue Policy 是否允许指定 SNS Topic 的 <code>sqs:SendMessage</code>，并检查 KMS Key Policy / IAM 是否允许 SNS 投递路径使用密钥。</div>
+ <div class="analysis"><b>分析思路：</b>SNS 到 SQS 的投递依赖队列资源授权；加密队列还需密钥授权。应将来源限制到准确 Topic ARN，并检查区域、账号和显式 Deny。</div>
+ <div class="trap"><b>排除：</b>只修改发布者身份策略并不能授权 SNS 服务写入队列；仅给消费者读取权限无助于 SNS 投递；关闭加密不应作为未经评估的长期修复。</div>
+</div>
+</section>
+
+<section id="quick">
+<h2>十一、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>吸收突发、消费者自行拉取</td><td>SQS</td><td>队列是缓冲，不是广播。</td></tr>
+<tr><td>一个事件通知多个系统</td><td>SNS Topic</td><td>多个消费者共用单队列是竞争消费。</td></tr>
+<tr><td>多个系统各自积压和重试</td><td>SNS → 每个系统一个 SQS</td><td>确保 SNS 有权写入各队列。</td></tr>
+<tr><td>消息要求严格顺序</td><td>SQS FIFO + MessageGroupId</td><td>顺序在同一组内，不同组可并行。</td></tr>
+<tr><td>标准队列重复消息</td><td>至少一次投递 + 幂等处理</td><td>不要依赖消息 ID 解决业务副作用重复。</td></tr>
+<tr><td>接收后暂时不让其他消费者看到</td><td>Visibility Timeout</td><td>不是消息保留期，也不是永久锁。</td></tr>
+<tr><td>空轮询多、想降低请求数</td><td>Long Polling</td><td>仍是消费者发起的轮询。</td></tr>
+<tr><td>毒消息反复失败</td><td>Redrive Policy + DLQ</td><td>DLQ 必须有告警、排查和重放流程。</td></tr>
+<tr><td>只将特定事件类型发给订阅者</td><td>SNS Subscription Filter Policy</td><td>过滤不是安全授权机制。</td></tr>
+<tr><td>SNS 推送到加密 SQS 失败</td><td>Queue Policy + KMS Key Policy</td><td>两种权限都可能需要，逐跳检查。</td></tr>
+<tr><td>同 Topic 的订阅者独立吸收积压</td><td>每个订阅者使用独立队列</td><td>Fan-out 不等于共享队列。</td></tr>
+<tr><td>多种事件内容匹配、总线路由</td><td>比较 EventBridge</td><td>SNS Topic 与 EventBridge 解决的问题侧重点不同。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>十二、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>SQS：</b>拉取式队列，缓冲生产速率与消费速率</span></li>
+<li><input type="checkbox"><span><b>SNS：</b>Topic 发布/订阅，适合一对多推送</span></li>
+<li><input type="checkbox"><span><b>Standard Queue：</b>高扩展，至少一次，顺序尽力而为</span></li>
+<li><input type="checkbox"><span><b>FIFO Queue：</b>按 MessageGroupId 保序，组间可并行</span></li>
+<li><input type="checkbox"><span><b>FIFO 去重：</b>有限去重窗口，不等同端到端恰好一次</span></li>
+<li><input type="checkbox"><span><b>ReceiptHandle：</b>接收后用于删除当前消息，不是永久消息标识</span></li>
+<li><input type="checkbox"><span><b>Visibility Timeout：</b>暂时隐藏接收中的消息，超时可重现</span></li>
+<li><input type="checkbox"><span><b>Retention Period：</b>消息在队列中的最长保留时间</span></li>
+<li><input type="checkbox"><span><b>Long Polling：</b>减少空响应；仍是消费者发起请求</span></li>
+<li><input type="checkbox"><span><b>幂等：</b>至少一次投递下保护外部副作用</span></li>
+<li><input type="checkbox"><span><b>SNS Fan-out：</b>Topic 将事件副本投递至多个订阅</span></li>
+<li><input type="checkbox"><span><b>独立消费者：</b>为每个系统配置自己的 SQS 队列</span></li>
+<li><input type="checkbox"><span><b>Filter Policy：</b>在 SNS 订阅上选择要投递的消息</span></li>
+<li><input type="checkbox"><span><b>Filter ≠ Authorization：</b>权限仍由 IAM / 资源策略控制</span></li>
+<li><input type="checkbox"><span><b>Redrive Policy：</b>源队列消息超过接收阈值后转入 DLQ</span></li>
+<li><input type="checkbox"><span><b>DLQ：</b>隔离失败消息；需监控、排障与受控重放</span></li>
+<li><input type="checkbox"><span><b>SNS → SQS：</b>Queue Policy 放行指定 Topic 的 SendMessage</span></li>
+<li><input type="checkbox"><span><b>加密队列：</b>除队列策略外还检查 KMS Key Policy</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十三、快速自测</h2>
+<p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz">
+ <b>1. 三个服务都要处理订单创建事件，且需要各自独立积压与恢复。哪种设计最合适？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',false)">A. 三个服务共用一个 SQS 队列</button>
+ <button class="secondary" onclick="showAnswer('q1',true)">B. SNS Topic Fan-out 到三个独立 SQS 队列</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. 使用单个 FIFO 队列并让第一个服务转发</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. 缩短 SQS 消息保留期</button>
+ <div class="answer" id="q1"><b>正确答案：B。</b>Topic 广播事件，各自的 SQS 队列隔离消费者积压和故障。共用队列是竞争消费，无法保证每个服务都收到每条消息。</div>
+</div>
+<div class="quiz">
+ <b>2. 一个订单的状态事件必须按顺序处理，不同订单可以并行。应如何配置 FIFO 消息组？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 所有消息都使用同一个订单 ID 以外的固定组 ID</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. 每个订单使用自己的 MessageGroupId</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 改用 Standard Queue 并提高可见性超时</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. 把消息保留期设为最长</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>每个订单形成一个顺序组，同一订单内保序、不同订单可并行。所有消息共用一个组会形成单一串行通道。</div>
+</div>
+<div class="quiz">
+ <b>3. SQS 消费者处理时间偶尔超过可见性超时，导致同一任务被并行处理。最直接要检查什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',false)">A. SNS Topic 的订阅确认状态</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">B. SQS 消息保留期是否设为最短</button>
+ <button class="secondary" onclick="showAnswer('q3',true)">C. 可见性超时是否覆盖处理时长，并确保消费者幂等</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. 把 Standard Queue 改成 SNS FIFO Topic</button>
+ <div class="answer" id="q3"><b>正确答案：C。</b>超时过短会使仍在处理的消息重新可见；适当调整超时，并用幂等处理承受可能重复投递。保留期和 Topic 类型不解决此机制问题。</div>
+</div>
+</section>
+
+<section id="references">
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" target="_blank" rel="noopener">Amazon SQS 开发人员指南</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html" target="_blank" rel="noopener">SQS 可见性超时</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html" target="_blank" rel="noopener">SQS 短轮询与长轮询</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html" target="_blank" rel="noopener">SQS 死信队列</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-fifo-queues.html" target="_blank" rel="noopener">SQS FIFO 队列</a></li>
+<li><a href="https://docs.aws.amazon.com/sns/latest/dg/welcome.html" target="_blank" rel="noopener">Amazon SNS 开发人员指南</a></li>
+<li><a href="https://docs.aws.amazon.com/sns/latest/dg/sns-message-filtering.html" target="_blank" rel="noopener">SNS 消息过滤</a></li>
+<li><a href="https://docs.aws.amazon.com/sns/latest/dg/sns-sqs-as-subscriber.html" target="_blank" rel="noopener">SNS Fan-out 到 SQS 队列</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>本文是非官方复习提纲，不代表 AWS 认证题库或考试原题。服务配额、协议支持、FIFO 吞吐和加密能力可能更新，请以 AWS 官方文档及当前 SAP-C02 考试指南为准。</div>
+</section>
+</main>
+</div>
+<footer class="container">Amazon SQS / SNS SAP-C02 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

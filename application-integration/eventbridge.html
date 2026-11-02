@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 EventBridge 考点速查：事件总线、事件模式、跨账号路由、Schema Registry、归档重放与失败处理。">
+<title>AWS SAP-C02｜Amazon EventBridge 考试速查手册</title>
+<style>
+:root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;--green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;--red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}a{color:var(--primary);text-decoration:none}a:hover{text-decoration:underline}.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}header p{color:#dbeafe;max-width:780px;margin:0}.header-meta,.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}button.secondary{background:#e2e8f0;color:#334155}.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}nav strong{display:block;margin-bottom:10px}nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}main{min-width:0}section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}h3{font-size:19px;margin:24px 0 10px}p{margin:9px 0}ul,ol{padding-left:23px}li{margin:5px 0}.lead{font-size:17px;color:#334155}.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}.callout.green{background:var(--green-soft);border-color:var(--green)}.callout.orange{background:var(--orange-soft);border-color:var(--orange)}.callout.red{background:var(--red-soft);border-color:var(--red)}table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f8fafc;color:#334155;font-weight:700}tr:last-child td{border-bottom:0}.table-wrap{overflow-x:auto}.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}.node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:130px}.arrow{color:#64748b;font-weight:700;font-size:18px}.scenario,.quiz{border:1px solid var(--line);border-radius:12px;padding:17px;margin:14px 0;background:#fafcff}.scenario h3{margin:0 0 8px;color:#1e3a5f;font-size:16px}.analysis,.answer-box,.trap{padding:10px 14px;border-radius:6px;margin:10px 0}.analysis{background:var(--green-soft);border-left:3px solid var(--green)}.answer-box{background:var(--primary-soft);border-left:3px solid var(--primary)}.trap{background:var(--orange-soft);border-left:3px solid var(--orange)}.small{font-size:13px;color:var(--muted)}.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}.checklist{list-style:none;padding:0}.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:8px 0}.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}.quiz button{margin:5px 6px 5px 0}.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}@media print{body{background:#fff;font-size:12px}header{background:#fff;color:#111;padding:20px 0}header p,.eyebrow{color:#444!important}.pill{border:1px solid #aaa;color:#333}.layout{display:block;padding:10px 0}nav,.toolbar,.no-print{display:none!important}section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}a{color:#111;text-decoration:none}}
+</style>
+</head>
+<body>
+<header><div class="container">
+<div class="eyebrow"><a href="index.html" style="color:#bfdbfe">← 返回应用集成模块</a></div>
+<h1>Amazon EventBridge<br><span style="font-size:.65em;font-weight:400;color:#93c5fd">事件总线与无服务器路由 — SAP-C02 核心考点</span></h1>
+<p>通过事件总线接收 AWS 服务、自有应用和 SaaS 伙伴的事件，再用事件模式路由到目标。掌握事件总线类型、跨账号策略、重试与 DLQ、归档重放、Schema Registry，以及与 SNS、CloudWatch 告警和 Scheduler 的边界。</p>
+<div class="header-meta"><span class="pill">🔥 高频考点</span><span class="pill">SAP-C02</span><span class="pill">应用集成 / 事件驱动</span><span class="pill">Event Bus · Rules · Cross-account · Schema</span></div>
+<div class="toolbar no-print"><button onclick="window.print()">打印 / 另存为 PDF</button><button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button><button class="secondary" onclick="location.href='index.html'">返回应用集成分类</button></div>
+</div></header>
+<div class="container layout">
+<nav><strong>页面目录</strong><a href="#model">一、事件模型与总线类型</a><a href="#rules">二、事件模式与规则</a><a href="#targets">三、目标与交付语义</a><a href="#cross">四、跨账号与跨区域</a><a href="#reliability">五、失败处理、归档与重放</a><a href="#schema">六、Schema Registry</a><a href="#schedule">七、计划任务与服务对比</a><a href="#security">八、安全与监控</a><a href="#scenarios">九、场景题解析</a><a href="#quick">十、关键词速查</a><a href="#memory">十一、考前速记卡</a><a href="#quiz">十二、快速自测</a><a href="#refs">官方资料</a></nav>
+<main>
+<section id="model"><h2>一、事件模型与总线类型</h2>
+<p class="lead">EventBridge 是无服务器事件总线与路由服务。事件发布者把事件送入总线，规则匹配事件内容，再将匹配事件投递到一个或多个目标；发布者不必直接调用每个消费者。</p>
+<div class="diagram"><div class="node"><b>事件源</b><br><small>AWS / 应用 / SaaS</small></div><span class="arrow">→</span><div class="node"><b>Event Bus</b><br><small>接收并隔离事件</small></div><span class="arrow">→</span><div class="node"><b>Rule</b><br><small>事件模式 / 定时</small></div><span class="arrow">→</span><div class="node"><b>Targets</b><br><small>Lambda / SQS / 工作流</small></div></div>
+<div class="table-wrap"><table><thead><tr><th>总线类型</th><th>事件来源与边界</th><th>典型用途</th></tr></thead><tbody>
+<tr><td>Default event bus</td><td>接收 AWS 服务事件；每个账户区域默认存在。</td><td>响应 AWS 资源状态变化、服务事件和 CloudTrail API 事件（须事件类型支持）。</td></tr>
+<tr><td>Custom event bus</td><td>应用发布自定义业务事件；可通过资源策略控制发布与跨账户访问。</td><td>领域事件、微服务集成、应用和 AWS 事件的集中路由。</td></tr>
+<tr><td>Partner event bus</td><td>与受支持 SaaS 伙伴集成后接收伙伴事件。</td><td>第三方 CRM、监控或业务 SaaS 向 AWS 事件驱动系统发送事件。</td></tr>
+</tbody></table></div>
+<p>事件通常包含 <code>source</code>、<code>detail-type</code>、<code>account</code>、<code>region</code>、时间和 <code>detail</code> 等字段。生产者应维护稳定事件契约；消费者可独立订阅事件而不改动生产者到每个下游的点对点连接。</p>
+<div class="callout green"><b>架构价值：</b>总线降低服务间耦合并支持内容路由，但它不是长期任务队列。需要消费者缓冲、拉取速率控制或持久工作队列时，将事件路由到 SQS。</div></section>
+<section id="rules"><h2>二、事件模式与规则</h2>
+<p>规则由 Event Pattern（按事件字段匹配）或 Schedule（基于时间触发）驱动，并指定一个或多个目标。事件模式采用 JSON 结构；只写需要匹配的字段即可，其余字段不限制。嵌套对象可匹配 detail 内的业务属性。</p>
+<h3>模式设计与常见匹配</h3><ul>
+<li>匹配 <code>source</code> 与 <code>detail-type</code>，先限定事件种类，再匹配 <code>detail</code> 中具体字段。</li>
+<li>字符串精确匹配时留意大小写；事件字段缺失、类型不同或字段路径错误都会导致零匹配。</li>
+<li>支持数值比较、前缀、存在性等模式运算符；复杂条件可将多个规则拆分，便于分别审计和监控。</li>
+<li>通过事件模式测试工具或代表性样例验证规则；修改生产事件契约后也应更新测试。</li>
+</ul>
+<div class="table-wrap"><table><thead><tr><th>触发方式</th><th>行为</th><th>用途</th></tr></thead><tbody>
+<tr><td>Event pattern</td><td>事件到达且匹配模式时触发。</td><td>状态变化、业务事件、AWS 服务通知。</td></tr>
+<tr><td>Scheduled rule</td><td>按固定速率或 Cron 计划触发。</td><td>已有规则的简单定时任务；新建时间计划通常优先考虑 EventBridge Scheduler。</td></tr>
+<tr><td>同一规则多个目标</td><td>一个匹配事件可投递到多个目标。</td><td>对一个事件执行多项动作；目标有独立重试/权限配置。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>过滤语义：</b>事件被规则匹配，只代表符合路由条件，不代表目标已成功处理。需要区分“未匹配”和“目标投递失败”，分别监控匹配计数、失败指标和目标端队列/工作流状态。</div></section>
+<section id="targets"><h2>三、目标与交付语义</h2>
+<p>常见目标包括 Lambda、Step Functions、SQS、SNS、Kinesis、API Destination 以及其他 AWS 服务。EventBridge 代表规则调用目标，需通过目标执行角色或资源策略获得权限；具体授权模式取决于目标类型。</p>
+<div class="table-wrap"><table><thead><tr><th>目标选择</th><th>适合需求</th><th>设计注意</th></tr></thead><tbody>
+<tr><td>Lambda</td><td>事件到达后执行轻量业务逻辑。</td><td>允许 EventBridge 调用函数；处理要幂等，函数自身失败与规则投递失败属于不同层次。</td></tr>
+<tr><td>SQS</td><td>缓冲事件、控制消费速率、隔离下游故障。</td><td>队列资源策略允许事件总线发送；用队列自身 DLQ 与可见性机制处理消费故障。</td></tr>
+<tr><td>Step Functions</td><td>启动多步骤编排。</td><td>核对状态机执行权限、输入映射与重复启动的业务影响。</td></tr>
+<tr><td>API Destination</td><td>通过连接调用外部 HTTP API。</td><td>配置 Connection 凭证、限流、重试以及目标端不可用时的失败处置。</td></tr>
+<tr><td>多目标</td><td>同一事件驱动多个独立动作。</td><td>每个目标的权限和重试策略需单独验证；一个目标成功不代表其他目标已成功。</td></tr>
+</tbody></table></div>
+<p>目标输入可直接传递原事件，也可用 Input、InputPath 或 InputTransformer 提取/转换字段，避免消费者收到不需要的负载。转换后的结构应保持下游契约稳定。</p></section>
+<section id="cross"><h2>四、跨账号与跨区域</h2>
+<p>跨账户事件路由通常由来源账户规则把事件发送到目标账户的自定义事件总线。目标总线资源策略允许指定账户或组织调用 <code>PutEvents</code>；来源端规则还需要有权限把事件投递到该总线。两端权限都正确后，目标账户可使用本地规则再路由给消费者。</p>
+<ol><li>在目标账户创建自定义 Event Bus，并配置限制明确的资源策略。</li><li>在来源端配置事件规则及目标总线 ARN，限制事件来源、类型和账户。</li><li>授权规则使用的角色执行跨账户 <code>PutEvents</code>；目标总线资源策略允许该主体。</li><li>目标账户为事件建立本地规则，完成二次过滤和消费路由。</li><li>验证目标账户/区域、资源策略、事件总线 ARN、KMS 或下游目标权限，并监控转发与投递失败。</li></ol>
+<div class="callout"><b>不要只加一侧权限：</b>来源身份策略与目标总线资源策略共同决定能否跨账号写入。跨区域复制、全球事件汇聚与跨账号授权是不同问题；根据题干分别检查总线 ARN、区域和账户边界。</div>
+<p>组织级策略可降低大量账户逐个授权的运维负担，但应配合组织条件、指定总线和最小权限。不要把公共事件总线开放给任意主体。</p></section>
+<section id="reliability"><h2>五、失败处理、归档与重放</h2>
+<p>EventBridge 对目标投递提供重试机制，可为规则目标配置最大事件年龄与重试次数；最终仍失败的事件可发送到 SQS 或 SNS DLQ。DLQ 只保存无法投递的事件，消费端执行后失败应由目标服务自己的错误处理机制负责。</p>
+<div class="table-wrap"><table><thead><tr><th>功能</th><th>解决的问题</th><th>边界</th></tr></thead><tbody>
+<tr><td>Retry policy</td><td>目标临时不可用时自动重试投递。</td><td>不保证目标业务执行成功；避免重试窗口与事件有效期冲突。</td></tr>
+<tr><td>Target DLQ</td><td>保留多次投递仍失败的事件供排障。</td><td>需为 DLQ 配置权限、告警、恢复与重放流程。</td></tr>
+<tr><td>Archive</td><td>按事件模式保存事件一段时间。</td><td>便于审计、回溯和恢复；需注意保留期、成本和数据治理。</td></tr>
+<tr><td>Replay</td><td>将归档事件重新送入事件总线，按当前规则再次路由。</td><td>可能重新触发副作用；消费者必须幂等，且要了解重放期间规则变化。</td></tr>
+</tbody></table></div>
+<p>事件总线与目标队列不是同义词：如果业务要求消费者独立积压、严格控制消费速率、较长时间缓冲，使用 SQS 作为目标。EventBridge Archive/Replay 更适合事件留存和重新路由，不替代业务数据库或长期不可变审计仓库。</p></section>
+<section id="schema"><h2>六、Schema Registry</h2>
+<p>Schema Registry 可发现或登记事件结构，并为开发者提供 schema 与代码绑定，帮助生产者和消费者理解事件契约。启用 Schema Discovery 可从进入总线的事件中推断结构，降低手工维护模式的负担。</p>
+<ul><li>为自定义事件定义稳定的字段名、类型和语义；schema 版本变更需与消费者兼容策略配套。</li><li>发现出来的 schema 是结构辅助，不代表数据正确、业务字段含义清楚或消费者一定兼容。</li><li>使用代码绑定减少手工解析错误，但仍要处理可选字段、未知字段和版本演进。</li><li>按事件源、detail-type 和 schema registry 的组织方式治理，避免相似事件出现互不兼容的重复定义。</li></ul>
+<div class="callout green"><b>考试要点：</b>Schema Registry 用于事件结构发现、目录和代码生成；它不负责事件路由、持久队列、认证授权或工作流编排。</div></section>
+<section id="schedule"><h2>七、计划任务与服务对比</h2>
+<div class="table-wrap"><table><thead><tr><th>服务</th><th>核心模式</th><th>优先选择线索</th></tr></thead><tbody>
+<tr><td>EventBridge</td><td>基于事件内容匹配并将事件路由到目标。</td><td>AWS/应用/SaaS 事件驱动、多账户事件总线、内容过滤。</td></tr>
+<tr><td>EventBridge Scheduler</td><td>一次性或重复计划，支持时区、灵活时间窗口与重试/DLQ。</td><td>需要规模化定时调用 AWS API、Lambda 或 Step Functions；新计划任务通常优先用 Scheduler。</td></tr>
+<tr><td>SNS</td><td>Topic 发布后向订阅者广播。</td><td>简单一对多推送；需要订阅过滤或 SNS→SQS Fan-out。</td></tr>
+<tr><td>SQS</td><td>队列缓冲，消费者拉取。</td><td>任务积压、独立消费速率和失败隔离。</td></tr>
+<tr><td>CloudWatch Alarm</td><td>指标阈值状态变化与告警动作。</td><td>监控指标达到阈值；告警动作可接入 SNS/EventBridge，但不是通用业务事件总线。</td></tr>
+</tbody></table></div>
+<p>EventBridge 接续了 CloudWatch Events 的事件路由能力并进一步扩展事件总线、SaaS 集成等功能。旧题描述 CloudWatch Events 时，应识别其与 EventBridge 的服务演进关系；定时任务的新设计再比较 Scheduler。</p></section>
+<section id="security"><h2>八、安全与监控</h2>
+<ul><li>用 IAM 身份策略控制发布、创建规则和管理目标；用事件总线资源策略控制跨账号/组织访问。</li><li>目标调用权限按目标类型配置：Lambda 资源策略、SQS Queue Policy、目标执行角色等不可互相替代。</li><li>限制事件模式、来源账户和资源 ARN，避免无关主体注入伪造事件。</li><li>事件可能包含个人信息或业务机密；评估事件负载最小化、日志访问、加密和保留期限。</li><li>关注匹配事件数、目标调用失败、受限调用和 DLQ 消息；并结合目标自身指标定位处理失败。</li></ul>
+<div class="callout orange"><b>定位分层：</b>无匹配事件先检查模式与事件字段；匹配但未投递检查目标权限、重试与 DLQ；投递成功但业务无结果检查目标执行和应用日志。</div></section>
+<section id="scenarios"><h2>九、场景题解析</h2>
+<div class="scenario"><h3>场景一：多个账号将资源事件汇聚到中央安全账户</h3><p>企业希望工作负载账户的合规事件进入中央账户统一审计，再由中央账户路由给处理器。</p><div class="answer-box"><b>正确方向：</b>中央账户创建自定义 Event Bus 并配置受限资源策略；各来源账户规则将匹配事件转发到目标总线，授权来源角色执行 PutEvents。</div><div class="analysis"><b>分析思路：</b>跨账户传递需要来源端授权和目标资源策略，中央总线可继续使用本地规则分发。</div><div class="trap"><b>排除：</b>仅在中央账户创建规则不会自动订阅所有账户事件；只给来源角色身份策略但不允许目标总线资源策略也不够。</div></div>
+<div class="scenario"><h3>场景二：只处理特定 S3 对象标签对应的业务事件</h3><p>多个 AWS 事件进入总线，消费者只需响应特定来源和 detail 中匹配条件的事件。</p><div class="answer-box"><b>正确方向：</b>建立 Event Pattern 规则，精确匹配 source、detail-type 和业务字段，再设置目标。</div><div class="analysis"><b>分析思路：</b>事件模式可在路由层过滤，生产者无需直接了解消费者。用代表性 JSON 测试字段路径和类型。</div><div class="trap"><b>排除：</b>仅配置目标不会自动过滤；Schema Registry 记录结构但不负责路由匹配。</div></div>
+<div class="scenario"><h3>场景三：临时 Lambda 故障导致部分事件投递失败</h3><p>匹配规则的目标偶发不可用，要求自动重试并保留最终无法投递的事件供排查。</p><div class="answer-box"><b>正确方向：</b>为目标配置重试策略与 SQS/SNS DLQ，并为 DLQ 设置告警和恢复流程。</div><div class="analysis"><b>分析思路：</b>重试负责暂时故障，DLQ 捕获终态投递失败。目标已接收后自身处理失败要用 Lambda 等目标的错误处理。</div><div class="trap"><b>排除：</b>只增加 Lambda 超时时间不处理 EventBridge 到目标的授权/交付失败；事件归档不是投递失败 DLQ。</div></div>
+<div class="scenario"><h3>场景四：事件契约常变导致消费者解析失败</h3><p>多个团队独立开发事件生产者和消费者，希望发现结构并生成类型绑定，降低字段变化造成的集成错误。</p><div class="answer-box"><b>正确方向：</b>采用 EventBridge Schema Registry 与 Schema Discovery，治理版本兼容和事件契约。</div><div class="analysis"><b>分析思路：</b>Registry 帮助发现、记录 schema 并生成代码绑定；仍需制定向后兼容策略和消费者容错。</div><div class="trap"><b>排除：</b>事件模式只决定路由；DLQ 只能留存失败事件，不能定义结构契约。</div></div>
+<div class="scenario"><h3>场景五：需要在特定时区按计划触发大量任务</h3><p>业务需要一次性和周期性定时调用工作流，并要求处理错过的触发和失败重试。</p><div class="answer-box"><b>正确方向：</b>使用 EventBridge Scheduler 配置时区计划、目标、重试与 DLQ。</div><div class="analysis"><b>分析思路：</b>Scheduler 专为大规模计划任务提供时区和灵活窗口能力；传统定时规则适合已有或简单规则场景。</div><div class="trap"><b>排除：</b>自建常驻 EC2 Cron 增加运维；Event Pattern 不是时间计划。</div></div>
+<div class="scenario"><h3>场景六：需要重新处理过去一小时的事件</h3><p>消费者升级后发现业务解析错误，希望从保留事件中重新投递，而不是要求生产者再次生成原事件。</p><div class="answer-box"><b>正确方向：</b>按需启用 EventBridge Archive，修复后对相应归档事件执行 Replay，并确保消费者幂等。</div><div class="analysis"><b>分析思路：</b>归档与重放可恢复事件流；重放可能再次触发已经成功的目标，需控制模式与副作用。</div><div class="trap"><b>排除：</b>DLQ 只存最终投递失败事件；归档不能替代业务数据备份，也不保证重放结果完全等同历史执行。</div></div>
+</section>
+<section id="quick"><h2>十、关键词速查</h2><div class="table-wrap"><table><thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead><tbody>
+<tr><td>AWS / 自定义 / SaaS 事件统一路由</td><td>Default / Custom / Partner Bus</td><td>按事件来源选总线类型。</td></tr><tr><td>基于 detail 字段选择目标</td><td>Event Pattern Rule</td><td>校验嵌套字段、大小写与类型。</td></tr><tr><td>跨账户事件中心</td><td>来源规则 + 目标总线资源策略</td><td>来源授权与目标授权都要正确。</td></tr><tr><td>失败投递保留</td><td>Retry Policy + Target DLQ</td><td>目标接收后的业务失败属于下一层。</td></tr><tr><td>历史事件重处理</td><td>Archive + Replay</td><td>需要幂等并管理重复副作用。</td></tr><tr><td>发现事件结构和生成代码</td><td>Schema Registry / Discovery</td><td>不是路由、授权或存储队列。</td></tr><tr><td>带时区的定时调用</td><td>EventBridge Scheduler</td><td>与事件模式规则区分。</td></tr><tr><td>积压和消费者拉取</td><td>EventBridge → SQS</td><td>EventBridge 总线不替代持久工作队列。</td></tr>
+</tbody></table></div></section>
+<section id="memory"><h2>十一、考前速记卡</h2><p class="small">勾选已掌握项目，页面内进度自动更新。</p><div class="progress"><span id="progressBar"></span></div><p class="small" id="progressText">已掌握 0 / 16</p><ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>Event Bus：</b>接收事件并与生产者/消费者解耦</span></li><li><input type="checkbox"><span><b>Default Bus：</b>AWS 服务事件</span></li><li><input type="checkbox"><span><b>Custom Bus：</b>应用自定义事件和账户间路由</span></li><li><input type="checkbox"><span><b>Partner Bus：</b>受支持 SaaS 伙伴事件</span></li><li><input type="checkbox"><span><b>Rule：</b>Event Pattern 匹配或计划触发</span></li><li><input type="checkbox"><span><b>Schema Registry：</b>发现/登记 schema 与代码绑定</span></li><li><input type="checkbox"><span><b>跨账户：</b>来源身份权限 + 目标总线资源策略</span></li><li><input type="checkbox"><span><b>Target Role / Policy：</b>按目标类型配置调用授权</span></li><li><input type="checkbox"><span><b>Retry：</b>处理短暂目标投递故障</span></li><li><input type="checkbox"><span><b>Target DLQ：</b>保存最终无法投递的事件</span></li><li><input type="checkbox"><span><b>Archive：</b>按模式留存事件</span></li><li><input type="checkbox"><span><b>Replay：</b>重新投递归档事件，消费者需幂等</span></li><li><input type="checkbox"><span><b>Scheduler：</b>时区与一次性/重复计划任务</span></li><li><input type="checkbox"><span><b>SQS Target：</b>额外提供积压缓冲和拉取消费</span></li><li><input type="checkbox"><span><b>未匹配：</b>检查模式、字段路径、类型和大小写</span></li><li><input type="checkbox"><span><b>交付分层：</b>总线投递成功不代表目标业务成功</span></li>
+</ul></section>
+<section id="quiz"><h2>十二、快速自测</h2><p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz"><b>1. 其他账户要向中央账户的自定义总线发送事件，至少需要检查哪两类权限？</b><br><button class="secondary" onclick="showAnswer('q1',false)">A. 目标账户 CloudWatch 权限和 Lambda 执行角色</button><button class="secondary" onclick="showAnswer('q1',true)">B. 来源身份策略和目标事件总线资源策略</button><button class="secondary" onclick="showAnswer('q1',false)">C. 只需目标总线的事件规则</button><div class="answer" id="q1">正确答案：B。跨账号写入需要来源端有 PutEvents 权限，目标总线资源策略也必须允许。</div></div>
+<div class="quiz"><b>2. 多个事件生产者格式不统一，团队想发现事件结构并生成类型绑定，选什么？</b><br><button class="secondary" onclick="showAnswer('q2',true)">A. Schema Registry / Discovery</button><button class="secondary" onclick="showAnswer('q2',false)">B. Event Archive</button><button class="secondary" onclick="showAnswer('q2',false)">C. SQS Visibility Timeout</button><div class="answer" id="q2">正确答案：A。Schema Registry 用于结构发现、登记和代码绑定，不负责事件投递失败恢复。</div></div>
+<div class="quiz"><b>3. 需要按本地时区定期触发工作流并管理失败重试，优先使用什么？</b><br><button class="secondary" onclick="showAnswer('q3',false)">A. 事件模式规则</button><button class="secondary" onclick="showAnswer('q3',true)">B. EventBridge Scheduler</button><button class="secondary" onclick="showAnswer('q3',false)">C. SNS Filter Policy</button><div class="answer" id="q3">正确答案：B。Scheduler 支持一次性/重复计划与时区等计划任务能力。</div></div>
+</section>
+<section id="refs"><h2>官方资料</h2><ul><li><a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html" target="_blank" rel="noopener">Amazon EventBridge 用户指南</a></li><li><a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-event-patterns.html" target="_blank" rel="noopener">EventBridge 事件模式</a></li><li><a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-cross-account.html" target="_blank" rel="noopener">跨账户事件发送</a></li><li><a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-archive.html" target="_blank" rel="noopener">归档与重放事件</a></li><li><a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-schema.html" target="_blank" rel="noopener">Schema Registry</a></li><li><a href="https://docs.aws.amazon.com/scheduler/latest/UserGuide/what-is-scheduler.html" target="_blank" rel="noopener">Amazon EventBridge Scheduler</a></li></ul><div class="callout orange"><b>备考提醒：</b>本文是非官方复习提纲，不代表 AWS 认证题库或考试原题。功能、配额和区域可用性可能更新，请以 AWS 官方文档和当前考试指南为准。</div></section>
+</main></div>
+<footer class="container">Amazon EventBridge SAP-C02 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+<script>
+function updateProgress(){const boxes=[...document.querySelectorAll('#memoryList input')];const done=boxes.filter(x=>x.checked).length;document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){const el=document.getElementById(id);el.style.display='block';el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';}
+</script>
+</body>
+</html>

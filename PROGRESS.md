@@ -13,14 +13,14 @@
 |---|---|
 | 根导航页 | 已完成；各分类卡片已标注完成进度，未创建的 `architecture-patterns.html` 入口已禁用，无断链 |
 | 分类入口页 | 12 个已完成（根导航挂了 11 个，`hybrid-edge` 未挂载） |
-| 服务正文 | **已完成 26 篇 / 导航规划 78 篇（去重）＝ 33.3%** |
-| 未创建正文 | **52 篇**（78 篇规划减去已完成 26 篇；含已禁用入口的 `architecture-patterns.html` 与 `app-runner.html`） |
+| 服务正文 | **已完成 32 篇 / 导航规划 78 篇（去重）＝ 41.0%** |
+| 未创建正文 | **46 篇**（78 篇规划减去已完成 32 篇；含已禁用入口的 `architecture-patterns.html` 与 `app-runner.html`） |
 | 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
-| 正文内场景题 | 26 篇正文共内嵌 **148 道手写场景题**，不是 529 道 |
-| 推荐下一篇 | `application-integration/sqs-sns.html`（P0；从零编写） |
+| 正文内场景题 | 32 篇正文共内嵌 **184 道手写场景题**，不是 529 道 |
+| 推荐下一篇 | `analytics/glue.html`（P0；从零编写） |
 | 最大阻塞 | 剩余正文量大，且 529 题尚未按服务归类、题库化；导航/命名旧规范已清理 |
 
-**一句话：站点骨架和 26 篇高频核心服务正文已经成形，剩余 52 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
+**一句话：站点骨架和 32 篇高频核心服务正文已经成形，剩余 46 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
 
 ---
 
@@ -84,7 +84,7 @@
 | 数据库 | `database/index.html` | 2 | 6 | 4 | 33.3% | P0 |
 | 安全、身份与合规 | `security/index.html` | 4 | 11 | 7 | 36.4% | P0 |
 | 管理与治理 | `management/index.html` | 4 | 9 | 5 | 44.4% | P0 |
-| 应用集成 | `application-integration/index.html` | 0 | 6 | 6 | 0% | P1 |
+| 应用集成 | `application-integration/index.html` | 6 | 6 | 0 | 100% | P1 |
 | 分析 | `analytics/index.html` | 0 | 7 | 7 | 0% | P2 |
 | 迁移与传输 | `migration/index.html` | 0 | 4 | 4 | 0% | P2 |
 | DevOps | `devops/index.html` | 0 | 4 | 4 | 0% | P2 |
@@ -176,14 +176,14 @@
 
 > Systems Manager 页面从零编写；不要从历史归档补内容。
 
-### 3.7 应用集成（0 / 6）
+### 3.7 应用集成（6 / 6）
 
-- [ ] P0 `application-integration/sqs-sns.html` — 从零编写：SQS 标准/FIFO、DLQ、SNS Fan-out、消息过滤
-- [ ] P0 `application-integration/eventbridge.html` — 事件规则、跨账号事件、Schema Registry
-- [ ] P0 `application-integration/step-functions.html` — 从零编写：Standard vs Express、状态类型、错误处理
-- [ ] P1 `application-integration/api-gateway.html` — REST/HTTP/WebSocket、授权、VPC Link
-- [ ] P2 `application-integration/appsync.html` — GraphQL、解析器、实时订阅
-- [ ] P2 `application-integration/mq.html` — ActiveMQ/RabbitMQ、与 SQS 对比
+- [x] P0 `application-integration/sqs-sns.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 SQS Standard/FIFO、可见性超时、长轮询、DLQ、SNS Fan-out、消息过滤与策略授权
+- [x] P0 `application-integration/eventbridge.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖总线类型、事件模式、目标投递、跨账号策略、重试/DLQ、Archive/Replay、Schema Registry 与 Scheduler
+- [x] P0 `application-integration/step-functions.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖 Standard/Express、状态类型、服务集成、Retry/Catch、回调令牌、Map 并行与执行监控
+- [x] P1 `application-integration/api-gateway.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖 REST/HTTP/WebSocket、IAM/JWT/Lambda 授权、使用计划、节流缓存、Private API 与 VPC Link
+- [x] P2 `application-integration/appsync.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖 GraphQL Schema、Resolver、数据源、授权模式、GraphQL Subscription / AppSync Events、缓存、N+1 与离线冲突处理
+- [x] P2 `application-integration/mq.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖 ActiveMQ/RabbitMQ、协议兼容、部署高可用、VPC 安全、迁移规划、运维监控及 SQS/SNS 选型
 
 ### 3.8 分析（0 / 7，另有 1 篇跨模块 Redshift）
 
@@ -500,5 +500,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-02 | 新增 `management/config.html`：12 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖配置记录、Rules、修复、Conformance Pack、Aggregator；管理分类卡片及首页统计更新，正文完成数校准为 24 / 78 | `management/config.html`、`management/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `application-integration/sqs-sns.html`（P0） |
 | 2026-11-02 | 新增 `networking/privatelink.html`：11 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖 Interface Endpoint、Endpoint Service、DNS、连接治理及 PrivateLink / Peering 选型；网络模块进度更新至 8 / 9，正文完成数校准为 25 / 78 | `networking/privatelink.html`、`networking/index.html`、`PROGRESS.md` | 按用户要求继续 P1：`networking/global-accelerator.html` |
 | 2026-11-02 | 新增 `networking/global-accelerator.html`：12 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖静态 Anycast IP、Standard / Custom Routing、端点组、流量拨盘、健康检查及 CloudFront 对比；网络模块完成 9 / 9，正文完成数校准为 26 / 78 | `networking/global-accelerator.html`、`networking/index.html`、`index.html`、`PROGRESS.md` | P0：`application-integration/sqs-sns.html` |
+| 2026-11-02 | 新增 `application-integration/sqs-sns.html`：9 个主题章节、6 道场景题、18 张速记卡、3 道快速自测；覆盖 SQS Standard/FIFO、可见性超时、长轮询、DLQ、SNS Fan-out、过滤、授权与加密；应用集成进度更新至 1 / 6，正文完成数校准为 27 / 78 | `application-integration/sqs-sns.html`、`application-integration/index.html`、`index.html`、`PROGRESS.md` | P0：`application-integration/eventbridge.html` |
+| 2026-11-02 | 完成应用集成剩余 5 篇正文：EventBridge、Step Functions、API Gateway、AppSync、Amazon MQ；每篇含 6 道场景题、16 张速记卡、3 道快速自测；分类页 6 / 6、首页总数和进度统计同步更新为 32 / 78 | `application-integration/*.html`、`application-integration/index.html`、`index.html`、`PROGRESS.md` | P0：`analytics/glue.html` |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。
