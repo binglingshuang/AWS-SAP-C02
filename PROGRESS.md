@@ -13,14 +13,14 @@
 |---|---|
 | 根导航页 | 已完成，但存在 1 个断链（`architecture-patterns.html`） |
 | 分类入口页 | 12 个已完成（根导航挂了 11 个，`hybrid-edge` 未挂载） |
-| 服务正文 | **已完成 8 篇 / 导航规划 78 篇（去重）＝ 10.3%** |
-| 未创建正文 | **70 篇**（78 篇规划减去已完成 8 篇；含根页断链 `architecture-patterns.html` 与 `app-runner.html`） |
+| 服务正文 | **已完成 9 篇 / 导航规划 78 篇（去重）＝ 11.5%** |
+| 未创建正文 | **69 篇**（78 篇规划减去已完成 9 篇；含根页断链 `architecture-patterns.html` 与 `app-runner.html`） |
 | 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
-| 正文内场景题 | 8 篇正文共内嵌 **40 道手写场景题**，不是 529 道 |
-| 推荐下一篇 | `networking/route53.html`（从零编写；`old/` 归档不读取） |
+| 正文内场景题 | 9 篇正文共内嵌 **46 道手写场景题**，不是 529 道 |
+| 推荐下一篇 | `compute/auto-scaling.html`（从零编写；`old/` 归档不读取） |
 | 最大阻塞 | 剩余正文量大，且 529 题尚未按服务归类、题库化；导航/命名旧规范已清理 |
 
-**一句话：站点骨架和 8 篇高频核心服务正文已经成形，剩余约 70 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
+**一句话：站点骨架和 9 篇高频核心服务正文已经成形，剩余约 69 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
 
 ---
 
@@ -46,11 +46,12 @@
 | `networking/direct-connect.html` | 网络 | 31 KB | 8,300 | 4 | 15 | 无 |
 | `networking/vpn.html` | 网络 | 45 KB | 11,500 | 6 | 18 | 有 |
 | `networking/transit-gateway.html` | 网络 | 44 KB | 11,100 | 6 | 18 | 有 |
+| `networking/route53.html` | 网络 | — | 约 14,000 | 6 | 18 | 有 |
 | `compute/ec2.html` | 计算 | 30 KB | 7,800 | 4 | 14 | 有 |
 | `storage/s3.html` | 存储 | 52 KB | 16,300 | 5 | 20 | 有 |
 | `security/iam.html` | 安全 | 62 KB | 19,800 | 6 | 20 | 有 |
 
-这 8 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
+这 9 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
 
 ---
 
@@ -60,7 +61,7 @@
 
 | 分类 | 入口页 | 已完成 | 规划 | 缺失 | 完成率 | 优先级 |
 |---|---|---:|---:|---:|---:|---|
-| 网络与内容分发 | `networking/index.html` | 5 | 9 | 4 | 55.6% | P0 |
+| 网络与内容分发 | `networking/index.html` | 6 | 9 | 3 | 66.7% | P0 |
 | 计算 | `compute/index.html` | 1 | 9 | 8 | 11.1% | P0 |
 | 存储 | `storage/index.html` | 1 | 7 | 6 | 14.3% | P0 |
 | 数据库 | `database/index.html` | 0 | 6 | 6 | 0% | P0 |
@@ -73,7 +74,7 @@
 | 机器学习与 AI | `ml/index.html` | 0 | 2 | 2 | 0% | P3 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 0 | 3 | 3 | 0% | P3 |
 | 综合专题 | 根页直达 | 0 | 1 | 1 | 0% | P1 |
-| **合计** |  | **8** | **78** | **70** | **10.3%** |  |
+| **合计** |  | **9** | **78** | **69** | **11.5%** |  |
 
 > 根页写的“74 个文档”是旧口径 / 合并页口径；按当前导航实际目标去重后是 78 篇。完成全部正文后再统一校准首页数字。
 
@@ -90,7 +91,7 @@
 - [x] `networking/cloudfront.html`
 - [x] `networking/vpn.html` — 完成日期：2026-11-02；字数约 11,500；场景题 6 道；覆盖 S2S / Client VPN / VPN over DX / CloudHub / 加速 VPN
 - [x] `networking/transit-gateway.html` — 完成日期：2026-11-02；字数约 11,100；场景题 6 道；覆盖附件、路由域、RAM、Peering、Multicast、集中出口
-- [ ] P0 `networking/route53.html` — 高频 DNS 路由、健康检查、Resolver
+- [x] `networking/route53.html` — 完成日期：2026-11-02；字数约 14,000；场景题 6 道；覆盖七种路由策略、健康检查、Public/Private 托管区、Resolver 混合云 DNS、Traffic Flow 与 AWS 服务集成
 - [ ] P0 `networking/elb.html` — ALB / NLB / GLB、跨区、SSL 终止
 - [ ] P1 `networking/privatelink.html` — Interface Endpoint、端点服务、与 Peering 对比
 - [ ] P1 `networking/global-accelerator.html` — Anycast IP、端点组、与 CloudFront 对比
@@ -423,7 +424,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 |---:|---|---|---|
 | ~~1~~ | ~~`networking/vpn.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
 | ~~2~~ | ~~`networking/transit-gateway.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
-| 3 | `networking/route53.html` | DNS 路由与健康检查高频 | 从零编写；引用 VPC DNS 章节 |
+| ~~3~~ | ~~`networking/route53.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
 | 4 | `compute/auto-scaling.html` | 计算层高频，与 EC2 直接衔接 | 从零编写；引用 EC2 购买选项 |
 | 5 | `compute/lambda.html` | 无服务器高频 | 从零编写；与 CloudFront/Edge 交叉引用 |
 | 6 | `storage/ebs.html` | 与 S3 组成存储核心 | 从零编写；引用 EC2 实例存储对比 |
@@ -451,5 +452,6 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-02 | 建立进度基线：6 篇正文、72 篇待补、529 题未题库化 | `PROGRESS.md` | 从 `networking/vpn.html` 开始 |
 | 2026-11-02 | 新增 `networking/vpn.html`：13 个章节、6 道场景题、18 张速记卡、3 道快速自测；断链清单由 76 条（含跨目录重复）降至 75 条，`vpn.html` 无新增断链 | `networking/vpn.html`、`PROGRESS.md` | 下一篇 `networking/transit-gateway.html` |
 | 2026-11-02 | 新增 `networking/transit-gateway.html`：14 个章节、6 道场景题、18 张速记卡、3 道快速自测；断链清单由 75 条降至 74 条 | `networking/transit-gateway.html`、`PROGRESS.md` | 下一篇 `networking/route53.html` |
+| 2026-11-02 | 新增 `networking/route53.html`：13 个章节、6 道场景题、18 张速记卡、5 道快速自测；覆盖七种路由策略、健康检查、Public/Private 托管区、Resolver 混合云 DNS、Traffic Flow、与 CloudFront/ELB/S3/GA 集成；断链清单中 `route53.html` 断链消除 | `networking/route53.html`、`PROGRESS.md` | 下一篇 `compute/auto-scaling.html` |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。
