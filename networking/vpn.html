@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 AWS VPN 考点整理：Site-to-Site VPN、Client VPN、VPN over Direct Connect、加速 VPN、隧道高可用与路由排错">
+<title>AWS SAP-C02｜AWS VPN 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:#bfdbfe;font-size:14px;margin-bottom:16px}
+.back-link:hover{color:#fff;text-decoration:none}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.orange{background:var(--orange-soft);color:var(--orange)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff}
+.card b{display:block;margin-bottom:5px}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;margin:2px 4px 2px 0}
+.badge-blue{background:#dbeafe;color:#1d4ed8}
+.badge-green{background:#dcfce7;color:#15803d}
+.badge-orange{background:#ffedd5;color:#c2410c}
+.badge-red{background:#fee2e2;color:#b91c1c}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}.cards{grid-template-columns:1fr}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <a class="back-link no-print" href="index.html">← 返回网络模块</a>
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>AWS VPN<br>加密隧道与远程接入</h1>
+  <p>Site-to-Site VPN、Client VPN、VPN over Direct Connect、加速 VPN 的核心机制。以"站点需求 → VPN 形态 → 隧道/路由设计"为主线，覆盖高可用、带宽上限与常见排错陷阱。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">混合网络</span>
+   <span class="pill">可打印 / 可勾选</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#basics">一、AWS VPN 总览</a>
+ <a href="#s2s">二、Site-to-Site VPN 组件</a>
+ <a href="#tunnel">三、隧道、带宽与高可用</a>
+ <a href="#routing">四、路由、BGP 与故障切换</a>
+ <a href="#client">五、Client VPN</a>
+ <a href="#dxvpn">六、VPN over Direct Connect</a>
+ <a href="#cloudhub">七、VPN CloudHub</a>
+ <a href="#accelerated">八、加速 Site-to-Site VPN</a>
+ <a href="#troubleshoot">九、常见故障与排查</a>
+ <a href="#scenarios">十、场景题解析</a>
+ <a href="#quick">十一、关键词速查</a>
+ <a href="#memory">十二、考前速记卡</a>
+ <a href="#quiz">十三、快速自测</a>
+</nav>
+
+<main>
+
+<!-- 一、总览 -->
+<section id="basics">
+<h2>一、AWS VPN 总览</h2>
+<p class="lead">AWS 的 VPN 不是单一服务，而是三种形态：<b>Site-to-Site VPN</b>（站点到站点、IPsec）、<b>Client VPN</b>（终端用户远程接入、OpenVPN/TLS），以及作为加密叠加层的 <b>VPN over Direct Connect</b>。考试必须先判断"连接的两端是谁"，再选形态。</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>对比项</th><th>Site-to-Site VPN</th><th>Client VPN</th></tr></thead>
+<tbody>
+<tr><td><b>连接对象</b></td><td>本地数据中心 / 分支机构 ↔ VPC</td><td>单个终端用户设备 ↔ VPC</td></tr>
+<tr><td><b>协议</b></td><td>IPsec（IKEv1 / IKEv2）</td><td>OpenVPN（基于 TLS/SSL）</td></tr>
+<tr><td><b>AWS 侧端点</b></td><td>Virtual Private Gateway（VGW）或 Transit Gateway（TGW）</td><td>Client VPN Endpoint（关联 Target Subnet）</td></tr>
+<tr><td><b>客户侧</b></td><td>Customer Gateway（物理或软件 VPN 设备）</td><td>用户安装 AWS VPN Client 或任意 OpenVPN 客户端</td></tr>
+<tr><td><b>认证方式</b></td><td>预共享密钥（PSK）+ 可选证书</td><td>Active Directory、SAML 联合身份、双向证书</td></tr>
+<tr><td><b>路由方式</b></td><td>静态路由或 BGP 动态路由</td><td>按 Target Subnet 路由 + 授权规则</td></tr>
+<tr><td><b>典型场景</b></td><td>混合云、分支互联、DX 备份链路</td><td>远程办公、运维接入、临时项目访问</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout green"><b>一句话区分：</b>连"站点/路由器"→ Site-to-Site VPN；连"人/笔记本"→ Client VPN。两者不能互相替代，也不存在"一个 VPN 连接同时服务站点和终端用户"的设计。</div>
+
+<h3>三种加密叠加/增强形态</h3>
+<div class="cards">
+ <div class="card"><b>VPN over Direct Connect</b><p>在 DX 专线上跑 IPsec，兼顾专线的稳定低延迟与端到端加密。DX 本身默认<b>不加密</b>。</p></div>
+ <div class="card"><b>VPN CloudHub</b><p>多个分支通过各自的 Site-to-Site VPN 连接汇聚到同一个 <b>VGW</b>，形成星型 hub-and-spoke 互联。</p></div>
+ <div class="card"><b>加速 Site-to-Site VPN</b><p>用 Global Accelerator 承载 VPN 流量，改善跨国长距离、公网抖动场景。<b>仅支持 TGW</b>，不支持 VGW。</p></div>
+ <div class="card"><b>与 DX 主备</b><p>DX 主用 + Site-to-Site VPN 备用，是成本与可用性平衡最常见的混合网络冗余答案。</p></div>
+</div>
+
+<div class="callout orange"><b>速度对比：</b>Site-to-Site VPN 可在分钟级建立（配置 + 隧道协商），Direct Connect 通常需要数周。题目只要出现"尽快/短期打通"，优先考虑 VPN。</div>
+</section>
+
+<!-- 二、S2S 组件 -->
+<section id="s2s">
+<h2>二、Site-to-Site VPN 组件与建立流程</h2>
+<p class="lead">一个 Site-to-Site VPN 连接 = 一条 <b>VPN Connection</b>，它由 AWS 侧端点（VGW/TGW）与客户侧 <b>Customer Gateway</b> 组成，并自动获得<b>两条隧道</b>。</p>
+
+<div class="diagram">
+ <div class="node"><b>本地网络</b><br><small>数据中心 / 分支</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Customer Gateway</b><br><small>公网 IP + BGP ASN</small></div>
+ <span class="arrow">⇄ IPsec 隧道 ⇄</span>
+ <div class="node"><b>VGW / TGW</b><br><small>AWS 侧端点</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>VPC</b><br><small>子网 / 实例</small></div>
+</div>
+
+<h3>四个核心组件</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>组件</th><th>归属</th><th>作用</th><th>考试要点</th></tr></thead>
+<tbody>
+<tr><td><b>Customer Gateway（CGW）</b></td><td>客户侧逻辑资源</td><td>描述本地 VPN 设备的公网 IP 与 BGP ASN</td><td>CGW 本身不是设备，是 AWS 侧的一条配置记录；设备更换后需重建/更新</td></tr>
+<tr><td><b>Virtual Private Gateway（VGW）</b></td><td>AWS 侧</td><td>附加到单个 VPC，作为 VPN 终点</td><td>一个 VPC 只能附加一个 VGW；VGW <b>不支持 ECMP</b></td></tr>
+<tr><td><b>Transit Gateway（TGW）</b></td><td>AWS 侧</td><td>作为 VPN Attachment 的终点，连接多个 VPC</td><td>支持多连接 <b>ECMP</b>，可横向扩展 VPN 带宽</td></tr>
+<tr><td><b>VPN Connection</b></td><td>AWS 侧</td><td>一条 IPsec 连接，含两条隧道</td><td>只能附加到 VGW <b>或</b> TGW，二者不可同时</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>建立顺序</h3>
+<ol>
+ <li>创建 Customer Gateway：填写本地设备公网 IP；若用 BGP，填写客户侧 ASN（如 65000）。</li>
+ <li>创建 VPN Connection：选择附加到 VGW 或 TGW，选择静态路由或 BGP。</li>
+ <li>下载配置模板：AWS 会输出两条隧道的端点、预共享密钥、IKE/PSK 参数。</li>
+ <li>在本地设备上配置两条隧道，并放行 UDP 500（IKE）与 UDP 4500（NAT-T）。</li>
+ <li>启用路由传播（VGW）或在 TGW 路由表中添加/传播路由，确认实例安全组与 NACL 放行。</li>
+</ol>
+
+<div class="callout red"><b>最常见失败原因：</b>只配置了一条隧道、PSK 或 IKE 版本不一致、本地防火墙未放行 UDP 500/4500、路由未传播到 VPC 路由表、CGW 位于 NAT 设备之后未启用 NAT-T。</div>
+
+<h3>隧道选项（Tunnel Options）</h3>
+<ul>
+ <li><b>Inside IPv4 CIDR：</b>每条隧道使用一个 /30 网段（默认由 AWS 分配，也可自定义），两端各占一个地址。</li>
+ <li><b>Pre-Shared Key：</b>每条隧道独立 PSK，可自定义；泄漏后需重建连接。</li>
+ <li><b>IKE 版本：</b>推荐 IKEv2；老设备可能只支持 IKEv1。两端版本必须一致。</li>
+ <li><b>DPD（Dead Peer Detection）：</b>用于检测对端存活并触发重建，影响故障切换速度。</li>
+</ul>
+</section>
+
+<!-- 三、隧道与带宽 -->
+<section id="tunnel">
+<h2>三、隧道、带宽与高可用设计</h2>
+<p class="lead">SAP-C02 的 VPN 题目几乎都在考两件事：<b>带宽够不够</b>、<b>单点故障在哪里</b>。记住隧道数量与上限，比记配置步骤更有用。</p>
+
+<h3>两条隧道是默认设计，不是冗余选项</h3>
+<ul>
+ <li>每个 VPN Connection 自带 <b>2 条隧道</b>，AWS 侧端点位于<b>不同可用区</b>，用于抵御单 AZ 故障。</li>
+ <li>两条隧道可同时配置在同一个 CGW 上；更稳的做法是<b>两个 CGW</b>（两台设备）分别承载一条隧道，避免设备级单点。</li>
+ <li>隧道状态可在 CloudWatch 查看 <code>TunnelState</code>，建议对两条隧道都设置告警，而不是只监控一条。</li>
+</ul>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>指标</th><th>典型值 / 限制</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>单隧道最大吞吐</td><td>约 <b>1.25 Gbps</b></td><td>实际值受加密算法、设备 CPU、丢包与 MTU 影响</td></tr>
+<tr><td>单连接理论吞吐</td><td>约 2.5 Gbps（双隧道）</td><td>单条 TCP 流通常仍受单隧道限制</td></tr>
+<tr><td>VGW 聚合能力</td><td><b>不支持 ECMP</b></td><td>多条 VPN 连接只能主备，无法叠加带宽</td></tr>
+<tr><td>TGW 聚合能力</td><td>支持 <b>ECMP</b></td><td>多条 VPN Connection 可并行分担流量并提升故障切换速度</td></tr>
+<tr><td>隧道 MTU</td><td>约 <b>1400 字节</b></td><td>IPsec 封装开销导致，需调整 MSS 或放行 ICMP 分片</td></tr>
+<tr><td>支持协议</td><td>IPv4 / IPv6</td><td>双栈场景需确认本地设备与隧道 CIDR 配置</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout red"><b>带宽陷阱：</b>题目要求"通过互联网连接、需要 3 Gbps 以上、且可叠加"时，单条 VPN 连接（双隧道）<b>达不到</b>。正确答案通常是 <b>TGW + 多条 Site-to-Site VPN 连接 + ECMP</b>，或改用 Direct Connect，而不是"增加一条隧道"。</div>
+
+<h3>高可用方案对比</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>方案</th><th>拓扑</th><th>可抵御的故障</th><th>成本</th></tr></thead>
+<tbody>
+<tr><td><b>单隧道</b></td><td>1 CGW → 1 隧道</td><td>无（隧道/AZ/设备均为单点）</td><td>最低</td></tr>
+<tr><td><b>双隧道单 CGW</b></td><td>1 CGW → 2 隧道</td><td>单隧道、单 AZ 故障</td><td>低</td></tr>
+<tr><td><b>双隧道双 CGW</b></td><td>2 CGW → 各 1 隧道</td><td>隧道、AZ、单台设备故障</td><td>中</td></tr>
+<tr><td><b>多连接 + TGW ECMP</b></td><td>多个 VPN Connection → TGW</td><td>上述全部 + 带宽叠加</td><td>中高</td></tr>
+<tr><td><b>DX 主 + VPN 备</b></td><td>DX（主）+ VPN（备）</td><td>DX 线路/设备中断</td><td>中</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout green"><b>答题顺序：</b>先问"是否要求带宽聚合"→ 是则必须 TGW + ECMP；再问"是否要求对抗站点级故障"→ 是则双 CGW；最后才考虑加速或 DX。</div>
+</section>
+
+<!-- 四、路由 -->
+<section id="routing">
+<h2>四、路由、BGP 与故障切换</h2>
+<p class="lead">VPN 隧道建立成功不代表业务可达。路由是否被传播、BGP 是否宣告、安全组/NACL 是否放行，是三层独立的问题。</p>
+
+<h3>静态路由 vs BGP 动态路由</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>对比项</th><th>静态路由</th><th>BGP 动态路由</th></tr></thead>
+<tbody>
+<tr><td>配置方式</td><td>在 VPN Connection 中手工指定本地网段</td><td>由本地设备与 AWS 端点交换路由</td></tr>
+<tr><td>故障切换</td><td>隧道断开后依赖路由失效，切换较慢</td><td>BGP 快速撤销路由，切换更快</td></tr>
+<tr><td>适用场景</td><td>设备不支持 BGP、网段固定且简单</td><td>多分支、多网段、需要自动收敛（推荐）</td></tr>
+<tr><td>考试判断</td><td>"设备不支持动态路由"</td><td>"需要自动故障切换/多路径"</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>路由传播的三条链路</h3>
+<ul>
+ <li><b>VGW 场景：</b>VPN 路由需在 VPC 路由表中启用 <b>Route Propagation</b>，静态路由则需手工添加目标为 VGW 的路由。</li>
+ <li><b>TGW 场景：</b>VPN Attachment 的路由进入 TGW 路由表，再由 TGW 关联/传播到各 VPC 的附件路由表。</li>
+ <li><b>本地侧：</b>本地设备必须把 AWS VPC CIDR 加入路由表/隧道感兴趣流量（Interesting Traffic），否则不会发起协商。</li>
+</ul>
+
+<div class="callout orange"><b>易错点：</b>VGW 无法把路由"推"给本地设备，BGP 是双向的；如果本地只配了单向静态路由，常见现象是"隧道 Up 但业务不通"。</div>
+
+<h3>故障切换与路由优先级</h3>
+<ul>
+ <li><b>DX 主 + VPN 备：</b>对 VPN 路由使用 <b>AS-PATH Prepend</b> 或更高 <b>MED</b>，让流量优先走 DX；DX 中断时 VPN 自动接管。</li>
+ <li><b>多 VPN 连接 + TGW：</b>利用 ECMP 并行分担；BGP 撤销失效路径后自动收敛。</li>
+ <li><b>VGW：</b>不支持 ECMP，多连接只能主备，切换依赖 BGP/路由失效检测。</li>
+</ul>
+
+<h3>DNS 解析：Route 53 Resolver</h3>
+<p>混合网络中的常见需求是"本地能解析 AWS 私有域名，AWS 也能解析本地域名"。做法是部署 <b>Route 53 Resolver Inbound / Outbound Endpoint</b>，并通过 VPN/DX 打通 53 端口：</p>
+<ul>
+ <li><b>Inbound Endpoint：</b>本地 DNS 服务器把 <code>aws.example.com</code> 的查询转发到 Resolver Inbound IP（位于 VPC 子网内）。</li>
+ <li><b>Outbound Endpoint + Resolver Rule：</b>AWS 侧把 <code>corp.example.com</code> 的查询转发到本地 DNS。</li>
+ <li>安全组/NACL 必须允许 UDP/TCP 53；本地防火墙需允许访问 Endpoint 的私有 IP。</li>
+</ul>
+
+<div class="callout"><b>与 VPN 的关系：</b>Resolver Endpoint 是 VPC 内的私有 IP，天然需要 VPN/DX 才能从本地访问；题目出现"本地服务器无法解析 AWS 私有域名"时，优先检查 Resolver Endpoint 与安全组，而不是重建 VPN。</div>
+</section>
+
+<!-- 五、Client VPN -->
+<section id="client">
+<h2>五、AWS Client VPN</h2>
+<p class="lead">Client VPN 是<b>按用户</b>的托管 VPN：员工在笔记本上安装客户端，通过 TLS 接入 VPC，无需在办公室部署硬件 VPN。</p>
+
+<h3>核心组件</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>组件</th><th>说明</th><th>考试要点</th></tr></thead>
+<tbody>
+<tr><td><b>Client VPN Endpoint</b></td><td>VPN 的逻辑入口，需绑定 <b>ACM 服务器证书</b></td><td>一个 Endpoint 关联一个 VPC 的多个 Target Subnet（可跨 AZ）</td></tr>
+<tr><td><b>Target Subnet</b></td><td>Endpoint 关联的子网，用于承载客户端流量</td><td>建议每个 AZ 关联一个子网，实现高可用</td></tr>
+<tr><td><b>Client CIDR</b></td><td>分配给 VPN 客户端的地址池</td><td>不能与 VPC CIDR 或本地网段重叠</td></tr>
+<tr><td><b>Authorization Rules</b></td><td>按用户组限制可访问的目标网段</td><td>默认拒绝；必须显式授权，否则客户端接入也访问不到资源</td></tr>
+<tr><td><b>Split Tunneling</b></td><td>只让指定流量走 VPN，其余走本地公网</td><td>开启后需在客户端路由/授权规则中精确配置</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>三种认证方式</h3>
+<div class="cards">
+ <div class="card"><b>Active Directory</b><p>对接 AWS Directory Service 或自建 AD，按<b>用户/组</b>授权。适合已有域环境的企业。</p></div>
+ <div class="card"><b>SAML 联合身份</b><p>对接 Okta、Azure AD 等 IdP，用户在浏览器完成 SSO 后获得 VPN 会话。适合多云/ SaaS 身份体系。</p></div>
+ <div class="card"><b>双向证书认证</b><p>客户端证书 + 服务器证书互验，适合设备级接入或自动化场景，不需要目录服务。</p></div>
+ <div class="card"><b>组合方式</b><p>可同时启用"证书 + 用户认证"，实现设备与用户双重校验（合规场景常见）。</p></div>
+</div>
+
+<h3>Split Tunnel：全流量 vs 分流</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>模式</th><th>流量走向</th><th>优点</th><th>缺点 / 适用</th></tr></thead>
+<tbody>
+<tr><td><b>Full Tunnel（关闭 split tunnel）</b></td><td>客户端所有流量经 VPN 到 VPC</td><td>统一出口、便于审计与内容过滤</td><td>占用 VPN 带宽与 AWS 出口费用；需 NAT/互联网出口</td></tr>
+<tr><td><b>Split Tunnel（开启）</b></td><td>只有目标网段走 VPN，其余走本地网络</td><td>节省带宽、降低延迟、成本低</td><td>安全策略需在终端侧配合；适合只访问内网资源</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout red"><b>Client VPN 不是站点 VPN：</b>它只服务终端用户，不能让两个分支机构互联，也不能替代 Site-to-Site VPN。题目要求"分支路由器互联"时，选 Site-to-Site VPN 或 DX。</div>
+
+<div class="callout orange"><b>授权规则顺序：</b>Client VPN 的 Authorization Rule 默认全部拒绝。只关联 Target Subnet 而不加授权规则，是最常见的"能连上但打不开资源"原因。</div>
+</section>
+
+<!-- 六、VPN over DX -->
+<section id="dxvpn">
+<h2>六、VPN over Direct Connect</h2>
+<p class="lead">Direct Connect 提供稳定低延迟的专用链路，但<b>默认不加密</b>。当合规要求"传输加密"、同时又不能放弃专线质量时，在 DX 之上叠加 IPsec，即 VPN over Direct Connect。</p>
+
+<h3>两种接入方式</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>方式</th><th>DX 虚拟接口</th><th>AWS 侧终点</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><b>Public VIF + VGW</b></td><td>Public VIF</td><td>VGW 的公网 IP</td><td>最常见形态：通过 DX 到达 AWS 公网端点后建立 IPsec，不经过公共互联网</td></tr>
+<tr><td><b>Transit VIF + TGW</b></td><td>Transit VIF</td><td>TGW 上的 VPN Attachment</td><td>适合多 VPC 场景，可在专线之上叠加加密并复用 TGW 路由域</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout red"><b>与 DX 页面的对应：</b>DX 本身不加密，加密方案是 <b>MACsec（L2，仅专用连接）</b>或 <b>VPN over DX（L3 IPsec）</b>。题目同时要求"低延迟专线 + 端到端加密"时，答案通常是后者。</div>
+
+<h3>与 MACsec 的边界</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>对比项</th><th>MACsec</th><th>VPN over Direct Connect</th></tr></thead>
+<tbody>
+<tr><td>加密层级</td><td>Layer 2（逐跳）</td><td>Layer 3（端到端 IPsec）</td></tr>
+<tr><td>适用连接</td><td>仅 Dedicated Connection</td><td>Dedicated + Hosted 均可</td></tr>
+<tr><td>性能开销</td><td>极小（硬件加速）</td><td>有 CPU 开销，单隧道约 1.25 Gbps</td></tr>
+<tr><td>跨 Region</td><td>不支持（链路层限制）</td><td>支持（IP 路由不受限）</td></tr>
+<tr><td>典型场景</td><td>金融/政务硬件级加密</td><td>通用合规加密 + 专线质量</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout orange"><b>成本与设计：</b>VPN over DX 需要同时为 DX 端口与 VPN 连接付费。若只是"加密公网流量"，普通 Site-to-Site VPN 就够了；只有题目明确"已有 DX / 要求专线低延迟"时才选叠加方案。</div>
+
+<h3>DX 主用 + VPN 备用</h3>
+<p>这是 SAP-C02 最经典的混合网络冗余答案：DX 承载生产流量，Site-to-Site VPN 通过公网作为备份，靠 BGP 属性控制优先级；DX 中断后 VPN 自动接管。相比双 DX 双 Location，成本显著更低，但备份链路带宽与延迟较差。</p>
+</section>
+
+<!-- 七、CloudHub -->
+<section id="cloudhub">
+<h2>七、VPN CloudHub（星型分支互联）</h2>
+<p class="lead">当多个分支机构各自只有一条 Site-to-Site VPN、又需要"分支之间互相通信"时，不需要为每对分支建隧道，而是让所有分支连接到<b>同一个 VGW</b>，由 VGW 做中转。</p>
+
+<div class="diagram">
+ <div class="node"><b>分支 A</b><br><small>CGW-A</small></div>
+ <span class="arrow">↘</span>
+ <div class="node"><b>VGW</b><br><small>Hub</small></div>
+ <span class="arrow">↙</span>
+ <div class="node"><b>分支 B</b><br><small>CGW-B</small></div>
+ <span class="arrow">↔</span>
+ <div class="node"><b>分支 C</b><br><small>CGW-C</small></div>
+</div>
+
+<h3>工作方式</h3>
+<ul>
+ <li>每个分支建立一条 Site-to-Site VPN 到<b>同一个 VGW</b>，形成 hub-and-spoke。</li>
+ <li>各分支通过 <b>BGP</b> 向 VGW 宣告自己的私有网段；VGW 把其他分支的路由再宣告回来。</li>
+ <li>分支 A → 分支 B 的流量经 VGW 中转，无需 A、B 之间直连。</li>
+ <li>建议各分支使用不同 BGP ASN，避免路由环路与 ASN 冲突。</li>
+</ul>
+
+<div class="callout orange"><b>CloudHub 与 TGW 的区别：</b>CloudHub 基于 <b>VGW</b>，本质是"一个 VPC 的星型 VPN 汇聚"；需要连接多个 VPC、做路由域隔离或大规模扩展时，应使用 <b>Transit Gateway</b>，而不是在 VGW 上堆连接。</div>
+
+<div class="callout red"><b>易错点：</b>CloudHub 中分支间流量会经过 VGW，VGW 不做安全组过滤；访问控制需依赖各分支防火墙、VPC 安全组或子网 NACL。不要把它当作"分支之间天然隔离"。</div>
+</section>
+
+<!-- 八、加速 VPN -->
+<section id="accelerated">
+<h2>八、加速 Site-to-Site VPN</h2>
+<p class="lead">当分支与 AWS 跨越大洲、公网丢包抖动严重时，普通 VPN 的吞吐和稳定性会明显下降。加速 VPN 用 <b>AWS Global Accelerator</b> 把流量引入 AWS 全球骨干网，改善长距离传输。</p>
+
+<h3>关键约束</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>项目</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><b>AWS 侧端点</b></td><td>必须使用 <b>Transit Gateway</b>；<b>不支持 VGW</b></td></tr>
+<tr><td><b>加速器</b></td><td>创建 Global Accelerator，把 VPN 作为端点，客户端流量走 Anycast IP 进入 AWS 骨干网</td></tr>
+<tr><td><b>对端要求</b></td><td>本地设备仍需公网 IP，并配置两条隧道</td></tr>
+<tr><td><b>收益</b></td><td>降低跨国丢包与抖动、提升吞吐稳定性；不改变加密方式（仍是 IPsec）</td></tr>
+<tr><td><b>成本</b></td><td>VPN 费用 + Global Accelerator 费用，通常高于普通 VPN</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout green"><b>关键词映射：</b>"跨洲/长距离" + "公网质量不稳定" + "需要稳定 VPN" → 加速 Site-to-Site VPN；如果题目还要求"多 VPC"，正好与 TGW 组合。</div>
+
+<div class="callout red"><b>别混用：</b>Global Accelerator 也可以加速 ALB/NLB/EC2/EIP，但"加速 VPN"这条特性只对 <b>TGW 上的 Site-to-Site VPN</b> 生效。VGW + 加速器不是合法组合。</div>
+</section>
+
+<!-- 九、排错 -->
+<section id="troubleshoot">
+<h2>九、常见故障与排查路径</h2>
+<p class="lead">VPN 问题分四层：<b>隧道是否建立</b> → <b>路由是否可达</b> → <b>安全策略是否放行</b> → <b>应用/DNS 是否正确</b>。按顺序排查，比反复重建连接有效。</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>现象</th><th>优先检查</th><th>常见原因</th></tr></thead>
+<tbody>
+<tr><td>隧道一直 Down</td><td>PSK、IKE 版本、加密算法、CGW 公网 IP</td><td>两端参数不匹配；本地设备在 NAT 后未启用 NAT-T；UDP 500/4500 被封</td></tr>
+<tr><td>隧道 Up 但业务不通</td><td>VPC 路由表、TGW 路由表、感兴趣流量</td><td>路由未传播；本地未把 VPC CIDR 加入隧道；子网路由指向错误</td></tr>
+<tr><td>能 ping 通但 TCP 不通</td><td>安全组、NACL、实例防火墙</td><td>只放行了 ICMP；NACL 无状态导致返回流量被拒</td></tr>
+<tr><td>大包失败、小包正常</td><td>MTU / MSS、ICMP 分片</td><td>IPsec 封装后超过 1400 字节；中间设备丢弃 ICMP</td></tr>
+<tr><td>访问时通时断</td><td>两条隧道状态、BGP 收敛、ECMP</td><td>只监控一条隧道；BGP 计时器过长；路径不对称</td></tr>
+<tr><td>本地解析不了 AWS 私有域名</td><td>Route 53 Resolver Endpoint、53 端口</td><td>未部署 Inbound Endpoint；安全组未放行 53；本地未配置条件转发</td></tr>
+<tr><td>Client VPN 连上但打不开资源</td><td>Authorization Rule、Target Subnet 路由</td><td>默认拒绝且未加授权；Target Subnet 路由表没有到目标网段的路由</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>排错顺序建议</h3>
+<ol>
+ <li><b>看隧道：</b>CloudWatch <code>TunnelState</code> 是否为 Up；两条隧道是否都配置。</li>
+ <li><b>看路由：</b>VPC/TGW 路由表是否有目标网段；是否为传播路由；本地是否有回程路由。</li>
+ <li><b>看策略：</b>安全组入/出站、NACL 双向、实例系统防火墙。</li>
+ <li><b>看 MTU/DNS：</b>大包测试、<code>dig</code> 指定 Resolver Inbound IP 验证解析链路。</li>
+</ol>
+
+<div class="callout"><b>监控建议：</b>为两条隧道都建立 CloudWatch 告警（TunnelState、TunnelDataIn/Out），并对 VPN 连接建立/断开事件做通知；仅监控"连接存在"无法发现单隧道失效。</div>
+</section>
+
+<!-- 十、场景题 -->
+<section id="scenarios">
+<h2>十、场景题解析</h2>
+<p class="small">先独立判断，再查看解析与错误选项排除。</p>
+
+<div class="quiz">
+<b>场景 1：一家公司需要在两周内把本地数据中心接入 AWS VPC，要求流量加密、可接受公网延迟、预算有限。最合适的方案是？</b>
+<br><button class="secondary" onclick="showAnswer('v1',false)">A. AWS Direct Connect + Private VIF</button>
+<button class="secondary" onclick="showAnswer('v1',true)">B. Site-to-Site VPN（VGW，双隧道）</button>
+<button class="secondary" onclick="showAnswer('v1',false)">C. AWS Client VPN</button>
+<button class="secondary" onclick="showAnswer('v1',false)">D. AWS PrivateLink</button>
+<div class="answer" id="v1">
+ <b>正确答案：B。</b>两周内建立 + 加密 + 成本敏感 → Site-to-Site VPN。A 的 DX 建立通常需要数周且默认不加密；C 的 Client VPN 面向终端用户，不能连接数据中心路由器；D 的 PrivateLink 用于私有访问服务端点，不是站点互联。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景 2：某企业通过互联网连接 5 个 VPC，要求 VPN 总吞吐可扩展到 4 Gbps，且任一隧道故障不影响业务。应如何设计？</b>
+<br><button class="secondary" onclick="showAnswer('v2',false)">A. 单个 VGW + 一条 VPN 连接（双隧道）</button>
+<button class="secondary" onclick="showAnswer('v2',true)">B. Transit Gateway + 多条 Site-to-Site VPN 连接 + ECMP</button>
+<button class="secondary" onclick="showAnswer('v2',false)">C. 单个 VGW + 两条 VPN 连接主备</button>
+<button class="secondary" onclick="showAnswer('v2',false)">D. Client VPN + Split Tunnel</button>
+<div class="answer" id="v2">
+ <b>正确答案：B。</b>需要带宽聚合 → 必须使用支持 ECMP 的 TGW，多条 VPN 连接可并行分担并快速收敛。A 单连接上限约 2.5 Gbps 且只有两条隧道；C 的 VGW 不支持 ECMP，只能主备，无法叠加到 4 Gbps；D 面向终端用户，不适用于站点互联。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景 3：公司已有一条 Direct Connect 专线承载生产流量，合规新规要求本地到 AWS 的传输必须加密，但不接受公网 VPN 的延迟波动。最佳方案是？</b>
+<br><button class="secondary" onclick="showAnswer('v3',false)">A. 仅使用 Direct Connect（数据本身已加密）</button>
+<button class="secondary" onclick="showAnswer('v3',false)">B. 用 Site-to-Site VPN 替换 Direct Connect</button>
+<button class="secondary" onclick="showAnswer('v3',true)">C. 在 Direct Connect 之上叠加 IPsec VPN</button>
+<button class="secondary" onclick="showAnswer('v3',false)">D. 使用 AWS PrivateLink</button>
+<div class="answer" id="v3">
+ <b>正确答案：C。</b>VPN over Direct Connect 同时满足"专线低延迟"和"传输加密"。A 的 DX 默认不加密，不满足合规；B 放弃专线质量且带宽受限；D 是服务端点私有访问方案，与混合链路传输加密无关。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景 4：远程员工需要访问 VPC 内的私有管理资源，要求使用公司 Active Directory 认证、按部门限制可访问网段，并且员工日常上网流量不要占用 VPN 带宽。应选择？</b>
+<br><button class="secondary" onclick="showAnswer('v4',false)">A. Site-to-Site VPN + 双 CGW</button>
+<button class="secondary" onclick="showAnswer('v4',true)">B. Client VPN + AD 认证 + 授权规则 + Split Tunnel</button>
+<button class="secondary" onclick="showAnswer('v4',false)">C. Client VPN + 双向证书认证 + Full Tunnel</button>
+<button class="secondary" onclick="showAnswer('v4',false)">D. Direct Connect + Public VIF</button>
+<div class="answer" id="v4">
+ <b>正确答案：B。</b>面向员工终端 → Client VPN；目录认证 → AD；按部门限制 → 用户组授权规则；不占用 VPN 带宽 → Split Tunnel。A 面向站点；C 缺少 AD 且全流量会占用带宽；D 需要专线且不服务个人终端。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景 5：某跨国企业在新加坡、伦敦、圣保罗各有分支，均通过公网 Site-to-Site VPN 连接 AWS，近期长距离链路丢包严重、吞吐不稳定。在不改变 IPsec 加密的前提下，最优改进是？</b>
+<br><button class="secondary" onclick="showAnswer('v5',false)">A. 把 VPN 改为 Client VPN</button>
+<button class="secondary" onclick="showAnswer('v5',true)">B. 使用 Transit Gateway + 加速 Site-to-Site VPN（Global Accelerator）</button>
+<button class="secondary" onclick="showAnswer('v5',false)">C. 增加 VGW 数量</button>
+<button class="secondary" onclick="showAnswer('v5',false)">D. 在每条隧道上启用 MACsec</button>
+<div class="answer" id="v5">
+ <b>正确答案：B。</b>跨洲长距离 + 公网质量差 → 加速 VPN 把流量引入 AWS 骨干网，且仍保持 IPsec 加密。加速 VPN 仅支持 TGW，所以 B 是完整组合。A 形态错误；C 的 VGW 不是越多越好且不支持 ECMP；D 的 MACsec 只适用于 Direct Connect 专用连接。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景 6：三个分支机构各自只有一条 Site-to-Site VPN，现要求分支之间可以直接互访，且不想为每对分支单独建隧道。成本最低的做法是？</b>
+<br><button class="secondary" onclick="showAnswer('v6',false)">A. 为每对分支新增一条 VPN 连接</button>
+<button class="secondary" onclick="showAnswer('v6',true)">B. 三个分支全部连接到同一个 VGW（VPN CloudHub）</button>
+<button class="secondary" onclick="showAnswer('v6',false)">C. 使用 Client VPN 让分支员工互访</button>
+<button class="secondary" onclick="showAnswer('v6',false)">D. 用 PrivateLink 连接三个分支</button>
+<div class="answer" id="v6">
+ <b>正确答案：B。</b>VPN CloudHub 用同一个 VGW 做星型中转，分支通过 BGP 宣告各自网段即可互访，避免 N×N 条隧道。A 成本高且管理复杂；C 面向终端用户；D 不用于站点间私有网络互联。
+</div>
+</div>
+</section>
+
+<!-- 十一、关键词速查 -->
+<section id="quick">
+<h2>十一、关键词速查表</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>题目关键词 / 场景</th><th>对应答案</th></tr></thead>
+<tbody>
+<tr><td>快速建立混合连接、可接受公网</td><td>Site-to-Site VPN（分钟级，DX 需数周）</td></tr>
+<tr><td>站点/路由器 ↔ VPC</td><td>Site-to-Site VPN（IPsec，VGW 或 TGW）</td></tr>
+<tr><td>员工笔记本远程接入</td><td>Client VPN（OpenVPN / TLS）</td></tr>
+<tr><td>AD 认证 + 按部门授权</td><td>Client VPN + Active Directory + Authorization Rules</td></tr>
+<tr><td>SSO / Okta / Azure AD 登录 VPN</td><td>Client VPN + SAML 联合身份</td></tr>
+<tr><td>只让内网流量走 VPN</td><td>Client VPN Split Tunnel</td></tr>
+<tr><td>号称为"双隧道"却只配一条</td><td>常见错误：应两条隧道都配置（不同 AZ）</td></tr>
+<tr><td>单 VPN 连接带宽上限</td><td>单隧道约 1.25 Gbps，双隧道约 2.5 Gbps</td></tr>
+<tr><td>需要 VPN 带宽叠加 / ECMP</td><td>Transit Gateway + 多条 VPN 连接（VGW 不支持 ECMP）</td></tr>
+<tr><td>VGW 多条 VPN 连接</td><td>只能主备，不能聚合带宽</td></tr>
+<tr><td>DX 默认加密吗</td><td>不加密；需 MACsec 或 VPN over DX</td></tr>
+<tr><td>专线低延迟 + 传输加密</td><td>VPN over Direct Connect（IPsec over DX）</td></tr>
+<tr><td>多个分支星型互联（单 VGW）</td><td>VPN CloudHub</td></tr>
+<tr><td>跨洲长距离、公网丢包严重</td><td>加速 Site-to-Site VPN（Global Accelerator + TGW）</td></tr>
+<tr><td>加速 VPN 能否用 VGW</td><td>不能，仅支持 Transit Gateway</td></tr>
+<tr><td>DX 主用、公网 VPN 备用</td><td>DX + Site-to-Site VPN，BGP AS-PATH Prepend / MED 控制优先级</td></tr>
+<tr><td>本地解析 AWS 私有域名</td><td>Route 53 Resolver Inbound Endpoint + 放行 53 端口</td></tr>
+<tr><td>大包不通、小包正常</td><td>IPsec MTU 约 1400，调整 MSS / 放行 ICMP</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- 十二、速记卡 -->
+<section id="memory">
+<h2>十二、考前速记卡（可勾选）</h2>
+<p>复习时勾选已掌握的项目。进度仅在当前页面打开期间有效。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>两种形态：</b>Site-to-Site VPN 连站点，Client VPN 连终端用户，不可互相替代</span></li>
+<li><input type="checkbox"><span><b>协议区别：</b>Site-to-Site 用 IPsec（IKEv1/v2）；Client VPN 用 OpenVPN（TLS）</span></li>
+<li><input type="checkbox"><span><b>AWS 侧端点：</b>VGW 或 TGW；一条 VPN 连接只能附加其中之一</span></li>
+<li><input type="checkbox"><span><b>两条隧道：</b>每个 VPN 连接默认 2 条隧道，位于不同 AZ</span></li>
+<li><input type="checkbox"><span><b>高可用：</b>双隧道 + 双 CGW 抵御隧道、AZ、设备故障</span></li>
+<li><input type="checkbox"><span><b>带宽上限：</b>单隧道约 1.25 Gbps，双隧道约 2.5 Gbps</span></li>
+<li><input type="checkbox"><span><b>VGW 限制：</b>不支持 ECMP，多连接只能主备</span></li>
+<li><input type="checkbox"><span><b>带宽聚合：</b>TGW + 多条 VPN 连接 + ECMP</span></li>
+<li><input type="checkbox"><span><b>路由方式：</b>静态路由或 BGP；BGP 收敛更快，推荐生产使用</span></li>
+<li><input type="checkbox"><span><b>VPC 路由：</b>VGW 场景需启用 Route Propagation 或手工添加路由</span></li>
+<li><input type="checkbox"><span><b>Client VPN 端点：</b>需 ACM 服务器证书；关联多个 Target Subnet 实现 AZ 高可用</span></li>
+<li><input type="checkbox"><span><b>Client VPN 认证：</b>AD、SAML 联合身份、双向证书，可组合</span></li>
+<li><input type="checkbox"><span><b>Client VPN 授权：</b>默认拒绝，必须配置 Authorization Rule</span></li>
+<li><input type="checkbox"><span><b>Split Tunnel：</b>只有内网流量走 VPN，节省带宽</span></li>
+<li><input type="checkbox"><span><b>DX 默认不加密：</b>加密靠 MACsec（L2）或 VPN over DX（L3）</span></li>
+<li><input type="checkbox"><span><b>CloudHub：</b>多个分支连同一 VGW 做星型中转，基于 BGP</span></li>
+<li><input type="checkbox"><span><b>加速 VPN：</b>Global Accelerator + TGW，不支持 VGW</span></li>
+<li><input type="checkbox"><span><b>MTU：</b>IPsec 隧道约 1400 字节，大包问题查 MSS/ICMP</span></li>
+</ul>
+</section>
+
+<!-- 十三、快速自测 -->
+<section id="quiz">
+<h2>十三、快速自测</h2>
+<p class="small">先独立选择，再点击"查看解析"。</p>
+
+<div class="quiz">
+<b>1. 一个 VPC 已附加 VGW，现在需要为 VPN 增加带宽到 3 Gbps 以上。以下哪种做法可行？</b><br>
+<button class="secondary" onclick="showAnswer('q1',false)">A. 在 VGW 上再挂一条 VPN 连接，启用 ECMP</button>
+<button class="secondary" onclick="showAnswer('q1',true)">B. 改用 Transit Gateway，挂多条 VPN 连接并启用 ECMP</button>
+<button class="secondary" onclick="showAnswer('q1',false)">C. 在同一条 VPN 连接上增加第三条隧道</button>
+<button class="secondary" onclick="showAnswer('q1',false)">D. 把 VPN 连接的隧道 MTU 调大以提升吞吐</button>
+<div class="answer" id="q1"><b>正确答案：B。</b>VGW 不支持 ECMP，多条连接只能主备；每个连接固定 2 条隧道，不能自行增加；MTU 与吞吐上限无关。带宽聚合必须使用支持 ECMP 的 TGW。</div>
+</div>
+
+<div class="quiz">
+<b>2. 使用 Client VPN 让员工接入后，员工反馈"VPN 显示已连接，但无法访问 VPC 内的 EC2"。最可能的原因是？</b><br>
+<button class="secondary" onclick="showAnswer('q2',false)">A. 没有为 Client VPN 配置 BGP</button>
+<button class="secondary" onclick="showAnswer('q2',false)">B. 服务器证书过期</button>
+<button class="secondary" onclick="showAnswer('q2',true)">C. 未配置 Authorization Rule 或 Target Subnet 路由缺失</button>
+<button class="secondary" onclick="showAnswer('q2',false)">D. 隧道 MTU 太小</button>
+<div class="answer" id="q2"><b>正确答案：C。</b>Client VPN 的授权规则默认拒绝全部目标；同时 Target Subnet 所在 VPC 路由表必须有到目标网段的路由。Client VPN 不使用 BGP；证书过期通常会导致无法建立连接，而不是连上后无权限；MTU 不是首要原因。</div>
+</div>
+
+<div class="quiz">
+<b>3. 某公司已有 Direct Connect，但审计要求"本地与 AWS 之间的数据必须端到端加密"，同时明确不能牺牲专线延迟。以下方案最合适的是？</b><br>
+<button class="secondary" onclick="showAnswer('q3',false)">A. Direct Connect + Private VIF</button>
+<button class="secondary" onclick="showAnswer('q3',false)">B. Site-to-Site VPN 替换 Direct Connect</button>
+<button class="secondary" onclick="showAnswer('q3',true)">C. VPN over Direct Connect（IPsec over DX）</button>
+<button class="secondary" onclick="showAnswer('q3',false)">D. Client VPN + Full Tunnel</button>
+<div class="answer" id="q3"><b>正确答案：C。</b>专线保留低延迟，IPsec 提供端到端加密。Private VIF 本身不加密；VPN 替换 DX 会失去专线质量；Client VPN 面向个人终端，不能承载站点间流量。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html" target="_blank" rel="noopener">AWS Site-to-Site VPN 用户指南</a></li>
+<li><a href="https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/cvpn-working.html" target="_blank" rel="noopener">AWS Client VPN 管理指南</a></li>
+<li><a href="https://docs.aws.amazon.com/vpn/latest/s2svpn/accelerated-vpn.html" target="_blank" rel="noopener">Accelerated Site-to-Site VPN</a></li>
+<li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpn-connections.html" target="_blank" rel="noopener">VPC 中的 VPN 连接</a></li>
+<li><a href="https://docs.aws.amazon.com/directconnect/latest/UserGuide/direct-connect-gateways.html" target="_blank" rel="noopener">Direct Connect Gateway 文档</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>本文为复习提纲，服务功能与配额持续更新，请以 AWS 官方文档和最新考试指南为准；本页不是官方题库。</div>
+</section>
+
+</main>
+</div>
+<footer class="container">AWS SAP-C02 AWS VPN 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

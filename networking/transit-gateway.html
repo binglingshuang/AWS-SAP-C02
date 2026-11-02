@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Transit Gateway 考点整理：附件类型、路由域与多路由表、RAM 共享、跨 Region Peering、Multicast、集中出口与排错">
+<title>AWS SAP-C02｜AWS Transit Gateway 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:#bfdbfe;font-size:14px;margin-bottom:16px}
+.back-link:hover{color:#fff;text-decoration:none}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.orange{background:var(--orange-soft);color:var(--orange)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff}
+.card b{display:block;margin-bottom:5px}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;margin:2px 4px 2px 0}
+.badge-blue{background:#dbeafe;color:#1d4ed8}
+.badge-green{background:#dcfce7;color:#15803d}
+.badge-orange{background:#ffedd5;color:#c2410c}
+.badge-red{background:#fee2e2;color:#b91c1c}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}.cards{grid-template-columns:1fr}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <a class="back-link no-print" href="index.html">← 返回网络模块</a>
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>AWS Transit Gateway<br>大规模网络的中枢路由器</h1>
+  <p>附件类型、路由表与隔离、RAM 多账号共享、跨 Region Peering、Multicast 与集中出口。以"网络规模 → 拓扑选型 → 路由域设计"为主线，覆盖 SAP-C02 最常见的多 VPC 架构题。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">多 VPC / 混合网络</span>
+   <span class="pill">可打印 / 可勾选</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#overview">一、Transit Gateway 定位</a>
+ <a href="#attachments">二、附件（Attachments）类型</a>
+ <a href="#routing">三、路由表、关联与传播</a>
+ <a href="#compare">四、与 Peering / VGW / DXGW 对比</a>
+ <a href="#ram">五、多账号与 RAM 共享</a>
+ <a href="#crossregion">六、跨 Region：TGW Peering</a>
+ <a href="#multicast">七、Multicast 组播</a>
+ <a href="#connect">八、TGW Connect 与 SD-WAN</a>
+ <a href="#egress">九、集中出口与集中检查</a>
+ <a href="#ops">十、高可用、ECMP 与排错</a>
+ <a href="#scenarios">十一、场景题解析</a>
+ <a href="#quick">十二、关键词速查</a>
+ <a href="#memory">十三、考前速记卡</a>
+ <a href="#quiz">十四、快速自测</a>
+</nav>
+
+<main>
+
+<!-- 一、定位 -->
+<section id="overview">
+<h2>一、Transit Gateway 的定位</h2>
+<p class="lead">AWS Transit Gateway（TGW）是<b>区域级</b>的托管路由中枢：VPC、VPN、Direct Connect、其他 TGW 都作为"附件"挂到它上面，由它在一张或多张路由表中完成转发。它解决的是 <b>N 个 VPC 全互联带来的 N×N 条 Peering</b> 问题。</p>
+
+<div class="diagram">
+ <div class="node"><b>VPC A</b><br><small>附件</small></div>
+ <div class="node"><b>VPC B</b><br><small>附件</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Transit Gateway</b><br><small>Hub + 路由表</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>VPN / DX</b><br><small>本地网络</small></div>
+ <div class="node"><b>VPC C</b><br><small>附件</small></div>
+</div>
+
+<h3>三个必须记住的属性</h3>
+<ul>
+ <li><b>区域级资源：</b>TGW 属于某个 Region，不能直接挂载另一个 Region 的 VPC；跨 Region 需要 <b>TGW Peering</b>。</li>
+ <li><b>转发是"传递"的：</b>同一个 TGW 内，A → B、B → C 的流量可以由 TGW 中转，不需要 A、C 建 Peering。这是它和 VPC Peering 的本质区别。</li>
+ <li><b>路由可控：</b>通过多张路由表把"全互通"切成多个路由域，实现生产/测试隔离、共享服务访问等设计。</li>
+</ul>
+
+<div class="callout green"><b>一句话选型：</b>2–3 个 VPC 点对点 → VPC Peering 够用；10+ VPC、多账号、混合云、需要集中出口 → Transit Gateway。</div>
+
+<h3>TGW 能做什么、不能做什么</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>能力</th><th>TGW</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>VPC 之间传递路由（Hub 中转）</td><td>✅</td><td>同一 TGW 内可通过路由表把多个 VPC 连通</td></tr>
+<tr><td>连接 VPN / Direct Connect</td><td>✅</td><td>VPN Attachment、Transit VIF + DX Gateway</td></tr>
+<tr><td>多 VPN/DX 连接 ECMP 聚合带宽</td><td>✅</td><td>VGW 不支持 ECMP，这是 TGW 的关键优势</td></tr>
+<tr><td>跨 Region 直连 VPC</td><td>❌</td><td>需要用 TGW Peering 连接两个 Region 的 TGW</td></tr>
+<tr><td>组播（Multicast）</td><td>✅</td><td>通过 Multicast Domain，主要用于 VPC 附件</td></tr>
+<tr><td>NAT / 安全组过滤</td><td>❌</td><td>TGW 只做路由转发，NAT 需在 VPC 内用 NAT Gateway，检查用 GWLB/防火墙</td></tr>
+<tr><td>替代 VPC 安全组</td><td>❌</td><td>路由可达 ≠ 授权通过，安全组/NACL 仍然生效</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- 二、附件 -->
+<section id="attachments">
+<h2>二、附件（Attachments）类型</h2>
+<p class="lead">TGW 的所有连接都以"附件"形式存在。考试只要看到"什么资源挂到 TGW"，先定位附件类型，再判断路由与配额。</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>附件类型</th><th>连接对象</th><th>典型用途</th><th>路由来源</th></tr></thead>
+<tbody>
+<tr><td><b>VPC Attachment</b></td><td>同 Region 的 VPC（指定一个或多个子网）</td><td>VPC 互联、集中出口</td><td>VPC CIDR（静态）</td></tr>
+<tr><td><b>VPN Attachment</b></td><td>Site-to-Site VPN Connection</td><td>本地/分支通过 IPsec 接入</td><td>静态路由或 BGP</td></tr>
+<tr><td><b>DX Attachment（Transit VIF）</b></td><td>Direct Connect Gateway</td><td>专线接入多 VPC、专线加密叠加</td><td>BGP</td></tr>
+<tr><td><b>TGW Peering Attachment</b></td><td>另一个 Region 的 TGW</td><td>跨 Region 组网</td><td>对端 TGW 的路由</td></tr>
+<tr><td><b>Connect Attachment</b></td><td>支持 GRE + BGP 的 SD-WAN / 网络设备</td><td>替代 IPsec，接入第三方 SD-WAN</td><td>BGP</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>VPC Attachment 的细节</h3>
+<ul>
+ <li>一个 VPC 在同一 TGW 上通常只有<b>一个附件</b>，可在附件中指定多个子网（不必整个 VPC）。</li>
+ <li>附件创建后会生成一块 TGW 侧的 ENI 所在子网路由；VPC 路由表需把目标网段指向 TGW。</li>
+ <li><b>Appliance Mode</b> 是 VPC 附件的一个选项：让同一流量始终落在同一个 AZ，供防火墙/NAT 等有状态设备使用，避免跨 AZ 造成会话中断。</li>
+</ul>
+
+<div class="callout orange"><b>易错点：</b>TGW 附件创建成功不代表业务可达。VPC 内还需要路由表指向 TGW，TGW 路由表还需要有目标网段并关联到该附件，两个方向都成立才通。</div>
+
+<div class="callout"><b>与 DX 的衔接：</b>Direct Connect 通过 <b>Transit VIF + Direct Connect Gateway</b> 关联到 TGW，而不是像 VPC 那样直接建附件。这样一条专线可服务多个 Region 的多个 VPC。</div>
+</section>
+
+<!-- 三、路由 -->
+<section id="routing">
+<h2>三、路由表、关联与传播</h2>
+<p class="lead">TGW 的路由模型只有两个动作：<b>Association（关联）</b>决定某个附件"使用哪张路由表"；<b>Propagation（传播）</b>决定某个附件的路由"进入哪张路由表"。隔离与互通都靠这两个动作组合。</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>概念</th><th>含义</th><th>类比</th></tr></thead>
+<tbody>
+<tr><td><b>Transit Gateway Route Table</b></td><td>一张路由表，包含目标网段与下一跳附件</td><td>路由器的路由表</td></tr>
+<tr><td><b>Association</b></td><td>把附件绑定到某张路由表，决定它"按哪张表转发"</td><td>接口加入某个路由域</td></tr>
+<tr><td><b>Propagation</b></td><td>把附件的路由注入某张路由表，决定别人"能不能看到它"</td><td>路由重分发</td></tr>
+<tr><td><b>Blackhole Route</b></td><td>黑洞路由，命中即丢弃流量，用于阻断</td><td>路由层面的拒绝</td></tr>
+<tr><td><b>Default Route Table</b></td><td>创建 TGW 时自动生成，新附件默认关联并传播到它</td><td>默认全互通域</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>默认行为：一张表 = 全互通</h3>
+<p>如果不做任何额外配置，所有附件都关联到 <b>Default Route Table</b>，并把各自网段传播进去，结果是"挂上就能通"。这也是考试中最常见的默认前提。</p>
+
+<h3>用多张路由表做隔离</h3>
+<div class="diagram">
+ <div class="node"><b>Prod VPC</b><br><small>关联 Prod RT</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Prod Route Table</b><br><small>只含生产网段</small></div>
+ <span class="arrow">✕</span>
+ <div class="node"><b>Dev Route Table</b><br><small>只含测试网段</small></div>
+ <span class="arrow">←</span>
+ <div class="node"><b>Dev VPC</b><br><small>关联 Dev RT</small></div>
+</div>
+<ul>
+ <li><b>隔离做法：</b>生产附件只关联生产表、只向生产表传播；测试附件同理。两张表互不传播对方路由，天然不可达。</li>
+ <li><b>共享服务做法：</b>把共享服务 VPC 同时关联/传播到两张表，实现"共享一个服务、隔离其余流量"。</li>
+ <li><b>阻断特定网段：</b>在某张表中加入指向 <code>Blackhole</code> 的静态路由，优先级覆盖更宽泛的默认路由。</li>
+</ul>
+
+<div class="callout red"><b>设计顺序不能反：</b>先确定"谁和谁能通"（路由域），再创建附件。先建附件、后拆路由表，容易出现生产流量已经跑在默认表上、无法无损切换的情况。</div>
+
+<div class="callout orange"><b>路由选择：</b>TGW 按最长前缀匹配选路；默认路由 <code>0.0.0.0/0</code> 只会在没有更具体匹配时生效。排查时先确认目标网段是否真的出现在对应路由表里，而不是只看 VPC 路由表。</div>
+</section>
+
+<!-- 四、对比 -->
+<section id="compare">
+<h2>四、与 VPC Peering / VGW / DX Gateway 对比</h2>
+<p class="lead">这四个组件经常在同一道题里同时出现，混淆会导致选错拓扑。抓住"是否为路由器、是否传递、是否跨 Region"三点即可。</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>对比项</th><th>VPC Peering</th><th>Transit Gateway</th><th>Virtual Private Gateway</th><th>Direct Connect Gateway</th></tr></thead>
+<tbody>
+<tr><td><b>本质</b></td><td>两个 VPC 点对点连接</td><td>区域级路由中枢</td><td>单个 VPC 的 VPN 终点</td><td>DX 的全球逻辑汇聚点</td></tr>
+<tr><td><b>是否传递</b></td><td>❌ 非传递（A-B、B-C 不代表 A-C）</td><td>✅ 同 TGW 内可传递</td><td>—（不是路由器）</td><td>—（汇聚，不做 VPC 间路由）</td></tr>
+<tr><td><b>规模</b></td><td>VPC 数量少、点对点</td><td>大量 VPC、Hub-Spoke</td><td>单 VPC + 少量 VPN</td><td>多条 DX + 多 VPC/TGW</td></tr>
+<tr><td><b>路由控制</b></td><td>无路由表，靠 VPC 路由表</td><td>多路由表、关联、传播、黑洞</td><td>VPC 路由表 + 路由传播</td><td>BGP + 关联 VGW/TGW</td></tr>
+<tr><td><b>ECMP</b></td><td>不适用</td><td>✅ 多 VPN/DX 连接可聚合</td><td>❌ 只能主备</td><td>由下层连接与 TGW 决定</td></tr>
+<tr><td><b>跨 Region</b></td><td>✅ 支持跨 Region Peering</td><td>需 TGW Peering</td><td>❌ 单 VPC</td><td>✅ 全球资源</td></tr>
+<tr><td><b>典型场景</b></td><td>两个团队 VPC 直连</td><td>多 VPC/多账号/混合云</td><td>单 VPC 混合连接</td><td>专线接入多 VPC</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout green"><b>记忆口诀：</b>Peering 是"两点连线"，TGW 是"交换机 + 路由表"，VGW 是"单个 VPC 的 VPN 插口"，DXGW 是"专线的全球分发器"。</div>
+
+<div class="callout orange"><b>不要用 Peering 拼大规模网络：</b>N 个 VPC 全互联需要 N×(N-1)/2 条 Peering，且每条都要维护路由与接受请求；TGW 只需 N 个附件，是 SAP-C02 "减少运维复杂度"的标准答案。</div>
+
+<h3>TGW 与 VPC Peering 能否共存</h3>
+<p>可以。已有 Peering 的 VPC 仍可再挂到 TGW；但要注意路由优先级与流量路径——同一目标可能同时存在 Peering 路由与 TGW 路由，需明确哪条是主路径，否则会出现非预期绕行。考试中若题目强调"逐步迁移、保留现有 Peering"，通常允许共存，再逐条下线 Peering。</p>
+</section>
+
+<!-- 五、RAM -->
+<section id="ram">
+<h2>五、多账号与 RAM 共享</h2>
+<p class="lead">多账号场景不需要在每个账号各建一套 TGW。通过 <b>AWS Resource Access Manager（RAM）</b>把 TGW 共享给其他账号或整个 OU，参与账号即可把自己的 VPC、VPN 作为附件挂上来。</p>
+
+<h3>共享模型</h3>
+<ul>
+ <li><b>Owner（拥有者）：</b>创建 TGW、定义路由表、审批/管理附件，通常放在网络账号（Network Account）。</li>
+ <li><b>Participant（参与者）：</b>接受 RAM 共享后，用自己的 VPC 创建附件；附件仍归参与者账号所有与管理。</li>
+ <li><b>共享范围：</b>可共享到具体账号 ID，或通过 Organizations 共享给整个 OU，新加入账号自动获得。</li>
+ <li><b>权限边界：</b>参与者默认只能管理自己的附件，不能改 Owner 的路由表；需要跨账号改路由时由 Owner 操作。</li>
+</ul>
+
+<div class="callout green"><b>标准多账号网络架构：</b>网络账号建 TGW 并用 RAM 共享 → 各业务账号挂自己的 VPC → 网络账号统一设计路由表与集中出口。这是 SAP-C02 多账号网络题的高频答案。</div>
+
+<div class="callout red"><b>常见错误选项：</b>"每个账号各建一个 TGW 再互相 Peering"——成本高、路由域难统一、跨账号 Peering 仍需逐对建立；"用 VPC Peering 全互联"——运维复杂度随 VPC 数量平方增长。</div>
+
+<h3>共享后仍需注意</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>事项</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>CIDR 不重叠</td><td>所有参与账号的 VPC/本地网段必须统一规划，重叠会导致路由冲突</td></tr>
+<tr><td>路由审批</td><td>参与者传播路由到共享路由表时，Owner 需确认不会破坏隔离设计</td></tr>
+<tr><td>计费</td><td>TGW 附件与流量费用计入附件所在账号，需提前约定分摊</td></tr>
+<tr><td>删除顺序</td><td>先删除参与者附件，再停止共享，最后删除 TGW，否则会产生残留附件</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- 六、跨 Region -->
+<section id="crossregion">
+<h2>六、跨 Region：TGW Peering</h2>
+<p class="lead">TGW 是区域级资源，无法直接把 us-east-1 的 VPC 挂到 ap-southeast-1 的 TGW 上。跨 Region 组网的标准做法是：每个 Region 各建一个 TGW，再用 <b>TGW Peering Attachment</b> 把它们连起来。</p>
+
+<div class="diagram">
+ <div class="node"><b>Region A TGW</b><br><small>VPC A1 / A2</small></div>
+ <span class="arrow">⇄ Peering ⇄</span>
+ <div class="node"><b>Region B TGW</b><br><small>VPC B1 / B2</small></div>
+</div>
+
+<h3>关键行为</h3>
+<ul>
+ <li>Peering 连接的两个 TGW 各自保留自己的路由表；对端 TGW 的路由通过 Peering 附件传播进来。</li>
+ <li>流量走 <b>AWS 全球骨干网</b>，不经过公网 VPN，延迟与稳定性优于跨 Region 公网连接。</li>
+ <li><b>不自动传递第三跳：</b>A—B、B—C 两条 Peering 不会让 A 自动访问 C；需要逐段建立 Peering 并在每张路由表中配置路由。</li>
+ <li>需要确认目标 Region 组合支持 TGW Peering；并非所有 Region 对都可用。</li>
+</ul>
+
+<div class="callout orange"><b>与 DX Gateway 的区别：</b>DX Gateway 是<b>全球级</b>逻辑资源，可把一条专线关联到多个 Region 的 VGW/TGW；TGW Peering 是<b>两个 TGW 之间</b>的网络互联。题目说"一条专线访问多 Region"→ DXGW；"两个 Region 的 VPC 互访、无专线"→ TGW Peering。</div>
+
+<h3>跨 Region 方案对比</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>方案</th><th>流量路径</th><th>适用场景</th><th>缺点</th></tr></thead>
+<tbody>
+<tr><td><b>TGW Peering</b></td><td>AWS 骨干网</td><td>多 VPC 跨 Region 互访</td><td>需逐 Region 建 TGW 与 Peering，路由管理有成本</td></tr>
+<tr><td><b>跨 Region VPC Peering</b></td><td>AWS 骨干网</td><td>少量 VPC 点对点</td><td>VPC 多时呈平方增长</td></tr>
+<tr><td><b>公网 Site-to-Site VPN</b></td><td>公共互联网</td><td>临时、低成本</td><td>延迟抖动、带宽受限</td></tr>
+<tr><td><b>Direct Connect + DXGW</b></td><td>专线 + AWS 骨干网</td><td>合规、稳定低延迟</td><td>成本高、开通周期长</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- 七、Multicast -->
+<section id="multicast">
+<h2>七、Multicast 组播</h2>
+<p class="lead">TGW 是少数支持组播的 AWS 网络组件之一，用于"一份数据同时发给多个订阅者"的场景，如行情推送、媒体分发、集群配置同步。</p>
+
+<h3>三个概念</h3>
+<div class="cards">
+ <div class="card"><b>Multicast Domain</b><p>组播域，是组播流量的逻辑边界；一个 TGW 可建多个域。</p></div>
+ <div class="card"><b>VPC Attachment 关联</b><p>把 VPC 附件加入组播域，该 VPC 内的实例才能收发组播。</p></div>
+ <div class="card"><b>IGMP</b><p>实例通过 IGMP 加入/退出组播组，TGW 据此决定哪些子网接收流量。</p></div>
+ <div class="card"><b>组播地址</b><p>使用 224.0.0.0/4 范围内的地址；需应用与网络设备同时支持。</p></div>
+</div>
+
+<h3>使用前提</h3>
+<ul>
+ <li>必须在 TGW 上创建 <b>Multicast Domain</b>，并把 VPC 附件关联进去；只建 TGW 不会自动支持组播。</li>
+ <li>实例所在子网需启用组播，ENI 需支持组播；应用侧要加入同一个组播组。</li>
+ <li>组播目前以 <b>VPC 附件</b>为主，不能指望它跨 VPN、DX 或 Peering 自动延伸。</li>
+ <li>安全组/NACL 仍需放行组播流量；不要假设"组播域内自动全通"。</li>
+</ul>
+
+<div class="callout green"><b>关键词映射：</b>"一份行情同时广播给多个 VPC"、"组播"、"IGMP" → TGW Multicast Domain。若题目只是"把同一份数据分发给很多用户"，也可能是 CloudFront/SNS，需看是否要求网络层组播。</div>
+
+<div class="callout orange"><b>组播不是广播：</b>组播只发给加入该组的成员；没有加入组的子网不会收到流量。排查时先确认 IGMP 加入状态与组播域关联，而不是先查路由表。</div>
+</section>
+
+<!-- 八、Connect -->
+<section id="connect">
+<h2>八、TGW Connect 与 SD-WAN 接入</h2>
+<p class="lead">分支或第三方 SD-WAN 设备不一定支持 IPsec。TGW 提供 <b>Connect Attachment</b>：用 GRE 隧道 + BGP 把这类设备接入 TGW，而不必走 Site-to-Site VPN。</p>
+
+<h3>Connect 与 VPN 的差别</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>对比项</th><th>VPN Attachment</th><th>Connect Attachment</th></tr></thead>
+<tbody>
+<tr><td>封装协议</td><td>IPsec（IKEv1/v2）</td><td>GRE</td></tr>
+<tr><td>路由</td><td>静态或 BGP</td><td>BGP</td></tr>
+<tr><td>对端设备</td><td>支持 IPsec 的路由器/防火墙</td><td>支持 GRE + BGP 的 SD-WAN / 网络设备</td></tr>
+<tr><td>加密</td><td>✅ IPsec 加密</td><td>❌ GRE 本身不加密，需要另叠加加密</td></tr>
+<tr><td>典型场景</td><td>传统分支、DX 加密叠加</td><td>SD-WAN 厂商设备接入、替代多条 VPN</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout red"><b>安全提醒：</b>GRE 不提供加密。若题目同时要求"SD-WAN 接入 + 传输加密"，需要在 GRE 之上叠加 IPsec，或改用 VPN Attachment；不要只答 TGW Connect。</div>
+
+<div class="callout"><b>与 VPN 的共存：</b>同一个 TGW 可同时挂 VPN Attachment 和 Connect Attachment，由路由表决定各自可见的网段；迁移期可以让 SD-WAN 与传统 VPN 并存，逐步切换。</div>
+</section>
+
+<!-- 九、集中出口 -->
+<section id="egress">
+<h2>九、集中出口与集中检查</h2>
+<p class="lead">TGW 最常见的架构用途之一，是把几十个 VPC 的互联网出口收敛到 <b>一个 Egress VPC</b>，统一做 NAT、日志与安全检查，而不是每个 VPC 都建 IGW/NAT Gateway。</p>
+
+<h3>集中出口架构</h3>
+<div class="diagram">
+ <div class="node"><b>Spoke VPC A</b><br><small>0.0.0.0/0 → TGW</small></div>
+ <div class="node"><b>Spoke VPC B</b><br><small>0.0.0.0/0 → TGW</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>TGW</b><br><small>0.0.0.0/0 → Egress 附件</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Egress VPC</b><br><small>NAT Gateway / 防火墙</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Internet</b><br><small>IGW</small></div>
+</div>
+
+<h3>配置要点</h3>
+<ol>
+ <li>Spoke VPC 路由表：<code>0.0.0.0/0</code> 指向 TGW 附件。</li>
+ <li>TGW 路由表：<code>0.0.0.0/0</code> 指向 Egress VPC 附件（仅此一条出口，避免多出口混乱）。</li>
+ <li>Egress VPC：部署 NAT Gateway 与 Internet Gateway，子网路由指向 IGW。</li>
+ <li>回程流量：NAT Gateway 保持会话，返回流量经 TGW 回到 Spoke VPC，需确保路由表有回程条目。</li>
+</ol>
+
+<h3>集中检查（Inspection）</h3>
+<ul>
+ <li>用 <b>Gateway Load Balancer（GWLB）</b> + 第三方防火墙做集中流量检查，Spoke 的流量先经 GWLB 再出网。</li>
+ <li>Egress VPC 附件启用 <b>Appliance Mode</b>，让同一流量的往返都落在同一 AZ，避免有状态设备会话断裂。</li>
+ <li>检查架构中 TGW 仍然只做转发，不承担过滤；安全策略在防火墙/GWLB 与安全组上实现。</li>
+</ul>
+
+<div class="callout orange"><b>成本陷阱：</b>集中出口不等于"零成本"。TGW 附件与流量、Egress VPC 的 NAT Gateway、GWLB 都单独计费。题目要求"最低成本"且 VPC 只有 2–3 个时，可能直接每个 VPC 建 NAT Gateway 更便宜。</div>
+
+<div class="callout red"><b>别把 NAT 写进 TGW：</b>TGW 不做 NAT、不做安全组、不做 DNS。所有需要"地址转换/内容检查/域名解析"的答案，都必须落到 VPC 内的具体服务上。</div>
+</section>
+
+<!-- 十、运维 -->
+<section id="ops">
+<h2>十、高可用、ECMP 与排错</h2>
+<p class="lead">TGW 本身是托管的多可用区服务，不需要像 EC2 那样自己搭主备。设计中真正需要关注的是<b>附件侧的冗余</b>、<b>路由收敛</b>与<b>监控</b>。</p>
+
+<h3>冗余与带宽</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>需求</th><th>做法</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>VPN 带宽聚合</td><td>TGW + 多条 VPN Attachment + ECMP</td><td>单条 VPN 连接约 2.5 Gbps，需多连接叠加</td></tr>
+<tr><td>DX 带宽聚合</td><td>多条 DX + Transit VIF + ECMP</td><td>BGP 动态路由让流量分散到多条专线</td></tr>
+<tr><td>专线备份公网</td><td>DX 主 + VPN 备（都挂 TGW）</td><td>AS-PATH Prepend / MED 控制优先级</td></tr>
+<tr><td>跨 Region 冗余</td><td>双 TGW Peering（不同路径）</td><td>需确认 Region 对与路由设计支持</td></tr>
+<tr><td>集中出口高可用</td><td>Egress VPC 多 AZ + 多 NAT Gateway</td><td>避免单 NAT Gateway 成为出口瓶颈</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>排错顺序</h3>
+<ol>
+ <li><b>附件状态：</b>VPC/VPN/DX 附件是否 <code>available</code>；是否被删除或处于 pending。</li>
+ <li><b>关联：</b>源附件是否关联到预期路由表；目标网段是否在该表中。</li>
+ <li><b>传播：</b>目标附件是否把网段传播进该表；跨账号共享时 Owner 是否允许。</li>
+ <li><b>VPC 侧：</b>VPC 路由表是否有指向 TGW 的路由；子网是否与附件关联。</li>
+ <li><b>策略：</b>安全组、NACL、实例防火墙；集中出口时再看 NAT/防火墙回程。</li>
+</ol>
+
+<div class="callout"><b>常见"不通"根因：</b>只看 VPC 路由表、忽略 TGW 路由表；路由表未关联；跨账号附件已建但未传播；DX/VPN 的 BGP 路由未宣告；集中出口只有去程没有回程。</div>
+
+<h3>监控与配额</h3>
+<ul>
+ <li>用 CloudWatch 监控 TGW 的流量与附件相关指标，并为关键附件建立告警。</li>
+ <li>附件数、路由表数、静态路由数、Peering 数都有配额；大规模设计前先核对配额，必要时申请提升。</li>
+ <li>变更前记录路由表快照，变更后逐条比对，避免"以为传播了其实没有"。</li>
+</ul>
+</section>
+
+<!-- 十一、场景题 -->
+<section id="scenarios">
+<h2>十一、场景题解析</h2>
+<p class="small">先独立判断，再查看解析与错误选项排除。</p>
+
+<div class="quiz">
+<b>场景 1：公司有 25 个 VPC，需要彼此互通，同时通过 Direct Connect 访问本地数据中心，要求运维简单、避免逐对建 Peering。最优方案是？</b>
+<br><button class="secondary" onclick="showAnswer('t1',false)">A. 为每对 VPC 建立 VPC Peering</button>
+<button class="secondary" onclick="showAnswer('t1',false)">B. 每个 VPC 各建一个 VGW</button>
+<button class="secondary" onclick="showAnswer('t1',true)">C. Transit Gateway + Transit VIF / DX Gateway</button>
+<button class="secondary" onclick="showAnswer('t1',false)">D. 用 AWS PrivateLink 连接所有 VPC</button>
+<div class="answer" id="t1">
+ <b>正确答案：C。</b>25 个 VPC 全互联若用 Peering 需要 300 条连接，运维不可行；TGW 只需 25 个附件，并可通过 Transit VIF + DX Gateway 接入本地。B 的 VGW 面向单 VPC 与 VPN，不是多 VPC 中枢；D 的 PrivateLink 用于私有访问特定服务，不做 VPC 间全网互通。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景 2：集团有 12 个业务账号，每个账号有自己的 VPC，希望共享一套 Transit Gateway 并由网络账号统一管理路由。应采用？</b>
+<br><button class="secondary" onclick="showAnswer('t2',false)">A. 每个账号各建 TGW 并互相 Peering</button>
+<button class="secondary" onclick="showAnswer('t2',true)">B. 网络账号建 TGW，通过 AWS RAM 共享给各账号</button>
+<button class="secondary" onclick="showAnswer('t2',false)">C. 所有 VPC 合并到同一账号</button>
+<button class="secondary" onclick="showAnswer('t2',false)">D. 用 VPC Peering 跨账号全互联</button>
+<div class="answer" id="t2">
+ <b>正确答案：B。</b>RAM 可以把 TGW 共享给账号或整个 OU，参与账号自行创建附件，Owner 统一维护路由表，是标准的多账号网络架构。A 成本与路由复杂度高；C 破坏账号隔离与计费边界；D 的跨账号 Peering 仍需逐对建立，规模不可控。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景 3：生产与测试 VPC 都挂在同一个 TGW 上，要求测试环境绝对不能访问生产网段，但两者都能访问共享服务 VPC。应如何设计？</b>
+<br><button class="secondary" onclick="showAnswer('t3',false)">A. 只使用默认路由表，靠安全组隔离</button>
+<button class="secondary" onclick="showAnswer('t3',false)">B. 为生产 VPC 单独建一个 TGW</button>
+<button class="secondary" onclick="showAnswer('t3',true)">C. 建两张路由表：生产与测试各自关联，共享服务附件同时传播到两张表</button>
+<button class="secondary" onclick="showAnswer('t3',false)">D. 用 SCP 禁止测试账号访问生产 VPC</button>
+<div class="answer" id="t3">
+ <b>正确答案：C。</b>多路由表 + 关联/传播控制可实现"生产与测试互不可见、但都能到共享服务"。A 的默认表全互通，安全组不能替代路由隔离；B 成本高且共享服务需重复接入；D 的 SCP 管 IAM 权限，管不了网络路由。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景 4：企业在 us-east-1 与 eu-west-1 各有一套 TGW 和多个 VPC，要求跨 Region 互访且流量走 AWS 骨干网。最合适的做法是？</b>
+<br><button class="secondary" onclick="showAnswer('t4',false)">A. 把两个 Region 的 VPC 都挂到同一个 TGW</button>
+<button class="secondary" onclick="showAnswer('t4',true)">B. 两个 TGW 建立 TGW Peering</button>
+<button class="secondary" onclick="showAnswer('t4',false)">C. 建立跨 Region 的公网 Site-to-Site VPN</button>
+<button class="secondary" onclick="showAnswer('t4',false)">D. 用 CloudFront 分发跨 Region 流量</button>
+<div class="answer" id="t4">
+ <b>正确答案：B。</b>TGW 是区域级资源，无法跨 Region 直挂 VPC；TGW Peering 让两个 TGW 通过 AWS 骨干网互联。A 不成立；C 走公网且 VPN 带宽有限；D 的 CloudFront 是内容分发，不是 VPC 间私有网络。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景 5：30 个业务 VPC 需要统一经一个 Egress VPC 访问互联网，并在此处做集中流量检查，同时避免有状态防火墙会话中断。应如何组合？</b>
+<br><button class="secondary" onclick="showAnswer('t5',false)">A. 每个 VPC 各建 NAT Gateway 与 IGW</button>
+<button class="secondary" onclick="showAnswer('t5',false)">B. TGW + 共享路由表 + 安全组检查</button>
+<button class="secondary" onclick="showAnswer('t5',true)">C. TGW 集中路由到 Egress VPC + GWLB/防火墙 + Egress 附件启用 Appliance Mode</button>
+<button class="secondary" onclick="showAnswer('t5',false)">D. TGW 直接执行 NAT 与内容过滤</button>
+<div class="answer" id="t5">
+ <b>正确答案：C。</b>Spoke 默认路由指向 TGW，TGW 默认路由指向 Egress 附件，检查由 GWLB/防火墙完成；Appliance Mode 保证同一流量的往返落在同一 AZ。A 成本高且无法集中检查；B 的 TGW 不做安全检查；D 的 TGW 不具备 NAT/过滤能力。
+</div>
+</div>
+
+<div class="quiz">
+<b>场景 6：交易所需要把同一份行情数据同时推送给 8 个 VPC 内的订阅应用，要求网络层一份数据多播、由应用按需加入。应选择？</b>
+<br><button class="secondary" onclick="showAnswer('t6',false)">A. 为每对 VPC 建 VPC Peering 后逐份复制</button>
+<button class="secondary" onclick="showAnswer('t6',false)">B. 用 SNS 向 8 个 VPC 的终端逐个推送</button>
+<button class="secondary" onclick="showAnswer('t6',true)">C. TGW Multicast Domain + 关联 VPC 附件 + IGMP 加入组播组</button>
+<button class="secondary" onclick="showAnswer('t6',false)">D. 用 CloudFront 实时分发行情</button>
+<div class="answer" id="t6">
+ <b>正确答案：C。</b>要求网络层组播 → TGW Multicast Domain，VPC 附件关联组播域，应用通过 IGMP 加入。A 仍是多份复制，浪费带宽；B 是应用层消息推送，不是组播；D 面向 HTTP 内容分发，不适合组播行情。
+</div>
+</div>
+</section>
+
+<!-- 十二、速查 -->
+<section id="quick">
+<h2>十二、关键词速查表</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>题目关键词 / 场景</th><th>对应答案</th></tr></thead>
+<tbody>
+<tr><td>大量 VPC 互联、避免 N×N Peering</td><td>Transit Gateway（Hub-Spoke）</td></tr>
+<tr><td>同 TGW 内 A 经 Hub 访问 C</td><td>TGW 路由是传递的（VPC Peering 不是）</td></tr>
+<tr><td>一个 VPC 的 VPN 终点</td><td>Virtual Private Gateway（VGW）</td></tr>
+<tr><td>多个 VPC + VPN 带宽叠加</td><td>TGW + 多条 VPN Attachment + ECMP</td></tr>
+<tr><td>DX 接入多 VPC</td><td>Transit VIF + Direct Connect Gateway + TGW</td></tr>
+<tr><td>生产/测试隔离但仍共享服务</td><td>多张 TGW 路由表 + 关联/传播控制</td></tr>
+<tr><td>明确阻断某个网段</td><td>TGW 黑洞路由（Blackhole）</td></tr>
+<tr><td>多账号共享网络中枢</td><td>AWS RAM 共享 TGW</td></tr>
+<tr><td>跨 Region 两套 TGW 互联</td><td>TGW Peering Attachment</td></tr>
+<tr><td>一条专线访问多个 Region VPC</td><td>Direct Connect Gateway（全球级）</td></tr>
+<tr><td>组播行情 / IGMP</td><td>TGW Multicast Domain</td></tr>
+<tr><td>SD-WAN 设备只支持 GRE + BGP</td><td>TGW Connect Attachment</td></tr>
+<tr><td>GRE 是否加密</td><td>不加密，需要叠加 IPsec</td></tr>
+<tr><td>几十个 VPC 统一互联网出口</td><td>TGW + Egress VPC（NAT Gateway / IGW）</td></tr>
+<tr><td>集中流量检查且会话不中断</td><td>GWLB + 防火墙 + Egress 附件 Appliance Mode</td></tr>
+<tr><td>TGW 能否做 NAT / 安全组</td><td>不能，只做路由转发</td></tr>
+<tr><td>新建附件默认全互通</td><td>Default Route Table（默认关联 + 传播）</td></tr>
+<tr><td>附件建好但流量不通</td><td>查 TGW 路由表关联/传播 + VPC 路由表双向配置</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- 十三、速记卡 -->
+<section id="memory">
+<h2>十三、考前速记卡（可勾选）</h2>
+<p>复习时勾选已掌握的项目。进度仅在当前页面打开期间有效。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>本质：</b>区域级托管路由中枢，解决 N×N Peering 的运维爆炸</span></li>
+<li><input type="checkbox"><span><b>传递性：</b>同一 TGW 内可经 Hub 中转；VPC Peering 非传递</span></li>
+<li><input type="checkbox"><span><b>五类附件：</b>VPC、VPN、DX（Transit VIF）、TGW Peering、Connect</span></li>
+<li><input type="checkbox"><span><b>默认行为：</b>新附件关联 Default Route Table 并传播 → 全互通</span></li>
+<li><input type="checkbox"><span><b>隔离三板斧：</b>多路由表 + Association + Propagation</span></li>
+<li><input type="checkbox"><span><b>黑洞路由：</b>用于在路由层明确阻断某网段</span></li>
+<li><input type="checkbox"><span><b>Appliance Mode：</b>VPC 附件选项，保证同流同 AZ，供有状态设备使用</span></li>
+<li><input type="checkbox"><span><b>多账号：</b>RAM 共享 TGW；参与者管理自己的附件</span></li>
+<li><input type="checkbox"><span><b>跨 Region：</b>TGW Peering；TGW 本身不能跨 Region 挂 VPC</span></li>
+<li><input type="checkbox"><span><b>Peering 非三跳传递：</b>不会自动跨第三个 TGW，需要逐段配置</span></li>
+<li><input type="checkbox"><span><b>DXGW：</b>全球级，一条专线关联多 Region 的 VGW/TGW</span></li>
+<li><input type="checkbox"><span><b>ECMP：</b>TGW 支持多 VPN/DX 连接聚合；VGW 不支持</span></li>
+<li><input type="checkbox"><span><b>Multicast：</b>Multicast Domain + VPC 附件 + IGMP</span></li>
+<li><input type="checkbox"><span><b>Connect：</b>GRE + BGP 接 SD-WAN，GRE 不加密</span></li>
+<li><input type="checkbox"><span><b>集中出口：</b>Spoke 默认路由 → TGW → Egress VPC → NAT/IGW</span></li>
+<li><input type="checkbox"><span><b>集中检查：</b>GWLB + 防火墙；TGW 本身不做过滤</span></li>
+<li><input type="checkbox"><span><b>TGW 不做：</b>NAT、安全组、DNS、内容检查</span></li>
+<li><input type="checkbox"><span><b>排错顺序：</b>附件状态 → 关联 → 传播 → VPC 路由 → 安全策略</span></li>
+</ul>
+</section>
+
+<!-- 十四、自测 -->
+<section id="quiz">
+<h2>十四、快速自测</h2>
+<p class="small">先独立选择，再点击"查看解析"。</p>
+
+<div class="quiz">
+<b>1. 新建一个 Transit Gateway 并挂上两个 VPC 附件后，默认情况下两个 VPC 能否互通？</b><br>
+<button class="secondary" onclick="showAnswer('q1',true)">A. 能，附件默认关联并传播到 Default Route Table</button>
+<button class="secondary" onclick="showAnswer('q1',false)">B. 不能，必须手工创建路由表并逐条添加路由</button>
+<button class="secondary" onclick="showAnswer('q1',false)">C. 不能，必须为两个 VPC 再建 Peering</button>
+<button class="secondary" onclick="showAnswer('q1',false)">D. 能，但仅限同一可用区内的实例</button>
+<div class="answer" id="q1"><b>正确答案：A。</b>TGW 创建时自带 Default Route Table，新附件默认关联到该表并传播路由，因此默认全互通。需要隔离时才创建额外路由表并调整关联/传播。B、C 都把默认行为说反；D 与 AZ 无关。</div>
+</div>
+
+<div class="quiz">
+<b>2. 某企业把 TGW 共享给 8 个业务账号，其中一个账号报告"附件已创建，但访问不了其他账号的 VPC"。最应先检查？</b><br>
+<button class="secondary" onclick="showAnswer('q2',false)">A. 该账号的 IAM 权限</button>
+<button class="secondary" onclick="showAnswer('q2',true)">B. 该附件是否关联到共享路由表、其路由是否传播</button>
+<button class="secondary" onclick="showAnswer('q2',false)">C. 是否为该账号单独建了 TGW</button>
+<button class="secondary" onclick="showAnswer('q2',false)">D. 该 VPC 是否配置了 Internet Gateway</button>
+<div class="answer" id="q2"><b>正确答案：B。</b>跨账号共享场景最常见的根因是附件关联到了错误的路由表，或路由未传播到共享表。IAM 权限通常影响"能否创建附件"而不是转发；C、D 与现象无关。</div>
+</div>
+
+<div class="quiz">
+<b>3. 以下哪种需求 Transit Gateway 本身无法满足？</b><br>
+<button class="secondary" onclick="showAnswer('q3',false)">A. 多 VPC 之间的传递路由</button>
+<button class="secondary" onclick="showAnswer('q3',false)">B. 多条 VPN 连接的 ECMP 带宽聚合</button>
+<button class="secondary" onclick="showAnswer('q3',true)">C. 为 VPC 提供 NAT 与安全组级过滤</button>
+<button class="secondary" onclick="showAnswer('q3',false)">D. 通过 Multicast Domain 分发组播流量</button>
+<div class="answer" id="q3"><b>正确答案：C。</b>TGW 只负责路由转发，NAT 需在 VPC 内用 NAT Gateway，过滤需安全组/NACL 或 GWLB/防火墙。A、B、D 都是 TGW 的原生能力。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html" target="_blank" rel="noopener">AWS Transit Gateway 用户指南</a></li>
+<li><a href="https://docs.aws.amazon.com/vpc/latest/tgw/tgw-transit-gateways.html" target="_blank" rel="noopener">Transit Gateway 路由表与附件</a></li>
+<li><a href="https://docs.aws.amazon.com/vpc/latest/tgw/tgw-peering.html" target="_blank" rel="noopener">Transit Gateway Peering</a></li>
+<li><a href="https://docs.aws.amazon.com/vpc/latest/tgw/tgw-multicast-overview.html" target="_blank" rel="noopener">Transit Gateway Multicast</a></li>
+<li><a href="https://docs.aws.amazon.com/ram/latest/userguide/what-is.html" target="_blank" rel="noopener">AWS Resource Access Manager</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>本文为复习提纲，服务功能与配额持续更新，请以 AWS 官方文档和最新考试指南为准；本页不是官方题库。</div>
+</section>
+
+</main>
+</div>
+<footer class="container">AWS SAP-C02 Transit Gateway 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>

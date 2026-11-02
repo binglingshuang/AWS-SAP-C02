@@ -1,8 +1,8 @@
 # AWS SAP-C02 备考站 · 项目进度与续写指南
 
 > 快照时间：2026-11-02
-> 当前 HEAD：`718214b add gitlab-ci`（工作区存在未提交的移动操作，见第 7 节）
-> 扫描范围：根目录与 12 个分类目录下的 HTML、`input/exam.csv`、`tools/`；`old/` 仅登记为历史归档，不读取其内容
+> 当前 HEAD：`29642d4 改为使用Trae版本`
+> 扫描范围：根目录与 12 个分类目录下的 HTML、`input/exam.csv`；`old/` 仅登记为历史归档，不读取其内容
 > 用途：中断后直接从第 3、4、9 节继续，不需要重新盘点仓库。
 
 ---
@@ -13,14 +13,14 @@
 |---|---|
 | 根导航页 | 已完成，但存在 1 个断链（`architecture-patterns.html`） |
 | 分类入口页 | 12 个已完成（根导航挂了 11 个，`hybrid-edge` 未挂载） |
-| 服务正文 | **已完成 6 篇 / 导航规划 78 篇（去重）＝ 7.7%** |
-| 未创建正文 | **72 篇**（70 个去重链接目标 + `architecture-patterns.html` + `app-runner.html`） |
-| 529 道真题 | CSV 原始数据已备齐，**尚未加工成任何题库页面** |
-| 正文内场景题 | 6 篇正文共内嵌约 **28 道手写场景题**，不是 529 道 |
-| 推荐下一篇 | `networking/vpn.html`（从零编写；`old/` 归档不读取） |
-| 最大阻塞 | 导航架构 / 文件命名规范存在两套互相冲突的方案，见第 8 节 |
+| 服务正文 | **已完成 8 篇 / 导航规划 78 篇（去重）＝ 10.3%** |
+| 未创建正文 | **70 篇**（78 篇规划减去已完成 8 篇；含根页断链 `architecture-patterns.html` 与 `app-runner.html`） |
+| 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
+| 正文内场景题 | 8 篇正文共内嵌 **40 道手写场景题**，不是 529 道 |
+| 推荐下一篇 | `networking/route53.html`（从零编写；`old/` 归档不读取） |
+| 最大阻塞 | 剩余正文量大，且 529 题尚未按服务归类、题库化；导航/命名旧规范已清理 |
 
-**一句话：站点骨架和 6 篇高频核心服务正文已经成形，剩余约 72 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
+**一句话：站点骨架和 8 篇高频核心服务正文已经成形，剩余约 70 篇正文、529 道题的归类与题库化、全站断链修复尚未完成。**
 
 ---
 
@@ -30,13 +30,12 @@
 |---|---|---:|---|
 | 根导航页 | `index.html` | 1 | 手工维护的 11 分类卡片入口，设计完成 |
 | 分类入口页 | `<category>/index.html` | 12 | 11 个已挂到根页，`hybrid-edge/index.html` 未挂载 |
-| 服务正文 | `<category>/*.html` | **6** | VPC、CloudFront、Direct Connect、EC2、S3、IAM |
-| 真题原始数据 | `input/exam.csv` | **529 题** | 含题干、选项、答案、中文解析，未加工 |
+| 服务正文 | `<category>/*.html` | **8** | VPC、CloudFront、Direct Connect、VPN、Transit Gateway、EC2、S3、IAM |
+| 参考考题库 | `input/exam.csv` | **529 题** | 含题干、选项、答案、中文解析；只读参考，未加工成页面 |
 | 历史归档正文 | `old/**/*.html` | 10 篇（1 篇 0 字节） | **历史归档，禁止读取或作为续写素材** |
 | 历史归档架构图 | `old/Draw.io/*.drawio` | 4 张 | **历史归档，不读取、不复用** |
-| 索引生成器 | `tools/generate_index.py` | 1 | 会覆盖根 `index.html`，与当前手工导航冲突 |
 | 部署配置 | `.gitlab-ci.yml` | 1 | 将整个仓库复制到 `public/`，包括 `old/` 与 `input/` |
-| 说明文档 | `README.md` | 1 | 导航与命名说明已落后于当前实现 |
+| 说明文档 | `README.md` | 1 | 已改为手工导航说明，移除旧生成器与命名规范 |
 
 ### 已完成正文清单
 
@@ -45,11 +44,13 @@
 | `networking/vpc.html` | 网络 | 63 KB | 20,400 | 5 | 20 | 有 |
 | `networking/cloudfront.html` | 网络 | 30 KB | 8,100 | 4 | 12 | 无 |
 | `networking/direct-connect.html` | 网络 | 31 KB | 8,300 | 4 | 15 | 无 |
+| `networking/vpn.html` | 网络 | 45 KB | 11,500 | 6 | 18 | 有 |
+| `networking/transit-gateway.html` | 网络 | 44 KB | 11,100 | 6 | 18 | 有 |
 | `compute/ec2.html` | 计算 | 30 KB | 7,800 | 4 | 14 | 有 |
 | `storage/s3.html` | 存储 | 52 KB | 16,300 | 5 | 20 | 有 |
 | `security/iam.html` | 安全 | 62 KB | 19,800 | 6 | 20 | 有 |
 
-这 6 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
+这 8 篇共用同一套页面结构：顶部标题区、粘性目录、对比表格、场景题解析、关键词速查、可勾选速记卡、官方资料与免责声明。续写时应直接复用其中一篇的骨架，不要另起一套样式。
 
 ---
 
@@ -59,7 +60,7 @@
 
 | 分类 | 入口页 | 已完成 | 规划 | 缺失 | 完成率 | 优先级 |
 |---|---|---:|---:|---:|---:|---|
-| 网络与内容分发 | `networking/index.html` | 3 | 9 | 6 | 33.3% | P0 |
+| 网络与内容分发 | `networking/index.html` | 5 | 9 | 4 | 55.6% | P0 |
 | 计算 | `compute/index.html` | 1 | 9 | 8 | 11.1% | P0 |
 | 存储 | `storage/index.html` | 1 | 7 | 6 | 14.3% | P0 |
 | 数据库 | `database/index.html` | 0 | 6 | 6 | 0% | P0 |
@@ -72,7 +73,7 @@
 | 机器学习与 AI | `ml/index.html` | 0 | 2 | 2 | 0% | P3 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 0 | 3 | 3 | 0% | P3 |
 | 综合专题 | 根页直达 | 0 | 1 | 1 | 0% | P1 |
-| **合计** |  | **6** | **78** | **72** | **7.7%** |  |
+| **合计** |  | **8** | **78** | **70** | **10.3%** |  |
 
 > 根页写的“74 个文档”是旧口径 / 合并页口径；按当前导航实际目标去重后是 78 篇。完成全部正文后再统一校准首页数字。
 
@@ -82,13 +83,13 @@
 
 图例：`[x]` 已完成，`[ ]` 未开始，`[!]` 需先做决策，`[~]` 草稿 / 待补完。
 
-### 3.1 网络与内容分发（3 / 9）
+### 3.1 网络与内容分发（5 / 9）
 
 - [x] `networking/vpc.html`
 - [x] `networking/direct-connect.html`
 - [x] `networking/cloudfront.html`
-- [ ] P0 `networking/vpn.html` — 从零编写：Site-to-Site / Client VPN、VPN over DX、加速 VPN
-- [ ] P0 `networking/transit-gateway.html` — 从零编写：Attachments、路由域、Multicast、RAM 共享、跨 Region
+- [x] `networking/vpn.html` — 完成日期：2026-11-02；字数约 11,500；场景题 6 道；覆盖 S2S / Client VPN / VPN over DX / CloudHub / 加速 VPN
+- [x] `networking/transit-gateway.html` — 完成日期：2026-11-02；字数约 11,100；场景题 6 道；覆盖附件、路由域、RAM、Peering、Multicast、集中出口
 - [ ] P0 `networking/route53.html` — 高频 DNS 路由、健康检查、Resolver
 - [ ] P0 `networking/elb.html` — ALB / NLB / GLB、跨区、SSL 终止
 - [ ] P1 `networking/privatelink.html` — Interface Endpoint、端点服务、与 Peering 对比
@@ -218,9 +219,9 @@
 
 ---
 
-## 4. 529 道真题资产状态
+## 4. 参考考题库（`input/exam.csv`）状态
 
-`input/exam.csv` 已包含完整题目数据，但尚未进入站点任何页面。
+`input/exam.csv` 是参考考题库，已包含完整题目数据，但尚未进入站点任何页面；只读使用，不直接修改或发布。
 
 | 字段 | 说明 |
 |---|---|
@@ -243,9 +244,11 @@
 | `compute/ec2.html` | 4 |
 | `storage/s3.html` | 5 |
 | `security/iam.html` | 6 |
-| **合计** | **约 28** |
+| `networking/vpn.html` | 6 |
+| `networking/transit-gateway.html` | 6 |
+| **合计** | **约 40** |
 
-> “28 道”是根据页面内“场景一 / 场景 1”等标题统计的手写场景题，不是 CSV 中的 529 道。首页“529 道真题全覆盖”目前只是数据储备，不是已完成状态。
+> “40 道”是根据页面内“场景一 / 场景 1”等标题统计的手写场景题，不是 CSV 中的 529 道。首页“529 道真题全覆盖”目前只是数据储备，不是已完成状态。
 
 ### 题库化前需要补的元数据
 
@@ -291,9 +294,9 @@ CSV 没有“服务 / 分类”标签。要把 529 题挂到对应服务页或�
 
 ### 6.1 恢复步骤
 
-1. 先看 `git status`，确认第 7 节的未提交移动操作是否还在。
+1. 先看 `git status`，确认第 7 节的工作区状态。
 2. 打开本文件第 3 节，从 P0 且 `[ ]` 的第一项开始。
-3. 不要读取 `old/` 历史归档；所有正文从零编写，只参考现有 6 篇正文的结构与写法。
+3. 不要读取 `old/` 历史归档；所有正文从零编写，只参考现有 8 篇正文的结构与写法。
 4. 新建正文后，确认分类页已有同名链接；如果链接写错（如 App Runner），顺手修正入口页。
 5. 完成后更新本文件，再继续下一篇。
 6. 每完成 3–5 篇，跑一次断链检查并提交一次 Git。
@@ -308,7 +311,7 @@ from pathlib import Path
 import re
 
 root = Path.cwd()
-skip_dirs = {'old', 'input', 'tools', '.git'}
+skip_dirs = {'old', 'input', '.git'}
 
 pages = [root / 'index.html'] + [
     p for p in root.glob('*/index.html') if p.parent.name not in skip_dirs
@@ -339,42 +342,31 @@ PY
 
 ## 7. 当前 Git 工作区状态（重要）
 
-快照时的 `git status`：
+快照时 HEAD 为 `29642d4 改为使用Trae版本`。历史资源归档已提交；旧生成器原随提交移动到 `old/tools/generate_index.py`，本次已删除。
+
+本次进度整理后的 `git status`（其中 `vpn.html`、`transit-gateway.html` 为新增正文）：
 
 ```text
- D Draw.io/aws-sap-c02-client-vpn-solution.drawio
- D Draw.io/aws-sap-c02-dx-transit-gateway-multiregion.drawio
- D Draw.io/aws-sap-c02-high-availability-web-architecture.drawio
- D Draw.io/aws-sap-c02-hybrid-monitoring-elasticsearch.drawio
- D html-files.js
-?? old/Draw.io/
-?? old/html-files.js
+ M PROGRESS.md
+ M README.md
+ D old/tools/generate_index.py
+?? networking/vpn.html
+?? networking/transit-gateway.html
 ```
 
-含义：4 张图与根 `html-files.js` 已从根目录删除，但 `old/` 下的对应副本尚未提交。继续写作前建议先确认这是有意迁移，然后提交一次“归档旧资源”的变更，避免后续误判文件丢失。
+含义：进度文档、README 清理、旧生成器删除与两篇新正文尚未提交。继续写作前可直接提交这些变更，或继续新增正文。
 
 ---
 
 ## 8. 已知问题与待决策
 
-### 8.1 P0：导航架构有两套方案
+### 8.1 已解决：导航生成器已移除
 
-- 当前根 `index.html` 是手工维护的分类门户。
-- `README.md` 要求运行 `python tools\generate_index.py`，但该脚本会：
-  - 用简单文件列表**覆盖**根 `index.html`；
-  - 生成根 `html-files.js`；
-  - 递归扫描 `old/` 与所有目录，把旧文件也列入导航。
-- 根目录当前没有 `html-files.js`，旧的已移动到 `old/`，所以 README 描述与现状不符。
+旧生成器（原 `tools/generate_index.py`，后归档到 `old/tools/`）已删除，根 `index.html` 继续手工维护；README 中的生成器命令、`html-files.js` 说明已移除。新增正文后只需更新对应分类入口页。
 
-**待决策：** 保留手工分类门户（推荐，符合当前设计），还是改回生成器文件列表。若保留手工门户，应改造生成器或明确“不要运行”，并更新 README。
+### 8.2 已解决：文件命名规范已统一
 
-### 8.2 P1：文件命名规范冲突
-
-- `README.md` 规定：`aws-sap-c02-<主题>-<内容>.html`。
-- 当前新正文实际使用：`networking/vpc.html`、`compute/ec2.html` 等短名。
-- 分类页、根页全部按短名链接。
-
-**待决策：** 保持短名（推荐，避免全站改链），还是批量重命名为长名并同步所有 `href`。在决策前，新文件继续使用短 kebab-case，与现有正文一致。
+README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前统一使用“分类目录 + 小写短文件名”（如 `networking/vpc.html`），新增正文沿用此形式。
 
 ### 8.3 P1：`hybrid-edge` 是孤儿分类
 
@@ -401,19 +393,19 @@ PY
 
 ### 8.6 P2：首页统计与事实不符
 
-- 首页写“74 个文档”，实际 6 篇正文 + 12 个分类入口 + 根页。
-- 首页写“529 道真题”，实际只有 CSV 原料，页面内约 28 道场景题。
+- 首页写“74 个文档”，实际 8 篇正文 + 12 个分类入口 + 根页。
+- 首页写“529 道真题”，实际只有 CSV 原料，页面内约 40 道场景题。
 - 首页写“11 大类”，实际有 12 个分类入口页（`hybrid-edge` 未挂载）。
 - `networking` 首页写“10 个服务”，分类页实际 9 项。
 
-建议：在内容未完成前改为“6 篇已上线 / 72 篇待补 / 529 道题库待整理”，或完成后再恢复宣传数字。
+建议：在内容未完成前改为“8 篇已上线 / 70 篇待补 / 529 道题库待整理”，或完成后再恢复宣传数字。
 
-### 8.7 P2：旧资料与部署
+### 8.7 P2：历史归档与部署
 
-- `old/AWS_SSM_Session_Manager.html` 为 0 字节，不能使用。
-- `old/` 下 10 篇旧正文均未挂到新导航，但会被 `.gitlab-ci.yml` 一起发布到 `public/`。
-- `input/exam.csv` 也会被发布到 `public/`。
-- 旧正文风格与新正文不一致，直接发布会让访问者看到两套设计。
+- `old/` 下 10 篇历史正文均未挂到新导航，且不应读取；它们会被 `.gitlab-ci.yml` 一起发布到 `public/`。
+- 其中 1 篇为 0 字节，不能使用。
+- `input/exam.csv` 是参考考题库，也会被发布到 `public/`。
+- 历史正文风格与新正文不一致，直接发布会让访问者看到两套设计。
 
 **待决策：** `old/` 作为本地归档并从 Pages 构建排除，还是彻底删除；`input/` 是否随站点发布。
 
@@ -429,8 +421,8 @@ PY
 
 | 顺序 | 文件 | 理由 | 编写方式 |
 |---:|---|---|---|
-| 1 | `networking/vpn.html` | 网络高频，与现有 VPC / DX 正文交叉引用 | 从零编写 |
-| 2 | `networking/transit-gateway.html` | 混合网络核心，与 DX / VPC 交叉引用 | 从零编写 |
+| ~~1~~ | ~~`networking/vpn.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
+| ~~2~~ | ~~`networking/transit-gateway.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
 | 3 | `networking/route53.html` | DNS 路由与健康检查高频 | 从零编写；引用 VPC DNS 章节 |
 | 4 | `compute/auto-scaling.html` | 计算层高频，与 EC2 直接衔接 | 从零编写；引用 EC2 购买选项 |
 | 5 | `compute/lambda.html` | 无服务器高频 | 从零编写；与 CloudFront/Edge 交叉引用 |
@@ -446,7 +438,7 @@ PY
 
 ## 10. 历史归档说明
 
-`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。新正文一律基于现有 6 篇正文的模板从零编写。
+`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。新正文一律基于现有 8 篇正文的模板从零编写。
 
 是否保留、删除或从 Pages 构建中排除，见第 8.7 节。
 
@@ -457,5 +449,7 @@ PY
 | 日期 | 完成内容 | 变更文件 | 下一步 |
 |---|---|---|---|
 | 2026-11-02 | 建立进度基线：6 篇正文、72 篇待补、529 题未题库化 | `PROGRESS.md` | 从 `networking/vpn.html` 开始 |
+| 2026-11-02 | 新增 `networking/vpn.html`：13 个章节、6 道场景题、18 张速记卡、3 道快速自测；断链清单由 76 条（含跨目录重复）降至 75 条，`vpn.html` 无新增断链 | `networking/vpn.html`、`PROGRESS.md` | 下一篇 `networking/transit-gateway.html` |
+| 2026-11-02 | 新增 `networking/transit-gateway.html`：14 个章节、6 道场景题、18 张速记卡、3 道快速自测；断链清单由 75 条降至 74 条 | `networking/transit-gateway.html`、`PROGRESS.md` | 下一篇 `networking/route53.html` |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。
