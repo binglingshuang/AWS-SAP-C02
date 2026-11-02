@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Amazon ECS 与 AWS Fargate 考点速查：Task Definition、EC2/Fargate 启动模式、网络、服务自动扩缩与部署。">
+<title>AWS SAP-C02｜Amazon ECS 与 AWS Fargate 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>Amazon ECS / AWS Fargate<br>容器编排与无服务器容器</h1>
+  <p>从 ECS 集群、Task Definition 与 Service 的职责边界，到 EC2 / Fargate 容量选择、awsvpc 网络、Service Auto Scaling 和安全部署。先识别任务是否长期运行、谁管理底层实例，再选择编排与容量模式。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">计算 / 容器</span>
+   <span class="pill">关键词：Task Definition · Fargate · Service Auto Scaling</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回计算分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#overview">一、ECS 核心模型</a>
+ <a href="#task-definition">二、Task Definition</a>
+ <a href="#capacity">三、EC2、Fargate 与容量策略</a>
+ <a href="#service">四、Task、Service 与部署</a>
+ <a href="#network">五、网络、负载均衡与服务发现</a>
+ <a href="#scaling">六、Service Auto Scaling</a>
+ <a href="#security">七、IAM、密钥与执行访问</a>
+ <a href="#storage">八、存储、日志与运维</a>
+ <a href="#reliability">九、高可用与成本选型</a>
+ <a href="#scenarios">十、场景题解析</a>
+ <a href="#quick">十一、关键词速查</a>
+ <a href="#memory">十二、考前速记卡</a>
+ <a href="#quiz">十三、快速自测</a>
+</nav>
+
+<main>
+<section id="overview">
+<h2>一、ECS 核心模型</h2>
+<p class="lead">Amazon ECS 是 AWS 原生容器编排服务；它安排容器在哪里运行、维持多少个副本并协调部署。ECS 本身不等于容器镜像仓库，也不决定应用的业务扩缩策略。</p>
+<div class="diagram">
+ <div class="node"><b>Task Definition</b><br><small>容器、资源、角色、网络与日志模板</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Task</b><br><small>定义的一次运行实例</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>ECS Service</b><br><small>保持期望副本数并滚动部署</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>容量提供者</b><br><small>EC2 / Fargate / Fargate Spot</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>组件</th><th>职责</th><th>题目中的线索</th></tr></thead>
+<tbody>
+<tr><td>Cluster</td><td>组织 ECS 资源并关联容量提供者；并非应用容器本身。</td><td>为一组服务设置逻辑边界与可用计算容量。</td></tr>
+<tr><td>Task Definition</td><td>版本化的任务蓝图，描述一个或多个容器及运行配置。</td><td>镜像、CPU/内存、端口、角色、环境变量、日志。</td></tr>
+<tr><td>Task</td><td>Task Definition 的运行实例；可由 Service 维持，也可一次性运行。</td><td>短期批处理或一次性作业通常直接运行 Task。</td></tr>
+<tr><td>Service</td><td>维护期望 Task 数、调度替换故障任务，并管理服务部署。</td><td>持续运行的 Web/API、目标组注册、滚动发布。</td></tr>
+<tr><td>Capacity Provider</td><td>将任务需求映射到 EC2 Auto Scaling 容量或 Fargate 容量。</td><td>需要混合 EC2/Fargate、容量伸缩或 Spot。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>先辨别入口：</b>持续服务用 ECS Service；独立、有限时长的容器工作可用 RunTask / Scheduled Task；长时间队列处理也可由 Service 持续消费。ECS 负责编排，应用仍需处理重试、幂等与优雅退出。</div>
+</section>
+
+<section id="task-definition">
+<h2>二、Task Definition：容器运行蓝图</h2>
+<p>Task Definition 以修订版本记录任务配置。发布新修订不会自动替换正在运行的 Task；更新 Service 使用新修订后，才会按部署配置替换任务。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>配置项</th><th>作用</th><th>常见误区</th></tr></thead>
+<tbody>
+<tr><td>Container definitions</td><td>镜像位置、命令、端口、环境变量、依赖关系、健康检查与日志。</td><td>将镜像存放在 ECR；定义引用镜像，不是将镜像上传到 ECS。</td></tr>
+<tr><td>CPU / Memory</td><td>为 Task 和容器声明资源；Fargate Task 的 CPU / 内存组合须符合平台支持的组合。</td><td>不能把 Fargate 当成可任意超卖的宿主机；资源请求需与实际负载匹配。</td></tr>
+<tr><td>Task execution role</td><td>由 ECS/Fargate Agent 代表任务执行拉取私有 ECR 镜像、写 CloudWatch Logs、注入受支持的密钥等操作。</td><td>不是应用代码访问 AWS API 的身份。</td></tr>
+<tr><td>Task role</td><td>向任务中的应用提供 AWS 凭证，例如读取 S3 或调用 DynamoDB。</td><td>不要把应用权限全部塞进执行角色或 EC2 实例角色。</td></tr>
+<tr><td>Network mode</td><td>Fargate 使用 <code>awsvpc</code>；EC2 模式还可按场景选择其他网络模式。</td><td>Fargate 的每个 Task 使用自己的弹性网络接口与安全组。</td></tr>
+<tr><td>Volumes</td><td>定义容器间共享或持久化所需的卷，例如 EFS 挂载。</td><td>容器可写层 / 临时存储不应被误当作跨 Task 持久卷。</td></tr>
+<tr><td>Logging / secrets</td><td>配置日志驱动，并通过 Secrets Manager / Parameter Store 引用敏感配置。</td><td>环境变量引用并不自动赋权；Task execution role 仍需相应权限。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>修订与部署：</b>Task Definition 修订是不可变的配置快照。生产更新应注册新修订、更新 Service 指向的修订并观察部署；回滚时可将 Service 恢复到已知稳定修订。</div>
+</section>
+
+<section id="capacity">
+<h2>三、EC2、Fargate 与容量策略</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>模式</th><th>容量与运维责任</th><th>适合场景</th><th>注意点</th></tr></thead>
+<tbody>
+<tr><td>ECS on EC2</td><td>客户管理 EC2 实例、AMI、补丁、容量与集群扩展；ECS 管理容器调度。</td><td>需要宿主机控制、特殊硬件/实例、稳定高利用率或特定内核能力。</td><td>需同时处理实例容量与任务调度；Task 数量扩展不等于 EC2 容量已就绪。</td></tr>
+<tr><td>Fargate</td><td>AWS 管理底层服务器；按 Task 声明的 CPU / 内存提供隔离运行环境。</td><td>希望减少主机管理、负载波动明显、团队想聚焦容器应用。</td><td>仍要管理镜像、IAM、网络、Task 资源与扩缩策略；不是“无需配置”。</td></tr>
+<tr><td>Fargate Spot</td><td>使用有折扣但可中断的 Fargate 容量。</td><td>可容忍中断的无状态、可重试、分布式批处理或弹性工作负载。</td><td>不要承载唯一副本或不可中断关键处理；实现优雅退出、重试和冗余。</td></tr>
+</tbody></table></div>
+<h3>Launch type 与 Capacity Provider</h3>
+<ul>
+<li>Launch type 可直接指定 <code>EC2</code> 或 <code>FARGATE</code>，适合简单、明确的启动选择。</li>
+<li>Capacity Provider Strategy 可组合 Fargate、Fargate Spot 或 EC2 Auto Scaling 容量提供者；<code>base</code> 指定最低基础任务数，<code>weight</code> 决定超出基础数后的相对分配。</li>
+<li>使用容量提供者策略时，应在集群中关联相应 Provider，并在 Service/RunTask 的配置中使用策略；不要把 Launch Type 与 Capacity Provider Strategy 当作同一字段同时配置。</li>
+<li>EC2 Capacity Provider 可与托管扩缩结合，按任务需求调整关联 Auto Scaling Group 的实例容量；这与 Service Auto Scaling 调整 Task 数是不同控制环节。</li>
+</ul>
+<div class="callout green"><b>选型快记：</b>需控制主机 / 利用特定实例能力 → ECS on EC2；不想管理主机 → Fargate；可中断且希望进一步优化成本 → 将部分容量放到 Fargate Spot，并保留足够的稳定容量。</div>
+</section>
+
+<section id="service">
+<h2>四、Task、Service 与部署</h2>
+<h3>Service 维持期望状态</h3>
+<p>将 <code>desiredCount</code> 设为期望任务数后，ECS Service Scheduler 会尝试维持该数量。任务因故障退出时，Service 可启动替代任务；这不代表应用数据自动恢复，也不保证替换立即成功，仍受子网 IP、配额、镜像拉取、资源和健康检查影响。</p>
+<h3>滚动部署与健康检查</h3>
+<ul>
+<li>更新镜像或 Task Definition 修订时，Service 按部署配置启动新任务、等待其健康，再逐步停止旧任务。</li>
+<li>部署百分比参数控制部署期间允许的最小健康任务数与最大运行任务数；为零停机发布留出额外容量，并确认目标组健康检查与容器启动时间相匹配。</li>
+<li>Deployment circuit breaker 可在部署失败时停止推进，并可配置自动回滚到最近一次成功部署。CloudWatch Alarm 也可用于部署监控与回滚。</li>
+<li>应用应处理 SIGTERM 等停止信号，停止接收新请求并完成在途工作；长任务需要设置合理的停止宽限时间。</li>
+</ul>
+<h3>服务发现和伸缩不是一回事</h3>
+<p>Service Connect、AWS Cloud Map 或负载均衡可帮助客户端找到任务端点；它们不负责将 Task 数扩到目标值。扩缩由 Service Auto Scaling 管理。</p>
+</section>
+
+<section id="network">
+<h2>五、网络、负载均衡与服务发现</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>需求</th><th>典型配置</th><th>核对点</th></tr></thead>
+<tbody>
+<tr><td>Fargate Task 入站</td><td><code>awsvpc</code> 模式，每个 Task 获得 ENI 与可单独关联的安全组。</td><td>子网需有足够 IP；安全组允许负载均衡器到 Task 端口。</td></tr>
+<tr><td>HTTP / HTTPS Web 服务</td><td>常用 ALB；ECS Service 将任务注册进 Target Group。</td><td><code>awsvpc</code> 任务通常使用 Target Group 的 <code>ip</code> target type，而不是 <code>instance</code>。</td></tr>
+<tr><td>TCP / UDP、静态地址等需求</td><td>评估 NLB 与对应目标组及客户端协议。</td><td>按协议、源 IP 保留、健康检查与入口需求选型，不要仅凭“容器”决定负载均衡器。</td></tr>
+<tr><td>Task 出站访问公网</td><td>私有子网通常经 NAT Gateway；也可为 AWS 服务配置相应 VPC Endpoint。</td><td>Fargate Task 不因放进 public subnet 就自动有公网 IP；需检查任务网络配置、路由、安全组和 DNS。</td></tr>
+<tr><td>内部服务寻址</td><td>Service Connect、Cloud Map 或内部负载均衡器。</td><td>健康状态、命名空间、端口及跨 VPC / 跨账号连通性仍需设计。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>网络排障顺序：</b>先确认 Task ENI 与子网 IP，再核对路由表、NACL、安全组、DNS、目标组类型/端口/健康检查，最后验证应用监听地址与端口。IAM 授权错误和网络超时是不同故障层。</div>
+</section>
+
+<section id="scaling">
+<h2>六、Service Auto Scaling</h2>
+<p>Application Auto Scaling 调整 ECS Service 的期望 Task 数。它扩的是任务副本，不是 Fargate Task 的 vCPU/内存规格；Task 规格需要修改 Task Definition 并部署新修订。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>策略</th><th>如何工作</th><th>常见用途</th></tr></thead>
+<tbody>
+<tr><td>Target tracking</td><td>维持指标在目标附近，自动创建/调整 CloudWatch Alarm。</td><td>按平均 CPU、内存或 ALB 每目标请求数维持容量。</td></tr>
+<tr><td>Step scaling</td><td>依据 Alarm 超出阈值的幅度，分级增加或减少 Task 数。</td><td>需要对不同负载区间采取不同幅度的响应。</td></tr>
+<tr><td>Scheduled scaling</td><td>按已知时间表调整最小、最大或期望容量。</td><td>每日固定业务高峰、批处理窗口或维护时段。</td></tr>
+<tr><td>Predictive scaling</td><td>根据历史模式预测未来容量；需结合支持的服务与指标配置。</td><td>规律性流量、希望在需求到来前预扩展；不替代实时扩缩机制。</td></tr>
+</tbody></table></div>
+<h3>伸缩边界与联动</h3>
+<ul>
+<li>配置 MinCapacity / MaxCapacity，避免自动扩展突破账户预算或下游服务承载能力。</li>
+<li>CPU / Memory 指标应采用适合 Service 的平均值；ALB 请求量应使用每目标请求指标，并确认负载均衡器与目标组关联正确。</li>
+<li>扩容 Task 后，若它们运行在 EC2 容量上，还要确保集群有足够的实例；使用 Fargate 时底层主机由 AWS 管理，但仍受服务配额和子网 IP 限制。</li>
+<li>缩容时确保任务可优雅排空；对队列消费者监控积压年龄与消费速率，不要只盯 CPU。</li>
+<li>Fargate Spot 中断会造成容量变化；对关键工作保留稳定容量并使用多副本、可重试和持久化队列。</li>
+</ul>
+<div class="callout orange"><b>常见陷阱：</b>Service Auto Scaling 调 Task 数；EC2 Capacity Provider / Auto Scaling Group 调宿主机数量。EC2 模式需要两层容量互相配合，Fargate 则不需要管理宿主实例。</div>
+</section>
+
+<section id="security">
+<h2>七、IAM、密钥与执行访问</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>身份 / 控制面</th><th>负责什么</th><th>设计原则</th></tr></thead>
+<tbody>
+<tr><td>Task execution role</td><td>Agent 拉取 ECR 镜像、写日志或取出配置引用的秘密。</td><td>仅授予启动任务所需权限；检查信任关系允许 ECS Tasks 使用。</td></tr>
+<tr><td>Task role</td><td>容器应用代码调用 AWS API。</td><td>按应用/任务拆分最小权限，避免共享过宽权限。</td></tr>
+<tr><td>EC2 instance profile</td><td>ECS on EC2 的宿主实例与 Agent 所需权限。</td><td>不要用宿主机角色代替 Task Role 为应用授权。</td></tr>
+<tr><td>Security Group</td><td>控制 ENI 入站与出站网络流量。</td><td>Fargate 可针对单个 Task 使用安全组；只开放必要端口和来源。</td></tr>
+<tr><td>Secrets Manager / Parameter Store</td><td>集中保存敏感值并按权限读取。</td><td>不要将长期凭证写入镜像、源代码或明文环境变量；规划轮换和任务更新。</td></tr>
+</tbody></table></div>
+<p>使用私有 ECR 时，镜像拉取失败应检查 execution role、ECR 仓库策略、镜像 URI / 标签，以及任务到 ECR 的网络路径。应用运行后访问 S3 失败，则优先核对 Task Role 和出站网络，不要只修改执行角色。</p>
+</section>
+
+<section id="storage">
+<h2>八、存储、日志与运维</h2>
+<ul>
+<li><b>临时存储：</b>Task 本地临时空间适合缓存与临时文件；任务替换、重新调度或终止后，不应假设文件仍在。</li>
+<li><b>持久共享文件：</b>需要多个任务共享 POSIX 文件时评估 EFS；为 Fargate 配置 EFS 时同时核对挂载目标、网络、安全组与文件系统授权。</li>
+<li><b>对象 / 块数据：</b>共享对象数据常用 S3；需块设备控制时由 EC2 等适配方案承载。不要将容器生命周期与持久数据生命周期绑死。</li>
+<li><b>日志：</b>为容器配置合适的日志驱动与 CloudWatch Logs；区分容器标准输出日志、应用指标和 ECS 平台事件。</li>
+<li><b>诊断：</b>结合 ECS Service Events、Task stopped reason、容器退出码、CloudWatch 日志、目标组健康状态和 CloudTrail 部署事件排查。</li>
+<li><b>ECS Exec：</b>适合受控地进入运行中的容器进行诊断；需显式启用并满足 IAM、网络与审计要求，不能作为日常部署或修复配置漂移的替代方案。</li>
+</ul>
+<div class="callout red"><b>数据持久性：</b>将状态写入外部持久服务；容器磁盘应可丢弃。对于队列消费者，先安全提交处理结果或检查点，再确认消息，降低任务被终止时的重复或数据丢失风险。</div>
+</section>
+
+<section id="reliability">
+<h2>九、高可用与成本选型</h2>
+<ul>
+<li>Service 跨多个可用区部署任务，并让负载均衡器健康检查与应用健康端点一致。</li>
+<li>至少保留足够的任务冗余应对部署、故障和扩缩；关键工作负载不要把唯一副本放在 Spot 容量。</li>
+<li>镜像应小而可复现，采用不可变版本标签；Task Definition 修订、部署状态和基础设施变更纳入审计。</li>
+<li>通过真实负载压测确定 CPU / Memory 请求与限制；低估会导致 OOM / 性能退化，高估则增加 Fargate 成本或降低 EC2 利用率。</li>
+<li>Fargate 按配置资源和运行时间计费；EC2 还需综合实例、存储、网络、容量闲置与运维成本比较。Spot 只适用于能承受中断的工作负载。</li>
+<li>监控 Task 数、部署失败、重启、CPU / 内存、请求延迟、队列积压、目标组健康和成本，而非只看单一 CPU 指标。</li>
+</ul>
+<div class="callout green"><b>答题框架：</b>托管控制面（ECS）与计算容量模式（EC2/Fargate）分开选择；持续副本选 Service；定义角色和网络边界；最后按负载指标设置 Service Auto Scaling，并为部署失败与中断设计回滚/重试。</div>
+</section>
+
+<section id="scenarios">
+<h2>十、场景题解析</h2>
+<div class="quiz">
+ <h3>场景一：不想维护容器宿主机</h3>
+ <p>团队已有 Docker 镜像，希望以 ECS 运行 HTTP 服务，不想管理 EC2 补丁和集群实例容量，并需要根据请求负载自动增减副本。</p>
+ <p><b>正确方向：</b>使用 ECS Service + Fargate，并配置 Service Auto Scaling（例如基于 ALB 每目标请求数或合适的 CPU 指标）。</p>
+ <p><b>分析思路：</b>ECS Service 维持期望任务数；Fargate 免去宿主实例管理；Application Auto Scaling 调整任务数量。</p>
+ <p><b>排除：</b>只改 Task Definition 不会自动扩缩；EC2 Capacity Provider 需要管理宿主容量；Lambda 不适合需要长期容器进程的服务。</p>
+</div>
+<div class="quiz">
+ <h3>场景二：低流量服务仍需一组常驻任务</h3>
+ <p>内部 API 必须持续运行并注册到内部负载均衡器，不是一次性作业。如何确保故障任务自动恢复？</p>
+ <p><b>正确方向：</b>创建 ECS Service 并设置 desired count、跨 AZ 子网和健康检查。</p>
+ <p><b>分析思路：</b>Service Scheduler 持续协调期望副本数，并在任务退出时尝试替换。</p>
+ <p><b>排除：</b>单次 RunTask 不会自动维持副本；容器重启策略不能取代跨任务调度与服务级部署。</p>
+</div>
+<div class="quiz">
+ <h3>场景三：应用访问 S3 被拒绝</h3>
+ <p>Fargate 任务成功拉取镜像并写入日志，但应用调用 S3 收到 AccessDenied。应优先检查什么？</p>
+ <p><b>正确方向：</b>Task Role 的信任关系与 S3 最小权限策略；再确认目标 Bucket Policy 和资源 ARN。</p>
+ <p><b>分析思路：</b>拉取镜像和日志成功说明 execution role 的启动权限大体正常；应用运行时的 AWS API 权限来自 Task Role。</p>
+ <p><b>排除：</b>扩大 Task execution role 或为整个集群授予管理员权限会混淆职责并扩大风险。</p>
+</div>
+<div class="quiz">
+ <h3>场景四：Fargate 服务无法被 ALB 识别</h3>
+ <p>任务已运行，但 ALB Target Group 中目标不健康；任务网络模式是 awsvpc。</p>
+ <p><b>正确方向：</b>使用 IP 类型目标组，核对容器端口映射、任务安全组允许 ALB 安全组访问、健康检查路径和应用监听地址。</p>
+ <p><b>分析思路：</b>awsvpc 为任务提供独立 ENI，因此目标是任务 IP，而非 EC2 实例 ID。</p>
+ <p><b>排除：</b>只重启 Service 不会修正 Target Group 类型或安全组缺口；开放所有来源也不是必要修复。</p>
+</div>
+<div class="quiz">
+ <h3>场景五：高峰前预先增加容器数量</h3>
+ <p>订单服务每个工作日 10 点出现可预测高峰，当前扩容到达较慢。如何在高峰前增加任务，同时保留实时响应能力？</p>
+ <p><b>正确方向：</b>使用 Scheduled Scaling 预调容量，并视负载需要叠加 Target Tracking 处理偏离预测的实时流量。</p>
+ <p><b>分析思路：</b>时间表针对已知规律预扩；目标跟踪补充实际指标变化。两者都受 Min/Max 容量约束。</p>
+ <p><b>排除：</b>只增加最大容量不会主动扩容；修改 Task CPU/内存不能直接增加副本。</p>
+</div>
+<div class="quiz">
+ <h3>场景六：可重试的批处理追求低成本</h3>
+ <p>一组无状态任务处理持久化队列中的可重试作业，允许任务被中断，但不能丢失作业，也不应让关键在线 API 受影响。</p>
+ <p><b>正确方向：</b>可评估 Fargate Spot 作为部分容量，保留稳定容量应对关键工作；使用持久化队列、幂等处理、优雅退出与重试。</p>
+ <p><b>分析思路：</b>Spot 的折扣以可中断为代价；耐久性应由队列和处理协议提供，而非依赖某个任务一直运行。</p>
+ <p><b>排除：</b>把唯一任务副本放在 Spot 或将未完成作业只保存在容器文件系统中，都会造成中断风险。</p>
+</div>
+</section>
+
+<section id="quick">
+<h2>十一、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>不想管理容器主机</td><td>ECS + Fargate</td><td>仍需管理 Task、网络、IAM、镜像和扩缩策略</td></tr>
+<tr><td>维持 N 个持续运行副本</td><td>ECS Service</td><td>单次 RunTask 不提供期望副本协调</td></tr>
+<tr><td>容器运行蓝图 / 配置修订</td><td>Task Definition</td><td>新修订需更新 Service 才会部署</td></tr>
+<tr><td>应用代码读取 S3</td><td>Task Role</td><td>Execution Role 用于 Agent 启动任务操作</td></tr>
+<tr><td>Fargate 被 ALB 访问</td><td>awsvpc + IP Target Group</td><td>检查任务 ENI、安全组、端口和健康检查</td></tr>
+<tr><td>按 CPU / 请求量增减副本</td><td>Service Auto Scaling</td><td>扩 Task 数，不是调单 Task 规格</td></tr>
+<tr><td>EC2 集群宿主机数量</td><td>Capacity Provider / ASG</td><td>与 Service 的 Task 数扩缩是两层控制</td></tr>
+<tr><td>固定时刻前预热容量</td><td>Scheduled Scaling</td><td>最大容量设高不等于会主动扩容</td></tr>
+<tr><td>可中断、可重试容器</td><td>Fargate Spot</td><td>关键容量需保留稳定副本与冗余</td></tr>
+<tr><td>持久共享 POSIX 文件</td><td>EFS</td><td>任务临时存储不能替代持久卷</td></tr>
+<tr><td>镜像拉取失败</td><td>Execution Role + ECR / 网络</td><td>检查仓库权限、镜像 URI 与出站路径</td></tr>
+<tr><td>滚动部署失败自动恢复</td><td>Deployment Circuit Breaker + rollback</td><td>健康检查、容量和启动时间也必须正确</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>十二、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>ECS：</b>AWS 原生容器编排控制面</span></li>
+<li><input type="checkbox"><span><b>Cluster：</b>组织资源并关联运行容量</span></li>
+<li><input type="checkbox"><span><b>Task Definition：</b>容器与资源配置的版本化蓝图</span></li>
+<li><input type="checkbox"><span><b>Task：</b>Task Definition 的运行实例</span></li>
+<li><input type="checkbox"><span><b>Service：</b>维持期望任务数、替换失败任务并协调部署</span></li>
+<li><input type="checkbox"><span><b>EC2 模式：</b>客户管理宿主机和容量，ECS 管理容器调度</span></li>
+<li><input type="checkbox"><span><b>Fargate：</b>免管理宿主机，仍需配置任务和网络</span></li>
+<li><input type="checkbox"><span><b>Fargate Spot：</b>可中断容量，适合可重试的弹性任务</span></li>
+<li><input type="checkbox"><span><b>Capacity Provider：</b>可将任务需求映射到 EC2 / Fargate 容量</span></li>
+<li><input type="checkbox"><span><b>Execution Role：</b>Agent 拉镜像、写日志等启动操作</span></li>
+<li><input type="checkbox"><span><b>Task Role：</b>容器应用运行时调用 AWS API</span></li>
+<li><input type="checkbox"><span><b>Fargate 网络：</b>awsvpc，每个 Task 有独立 ENI</span></li>
+<li><input type="checkbox"><span><b>ALB 目标组：</b>awsvpc Task 通常注册为 IP 类型目标</span></li>
+<li><input type="checkbox"><span><b>Service Auto Scaling：</b>伸缩任务副本数</span></li>
+<li><input type="checkbox"><span><b>EC2 Capacity Provider：</b>可联动 ASG 扩宿主机容量</span></li>
+<li><input type="checkbox"><span><b>修订：</b>新 Task Definition 需更新 Service 才会生效</span></li>
+<li><input type="checkbox"><span><b>持久数据：</b>外置到 EFS / S3 / 数据库等持久服务</span></li>
+<li><input type="checkbox"><span><b>部署安全：</b>健康检查 + Circuit Breaker / 回滚 + 优雅退出</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十三、快速自测</h2>
+<p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz">
+ <b>1. Fargate 任务需要调用 DynamoDB。应将应用权限授予哪个角色？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',false)">A. Task execution role</button>
+ <button class="secondary" onclick="showAnswer('q1',true)">B. Task role</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. ECS Cluster role</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. ALB service-linked role</button>
+ <div class="answer" id="q1"><b>正确答案：B。</b>Task Role 提供给应用容器运行时使用；Execution Role 由 Agent 用于拉取镜像、写日志等任务启动操作。</div>
+</div>
+<div class="quiz">
+ <b>2. 想依据 ALB 负载自动增加 Fargate Web 服务副本，应该配置什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 修改 Task Definition 的 CPU</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. ECS Service Auto Scaling 与合适的 ALB 指标</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 增加 Target Group 健康检查次数</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. 只提高 Fargate Spot 权重</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>Service Auto Scaling 调整期望 Task 数；修改 Task Definition CPU 会改变每个任务规格，且需重新部署。</div>
+</div>
+<div class="quiz">
+ <b>3. Fargate 的任务已经运行，但 ALB 目标持续不健康。网络模式为 awsvpc，首先核对哪组设置？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',true)">A. IP 类型目标组、任务安全组、端口与健康检查路径</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">B. Task Role 是否拥有 S3 权限</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. ECR 生命周期策略是否启用</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. EC2 Auto Scaling 的预测窗口</button>
+ <div class="answer" id="q3"><b>正确答案：A。</b>awsvpc Task 以任务 ENI/IP 作为目标，连接与健康检查需端到端匹配。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html" target="_blank" rel="noopener">Amazon ECS 开发人员指南</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html" target="_blank" rel="noopener">AWS Fargate 启动类型</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html" target="_blank" rel="noopener">Task Definition 参数</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-auto-scaling.html" target="_blank" rel="noopener">ECS Service Auto Scaling</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html" target="_blank" rel="noopener">Task IAM Role 与 Execution Role</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>功能、配额与支持矩阵可能更新；涉及 Fargate 资源组合、容量提供者和部署选项时，请以 AWS 最新文档为准。</div>
+</section>
+</main>
+</div>
+<footer class="container">AWS SAP-C02 ECS / Fargate 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>
