@@ -13,14 +13,14 @@
 |---|---|
 | 根导航页 | 已完成；12 个分类均已挂载并标注进度，`architecture-patterns.html` 已启用并接入根页 |
 | 分类入口页 | 12 个已完成并全部挂到根页 |
-| 服务正文 | **已完成 76 篇 / 去重规划 76 篇＝ 100%** |
+| 服务正文 | **75 篇；另有综合专题 1 篇；去重规划合计 76 篇＝ 100%** |
 | 未创建正文 | **0 篇** |
 | 参考考题库 | `input/exam.csv` 已备齐 529 题，**尚未加工成任何题库页面** |
 | 正文内场景题 | 各正文内嵌手写场景题，另有 529 道参考考题尚未题库化 |
-| 推荐下一篇 | 已完成：`architecture-patterns.html`（P1） |
-| 最大阻塞 | 529 题尚未按服务归类、题库化；导航/命名旧规范已清理 |
+| 下一步 | 决定题库页面形态并为 529 题补充分类与服务标签 |
+| 最大阻塞 | 529 题尚未按服务归类、题库化；部署时是否发布 `old/` 与 `input/` 尚待决策 |
 
-**一句话：站点骨架和 76 篇服务正文已成形，综合专题已补齐，剩余 529 道参考题的归类与题库化尚未完成。**
+**一句话：75 篇服务正文和 1 篇综合专题均已完成；剩余主要工作是 529 道参考题的归类与题库化，以及历史归档/题库文件的发布策略决策。**
 
 ---
 
@@ -315,7 +315,7 @@
 | `management/config.html` | 6 |
 | **合计** | **约 148** |
 
-> “148 道”是根据页面内场景题标题统计的手写场景题，不是 CSV 中的 529 道。首页“529 道题库待整理”目前只是数据储备，不是已完成状态。
+> 上表是早期盘点样本，仅覆盖表列出的 26 篇正文，约 148 道；不是当前全站场景题总数。后续新增正文尚未纳入此表，全站场景题总数待统一统计。CSV 中的 529 道参考题仍未题库化。
 
 ### 题库化前需要补的元数据
 
@@ -396,7 +396,7 @@ for page in pages:
 PY
 ```
 
-当前预期会输出 70+ 条待补正文；新写完一篇后，对应行应消失。若出现重复的跨目录链接，按“主分类创建、其他分类另见”的规则处理。
+截至 2026-11-03，本检查已核验根页和 12 个分类入口页，共 13 页，缺失链接为 0 条。新增或改动入口后重新运行检查；如有输出，按“主分类创建、其他分类另见”的规则处理。
 
 ### 6.3 每篇完成后的记录模板
 
@@ -408,19 +408,9 @@ PY
 
 ---
 
-## 7. 当前 Git 工作区状态（重要）
+## 7. Git 工作区状态
 
-当前工作区状态：
-
-```text
- M PROGRESS.md
- M index.html
- M networking/index.html
-?? networking/global-accelerator.html
-?? networking/privatelink.html
-```
-
-含义：Global Accelerator / PrivateLink 正文、网络分类卡片、首页统计和本进度文档尚未提交。继续写作前可提交这些变更，或继续新增正文。
+修订前核验时工作区干净；本次修订后仅 `PROGRESS.md` 有未提交修改。此状态是快照；继续操作前仍应重新运行 `git status`，避免覆盖后续变更。
 
 ---
 
@@ -439,7 +429,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 - `hybrid-edge/index.html` 存在，但根页没有入口。
 - `compute/outposts-wavelength.html` 作为唯一正文，统一覆盖三项服务与选型。
 
-**处理结果（2026-11-02）：** Outposts / Local Zones / Wavelength 内容归入计算分类；未创建 `hybrid-edge/outposts.html` 或 `hybrid-edge/local-zones-wavelength.html`，避免重复内容。`hybrid-edge` 是否挂到根页仍是独立导航决策。
+**处理结果（2026-11-02 至 2026-11-03）：** Outposts / Local Zones / Wavelength 内容归入计算分类；未创建 `hybrid-edge/outposts.html` 或 `hybrid-edge/local-zones-wavelength.html`，避免重复内容。`hybrid-edge` 已于 2026-11-03 挂到根页。
 
 ### 8.4 已解决：跨分类链接与数据库专题页
 
@@ -455,16 +445,12 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 `compute/index.html` 中 App Runner 卡片已链接到 `app-runner.html`，正文已完成并开放访问。
 
-### 8.6 P2：首页统计与事实不符
+### 8.6 已处理：首页统计与事实不符
 
-- 首页写“74 个文档”，实际 37 篇正文 + 12 个分类入口 + 根页。
-- 首页写“529 道真题”，实际只有 CSV 原料，页面内约 148 道手写场景题。
-- 首页写“11 大类”，实际有 12 个分类入口页（`hybrid-edge` 未挂载）。
-- `networking` 首页服务数与分类页数量不一致。**已处理（2026-11-02）：** 根页和分类页统一为 9 项。
-
-建议：在内容未完成前改为“37 篇已上线 / 41 篇待补 / 529 道题库待整理”，或完成后再恢复宣传数字。
-
-**已处理（2026-11-02；分类挂载于 2026-11-03）：** 首页分类统计改为 12 大类，`hybrid-edge` 已挂载；正文进度同步为去重口径 75 / 76，题库仍待整理。
+- 进度口径：75 篇服务正文 + 1 篇综合专题，共 76 篇；正文缺失为 0。
+- `hybrid-edge` 已挂载，根页与分类入口共 12 类；`networking` 服务数已统一为 9 项。
+- `input/exam.csv` 中的 529 题仍是未加工的参考数据，不能计为已上线题库。早期约 148 道手写场景题的统计仅覆盖部分页面，不能代表全站总数。
+- 根页及 12 个分类入口的断链检查于 2026-11-03 核验为 0 条。
 
 ### 8.7 P2：历史归档与部署
 
@@ -498,13 +484,13 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | ~~9~~ | ~~`database/dynamodb.html`~~ | ✅ 已完成（2026-11-02） | 从零编写 |
 | ~~10~~ | ~~`security/kms-cloudhsm.html`~~ | ✅ 已完成（2026-11-02） | 从零编写；引用 S3 加密章节 |
 
-这批 10 篇均已完成。DevOps 四篇正文现已补齐；下一篇建议为 `architecture-patterns.html`（P1），后续继续处理剩余正文、题库化与全站校准。
+这批 10 篇均已完成。所有计划中的服务正文与综合专题也均已完成；后续工作转为参考题库化、发布策略决策和全站一致性校准。
 
 ---
 
 ## 10. 历史归档说明
 
-`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。新正文一律基于现有 37 篇正文的模板从零编写。
+`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。已完成的 75 篇服务正文沿用现有页面规范；综合专题另计 1 篇。
 
 是否保留、删除或从 Pages 构建中排除，见第 8.7 节。
 
@@ -533,6 +519,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-03 | 完成迁移与传输剩余 4 篇正文：7R 迁移策略、MGN、DataSync/Transfer Family、Migration Hub/ADS；每篇含 6 道场景题、18 张速记卡和 3 道快速自测；迁移分类 4 / 4（另有数据库模块 DMS/SCT），分类页和首页状态同步，全站正文统计更新为 68 / 78 | `migration/*.html`、`migration/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `devops/codepipeline.html`（P1） |
 | 2026-11-03 | 完成 DevOps 4 篇正文：CodePipeline、CodeDeploy、CodeBuild/CodeCommit/CodeArtifact、X-Ray；每篇含 6 道场景题、18 张速记卡和 3 道快速自测；分类页 4 / 4 开放，首页和进度统计同步更新为 72 / 78 | `devops/*.html`、`devops/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `architecture-patterns.html`（P1） |
 | 2026-11-03 | 完成机器学习与 AI 2 篇正文：AI 托管服务全览、Amazon SageMaker；各含 6 道场景题、18 张速记卡和快速自测；分类页开放，首页和进度统计同步更新为 74 / 78 | `ml/ml-ai.html`、`ml/sagemaker.html`、`ml/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `architecture-patterns.html`（P1） |
-| 2026-11-03 | 完成混合云与边缘分类：新增 IoT Core/Greengrass/Device Shadow 正文，复用计算模块的 Outposts/Local Zones/Wavelength 正文；3 个方向全部开放并将分类页挂至根页；校准去重总规划为 76 篇，进度更新至 75 / 76 | `hybrid-edge/iot.html`、`hybrid-edge/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `architecture-patterns.html`（P1） |
+| 2026-11-03 | 完成混合云与边缘分类：新增 IoT Core/Greengrass/Device Shadow 正文，复用计算模块的 Outposts/Local Zones/Wavelength 正文；3 个方向全部开放并将分类页挂至根页；服务正文完成 75 篇，综合专题待完成 | `hybrid-edge/iot.html`、`hybrid-edge/index.html`、`index.html`、`PROGRESS.md` | 完成 `architecture-patterns.html` |
+| 2026-11-03 | 完成 `architecture-patterns.html`，全站 75 篇服务正文及 1 篇综合专题全部完成（76 / 76）；校准进度口径、断链检查结果与工作区状态说明 | `architecture-patterns.html`、`PROGRESS.md` | 决定 529 题的分类标签与题库页面形态；决策 `old/`、`input/` 是否随 Pages 发布 |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。
