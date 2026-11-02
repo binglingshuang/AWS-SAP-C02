@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 EBS 考试速查：gp3、io2、st1、sc1 卷型选择，快照与加密、Multi-Attach、性能优化和卷扩展场景。">
+<title>AWS SAP-C02｜Amazon EBS 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:760px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+h4{font-size:16px;margin:18px 0 8px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.orange{background:var(--orange-soft);color:var(--orange)}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:125px}
+.diagram .arrow{color:#64748b;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff}
+.card b{display:block;margin-bottom:5px}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+.small{font-size:13px;color:var(--muted)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}.cards{grid-template-columns:1fr}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>Amazon EBS<br>弹性块存储 考试速查手册</h1>
+  <p>围绕 EC2 持久化块存储的卷型选型、快照、加密、Multi-Attach 与在线扩容。重点掌握性能指标、AZ 边界，以及“共享块设备不等于共享文件系统”的架构限制。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">块存储 / EC2</span>
+   <span class="pill">关键词：gp3 · io2 · Snapshot · Multi-Attach</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回存储分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#basics">一、EBS 基础与边界</a>
+ <a href="#volume-types">二、卷类型选型</a>
+ <a href="#performance">三、IOPS、吞吐量与延迟</a>
+ <a href="#snapshots">四、快照与恢复</a>
+ <a href="#encryption">五、加密与密钥</a>
+ <a href="#lifecycle">六、卷操作与扩容</a>
+ <a href="#multi-attach">七、Multi-Attach 与 RAID</a>
+ <a href="#availability">八、可用性、备份与灾难恢复</a>
+ <a href="#scenarios">九、场景题解析</a>
+ <a href="#quick">十、关键词速查</a>
+ <a href="#memory">十一、考前速记卡</a>
+ <a href="#quiz">十二、快速自测</a>
+</nav>
+
+<main>
+<section id="basics">
+<h2>一、EBS 基础与边界</h2>
+<p class="lead">Amazon Elastic Block Store（EBS）为 EC2 提供持久化块设备。卷通常在单个 Availability Zone 内创建，并通过网络附加到同一区域/可用区中受支持的实例。</p>
+<div class="diagram">
+ <div class="node"><b>EC2 实例</b><br><small>操作系统 / 应用</small></div>
+ <span class="arrow">⇄</span>
+ <div class="node"><b>EBS Volume</b><br><small>块设备 · 单 AZ</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>EBS Snapshot</b><br><small>时间点备份 · 跨 AZ 恢复</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>特性</th><th>EBS</th><th>考试中的判断</th></tr></thead>
+<tbody>
+<tr><td>存储形态</td><td>块存储，操作系统可在其上建立文件系统或裸设备</td><td>单实例磁盘、启动卷、数据库数据盘常用 EBS</td></tr>
+<tr><td>持久性</td><td>与实例生命周期解耦（取决于卷的删除设置）</td><td>实例停止/终止后，数据是否保留要看 DeleteOnTermination</td></tr>
+<tr><td>可用区范围</td><td>卷位于单一 AZ</td><td>不能把一个普通 EBS 卷直接挂到另一个 AZ 的实例</td></tr>
+<tr><td>快照范围</td><td>快照可用于同区域恢复新卷；复制快照可用于其他区域</td><td>跨 AZ 迁移通常通过快照在目标 AZ 创建卷；跨 Region 需复制快照</td></tr>
+<tr><td>生命周期</td><td>卷可从实例分离再附加给兼容实例；启动卷需按实例状态与操作约束处理</td><td>卷分离不等于数据删除，卷终止行为要检查配置</td></tr>
+</tbody></table></div>
+<h3>EBS、实例存储、EFS 与 S3</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>需求</th><th>优先考虑</th><th>核心区别</th></tr></thead>
+<tbody>
+<tr><td>单台 EC2 的低延迟持久化块设备</td><td>EBS</td><td>卷通常绑定单 AZ，可独立快照、备份与恢复</td></tr>
+<tr><td>实例本地临时高速磁盘</td><td>Instance Store</td><td>与宿主机生命周期相关；停止、终止或底层故障时数据可能丢失</td></tr>
+<tr><td>多台 Linux 实例共享文件系统</td><td>EFS</td><td>托管 NFS 文件系统，可跨 AZ 挂载；不是块设备</td></tr>
+<tr><td>对象/静态内容、数据湖、归档</td><td>S3</td><td>通过对象 API 访问，不是可挂载的通用块设备</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>删除保护陷阱：</b>实例终止不必然意味着 EBS 数据删除，也不必然意味着保留。根卷和数据卷的 <code>DeleteOnTermination</code> 行为可能不同；关键生产数据应有独立快照/备份策略，不能只依赖实例属性。</div>
+</section>
+
+<section id="volume-types">
+<h2>二、卷类型选型</h2>
+<p>先判断工作负载是通用事务型、低延迟高 IOPS，还是大块顺序吞吐，再选 SSD 或 HDD。容量、IOPS、吞吐和实例 EBS 带宽都要一起核对。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>卷类型</th><th>介质 / 性能方式</th><th>适合场景</th><th>主要陷阱</th></tr></thead>
+<tbody>
+<tr><td><b>gp3</b></td><td>通用 SSD；可独立配置 IOPS 与吞吐，不必随容量同比增加</td><td>大多数启动卷、开发环境、通用应用及常规数据库</td><td>通常是优先考虑的通用 SSD；性能配置仍有卷/实例配额与额外成本</td></tr>
+<tr><td><b>gp2</b></td><td>通用 SSD；基准性能与容量关联，并有突发机制</td><td>已有 gp2 工作负载、性能需求适中且匹配容量的通用用途</td><td>不能把 gp2 的容量关联和突发积分规则套给 gp3</td></tr>
+<tr><td><b>io2 Block Express</b></td><td>高耐久、高性能 Provisioned IOPS SSD；适用实例和配置可提供极高 IOPS / 吞吐</td><td>关键 OLTP、对延迟和 IOPS 有严格要求的大型数据库</td><td>应核对 Region、实例类型、容量与性能的当前限制；不代表所有实例都能达到卷上限</td></tr>
+<tr><td><b>io2 / io1</b></td><td>Provisioned IOPS SSD，可明确配置预置 IOPS</td><td>要求持续、可预测低延迟 I/O 的关键数据库</td><td>成本高于通用 SSD；容量与 IOPS 比率、实例带宽和支持能力均有限制</td></tr>
+<tr><td><b>st1</b></td><td>吞吐优化 HDD；面向大块顺序读写，使用吞吐/突发模型</td><td>大数据、日志处理、数据仓库、顺序扫描</td><td>非启动卷；不适合小块随机 I/O 或低延迟事务型数据库</td></tr>
+<tr><td><b>sc1</b></td><td>冷 HDD；成本更低，吞吐和突发能力更低</td><td>很少访问、以顺序访问为主的冷数据</td><td>非启动卷；不适合需要稳定高 IOPS 或低延迟的工作负载</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>快速决策：</b>没给特殊要求的通用块存储，先看 gp3；明确要求高且稳定的 IOPS/低延迟，选 io2/io1；大数据顺序吞吐选 st1；极少访问且成本优先的顺序数据选 sc1。若要求多个 AZ 同时访问同一共享文件，选 EFS，而不是普通 EBS。</div>
+<h3>启动卷限制</h3>
+<p>启动卷需要使用支持启动的 SSD 卷类型（常见为 gp3/gp2 或 Provisioned IOPS SSD）。st1 和 sc1 面向数据卷，不能作为 EC2 启动卷。不要只根据价格选卷而忽略启动能力和工作负载 I/O 模式。</p>
+</section>
+
+<section id="performance">
+<h2>三、IOPS、吞吐量与延迟</h2>
+<p>卷性能不是一个数字。IOPS 表示每秒 I/O 操作数，吞吐量表示每秒传输的数据量；实际应用吞吐还受 I/O 大小、队列深度、实例 EBS 带宽和文件系统影响。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>指标 / 机制</th><th>含义</th><th>排查 / 选型方式</th></tr></thead>
+<tbody>
+<tr><td>IOPS</td><td>每秒完成的读写操作数</td><td>随机、小块数据库 I/O 通常更看重 IOPS 和延迟</td></tr>
+<tr><td>Throughput</td><td>每秒传输的数据量</td><td>大块顺序扫描、媒体和批处理通常更看重吞吐</td></tr>
+<tr><td>Latency</td><td>单次 I/O 响应时间</td><td>对 OLTP、交易系统等关键；持续高延迟应查看卷与实例指标</td></tr>
+<tr><td>队列深度 / I/O 大小</td><td>应用并发提交的请求数及单次请求字节数</td><td>同一 IOPS 在不同 I/O 大小时可能对应不同吞吐；压测要模拟真实请求模式</td></tr>
+<tr><td>实例 EBS 带宽</td><td>实例类型对 EBS 流量的上限</td><td>卷配置再高，实例通道不足时也无法实现预期性能</td></tr>
+<tr><td>突发性能</td><td>特定卷类型在基准性能之外按机制短时突发</td><td>持续压测而非短测；gp2、st1、sc1 的突发机制不可混为一谈</td></tr>
+</tbody></table></div>
+<h3>性能诊断路径</h3>
+<ol>
+<li>确认应用 I/O 模式：随机还是顺序、读写比例、块大小、队列深度、突发或持续负载。</li>
+<li>查看卷的已配置性能与 CloudWatch 指标（如卷队列长度、读写延迟、IOPS、吞吐及突发余额相关指标）。</li>
+<li>确认实例类型的 EBS 优化能力和带宽上限，并检查 CPU、内存、文件系统及应用是否成为瓶颈。</li>
+<li>根据证据调整卷类型/IOPS/吞吐，或更换实例类型；使用代表性工作负载复测成本与尾延迟。</li>
+</ol>
+<div class="callout"><b>EBS-Optimized：</b>专用 EBS 带宽可减少存储流量与其他实例网络流量之间的竞争。现代实例通常具备默认或增强的 EBS 能力，但实际性能取决于具体实例规格和卷配置。</div>
+</section>
+
+<section id="snapshots">
+<h2>四、快照与恢复</h2>
+<p>EBS Snapshot 是卷在某个时间点的备份，后续快照采用增量方式保存变化块。快照由 AWS 管理底层存储，用户通常通过快照创建新卷、复制或共享快照进行恢复与迁移。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>能力</th><th>用途</th><th>重点</th></tr></thead>
+<tbody>
+<tr><td>增量快照</td><td>记录与前一快照相比发生变化的数据块，降低重复存储</td><td>删除旧快照时，AWS 会保留其他仍引用的数据块；删除快照不等于删掉所有后续恢复点</td></tr>
+<tr><td>从快照创建卷</td><td>恢复数据、创建同区域新卷</td><td>新卷在指定 AZ 创建；不能直接把卷从一个 AZ 移动到另一个 AZ</td></tr>
+<tr><td>复制快照</td><td>跨区域灾备、隔离备份账户/区域、转换加密状态</td><td>跨 Region 使用 Copy Snapshot；检查目标区域的 KMS 密钥策略与权限</td></tr>
+<tr><td>共享快照</td><td>与其他账号共享自有快照</td><td>接收方可基于共享快照复制后创建自己的卷；加密快照还需密钥授权</td></tr>
+<tr><td>Fast Snapshot Restore</td><td>在指定 AZ 创建卷时避免按需初始化带来的性能抖动</td><td>按快照和 AZ 启用，有额外费用；不是持续复制，也不替代备份</td></tr>
+<tr><td>Data Lifecycle Manager</td><td>按策略自动创建、保留或复制 EBS 快照/AMI（依策略类型）</td><td>用标签和生命周期策略统一管理；同时评估 AWS Backup 的集中治理需求</td></tr>
+</tbody></table></div>
+<h3>应用一致性</h3>
+<p>崩溃一致性快照类似突然断电后磁盘状态；多卷应用若要求跨卷一致性，需要使用支持的多卷快照/编排能力，并在数据库或应用层采用静默、备份模式或日志恢复流程。单个卷快照不自动保证分布式应用的一致性。</p>
+<div class="callout orange"><b>恢复性能陷阱：</b>从快照创建卷后，数据可能在首次读取时按需加载，导致恢复初期 I/O 延迟。关键工作负载可以评估 Fast Snapshot Restore，或在适用场景使用卷初始化/预热手段；快照本身不是已挂载、已预热的备用卷。</div>
+</section>
+
+<section id="encryption">
+<h2>五、加密与密钥</h2>
+<ul>
+<li>EBS 加密在卷与快照层面保护静态数据，并对卷与实例之间传输的数据提供加密；底层使用 AWS KMS 管理的密钥。</li>
+<li>加密卷创建的快照会保持加密；由加密快照创建的卷也会加密。加密卷挂载到受支持实例后，对应用和操作系统通常透明。</li>
+<li>可为账户/区域启用 EBS 默认加密，避免新建卷和快照意外未加密；新旧资源是否加密仍需盘点与审计。</li>
+<li>使用客户管理密钥时，必须确保操作者、服务和恢复账户具备正确的 KMS 密钥使用权限；密钥禁用或授权缺失会阻断挂载、复制或恢复。</li>
+</ul>
+<h3>将现有未加密卷转换为加密卷</h3>
+<ol>
+<li>为现有卷创建快照。</li>
+<li>复制该快照，并在复制时选择加密及目标 KMS 密钥。</li>
+<li>从加密快照在所需 AZ 创建新卷。</li>
+<li>停机窗口内替换挂载卷或迁移应用数据，并验证启动、权限和恢复流程。</li>
+</ol>
+<div class="callout red"><b>常见误区：</b>不能把一个现有未加密卷原地切换成加密卷。要通过加密快照副本创建新加密卷，再替换原卷。跨账号/跨区域复制加密快照时，必须同时处理 KMS 密钥共享与目标密钥加密。</div>
+</section>
+
+<section id="lifecycle">
+<h2>六、卷操作与扩容</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>操作</th><th>支持的方向 / 方式</th><th>操作后检查</th></tr></thead>
+<tbody>
+<tr><td>增加容量</td><td>对支持的卷使用 Elastic Volumes 在线修改；可调整大小，部分类型还可调整性能配置</td><td>等待卷状态完成，再扩展分区和文件系统；只改云端卷大小不会自动扩大操作系统文件系统</td></tr>
+<tr><td>调整性能</td><td>在类型允许时修改 IOPS、吞吐或卷类型</td><td>核对当前状态、变更频率限制、实例带宽和应用表现</td></tr>
+<tr><td>减少容量</td><td>通常不能直接缩小现有 EBS 卷</td><td>创建更小目标卷、复制/迁移所需数据并切换；先验证文件系统和容量规划</td></tr>
+<tr><td>跨 AZ 迁移</td><td>从源卷创建快照，在目标 AZ 从快照创建新卷</td><td>新卷需挂载到目标实例并验证数据一致性与启动配置</td></tr>
+<tr><td>终止实例</td><td>依卷的 DeleteOnTermination 属性决定是否删除</td><td>终止前检查根卷、数据卷与快照；关键数据不能只靠保留卷属性保护</td></tr>
+</tbody></table></div>
+<p>修改卷后，根据操作系统、分区表和文件系统执行相应扩展。Linux 常见流程包括扩展分区（如有）和文件系统；Windows 则需在磁盘管理中扩展卷。遵循操作系统与文件系统文档，避免盲目操作导致数据风险。</p>
+<div class="callout"><b>考试关键：</b>“卷已扩容但应用看不到容量”通常是操作系统分区/文件系统尚未扩展；“要缩小卷”则需要新建较小卷并迁移，而不是直接执行反向修改。</div>
+</section>
+
+<section id="multi-attach">
+<h2>七、Multi-Attach 与 RAID</h2>
+<h3>EBS Multi-Attach</h3>
+<p>特定 io1/io2 卷可启用 Multi-Attach，让同一 AZ 内多个支持的 Nitro 实例同时附加同一个卷，适合经过设计的共享块存储集群。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>特性</th><th>Multi-Attach 行为</th><th>设计要求</th></tr></thead>
+<tbody>
+<tr><td>支持类型</td><td>特定 io1/io2 配置，具体 Region、实例和卷配额以服务文档为准</td><td>卷和实例必须位于同一 AZ，并满足 Nitro/平台约束</td></tr>
+<tr><td>共享单位</td><td>共享同一个块设备，不是文件级共享服务</td><td>使用集群感知文件系统/集群软件及正确锁管理</td></tr>
+<tr><td>一致性</td><td>多主机并发写有数据损坏风险</td><td>不能让多个普通主机把卷当作独立本地磁盘并同时写入</td></tr>
+<tr><td>可用区范围</td><td>同一卷的附加实例限定在同一 AZ</td><td>需要跨 AZ 文件共享时评估 EFS 或其他适用架构</td></tr>
+</tbody></table></div>
+<div class="callout red"><b>陷阱：</b>Multi-Attach 不会自动提供分布式锁、集群文件系统或跨 AZ 高可用。题干若只是“多实例共享文件”，通常 EFS 更符合需求；只有明确需要共享高性能块设备且应用可集群化时才选 Multi-Attach。</div>
+<h3>RAID 与条带化</h3>
+<ul>
+<li><b>RAID 0（Striping）：</b>跨多个卷分散 I/O，可提高聚合吞吐/IOPS，但没有冗余；任一成员卷故障可能导致整个阵列数据不可用。</li>
+<li><b>RAID 1（Mirroring）：</b>镜像写入以提高冗余；有效容量降低，且不等同于跨 AZ 备份或灾难恢复。</li>
+<li>RAID 设计不能突破实例总 EBS 带宽，也不能代替快照、备份与恢复演练。</li>
+</ul>
+</section>
+
+<section id="availability">
+<h2>八、可用性、备份与灾难恢复</h2>
+<div class="cards">
+ <div class="card"><b>同 AZ 实例故障</b>在适当情况下将卷分离并挂载到同 AZ 的恢复实例；排查实例状态、卷附件与文件系统一致性。</div>
+ <div class="card"><b>同区域跨 AZ</b>从快照在目标 AZ 创建新卷，接入备用实例；准备快照、网络、启动配置和切换流程。</div>
+ <div class="card"><b>跨区域灾备</b>复制快照到目标区域，处理 KMS 密钥、网络与恢复资源；定期验证 RTO/RPO。</div>
+ <div class="card"><b>集中治理</b>按标签和策略管理快照保留、加密与删除；对关键系统设置告警并测试恢复。</div>
+</div>
+<p>EBS 卷属于单 AZ 资源，快照是其常见的跨 AZ/跨区域恢复基础。需要高可用时，通常在应用架构层做多 AZ 部署与自动故障切换；不要把“EBS 本身可跨 AZ 同步挂载”作为设计假设。</p>
+<h3>备份策略检查清单</h3>
+<ul>
+<li>定义备份频率、保留期、跨账号/跨区域复制和删除保护要求。</li>
+<li>使用适当的 AWS Backup 或 Data Lifecycle Manager 策略自动创建恢复点，并确认资源标签、权限和排除项。</li>
+<li>监控快照创建失败、复制延迟、KMS 权限和成本；为关键资源保留独立恢复账户/区域时验证访问策略。</li>
+<li>定期恢复快照到新卷并执行应用级验证；“有快照”不等于“恢复目标已达到”。</li>
+</ul>
+</section>
+
+<section id="scenarios">
+<h2>九、场景题解析</h2>
+<div class="quiz">
+ <h3>场景一：通用应用磁盘需要独立调整 IOPS</h3>
+ <p>应用使用通用 SSD，容量不会显著增加，但 I/O 负载升高，需要提升性能且希望避免按容量同步扩盘。应优先选择什么？</p>
+ <p><b>正确方向：</b>使用 gp3 并按实际需求配置 IOPS/吞吐。</p>
+ <p><b>分析思路：</b>gp3 的性能配置可与卷容量相对独立，适合大多数通用工作负载的弹性调优。</p>
+ <p><b>排除：</b>gp2 的性能与容量关联；io2 面向明确的高性能/低延迟需求，通常成本更高；st1/sc1 是顺序吞吐 HDD，不适合随机通用 I/O。</p>
+</div>
+<div class="quiz">
+ <h3>场景二：关键数据库要求稳定高 IOPS 与低延迟</h3>
+ <p>OLTP 数据库有严格 I/O 延迟和稳定性能目标，团队需要显式配置预置 IOPS，并且愿意为性能付费。</p>
+ <p><b>正确方向：</b>评估 io2（适用时包括 io2 Block Express），并核对实例类型与卷配置上限。</p>
+ <p><b>分析思路：</b>Provisioned IOPS SSD 面向关键、低延迟且 IOPS 可预测的数据库工作负载。</p>
+ <p><b>排除：</b>st1/sc1 面向顺序吞吐/冷数据；仅提高通用卷容量不一定能满足 IOPS；卷性能不能超过实例 EBS 通道能力。</p>
+</div>
+<div class="quiz">
+ <h3>场景三：需要把 EBS 卷迁移到另一个 AZ</h3>
+ <p>源实例所在 AZ 不可用，恢复团队需要在同一区域的另一 AZ 启动新实例并恢复数据。</p>
+ <p><b>正确方向：</b>使用可用快照，在目标 AZ 创建新卷并挂载到恢复实例。</p>
+ <p><b>分析思路：</b>EBS 卷具有 AZ 作用范围，卷本身不能直接跨 AZ 迁移；快照可作为在目标 AZ 创建新卷的基础。</p>
+ <p><b>排除：</b>直接把原卷挂到另一 AZ 实例不可行；Multi-Attach 也不跨 AZ；若目标在另一个 Region，需要先复制快照。</p>
+</div>
+<div class="quiz">
+ <h3>场景四：现有未加密数据卷必须加密</h3>
+ <p>一块已在使用的未加密 EBS 卷需要满足静态加密要求，且允许维护窗口内迁移。</p>
+ <p><b>正确方向：</b>创建快照，将快照复制为加密快照，再从加密快照创建新卷并切换。</p>
+ <p><b>分析思路：</b>通过快照复制转换加密状态，使用目标 KMS 密钥并验证权限。</p>
+ <p><b>排除：</b>不能直接对现有未加密卷执行原地加密；仅启用默认加密不会自动转换既有卷。</p>
+</div>
+<div class="quiz">
+ <h3>场景五：两台 EC2 需要共享并写入同一组文件</h3>
+ <p>多台实例分布在多个 AZ，需要并发访问同一套目录和文件，业务没有集群块存储能力。</p>
+ <p><b>正确方向：</b>评估 EFS 等托管共享文件系统，而非普通 EBS 或 Multi-Attach。</p>
+ <p><b>分析思路：</b>需求是多实例共享文件语义并跨 AZ 访问，EFS 提供文件系统接口；EBS 是块设备且通常限定单 AZ。</p>
+ <p><b>排除：</b>普通 EBS 卷不能跨 AZ 同时挂载；Multi-Attach 不是通用共享文件系统，还需要集群软件并受同 AZ 限制。</p>
+</div>
+<div class="quiz">
+ <h3>场景六：从快照恢复后首次读取变慢</h3>
+ <p>团队从快照快速创建新数据卷并切换流量，但首次访问旧数据时延迟显著升高。如何降低计划内恢复的初始化抖动？</p>
+ <p><b>正确方向：</b>在目标 AZ 为快照评估启用 Fast Snapshot Restore，或按支持方式初始化/预热卷，并提前演练。</p>
+ <p><b>分析思路：</b>快照创建的卷可能在首次读取时加载数据；Fast Snapshot Restore 可帮助新卷避免按需初始化性能影响，但有额外成本和适用范围。</p>
+ <p><b>排除：</b>增加普通卷容量不等于预热；EBS 快照并不是已初始化的在线备用卷；恢复前未验证无法证明 RTO 达标。</p>
+</div>
+</section>
+
+<section id="quick">
+<h2>十、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>通用 SSD，性能与容量分开调</td><td>gp3</td><td>不是 gp2 的容量相关基准性能模型</td></tr>
+<tr><td>高 IOPS、低延迟 OLTP</td><td>io2 / io1</td><td>同时检查实例 EBS 带宽与卷限制</td></tr>
+<tr><td>大块顺序扫描 / 大数据</td><td>st1</td><td>非启动卷，不适合随机 I/O</td></tr>
+<tr><td>低成本冷顺序数据</td><td>sc1</td><td>性能低于 st1，不适合热数据</td></tr>
+<tr><td>卷要跨 AZ 恢复</td><td>快照 → 目标 AZ 新卷</td><td>不能直接跨 AZ 附加原卷</td></tr>
+<tr><td>跨 Region 灾备</td><td>复制快照</td><td>还需复制/授权 KMS 密钥并准备恢复资源</td></tr>
+<tr><td>未加密卷转加密</td><td>快照复制时加密 → 新卷</td><td>不能对原卷原地加密</td></tr>
+<tr><td>多实例跨 AZ 共享文件</td><td>EFS</td><td>普通 EBS 是块设备且单 AZ</td></tr>
+<tr><td>多实例同 AZ 共享块设备</td><td>符合条件的 io1/io2 Multi-Attach</td><td>需集群文件系统/锁；不是通用共享文件方案</td></tr>
+<tr><td>快照恢复首次读性能</td><td>Fast Snapshot Restore / 初始化</td><td>需按快照与 AZ 规划，且有成本</td></tr>
+<tr><td>只改了卷大小，系统空间未增加</td><td>扩展分区/文件系统</td><td>EBS 调整不自动修改 OS 文件系统</td></tr>
+<tr><td>实例终止后数据是否保留</td><td>DeleteOnTermination</td><td>仍应保留独立备份/快照</td></tr>
+<tr><td>从快照创建小一点的卷</td><td>先创建满足快照数据要求的新卷并迁移</td><td>不能直接缩小现有 EBS 卷</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>十一、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>EBS：</b>持久化块存储，卷通常属于单一 AZ</span></li>
+<li><input type="checkbox"><span><b>gp3：</b>通用 SSD，IOPS/吞吐可与容量相对独立配置</span></li>
+<li><input type="checkbox"><span><b>gp2：</b>通用 SSD，性能与容量相关并具有突发机制</span></li>
+<li><input type="checkbox"><span><b>io2/io1：</b>Provisioned IOPS SSD，适合关键低延迟数据库</span></li>
+<li><input type="checkbox"><span><b>st1：</b>吞吐优化 HDD，顺序访问；不能作启动卷</span></li>
+<li><input type="checkbox"><span><b>sc1：</b>冷 HDD，成本更低且性能更低；不能作启动卷</span></li>
+<li><input type="checkbox"><span><b>性能瓶颈：</b>卷、实例 EBS 带宽、IO 大小和应用都要检查</span></li>
+<li><input type="checkbox"><span><b>Snapshot：</b>增量备份，可用于恢复新卷与跨 AZ 迁移</span></li>
+<li><input type="checkbox"><span><b>跨 Region：</b>复制快照，并处理目标 KMS 密钥</span></li>
+<li><input type="checkbox"><span><b>加密：</b>新卷/快照可用 KMS；既有未加密卷经快照复制转换</span></li>
+<li><input type="checkbox"><span><b>Fast Snapshot Restore：</b>指定快照/AZ，缓解恢复后首次读初始化影响</span></li>
+<li><input type="checkbox"><span><b>Elastic Volumes：</b>支持的卷可在线扩容/调整性能</span></li>
+<li><input type="checkbox"><span><b>文件系统：</b>卷扩容后还需扩展分区和文件系统</span></li>
+<li><input type="checkbox"><span><b>缩容：</b>不能直接缩小现有卷，需迁移到较小新卷</span></li>
+<li><input type="checkbox"><span><b>Multi-Attach：</b>特定 io1/io2，同 AZ，多主机共享块设备</span></li>
+<li><input type="checkbox"><span><b>共享文件：</b>跨 AZ 多实例场景优先考虑 EFS，不是普通 EBS</span></li>
+<li><input type="checkbox"><span><b>删除行为：</b>终止实例是否删卷取决于 DeleteOnTermination</span></li>
+<li><input type="checkbox"><span><b>RAID 0：</b>可提升聚合性能但没有冗余，不能替代备份</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十二、快速自测</h2>
+<p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz">
+ <b>1. 一个常规应用使用通用 SSD，想在不扩大容量的情况下单独提高配置的 IOPS。优先选择哪种卷？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',false)">A. sc1</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">B. gp2</button>
+ <button class="secondary" onclick="showAnswer('q1',true)">C. gp3</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. st1</button>
+ <div class="answer" id="q1"><b>正确答案：C。</b>gp3 可独立配置 IOPS/吞吐，不要求按相同比例增加容量。gp2 性能与容量关联；st1/sc1 为顺序吞吐型 HDD。</div>
+</div>
+<div class="quiz">
+ <b>2. 一个未加密 EBS 数据卷必须加密，且允许迁移到新卷。以下哪种做法正确？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 直接在控制台对现有卷切换加密开关</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. 创建快照，复制为加密快照，再创建新卷并切换</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 只启用 EBS 默认加密即可转换既有卷</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. 修改实例安全组</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>现有未加密卷不能原地转换。快照复制时选择加密及 KMS 密钥，再由加密快照创建新卷。</div>
+</div>
+<div class="quiz">
+ <b>3. 两台位于不同 AZ 的 EC2 需要同时读写同一个共享目录。哪种设计最符合需求？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',false)">A. 把同一个 gp3 卷同时挂载到两台实例</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">B. 对卷启用 Multi-Attach 后跨 AZ 使用</button>
+ <button class="secondary" onclick="showAnswer('q3',true)">C. 使用支持跨 AZ 挂载的共享文件系统，例如 EFS</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. 为每台实例建立相同大小的独立卷</button>
+ <div class="answer" id="q3"><b>正确答案：C。</b>EFS 提供共享文件系统语义并支持多 AZ 访问。普通 EBS 卷为块设备且限定单 AZ；Multi-Attach 也不提供跨 AZ 文件共享。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/ebs/latest/userguide/what-is-ebs.html" target="_blank" rel="noopener">Amazon EBS 用户指南</a></li>
+<li><a href="https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volume-types.html" target="_blank" rel="noopener">EBS 卷类型</a></li>
+<li><a href="https://docs.aws.amazon.com/ebs/latest/userguide/ebs-snapshots.html" target="_blank" rel="noopener">EBS 快照</a></li>
+<li><a href="https://docs.aws.amazon.com/ebs/latest/userguide/ebs-encryption.html" target="_blank" rel="noopener">EBS 加密</a></li>
+<li><a href="https://docs.aws.amazon.com/ebs/latest/userguide/ebs-modify-volume.html" target="_blank" rel="noopener">修改 EBS 卷</a></li>
+<li><a href="https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volumes-multi.html" target="_blank" rel="noopener">EBS Multi-Attach</a></li>
+<li><a href="../compute/ec2.html">EC2 实例类型、实例存储与 EBS 选型</a></li>
+<li><a href="s3.html">S3 对象存储与生命周期</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>本文是非官方复习提纲，不代表 AWS 认证题库或考试原题。EBS 卷型能力、实例兼容性、配额和定价会随区域及服务更新，请以 AWS 官方文档为准。</div>
+</section>
+</main>
+</div>
+<footer class="container">Amazon EBS SAP-C02 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>
