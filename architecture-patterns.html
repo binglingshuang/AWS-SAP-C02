@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 架构设计模式速查：Well-Architected、灾难恢复、可用性、Failover、多账号治理和成本优化。">
+<title>AWS SAP-C02｜架构设计模式与架构决策速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;
+  --primary:#2563eb;--primary-soft:#eff6ff;--green:#15803d;--green-soft:#f0fdf4;
+  --orange:#c2410c;--orange-soft:#fff7ed;--red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06)
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif} a{color:var(--primary);text-decoration:none} a:hover{text-decoration:underline} .container{width:min(1120px,calc(100% - 32px));margin:auto} header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px} header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe} header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0} header p{color:#dbeafe;max-width:760px;margin:0} .header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px} .pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px} .layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px} nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto} nav strong{display:block;margin-bottom:10px} nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px} nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none} main{min-width:0} section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px} h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)} h3{font-size:19px;margin:26px 0 10px} h4{font-size:16px;margin:18px 0 8px} p{margin:9px 0} ul,ol{padding-left:23px} li{margin:5px 0} .lead{font-size:17px;color:#334155} .callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0} .callout.green{background:var(--green-soft);border-color:var(--green)} .callout.orange{background:var(--orange-soft);border-color:var(--orange)} .callout.red{background:var(--red-soft);border-color:var(--red)} table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px} th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top} th{background:#f8fafc;color:#334155;font-weight:700} tr:last-child td{border-bottom:0} .table-wrap{overflow-x:auto} code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em} .diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0} .diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:120px} .diagram .arrow{color:#64748b;font-weight:700} .checklist{list-style:none;padding:0} .checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0} .checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto} .progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px} .progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s} .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px} button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer} button.secondary{background:#e2e8f0;color:#334155} .quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0} .quiz button{margin:5px 6px 5px 0} .answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px} footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px} .small{font-size:13px;color:var(--muted)} @media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}} @media print{body{background:#fff;font-size:12px} header{background:#fff;color:#111;padding:20px 0} header p,.eyebrow{color:#444!important} .pill{border:1px solid #aaa;color:#333} .layout{display:block;padding:10px 0} nav,.toolbar,.no-print{display:none!important} section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px} a{color:#111;text-decoration:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>架构设计模式<br>Well-Architected、DR 与高可用决策</h1>
+  <p>这篇不是“服务清单”，而是把 AWS 架构能力放回一张总图：如何在稳定性、成本、安全和速度之间做选择。SAP-C02 常见的问法，不是“哪个服务最先进”，而是“在什么条件下应选哪种架构模式”。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">架构 / 设计模式</span>
+   <span class="pill">关键词：Well-Architected · DR · HA · 多账号</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回根导航</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#overview">一、定位与核心原则</a>
+ <a href="#well-architected">二、Well-Architected</a>
+ <a href="#dr">三、灾难恢复与 RTO/RPO</a>
+ <a href="#ha">四、高可用与 Failover</a>
+ <a href="#multi-account">五、多账号与治理边界</a>
+ <a href="#cost">六、成本优化原则</a>
+ <a href="#scenarios">七、场景题解析</a>
+ <a href="#quick">八、关键词速查</a>
+ <a href="#memory">九、考前速记卡</a>
+ <a href="#quiz">十、快速自测</a>
+</nav>
+
+<main>
+<section id="overview">
+<h2>一、定位与核心原则</h2>
+<p class="lead">AWS 架构题通常不是“看你知道哪个服务”，而是看你知道“什么架构在什么需求下合理”。候选答案一般是围绕可用性、成本、安全、弹性和治理之间的 trade-off。</p>
+<div class="diagram">
+ <div class="node"><b>业务需求</b><br><small>RTO / RPO / SLA</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>设计目标</b><br><small>可靠性 / 安全 / 成本</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>架构模式</b><br><small>AZ / Region / Multi-Account</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>运维动作</b><br><small>Failover / 监控 / 缩放</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>考点</th><th>关键定义</th><th>做题提示</th></tr></thead>
+<tbody>
+<tr><td>RTO</td><td>恢复时间目标，系统要在多少时间内恢复。</td><td>业务容忍度越低，越偏向更高冗余和更快切换的方案。</td></tr>
+<tr><td>RPO</td><td>恢复点目标，数据能丢多少时间窗口内的数据。</td><td>高价值数据通常要求更频繁复制、快照或持续同步。</td></tr>
+<tr><td>SLA</td><td>服务可用性目标，如 99.9% / 99.95% / 99.99%。</td><td>题目常用 SLA 做“是否须多 AZ / 多 Region”判断。</td></tr>
+<tr><td>Trade-off</td><td>高可用增大成本，严格恢复要求提升复杂度。</td><td>不要只选“最先进”而忽略成本和运维复杂度。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="well-architected">
+<h2>二、Well-Architected Framework</h2>
+<p>Well-Architected 不是单一的 AWS 服务，而是一套“评估和改进架构”的框架。SAP-C02 常在多选题里要求你优先判断“最缺失的工程能力”。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>支柱</th><th>核心关注点</th><th>典型动作</th></tr></thead>
+<tbody>
+<tr><td>Operational Excellence</td><td>自动化、日志、变更管理、可观测性</td><td>CloudFormation、CodePipeline、CloudWatch、AWS Config</td></tr>
+<tr><td>Security</td><td>最小权限、审计、加密、身份隔离</td><td>IAM、KMS、Organizations、GuardDuty</td></tr>
+<tr><td>Reliability</td><td>故障恢复、自动修复、容错、冗余</td><td>Multi-AZ、Auto Scaling、Health Check、Backups</td></tr>
+<tr><td>Performance Efficiency</td><td>伸缩能力、低延迟、高吞吐、缓存</td><td>CloudFront、ElastiCache、ECS/EKS、Auto Scaling</td></tr>
+<tr><td>Cost Optimization</td><td>按需、折扣、审计成本</td><td>Rightsizing、Savings Plans、Spot、S3 Lifecycle</td></tr>
+<tr><td>Sustainability</td><td>降低能源与资源浪费</td><td>减少无效运行、合理缓存与调度</td></tr>
+</tbody></table></div>
+<div class="callout"><b>记忆口诀：</b>“稳定、可审计、能扩展、可运营、能省钱”。</div>
+</section>
+
+<section id="dr">
+<h2>三、灾难恢复与 RTO/RPO</h2>
+<p class="lead">灾难恢复不是“有没有备份”，而是“在故障后如何恢复、恢复到什么程度、需要多长时间”。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>策略</th><th>特点</th><th>适用场景</th></tr></thead>
+<tbody>
+<tr><td>Pilot Light</td><td>核心服务在备用区域已有最少运行能力；恢复时快速拉起其他组件。</td><td>允许较长恢复时间，但需较快恢复核心业务。</td></tr>
+<tr><td>Warm Standby</td><td>备用环境持续运行一部分服务，恢复时间中等。</td><td>中高重要业务，接受分钟级切换。</td></tr>
+<tr><td>Hot Standby / Active-Active</td><td>多站点同时运行，切换时间最短，成本最高。</td><td>金融、支付、关键 SLA。</td></tr>
+<tr><td>Backup-centric</td><td>以快照、备份和恢复为核心，恢复复杂但成本低。</td><td>非关键业务、离线分析等。</td></tr>
+</tbody></table></div>
+<p>通常题目会按“恢复时间可以接受多久 / 数据能丢多少”来判断：如果要“几分钟恢复、几秒钟切换”就看 Active-Active；如果“本地数据可接受一天损失”则更偏简单备份策略。在考试中，最容易搞混的是：<b>备份本身不等于 DR</b>，DR 还要有恢复流程、切换策略和演练。</p>
+<div class="callout orange"><b>考试常见判断：</b>RTO 短 → 更高可用、更多冗余；RPO 低 → 持续复制、增量同步、快照频率高。</div>
+</section>
+
+<section id="ha">
+<h2>四、高可用与 Failover</h2>
+<p>高可用的核心是“单点故障不影响业务”。最重要的技术点通常是：多 AZ、自动伸缩、健康检查、DNS failover 和无状态化。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>模式</th><th>说明</th><th>典型服务</th></tr></thead>
+<tbody>
+<tr><td>Multi-AZ</td><td>同一区域不同可用区，适合提升可用性。</td><td>RDS Multi-AZ、ElastiCache、MQ、EFS</td></tr>
+<tr><td>Multi-Region</td><td>跨区域冗余，适合灾难恢复和区域级故障。</td><td>Route 53 failover、S3 CRR、Global Accelerator</td></tr>
+<tr><td>Active/Passive</td><td>主站点活跃，备用站点冷/温待命。</td><td>Route 53 health checks + failover</td></tr>
+<tr><td>Active/Active</td><td>多个站点同时服务请求，流量分发和状态管理更复杂。</td><td>全球业务、高可用分发</td></tr>
+</tbody></table></div>
+<p><b>一条核心原则：</b>如果实例、接口、数据库或前端节点是有状态且不能无缝替换，就不要“只靠某个单独节点的副本”来解决 HA；要把状态外置、持久化，并在健康检查和路由层做切换。</p>
+<div class="callout green"><b>优先顺序：</b>1）把状态外置；2）做多 AZ；3）做健康检查；4）配置自动扩容；5）再考虑跨区或跨区域切换。</div>
+</section>
+
+<section id="multi-account">
+<h2>五、多账号与治理边界</h2>
+<p>大多数企业不是“一个账号承载所有业务”，而是“<b>管理账号 + 安全账号 + 生产/开发/共享服务账号</b>”的组织结构。这样做的目的，是让网络、权限、配置和账单治理互不污染。</p>
+<div class="diagram">
+ <div class="node"><b>Management</b><br><small>统一治理</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Security</b><br><small>审计 / IAM / CSPM</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Dev / Test / Prod</b><br><small>环境隔离</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Shared Services</b><br><small>网络 / CI / 监控</small></div>
+</div>
+<ul>
+<li><b>组织层级：</b>Root → OU → Account 的结构有助于统一附加策略、环境隔离和账单控制。</li>
+<li><b>权限边界：</b>在多账号环境中，SCP / IAM / 资源策略共同决定“谁在什么账号下能做什么”。</li>
+<li><b>治理能力：</b>Control Tower、Organizations、Config、CloudTrail 让治理变成平台能力，而不是手工操作。</li>
+<li><b>例子：</b>生产账号不允许直接手工创建资源，开发环境不能访问生产日志，安全账号集中接收审计与检测告警。</li>
+</ul>
+<div class="callout"><b>典型结论：</b>只要题目给出“多个环境、多个账号、共享网络、集中审计”，优先联想到多账号架构与组织治理，而不是把所有资源塞进一个账户。</div>
+</section>
+
+<section id="cost">
+<h2>六、成本优化原则</h2>
+<p>在 AWS 上，架构题经常出现“保住 SLA，且更便宜”的方案选择。高分答案通常遵循“先对齐需求，再做成本抑制”。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>优化方向</th><th>典型方法</th><th>适用场景</th></tr></thead>
+<tbody>
+<tr><td>Right-size</td><td>按流量与峰值匹配实例大小</td><td>长时间低负载应用</td></tr>
+<tr><td>按使用付费</td><td>On-Demand / Serverless / Spot</td><td>波峰波谷、批处理、非关键任务</td></tr>
+<tr><td>缓存与削峰</td><td>CloudFront / ElastiCache / S3 Lifecycle</td><td>高并发读取、静态内容与热点数据</td></tr>
+<tr><td>降低冗余</td><td>按业务分层决定是否需要多 AZ / 多 Region</td><td>非核心系统、低频任务</td></tr>
+<tr><td>自动化治理</td><td>Budget、Cost Explorer、Tagging、Lifecycle Rules</td><td>企业环境与持续运营</td></tr>
+</tbody></table></div>
+<p>常见错误：以为“更高可用就一定是更强的设计”，忽略了“业务真正需要的是 99.95% 还是 99.99%”。对于非关键业务，Pilot Light 或单区方案通常比 Active-Active 更合理。不要为了“架构炫酷”牺牲成本。</p>
+</section>
+
+<section id="scenarios">
+<h2>七、场景题解析</h2>
+<div class="quiz">
+ <h3>场景一：政府部门外部服务必须在 30 分钟内恢复</h3>
+ <p>某网站对外服务，要求关键服务在区域级故障中能在 30 分钟内切换到备用区域，且不要求两地同时处理全部流量。</p>
+ <p><b>正确方向：</b>优先采用 <b>Warm Standby 或 Pilot Light</b>，把关键数据库和核心应用按备份/复制方案准备在备用区域，并用健康检查 + Route 53 failover 进行切换。</p>
+ <p><b>分析思路：</b>要求“恢复较快但不需要全量活跃双活”，因此高成本的 Active-Active 不是第一选择。</p>
+ <p><b>排除：</b>只备份但不设计切换流程；或者直接做全双活，成本远高于需求。</p>
+</div>
+<div class="quiz">
+ <h3>场景二：电商平台在促销峰值时需要弹性扩容并控制成本</h3>
+ <p>流量峰值突然放大，尖峰时段资源需求很高，但正常时段很低。</p>
+ <p><b>正确方向：</b>采用 Auto Scaling + CloudFront + 弹性缓存 + 服务器端按量资源，并在非关键组件使用 Spot 或更经济的实例类型。</p>
+ <p><b>分析思路：</b>这是典型的“成本优化 + Performance Efficiency”优先题，目标是把固定成本压到最低，同时保住尖峰能力。</p>
+ <p><b>排除：</b>一贯保持超大实例规模，或者完全采用单一大机型，会浪费成本。</p>
+</div>
+<div class="quiz">
+ <h3>场景三：企业有生产、开发和共享服务三个环境</h3>
+ <p>各环境之间必须能隔离权限、账单和审计流，且不希望管理员在开发账号中直接访问生产凭证。</p>
+ <p><b>正确方向：</b>设计为 <b>多账号组织结构</b>：管理账号、共享服务账号、安全账号、开发/测试/生产账号分层，并通过 SCP、IAM role 和 Control Tower 进行治理。</p>
+ <p><b>分析思路：</b>题干对“隔离”和“集中治理”要求明显，单账号方案会导致权限混乱和审计困难。</p>
+ <p><b>排除：</b>直接把所有资源放一个账号，或者仅靠 IAM 用户管理隔离，无法满足企业治理要求。</p>
+</div>
+<div class="quiz">
+ <h3>场景四：银行类应用要求 99.99% 可用，但不需要把所有地区都同时承载流量</h3>
+ <p>业务非常关键，要求高可用且对恢复时间非常敏感，但预算有限，不能无限扩容。</p>
+ <p><b>正确方向：</b>在主区域做 Multi-AZ + 自动恢复，备用区域准备热/冷切换环境，再通过健康检查与 DNS failover 实现最短切换。</p>
+ <p><b>分析思路：</b>高可用不是必须双活；关键是“对关键业务按服务分级做最小可接受恢复方式”，同时保持成本可控。</p>
+ <p><b>排除：</b>一味追求全量立刻双活，导致资源浪费和复杂度激增。</p>
+</div>
+<div class="quiz">
+ <h3>场景五：企业正在推行 Well-Architected Review</h3>
+ <p>团队发现问题集中在“配置漂移、审计缺失、日志不集中、没有自动化修复手段”。</p>
+ <p><b>正确方向：</b>优化 Operational Excellence 与 Security：自动化部署、统一指标、Config 检测、CloudTrail 审计和统一 IAM/Roles。</p>
+ <p><b>分析思路：</b>这类题的核心是“架构评审的失分项”，通常不是增加某个高级服务，而是把治理和自动化落实好。</p>
+ <p><b>排除：</b>只购买更强的硬件或大幅扩容，无法解决治理漂移问题。</p>
+</div>
+</section>
+
+<section id="quick">
+<h2>八、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>恢复时间短、跨区域切换</td><td>DR / Warm Standby / Route 53 failover</td><td>不等于必须双活</td></tr>
+<tr><td>故障后 30 分钟恢复</td><td>Pilot Light / Warm Standby</td><td>未必需要 Active-Active</td></tr>
+<tr><td>多环境、隔离账号、审计</td><td>Organizations / Control Tower / Multi-Account</td><td>要区分账号隔离与 IAM 策略</td></tr>
+<tr><td>爆发式流量、预算有限</td><td>Auto Scaling / Spot / 性能缓存</td><td>不要一味追求固定超大实例</td></tr>
+<tr><td>业务复杂且高可用</td><td>多 AZ / 自动修复 / 健康检查</td><td>不能只看“更快”忽略状态管理和切换</td></tr>
+<tr><td>架构评审中问题集中在自动化与治理</td><td>Well-Architected pillars</td><td>不是单一服务题，而是架构治理题</td></tr>
+<tr><td>日志、审计、身份和加密要求</td><td>Security pillar</td><td>成本优化不能牺牲最小权限和审计能力</td></tr>
+<tr><td>弹性扩容和低成本</td><td>Right-size + 自动伸缩 + 负载均衡 + 缓存</td><td>最省钱方案往往不是“永远保留峰值资源”</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>九、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 16</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>架构决策：</b>先看需求，再选可用性、成本和治理的平衡方案。</span></li>
+<li><input type="checkbox"><span><b>RTO：</b>恢复时间目标，决定是否需要更快切换和更高冗余。</span></li>
+<li><input type="checkbox"><span><b>RPO：</b>恢复点目标，决定复制频率和备份策略。</span></li>
+<li><input type="checkbox"><span><b>Well-Architected：</b>稳定、可审计、可扩展、可运维、可省钱。</span></li>
+<li><input type="checkbox"><span><b>Pilot Light：</b>最少核心能力保活，恢复时快速拉起其余功能。</span></li>
+<li><input type="checkbox"><span><b>Warm Standby：</b>备用环境持续运行一部分服务，适合中等恢复要求。</span></li>
+<li><input type="checkbox"><span><b>Active-Active：</b>双活成本最高，适合严格 SLA 和关键业务。</span></li>
+<li><input type="checkbox"><span><b>Multi-AZ：</b>同区域提升可用性，不等于跨区域灾备。</span></li>
+<li><input type="checkbox"><span><b>Multi-Region：</b>跨区域 DR / 故障转移的基础。</span></li>
+<li><input type="checkbox"><span><b>Failover：</b>健康检查 + DNS / 路由切换 + 自动恢复。</span></li>
+<li><input type="checkbox"><span><b>多账号：</b>环境、帐单、权限和审计更容易治理。</span></li>
+<li><input type="checkbox"><span><b>控制面与数据面：</b>治理能力不能靠“单一账号”隐藏复杂度。</span></li>
+<li><input type="checkbox"><span><b>最小权限：</b>架构中安全优先级高于“所有人都能操作”。</span></li>
+<li><input type="checkbox"><span><b>成本优化：</b>右配实例、缓存、Spot、按用量和分层设计。</span></li>
+<li><input type="checkbox"><span><b>架构不是炫技：</b>需求决定最优方案，不是“最先进”才是正确答案。</span></li>
+<li><input type="checkbox"><span><b>最终判断：</b>先看恢复要求，再看成本和治理平衡，最后才选择服务。</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十、快速自测</h2>
+<p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz">
+ <b>1. 某业务要求在区域级故障后 30 分钟恢复核心功能，并接受备用站点仅保留关键服务。最合理的设计是什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',true)">A. Pilot Light / Warm Standby</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">B. 全量双活</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. 只做单区域备份</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. 缩小所有实例并停用自动伸缩</button>
+ <div class="answer" id="q1"><b>正确答案：A。</b>在允许中等恢复时间时，Pilot Light 或 Warm Standby 更符合成本与恢复目标平衡。</div>
+</div>
+<div class="quiz">
+ <b>2. 生产环境必须保证高可用，但预算有限，不希望所有业务都同时双活。最合理的思路是什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 所有服务都配置为双活</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. 按关键业务分级：核心服务 Multi-AZ + 备用区域切换</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 减少自动扩容并一直保留超大实例</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. 把所有数据都放到一台实例上</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>高可用并不一定意味着全业务双活；关键是根据 RTO/RPO、业务重要性、成本做分级设计。</div>
+</div>
+<div class="quiz">
+ <b>3. 企业发现多环境间权限和账单混杂，应该优先考虑什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',true)">A. 多账号治理和分层组织</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">B. 增加一个更大账号并放入所有资源</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. 跳过 IAM，只使用共享密钥</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. 直接将所有业务压到单一 VPC</button>
+ <div class="answer" id="q3"><b>正确答案：A。</b>多账号治理是隔离、审计、权限和账单管理的关键设计模式。</div>
+</div>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/wellarchitected/latest/framework/wellarchitected-framework.html" target="_blank" rel="noopener">AWS Well-Architected Framework</a></li>
+<li><a href="https://docs.aws.amazon.com/whitepapers/latest/backup-recovery-strategies-on-aws/backup-recovery-strategies-on-aws.html" target="_blank" rel="noopener">Backup &amp; Recovery Strategies on AWS</a></li>
+<li><a href="https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html" target="_blank" rel="noopener">AWS Organizations</a></li>
+<li><a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html" target="_blank" rel="noopener">Route 53 health checks and failover</a></li>
+<li><a href="https://docs.aws.amazon.com/architecture-center/latest/reliability-architecture/" target="_blank" rel="noopener">AWS Well-Architected Reliability Pillar</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>架构题经常不是单选“哪个服务”，而是“哪种设计模式更能满足 RTO/RPO、SLA 和成本限制”。把恢复目标和成本约束放在首位，答案通常会更稳。</div>
+</section>
+</main>
+</div>
+<footer class="container">AWS SAP-C02 架构设计模式速记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const el=document.getElementById(id);
+ el.style.display='block';
+ el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
+}
+</script>
+</body>
+</html>
