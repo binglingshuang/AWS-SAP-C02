@@ -1,6 +1,6 @@
 # AWS SAP-C02 备考站 · 项目进度与续写指南
 
-> 快照时间：2026-11-03
+> 快照时间：2026-11-06
 > 当前 HEAD：`29642d4 改为使用Trae版本`
 > 扫描范围：根目录与 12 个分类目录下的 HTML、`input/exam.csv`；`old/` 仅登记为历史归档，不读取其内容
 > 用途：中断后直接从第 3、4、9 节继续，不需要重新盘点仓库。
@@ -13,11 +13,11 @@
 |---|---|
 | 根导航页 | 已完成；12 个分类均已挂载并标注进度，`architecture-patterns.html` 已启用并接入根页 |
 | 分类入口页 | 12 个已完成并全部挂到根页 |
-| 服务正文 | **76 篇；另有综合专题 1 篇；去重规划合计 77 篇＝ 100%** |
+| 服务正文 | **77 篇；另有综合专题 1 篇；去重规划合计 78 篇＝ 100%** |
 | 未创建正文 | **0 篇** |
 | 正文内场景题 | 各正文内嵌手写场景题 |
 
-**一句话：76 篇服务正文和 1 篇综合专题均已完成，全站正文缺失为 0。**
+**一句话：77 篇服务正文和 1 篇综合专题均已完成，全站正文缺失为 0。**
 
 ---
 
@@ -90,6 +90,7 @@
 | `compute/elastic-beanstalk.html` | 计算 | — | — | 6 | 18 | 有 |
 | `compute/batch.html` | 计算 | — | — | 6 | 18 | 有 |
 | `compute/outposts-wavelength.html` | 计算 | — | — | 6 | 18 | 有 |
+| `compute/workspaces.html` | 计算 | — | — | 6 | 16 | 有 |
 | `devops/codepipeline.html` | DevOps | — | — | 6 | 18 | 有 |
 | `devops/codedeploy.html` | DevOps | — | — | 6 | 18 | 有 |
 | `devops/codecommit-build.html` | DevOps | — | — | 6 | 18 | 有 |
@@ -109,7 +110,7 @@
 | 分类 | 入口页 | 已完成 | 规划 | 缺失 | 完成率 | 优先级 |
 |---|---|---:|---:|---:|---:|---|
 | 网络与内容分发 | `networking/index.html` | 9 | 9 | 0 | 100% | P0 |
-| 计算 | `compute/index.html` | 9 | 9 | 0 | 100% | P0 |
+| 计算 | `compute/index.html` | 10 | 10 | 0 | 100% | P0 |
 | 存储 | `storage/index.html` | 7 | 7 | 0 | 100% | P0 |
 | 数据库 | `database/index.html` | 6 | 6 | 0 | 100% | P0 |
 | 安全、身份与合规 | `security/index.html` | 11 | 11 | 0 | 100% | P0 |
@@ -121,7 +122,7 @@
 | 机器学习与 AI | `ml/index.html` | 2 | 2 | 0 | 100% | P2 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 1 | 1 | 0 | 100% | P3 |
 | 综合专题 | 根页直达 | 1 | 1 | 0 | 100% | P1 |
-| **合计** |  | **77** | **77** | **0** | **100%** |  |
+| **合计** |  | **78** | **78** | **0** | **100%** |  |
 
 > 混合云与边缘分类的 3 个核心方向均已覆盖：Outposts、Local Zones、Wavelength 共用 `compute/outposts-wavelength.html`；IoT 由 `hybrid-edge/iot.html` 覆盖。分类表及全站合计按唯一正文去重，因此混合云与边缘单列 1 篇新增正文。
 
@@ -145,7 +146,7 @@
 
 备注：根页服务数已校准为 9 项，与分类页一致。
 
-### 3.2 计算（9 / 9）
+### 3.2 计算（10 / 10）
 
 - [x] `compute/ec2.html`
 - [x] `compute/auto-scaling.html` — 完成日期：2026-11-02；字数约 13,000；场景题 6 道；覆盖四种扩展策略、冷却期、生命周期钩子、混合实例策略、终止保护、暖池、健康检查
@@ -156,6 +157,7 @@
 - [x] P1 `compute/elastic-beanstalk.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Web/Worker 环境、All at once / Rolling / Immutable / Traffic Splitting、蓝绿部署、`.ebextensions` 与数据生命周期
 - [x] P2 `compute/batch.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Job Definition / Queue / Compute Environment、EC2/Fargate/Spot、数组作业、依赖、重试与幂等
 - [x] P2 `compute/outposts-wavelength.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；作为唯一正文覆盖 Outposts、Local Zones、Wavelength 的部署位置、网络边界、服务支持与场景选型；避免与 `hybrid-edge` 重复编写
+- [x] `compute/workspaces.html` — 完成日期：2026-11-06；场景题 6 道；速记卡 16 条；覆盖 Personal / Pools、目录与网络、数据保护、成本及相邻 WorkSpaces 产品选型
 
 ### 3.3 存储（7 / 7）
 
@@ -422,7 +424,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 ### 8.6 已处理：首页统计与事实不符
 
-- 进度口径：76 篇服务正文 + 1 篇综合专题，共 77 篇；正文缺失为 0。
+- 进度口径：77 篇服务正文 + 1 篇综合专题，共 78 篇；正文缺失为 0。
 - `hybrid-edge` 已挂载，根页与分类入口共 12 类；`networking` 服务数已统一为 9 项。
 - 早期约 148 道手写场景题的统计仅覆盖部分页面，不能代表全站总数。
 - 根页及 12 个分类入口的断链检查于 2026-11-03 核验为 0 条。
@@ -464,7 +466,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 ## 10. 历史归档说明
 
-`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。已完成的 76 篇服务正文沿用现有页面规范；综合专题另计 1 篇。
+`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。已完成的 77 篇服务正文沿用现有页面规范；综合专题另计 1 篇。
 
 是否保留、删除或从 Pages 构建中排除，见第 8.7 节。
 
@@ -496,5 +498,6 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-03 | 完成混合云与边缘分类：新增 IoT Core/Greengrass/Device Shadow 正文，复用计算模块的 Outposts/Local Zones/Wavelength 正文；3 个方向全部开放并将分类页挂至根页；服务正文完成 75 篇，综合专题待完成 | `hybrid-edge/iot.html`、`hybrid-edge/index.html`、`index.html`、`PROGRESS.md` | 完成 `architecture-patterns.html` |
 | 2026-11-03 | 完成 `architecture-patterns.html`，全站 75 篇服务正文及 1 篇综合专题全部完成（76 / 76）；校准进度口径、断链检查结果与工作区状态说明 | `architecture-patterns.html`、`PROGRESS.md` | 决定 529 题的分类标签与题库页面形态；决策 `old/`、`input/` 是否随 Pages 发布 |
 | 2026-11-05 | 新增 `application-integration/ses.html`：覆盖 SMTP/API、Sandbox、身份/DKIM、STARTTLS、配置集事件、Firehose/S3/Athena 与邮件信誉；应用集成分类更新至 7 / 7，全站更新为 76 篇服务正文 + 1 篇综合专题 | `application-integration/ses.html`、`application-integration/index.html`、`index.html`、`PROGRESS.md` | 继续全站一致性校准 |
+| 2026-11-06 | 新增 `compute/workspaces.html`：覆盖 Personal / Pools、目录与网络、数据保护、成本及相邻产品选型；计算分类更新至 10 / 10，全站正文统计更新为 77 篇服务正文 + 1 篇综合专题 | `compute/workspaces.html`、`compute/index.html`、`index.html`、`PROGRESS.md` | 继续全站一致性校准 |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。

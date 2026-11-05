@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Amazon WorkSpaces 考点速查：Personal 与 Pools、目录集成、协议、安全、计费与 VDI 选型。">
+<title>AWS SAP-C02｜Amazon WorkSpaces 考试速查手册</title>
+<style>
+:root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;--green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;--red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}a{color:var(--primary);text-decoration:none}a:hover{text-decoration:underline}.container{width:min(1120px,calc(100% - 32px));margin:auto}header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:48px 0 38px}header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}header p{color:#dbeafe;max-width:780px;margin:0}.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.layout{display:grid;grid-template-columns:235px minmax(0,1fr);gap:24px;padding:28px 0 60px}nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}nav strong{display:block;margin-bottom:10px}nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}main{min-width:0}section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}h3{font-size:19px;margin:24px 0 10px}p{margin:9px 0}ul,ol{padding-left:23px}li{margin:5px 0}.lead{font-size:17px;color:#334155}.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}.callout.green{background:var(--green-soft);border-color:var(--green)}.callout.orange{background:var(--orange-soft);border-color:var(--orange)}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f8fafc;color:#334155;font-weight:700}tr:last-child td{border-bottom:0}.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}.node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:125px}.arrow{color:#64748b;font-weight:700}.checklist{list-style:none;padding:0}.checklist li{border-bottom:1px solid #eef2f7;padding:8px 0}.checklist label{display:flex;gap:10px;align-items:flex-start}.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}button.secondary{background:#e2e8f0;color:#334155}.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}.quiz button{margin:5px 6px 5px 0}.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}.small{font-size:13px;color:var(--muted)}footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}@media print{body{background:#fff;font-size:12px}header{background:#fff;color:#111;padding:20px 0}header p,.eyebrow{color:#444!important}.pill{border:1px solid #aaa;color:#333}.layout{display:block;padding:10px 0}nav,.toolbar{display:none!important}section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}a{color:#111;text-decoration:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>Amazon WorkSpaces<br>托管虚拟桌面服务</h1>
+  <p>WorkSpaces 将云端桌面交付给用户，减少终端设备和桌面基础设施的管理负担。考试选型关键是判断用户是否需要持久个人桌面、临时池化桌面，还是只需应用或浏览器交付。</p>
+  <div class="header-meta">
+   <span class="pill">SAP-C02</span><span class="pill">计算 / 终端用户计算</span>
+   <span class="pill">关键词：Personal · Pools · AD · 持久化 · 计费</span>
+  </div>
+  <div class="toolbar">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回计算分类</button>
+  </div>
+ </div>
+</header>
+<div class="container layout">
+<nav aria-label="页面目录">
+ <strong>页面目录</strong>
+ <a href="#overview">一、服务定位与选型</a>
+ <a href="#models">二、Personal 与 Pools</a>
+ <a href="#directory">三、目录与网络</a>
+ <a href="#operations">四、运维、安全与成本</a>
+ <a href="#comparison">五、相邻服务对比</a>
+ <a href="#scenarios">六、场景题解析</a>
+ <a href="#memory">七、考前速记卡</a>
+ <a href="#quiz">八、快速自测</a>
+</nav>
+<main>
+<section id="overview">
+<h2>一、服务定位与选型</h2>
+<p class="lead">Amazon WorkSpaces 是托管的桌面即服务（DaaS）方案。用户从受支持的客户端连接到云端桌面；考试通常考“持久桌面还是临时桌面”，其次才是目录、网络、安全和成本。</p>
+<div class="diagram">
+ <div class="node"><b>用户设备</b><br><small>WorkSpaces 客户端 / Web</small></div><span class="arrow">→</span>
+ <div class="node"><b>目录与身份</b><br><small>用户、组、认证</small></div><span class="arrow">→</span>
+ <div class="node"><b>WorkSpaces</b><br><small>个人桌面 / 桌面池</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>需求关键词</th><th>优先考虑</th><th>判断依据</th></tr></thead>
+<tbody>
+<tr><td>每位员工固定桌面、桌面状态与数据需要保留</td><td>WorkSpaces Personal</td><td>为用户配置个人 WorkSpace，适合持久桌面。</td></tr>
+<tr><td>轮班、临时员工、培训或共享终端，需要快速弹性提供桌面</td><td>WorkSpaces Pools</td><td>从共享容量池分配非持久会话，降低闲置个人桌面成本。</td></tr>
+<tr><td>只交付特定桌面应用，而非完整桌面</td><td>WorkSpaces Applications</td><td>应用流式交付更贴合单个或一组应用的需求。</td></tr>
+<tr><td>仅需安全访问 SaaS / 内部 Web 应用</td><td>WorkSpaces Secure Browser</td><td>提供受控浏览器会话，不等同于完整虚拟桌面。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>答题顺序：</b>先看是否需要持久用户桌面；再看是否要共享池化、应用流或仅浏览器；最后核对身份目录、连接方式、数据保护和计费模式。</div>
+</section>
+
+<section id="models">
+<h2>二、WorkSpaces Personal 与 Pools</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>维度</th><th>Personal</th><th>Pools</th></tr></thead>
+<tbody>
+<tr><td>桌面模型</td><td>分配给个人用户的持久桌面。</td><td>从桌面池取得会话的非持久桌面模型。</td></tr>
+<tr><td>适用用户</td><td>固定员工、需要个性化桌面或持续保留工作环境的用户。</td><td>轮班人员、季节性员工、培训或短期访问者。</td></tr>
+<tr><td>会话结束后</td><td>桌面与配置可持续供同一用户使用；仍应单独设计数据保护。</td><td>不要假设会话中的本地桌面状态自动成为用户持久数据；将用户数据和配置放在适当的持久化存储中。</td></tr>
+<tr><td>容量与成本</td><td>按用户管理桌面，长时间闲置时需评估 AutoStop 等模式。</td><td>按池容量和并发需求规划，适合使用率有波动的群体。</td></tr>
+<tr><td>常见陷阱</td><td>AutoStop 是计费/运行模式，不会把 Personal 变成 Pools。</td><td>Pools 不是“每人一台长期保留的桌面”；应验证应用与用户数据持久化方案。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>一句话记忆：</b>Personal = 一人一桌面、偏持久；Pools = 多用户共享容量、偏弹性非持久。</div>
+<h3>连接协议</h3>
+<p>WorkSpaces 支持的流式协议包括 PCoIP 与 WorkSpaces Streaming Protocol（WSP）；可用协议、客户端和功能受 WorkSpaces 类型及部署配置影响。场景要求特定客户端能力、外设或网络体验时，应核对该部署支持的协议，不要把协议选择与 Personal / Pools 的持久性模型混为一谈。</p>
+</section>
+
+<section id="directory">
+<h2>三、目录与网络</h2>
+<h3>身份和目录集成</h3>
+<ul>
+<li>WorkSpaces 需要目录来管理用户身份和桌面关联。根据组织现状选择 AWS Directory Service 的相应方案，例如 AWS Managed Microsoft AD、AD Connector 或 Simple AD；不是所有目录选项都具备相同的企业 AD 能力。</li>
+<li>已有本地 Microsoft AD 且希望保留现有凭证和目录管理时，评估 AD Connector 与本地目录之间的网络连通性、DNS、站点及防火墙要求。</li>
+<li>需要 AWS 托管的 Microsoft AD 功能或复杂域集成时，优先评估 AWS Managed Microsoft AD；具体支持矩阵依 WorkSpaces 部署类型和区域而异。</li>
+<li>目录高可用、用户认证可达性与桌面本身的可用性是相关但不同的设计点；不要只部署单一依赖后就假设整体具备跨 AZ / 跨区域故障转移。</li>
+</ul>
+<h3>VPC 与访问路径</h3>
+<ul>
+<li>规划 WorkSpaces 所在 VPC、子网、路由、DNS 与安全组，并验证桌面到目录、企业应用、文件服务及更新源的访问。</li>
+<li>私有子网中的桌面若需访问互联网，必须通过合适的出口路径（例如 NAT）；不要将“桌面可由客户端连接”误认为“桌面自动拥有互联网出口”。</li>
+<li>客户端到 WorkSpaces 服务的连接要求与桌面 ENI 的 VPC 出站访问是两个方向，应分别检查网络和防火墙策略。</li>
+<li>使用 VPN / Direct Connect 访问私有企业资源时，验证 DNS 解析、路由传播、返回路径和安全组规则。</li>
+</ul>
+<div class="callout orange">考试陷阱：目录连接失败、桌面无法访问业务子网、客户端无法连接是不同故障域。分别检查身份 / DNS、VPC 路由与安全组、客户端网络及服务端点要求。</div>
+</section>
+
+<section id="operations">
+<h2>四、运维、安全与成本</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>考点</th><th>应掌握的判断</th><th>常见误区</th></tr></thead>
+<tbody>
+<tr><td>AlwaysOn / AutoStop</td><td>AlwaysOn 适合需要随时可用、持续运行的桌面；AutoStop 适合有明显空闲时段的用户，通过停止闲置资源优化成本。</td><td>AutoStop 可能带来再次启动等待时间；需结合使用时长、启动体验及适用计费规则比较。</td></tr>
+<tr><td>用户数据</td><td>区分操作系统根卷与用户数据卷；根据目标选择持久卷、共享文件服务或组织的用户配置文件方案。</td><td>不要只依赖桌面实例存活来保证业务数据可恢复。</td></tr>
+<tr><td>重建与恢复</td><td>重建可将桌面恢复到其初始映像状态，并按服务机制恢复用户卷；执行前确认用户数据保护和恢复点。</td><td>重建不是任意的操作系统升级，也不应被当作备份策略的替代品。</td></tr>
+<tr><td>加密</td><td>依据合规要求使用受支持的静态加密选项与 AWS KMS 密钥策略；在创建时规划加密和密钥授权。</td><td>不要假设创建后可以无影响地切换加密状态或更换密钥。</td></tr>
+<tr><td>许可与自带许可</td><td>Windows 桌面许可需满足 AWS 与 Microsoft 的资格和条款，并核对区域、映像和部署限制。</td><td>“已有 Windows 许可”不自动等于可直接用于任意 WorkSpaces 部署。</td></tr>
+<tr><td>灾难恢复</td><td>根据 RTO / RPO 规划数据备份、目录恢复和目标区域的桌面重新配置；逐项确认相关功能可用性。</td><td>不要将单个 WorkSpace 的可用性等同于跨区域自动故障转移。</td></tr>
+</tbody></table></div>
+<p class="small">服务功能、协议、映像和计费选项可能随区域及产品更新而变化；实施前以 AWS 官方文档和定价页为准。</p>
+</section>
+
+<section id="comparison">
+<h2>五、相邻服务对比</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>服务</th><th>交付内容</th><th>优先选择场景</th></tr></thead>
+<tbody>
+<tr><td>WorkSpaces Personal</td><td>个人持久桌面</td><td>用户需要长期保留的完整桌面环境。</td></tr>
+<tr><td>WorkSpaces Pools</td><td>池化的非持久桌面会话</td><td>多用户、并发波动、用户桌面状态可重置的场景。</td></tr>
+<tr><td>WorkSpaces Applications（前身 AppStream 2.0）</td><td>应用流式交付</td><td>仅需发布桌面应用，不需要完整个人桌面。</td></tr>
+<tr><td>WorkSpaces Secure Browser</td><td>托管浏览器会话</td><td>安全访问 Web 应用、降低终端数据暴露。</td></tr>
+<tr><td>Amazon WorkSpaces Core</td><td>面向 VDI 方案的 AWS 基础设施能力</td><td>组织需要与合作伙伴 VDI 软件协作，而不是直接选择标准 WorkSpaces 桌面交付。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>决策口诀：</b>完整且持久的桌面选 Personal；弹性共享桌面选 Pools；只需应用选 Applications；只需 Web 访问选 Secure Browser。先匹配交付形态，再细化协议和架构。</div>
+</section>
+
+<section id="scenarios">
+<h2>六、场景题解析</h2>
+<div class="quiz">
+ <p><b>场景 1：</b>固定员工每天使用同一桌面，需要保留个人设置和工作环境。优先选择？</p>
+ <button onclick="showAnswer('s1')">查看解析</button>
+ <div class="answer" id="s1-answer">WorkSpaces Personal。它面向分配给个人的持久桌面；同时仍需设计用户数据备份与恢复。</div>
+</div>
+<div class="quiz">
+ <p><b>场景 2：</b>呼叫中心有大量轮班人员，但同时在线人数远少于总人数，桌面会话允许重置。优先选择？</p>
+ <button onclick="showAnswer('s2')">查看解析</button>
+ <div class="answer" id="s2-answer">评估 WorkSpaces Pools。池化容量适合并发用户少于总用户数、桌面不需长期保留的场景；持久用户文件需放在合适的数据层。</div>
+</div>
+<div class="quiz">
+ <p><b>场景 3：</b>公司已有本地 AD，希望用户继续使用现有企业身份访问 WorkSpaces。重点检查哪些条件？</p>
+ <button onclick="showAnswer('s3')">查看解析</button>
+ <div class="answer" id="s3-answer">目录集成方案与本地 AD 的网络连通性，包括 DNS、路由、防火墙以及目录服务部署要求；按企业目录功能需求评估 AD Connector 或 AWS Managed Microsoft AD。</div>
+</div>
+<div class="quiz">
+ <p><b>场景 4：</b>员工每天只在工作时段使用桌面，企业希望降低非工作时段的运行成本。应比较什么？</p>
+ <button onclick="showAnswer('s4')">查看解析</button>
+ <div class="answer" id="s4-answer">评估 AutoStop 与 AlwaysOn 的使用模式、启动延迟和对应计费规则。明显的空闲时段通常使 AutoStop 值得评估，但不能忽略恢复桌面所需时间。</div>
+</div>
+<div class="quiz">
+ <p><b>场景 5：</b>承包商只需在受控环境中使用企业 SaaS，无需安装桌面应用或获得完整操作系统桌面。优先看什么？</p>
+ <button onclick="showAnswer('s5')">查看解析</button>
+ <div class="answer" id="s5-answer">WorkSpaces Secure Browser。需求是安全浏览器会话，而不是完整虚拟桌面。</div>
+</div>
+<div class="quiz">
+ <p><b>场景 6：</b>桌面位于私有子网，用户能登录桌面，但桌面无法下载更新。优先排查什么？</p>
+ <button onclick="showAnswer('s6')">查看解析</button>
+ <div class="answer" id="s6-answer">检查桌面子网的出站路由和互联网出口（例如 NAT）、DNS 与安全组。客户端能连接 WorkSpaces 并不代表桌面本身拥有互联网出口。</div>
+</div>
+</section>
+
+<section id="memory">
+<h2>七、考前速记卡</h2>
+<p>复习进度：<span id="progress-label">0 / 16</span></p>
+<div class="progress" role="progressbar" aria-label="复习进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-fill"></span></div>
+<ul class="checklist" id="memory-list">
+ <li><label><input type="checkbox">Personal：个人分配、持久桌面；Pools：池化共享、非持久会话。</label></li>
+ <li><label><input type="checkbox">先按“完整桌面 / 应用流 / 安全浏览器”确定产品形态。</label></li>
+ <li><label><input type="checkbox">Personal 的 AlwaysOn 与 AutoStop 是运行及计费模式，不改变桌面产品模型。</label></li>
+ <li><label><input type="checkbox">AutoStop 可优化闲置时间成本，但要考虑桌面恢复等待。</label></li>
+ <li><label><input type="checkbox">用户身份由目录集成支撑；按本地 AD 和企业功能需求选择目录方案。</label></li>
+ <li><label><input type="checkbox">AD 集成要验证 DNS、路由、目录可达性和防火墙规则。</label></li>
+ <li><label><input type="checkbox">客户端连接路径与桌面 VPC 出站路径是两个不同问题。</label></li>
+ <li><label><input type="checkbox">私有子网需要合适的出站网络路径才能访问外部更新源。</label></li>
+ <li><label><input type="checkbox">区分根卷和用户数据卷，明确持久化、备份与恢复方案。</label></li>
+ <li><label><input type="checkbox">重建桌面前确认服务恢复行为、用户数据恢复点和业务影响。</label></li>
+ <li><label><input type="checkbox">在创建时规划静态加密和 KMS 密钥授权。</label></li>
+ <li><label><input type="checkbox">Windows 自带许可需符合适用条款与部署资格。</label></li>
+ <li><label><input type="checkbox">WorkSpaces Applications 是应用交付，不等于个人持久桌面。</label></li>
+ <li><label><input type="checkbox">WorkSpaces Secure Browser 面向 Web 访问，不提供完整桌面环境。</label></li>
+ <li><label><input type="checkbox">不要假设单个桌面具备跨区域自动故障转移。</label></li>
+ <li><label><input type="checkbox">最终选型围绕持久性、并发模式、身份、数据、网络和计费目标。</label></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>八、快速自测</h2>
+<div class="quiz">
+ <p>1. 哪种 WorkSpaces 模式最适合需要为固定员工保留个人桌面状态的场景？</p>
+ <button onclick="showAnswer('q1')">A. Personal</button><button onclick="showAnswer('q1')">B. Pools</button><button onclick="showAnswer('q1')">C. Secure Browser</button>
+ <div class="answer" id="q1-answer">正确答案：A。Personal 面向个人分配的持久桌面。</div>
+</div>
+<div class="quiz">
+ <p>2. 用户只需使用受控浏览器访问 Web 应用，不需要完整桌面，优先选择？</p>
+ <button onclick="showAnswer('q2')">A. WorkSpaces Personal</button><button onclick="showAnswer('q2')">B. WorkSpaces Secure Browser</button><button onclick="showAnswer('q2')">C. WorkSpaces Pools</button>
+ <div class="answer" id="q2-answer">正确答案：B。Secure Browser 交付的是托管浏览器会话。</div>
+</div>
+<div class="quiz">
+ <p>3. 桌面在私有子网里无法访问外网更新源，首先应检查？</p>
+ <button onclick="showAnswer('q3')">A. 子网出站路由和 NAT 等出口</button><button onclick="showAnswer('q3')">B. 用户桌面是否为 Personal</button><button onclick="showAnswer('q3')">C. 更换客户端设备</button>
+ <div class="answer" id="q3-answer">正确答案：A。客户端连接成功并不能证明桌面子网具备外网出站能力。</div>
+</div>
+</section>
+</main>
+</div>
+<footer>AWS SAP-C02 备考笔记 · Amazon WorkSpaces</footer>
+<script>
+const progressFill=document.getElementById('progress-fill');
+const progressLabel=document.getElementById('progress-label');
+const progressBar=document.querySelector('[role="progressbar"]');
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memory-list input')];
+ const done=boxes.filter(x=>x.checked).length;
+ const pct=Math.round((done/boxes.length)*100);
+ progressFill.style.width=pct+'%';
+ progressLabel.textContent=done+' / '+boxes.length;
+ progressBar.setAttribute('aria-valuenow',String(pct));
+}
+document.querySelectorAll('#memory-list input').forEach(input=>input.addEventListener('change',updateProgress));
+updateProgress();
+function showAnswer(id){
+ const answer=document.getElementById(id+'-answer');
+ answer.style.display='block';
+}
+</script>
+</body>
+</html>
