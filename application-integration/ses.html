@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Amazon SES 考点速查：SMTP/API、Sandbox、身份验证、DKIM、配置集、事件追踪、退信投诉与邮件架构选型。">
+<title>AWS SAP-C02｜Amazon SES 考试速查手册</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;
+  --line:#e2e8f0;--primary:#2563eb;--primary-soft:#eff6ff;
+  --green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;
+  --red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px}
+header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe}
+header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:780px;margin:0}
+.header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px}
+nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto}
+nav strong{display:block;margin-bottom:10px}
+nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px}
+nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none}
+main{min-width:0}
+section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px}
+h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+h3{font-size:19px;margin:26px 0 10px}
+p{margin:9px 0}
+ul,ol{padding-left:23px}
+li{margin:5px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0}
+.callout.green{background:var(--green-soft);border-color:var(--green)}
+.callout.orange{background:var(--orange-soft);border-color:var(--orange)}
+.callout.red{background:var(--red-soft);border-color:var(--red)}
+.tag{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;background:var(--primary-soft);color:var(--primary);margin-right:6px}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc;color:#334155;font-weight:700}
+tr:last-child td{border-bottom:0}
+.table-wrap{overflow-x:auto}
+.diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;margin:14px 0}
+.diagram .node{padding:12px 15px;background:#fff;border:1px solid #bfdbfe;border-radius:9px;text-align:center;min-width:130px}
+.diagram .arrow{color:#64748b;font-weight:700;font-size:18px}
+.scenario{border:1px solid var(--line);border-radius:12px;padding:18px;margin:16px 0;background:#fafcff}
+.scenario-title{font-weight:700;font-size:15px;margin-bottom:10px;color:#1e3a5f}
+.analysis{background:var(--green-soft);border-left:3px solid var(--green);padding:10px 14px;border-radius:6px;margin:10px 0}
+.answer-box{background:var(--primary-soft);border-left:3px solid var(--primary);padding:10px 14px;border-radius:6px;margin:10px 0}
+.trap{background:var(--orange-soft);border-left:3px solid var(--orange);padding:10px 14px;border-radius:6px;margin:10px 0}
+.small{font-size:13px;color:var(--muted)}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0 14px}
+.progress span{display:block;height:100%;width:0;background:#16a34a;transition:width .2s}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #eef2f7;padding:9px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);width:17px;height:17px;flex:0 0 auto}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.quiz button{margin:5px 6px 5px 0}
+.answer{display:none;margin-top:10px;padding:10px 12px;background:var(--green-soft);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{
+ body{background:#fff;font-size:12px}
+ header{background:#fff;color:#111;padding:20px 0}
+ header p,.eyebrow{color:#444!important}
+ .pill{border:1px solid #aaa;color:#333}
+ .layout{display:block;padding:10px 0}
+ nav,.toolbar,.no-print{display:none!important}
+ section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px}
+ a{color:#111;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow"><a href="index.html" style="color:#bfdbfe">← 返回应用集成模块</a></div>
+  <h1>Amazon SES<br><span style="font-size:0.65em;font-weight:400;color:#93c5fd">托管电子邮件服务 — SAP-C02 核心考点</span></h1>
+  <p>用 Amazon Simple Email Service (SES) 发送事务型或营销邮件，也可处理入站邮件。考试重点是 SMTP 与 API 的选择、Sandbox/区域限制、发件身份与 DNS 认证、配置集事件追踪，以及退信投诉和可交付性治理。</p>
+  <div class="header-meta">
+   <span class="pill">🔥 高频考点</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">应用集成 / 邮件服务</span>
+   <span class="pill">SMTP · DKIM · Sandbox · Configuration Set</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('.checklist input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回应用集成分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav id="mainNav">
+ <strong>页面目录</strong>
+ <a href="#overview">一、服务定位与邮件链路</a>
+ <a href="#interfaces">二、SMTP 与 API 发送方式</a>
+ <a href="#sandbox">三、Sandbox、配额与区域</a>
+ <a href="#identity">四、身份验证与 DNS 认证</a>
+ <a href="#smtp">五、SMTP、TLS 与端口</a>
+ <a href="#deliverability">六、投递、退信与投诉</a>
+ <a href="#events">七、配置集与事件追踪</a>
+ <a href="#templates">八、模板邮件与入站邮件</a>
+ <a href="#security">九、安全、跨账号与合规</a>
+ <a href="#patterns">十、架构选型与常见陷阱</a>
+ <a href="#scenarios">十一、场景题解析</a>
+ <a href="#quick">十二、关键词速查</a>
+ <a href="#memory">十三、考前速记卡</a>
+ <a href="#quiz">十四、快速自测</a>
+ <a href="#references">官方资料</a>
+</nav>
+
+<main>
+<section id="overview">
+<h2>一、服务定位与邮件链路</h2>
+<p class="lead">SES 是托管的邮件发送服务，可替代自建 SMTP 服务器，负责接收发送请求并向收件人邮件系统投递。应用可经 SES SMTP 接口或 SES API 发信；SES 也支持以接收规则处理入站邮件。</p>
+<div class="diagram">
+ <div class="node"><b>应用 / 工作负载</b><br>SMTP 或 API</div><div class="arrow">→</div>
+ <div class="node"><b>Amazon SES</b><br>身份、发送与事件</div><div class="arrow">→</div>
+ <div class="node"><b>收件人邮件系统</b><br>送达 / 退信 / 投诉</div>
+</div>
+<ul>
+ <li>适合事务型邮件（验证码、订单通知）、营销邮件和应用通知；用模板及 API 可避免维护邮件服务器。</li>
+ <li>SES 负责邮件发送，不是消息队列或完整工作流。需要异步缓冲时，可在应用与 SES 之间组合 SQS / Lambda。</li>
+ <li>入站邮件是另一条链路：SES 接收规则集匹配邮件并执行 S3、SNS、Lambda 等动作；不要与出站 SMTP 配置混为一谈。</li>
+</ul>
+<div class="callout orange"><b>先看题目限制：</b>若题干要求兼容现有 SMTP 客户端，优先使用 SES SMTP 接口；若需要 SES 模板、细粒度 API 功能或结构化发送操作，通常选择 SES API/SDK。</div>
+</section>
+
+<section id="interfaces">
+<h2>二、SMTP 与 API 发送方式</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>方式</th><th>适合场景</th><th>关键考点</th></tr></thead>
+<tbody>
+<tr><td>SES SMTP 接口</td><td>现有邮件客户端、SMTP 库或邮件服务器迁移，需少改应用协议</td><td>使用 SES SMTP endpoint、区域专用 SMTP 凭证和 TLS；SMTP 凭证不是 AWS Access Key。</td></tr>
+<tr><td>SES API / SDK</td><td>新应用、程序化控制、SES 模板、丰富的请求参数与响应处理</td><td>通过 IAM 凭证签名调用 API；使用最小权限的执行角色，无需自行管理 SMTP 密码。</td></tr>
+<tr><td>SES 控制台</td><td>验证身份、请求生产访问、查看发送指标及配置服务</td><td>不是生产应用持续发信的替代接口。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>凭证辨析：</b>SMTP 用户名和密码需从 SES 为目标区域生成，不能直接拿 IAM 用户的 Access Key/Secret Access Key 当 SMTP 凭证。使用 SMTP 的程序仍需能通过 TLS 与 SES 通信。</div>
+</section>
+
+<section id="sandbox">
+<h2>三、Sandbox、配额与区域</h2>
+<ul>
+ <li>新账户在每个 AWS Region 都有独立的 Sandbox 状态。Sandbox 中可测试服务，但收件人通常也必须是已验证地址/域名（或 SES mailbox simulator），并受发送速率和每日配额限制。</li>
+ <li>正式向普通收件人发信，需为对应区域申请生产访问、移出 Sandbox；生产状态下，收件人通常不必逐个验证，但发件身份仍须验证。</li>
+ <li>发送配额和速率限制按区域管理；高容量场景应提前申请提升，并监控配额使用和送达信誉。</li>
+ <li>身份、SMTP 凭证和服务配置具有区域范围。多区域容灾时，需在备用区域重新验证身份、配置 DKIM/事件目标、申请生产访问并验证配额。</li>
+</ul>
+<div class="callout red"><b>常见误区：</b>在一个 Region 验证域名或退出 Sandbox，不代表其他 Region 自动完成。考试通常考“区域隔离”这一原则；具体限额会随账户与服务更新，以控制台和官方文档为准。</div>
+</section>
+
+<section id="identity">
+<h2>四、身份验证与 DNS 认证</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>机制</th><th>目的 / 配置</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>SES Identity</td><td>验证发件域名或单个邮箱；域名身份一般更适合组织级发送</td><td>生产环境仍需验证 From / Source / Sender / Return-Path 等发件身份；验证是区域性的。</td></tr>
+<tr><td>DKIM</td><td>SES 提供 DNS 记录（常见 Easy DKIM 为 CNAME），用于对外发邮件做域名签名</td><td>把 SES 提供的记录发布到 DNS 并等待验证；不是仅设置 SPF 就完成 DKIM。</td></tr>
+<tr><td>SPF / Custom MAIL FROM</td><td>通过 DNS 声明邮件发送授权；自定义 MAIL FROM 可让退信域名与组织域名对齐</td><td>SPF 验证 MAIL FROM 域，不等于验证 From 显示地址；按 SES 指引配置 MX 与 SPF。</td></tr>
+<tr><td>DMARC</td><td>发布组织策略，要求 SPF 或 DKIM 与可见 From 域对齐，并接收聚合报告</td><td>先验证 DKIM/SPF 对齐，再逐步制定策略；DMARC 不能替代 SES identity 验证。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>选型提示：</b>为组织域名验证 SES identity，再配置 DKIM，并按邮件域名策略设置 SPF/DMARC，可覆盖多个发件地址并改善收件方信任。不要把“域名已验证”误当成所有 DNS 认证都自动完成。</div>
+</section>
+
+<section id="smtp">
+<h2>五、SMTP、TLS 与端口</h2>
+<ul>
+ <li>SES SMTP 连接应使用 TLS。STARTTLS 先建立 SMTP 会话再升级到 TLS；TLS Wrapper（隐式 TLS）则在连接开始时就进行 TLS 握手，两者不可混为一谈。</li>
+ <li>SES SMTP endpoint 的端口随连接模式而定；常见 STARTTLS 端口为 25、587、2587，TLS Wrapper 常用 465、2465。按所用区域的 SES SMTP endpoint 文档配置。</li>
+ <li>题干限定“只能使用 SMTP”时，仍可把 SMTP 服务端改为 SES endpoint，并启用 STARTTLS、配置 SES SMTP 凭证；不必改成 SES API。</li>
+ <li>EC2 对外发起 TCP 25 连接可能受默认节流。若应用/网络可调整，考虑 STARTTLS 端口 587/2587；必须使用 25 时，单独申请移除 EC2 端口 25 限制。</li>
+</ul>
+<div class="callout orange"><b>考试陷阱：</b>“应用不能用 TLS”与 SES SMTP 的加密要求冲突，必须升级客户端支持 STARTTLS/TLS。TLS Wrapper 不等同 STARTTLS；而 EC2 端口 25 节流是网络出口限制，不是 SES Sandbox 配额。</div>
+</section>
+
+<section id="deliverability">
+<h2>六、投递、退信与投诉</h2>
+<ul>
+ <li>硬退信、投诉和高发送失败率会损害发送信誉。只向有许可的收件人发送，及时处理退信/投诉，维护名单和退订流程。</li>
+ <li>利用 SES 账户级 suppression list 抑制已知硬退信或投诉收件人，避免反复发送；抑制列表不是营销订阅或退订管理的完整替代。</li>
+ <li>共享 IP 池由 SES 管理发送 IP；Dedicated IP 适用于需要较强发送信誉隔离、具有足够稳定发送量并能承担预热和运营工作的场景。</li>
+ <li>Dedicated IP pool 可按发送类型分组，例如隔离营销与事务邮件，降低一种流量的发送行为对另一种流量信誉的影响。</li>
+ <li>对高发送量、重要通知和多区域场景，监控发送配额、退信、投诉、延迟及账户发送状态，并通过 CloudWatch 告警或 SNS 通知相关团队。</li>
+</ul>
+<div class="callout"><b>不要过度设计：</b>题目未要求独占 IP、信誉隔离或可预测发送量时，托管共享 IP 通常更省运维；“Dedicated IP”并不自动带来更高送达率，还需要预热与良好名单管理。</div>
+</section>
+
+<section id="events">
+<h2>七、配置集与事件追踪</h2>
+<p>Configuration Set（配置集）将一组发送规则应用于邮件，可配置事件目标、指标及 Dedicated IP pool。发送请求需指定配置集，或在已验证身份上配置默认配置集，否则该请求不会自动采用预期的事件发布设置。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>目标</th><th>适用目的</th><th>典型组合</th></tr></thead>
+<tbody>
+<tr><td>CloudWatch</td><td>按事件类型查看聚合指标、创建告警</td><td>监控发送量、退信量或投诉变化</td></tr>
+<tr><td>SNS</td><td>将特定事件通知给订阅者</td><td>退信/投诉事件触发运维或应用处理</td></tr>
+<tr><td>Amazon Data Firehose</td><td>输出详细事件记录，交给后续数据目的地</td><td>Firehose → S3 → Glue Data Catalog / Athena 查询</td></tr>
+<tr><td>EventBridge</td><td>将邮件事件纳入事件驱动的规则、路由与自动化</td><td>按事件类型筛选并调用目标服务</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>日志检索题：</b>需要按收件人、主题和发送时间查询详细邮件事件时，启用 SES 配置集事件发布，使用 Firehose 将事件记录存入 S3，再用 Glue Catalog/Athena 查询。CloudWatch 适合指标与告警，不适合作为逐封邮件的任意字段检索库。</div>
+<div class="callout orange"><b>事件语义：</b>SEND 表示 SES 已接受发送请求，不等于收件人邮箱已收到；DELIVERY、BOUNCE、COMPLAINT、REJECT、DELIVERY_DELAY、RENDERING_FAILURE 等事件分别描述后续状态。事件记录不包含可重新发送的完整邮件内容。</div>
+</section>
+
+<section id="templates">
+<h2>八、模板邮件与入站邮件</h2>
+<ul>
+ <li>SES 模板可保存主题、HTML/文本正文和替换数据；程序根据收件人填充参数，适合确认邮件、通知和个性化事务邮件。</li>
+ <li>需要使用 SES 模板 API 时，通常由应用调用 SES API/SDK 的模板发送操作；不要假定只接入通用 SMTP 就能获得完整的 SES 模板管理能力。</li>
+ <li>模板中的用户数据应做正确的 HTML 转义和字段校验；避免把未受信任输入直接拼接到邮件 HTML。</li>
+ <li>入站邮件使用 SES receipt rule set：配置活动规则集、收件域名的 MX 记录，并按规则写入 S3、发布 SNS 或调用 Lambda 等。执行角色、目标资源策略和 KMS 权限需逐跳核对。</li>
+</ul>
+<div class="callout"><b>最少运维的模板题：</b>使用 SES 存储模板，由 Lambda 或应用通过 SES API 发送模板邮件；不必自建 SMTP 服务器或自行维护模板渲染基础设施。</div>
+</section>
+
+<section id="security">
+<h2>九、安全、跨账号与合规</h2>
+<ul>
+ <li>SMTP 发送需启用 TLS 并保护 SMTP 凭证；优先使用 Secrets Manager 等受控凭证存储，定期轮换，避免写入源码、镜像或日志。</li>
+ <li>API 调用使用 IAM 执行角色并遵循最小权限；将发送权限限制到必要 SES 操作和身份资源，避免长期 IAM 用户密钥。</li>
+ <li>跨账号委托发送要同时配置身份资源策略/发送授权，并由委托方使用其允许的凭证调用；仅有调用方 IAM Allow 并不自动赋予对方 SES 身份的发送权限。</li>
+ <li>若事件写入 SNS、S3、Firehose 或由 Lambda 处理，应逐跳检查目标资源策略、执行角色、KMS Key policy 和加密要求。</li>
+ <li>邮件可能含个人或交易信息；限制日志和事件数据访问，定义保留期限，并确保收件人同意、退订及数据处理符合组织政策和适用法规。</li>
+</ul>
+<div class="callout red"><b>边界提醒：</b>邮件投递加密（TLS）、SES 发件身份验证、IAM 授权和目标存储加密解决的是不同问题，应按题目要求分别配置。</div>
+</section>
+
+<section id="patterns">
+<h2>十、架构选型与常见陷阱</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>需求关键词</th><th>优先方案</th><th>排除 / 注意</th></tr></thead>
+<tbody>
+<tr><td>现有应用只支持 SMTP</td><td>改用 SES SMTP endpoint + 区域 SMTP 凭证 + STARTTLS</td><td>不要选 API/SDK 作为“零协议变更”方案；SES SMTP 仍要求 TLS。</td></tr>
+<tr><td>新应用、模板、结构化调用</td><td>SES API/SDK + IAM Role；模板存于 SES</td><td>不必自建 SMTP 主机；SMTP 用户密码不是 IAM 密钥。</td></tr>
+<tr><td>Sandbox 只能发往已验证收件人</td><td>申请该区域的 SES Production access</td><td>验证发件身份仍必需；出 Sandbox 不代表发送配额无限。</td></tr>
+<tr><td>按收件人 / 主题 / 时间查发送明细</td><td>Configuration Set → Firehose → S3 → Athena</td><td>CloudWatch 指标是聚合值；需指定配置集或设默认配置集。</td></tr>
+<tr><td>退信或投诉需要即时处理</td><td>配置集事件目标 SNS，配合 suppression list</td><td>不要只依赖人工查看控制台；退订管理还需应用业务逻辑。</td></tr>
+<tr><td>营销与事务邮件信誉隔离</td><td>评估 Dedicated IP pools + 配置集</td><td>承担预热、流量规划和 IP 信誉运维；小流量不一定值得使用。</td></tr>
+<tr><td>跨区域灾备</td><td>在备用区验证身份、配置 DNS/事件目标和配额</td><td>SES 身份、Sandbox 状态、凭证和配额不能假设自动跨区复制。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="scenarios">
+<h2>十一、场景题解析</h2>
+<div class="scenario">
+ <div class="scenario-title">场景一：迁移遗留 SMTP 应用，不能改用 API</div>
+ <p>应用只能使用 SMTP，原邮件服务器不支持 TLS，且使用 TCP 25。公司希望退役自建邮件服务器，改由 SES 发送。</p>
+ <div class="answer-box"><b>优先设计：</b>将 SMTP 目标改为 SES 对应区域的 SMTP endpoint，给客户端增加 STARTTLS 能力，并使用该区域生成的 SES SMTP 凭证。</div>
+ <div class="analysis"><b>分析思路：</b>协议仍是 SMTP，只需要兼容 SES 所要求的 TLS 并更换身份凭证。TLS Wrapper 与 STARTTLS 不同；若工作负载运行在 EC2 且 25 端口外发受限，可选用客户端支持的 STARTTLS 端口或申请解除端口 25 节流。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景二：Sandbox 中无法向真实客户发信</div>
+ <p>团队已验证发件域名，但测试时只能向已验证邮箱发送，要求启动生产通知。</p>
+ <div class="analysis"><b>分析思路：</b>在要发送邮件的 Region 申请 SES Production access，并按当前控制台流程说明发送用途、网站和退信/投诉处理方式。域名验证不等于退出 Sandbox；申请通过后仍需控制发送配额与信誉。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景三：排查邮件是否送达并按主题检索</div>
+ <p>运维需要保留详细的邮件事件，并按收件人、主题和发送时间搜索，不只是看成功率统计。</p>
+ <div class="analysis"><b>分析思路：</b>创建配置集并将发送请求关联到配置集；用 Amazon Data Firehose 导出事件到 S3，再通过 Glue Catalog 和 Athena 检索。CloudWatch 用于聚合指标与告警，不是逐条邮件事件的查询仓库。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景四：邮件模板要填充用户数据，且不维护邮件服务器</div>
+ <p>SaaS 应用需发送个性化确认邮件，模板包含动态客户字段，要求降低运维。</p>
+ <div class="analysis"><b>分析思路：</b>在 SES 管理邮件模板，由应用/Lambda 使用 SES API/SDK 的模板发送操作传入参数。无需自建 SMTP 服务器；动态内容需转义并校验。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景五：投诉和硬退信必须尽快通知团队</div>
+ <p>业务需要在发生退信或投诉时触发告警，并阻止向这些地址持续发送。</p>
+ <div class="analysis"><b>分析思路：</b>通过配置集发布事件到 SNS 并通知订阅者，配合账户级 suppression list 抑制相关收件人；另行维护业务退订与许可记录。</div>
+</div>
+<div class="scenario">
+ <div class="scenario-title">场景六：多区域容灾时备用区发信失败</div>
+ <p>主区域邮件正常，切换到另一个 Region 后，发件身份未经验证且账户仍在 Sandbox。</p>
+ <div class="analysis"><b>分析思路：</b>SES 区域状态彼此独立。提前在备用区验证域名、配置 DNS/DKIM 和事件目标，申请生产访问、准备区域 SMTP 凭证/API 权限并确认可用配额。</div>
+</div>
+</section>
+
+<section id="quick">
+<h2>十二、关键词速查</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
+<tbody>
+<tr><td>已有邮件客户端，只能 SMTP</td><td>SES SMTP endpoint + SMTP 凭证</td><td>启用 STARTTLS；SMTP 凭证不是 IAM Access Key。</td></tr>
+<tr><td>模板、动态个性化邮件</td><td>SES API/SDK + SES 模板</td><td>不必自建 SMTP；模板发送通常走 SES API。</td></tr>
+<tr><td>Sandbox 收件人受限</td><td>申请该区域生产访问</td><td>发件身份验证依然需要。</td></tr>
+<tr><td>使用域名发信</td><td>验证 SES domain identity</td><td>在每个需要发送的 Region 分别配置身份。</td></tr>
+<tr><td>改善域名邮件认证</td><td>DKIM + SPF / MAIL FROM + DMARC</td><td>身份验证与 SPF/DKIM/DMARC 是相关但不同的控制。</td></tr>
+<tr><td>EC2 TCP 25 出口受限</td><td>STARTTLS 用其他支持端口，或申请解除节流</td><td>与 SES Sandbox、发送速率配额是不同问题。</td></tr>
+<tr><td>逐封邮件事件搜索</td><td>Configuration Set → Firehose → S3 → Athena</td><td>CloudWatch 主要提供聚合指标。</td></tr>
+<tr><td>退信 / 投诉实时通知</td><td>Configuration Set → SNS</td><td>抑制列表不等于应用退订管理。</td></tr>
+<tr><td>营销与事务流量分开</td><td>Dedicated IP pool + 配置集</td><td>需要足够且稳定的发送量与 IP 预热管理。</td></tr>
+<tr><td>只在某区域验证过域名</td><td>在备用区域重新建身份和申请生产访问</td><td>SES identities、状态和配额不自动跨区。</td></tr>
+<tr><td>入站收件处理</td><td>MX + 活动 Receipt Rule Set</td><td>与 SMTP 出站发送配置分开处理。</td></tr>
+<tr><td>跨账号代表域名发信</td><td>SES identity sending authorization + IAM</td><td>调用方 IAM 权限与 SES 身份策略需同时检查。</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="memory">
+<h2>十三、考前速记卡</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>SES：</b>托管邮件发送与入站处理，不是消息队列</span></li>
+<li><input type="checkbox"><span><b>SMTP / API：</b>兼容旧客户端选 SMTP；新应用与模板优先 API/SDK</span></li>
+<li><input type="checkbox"><span><b>SMTP 凭证：</b>区域专用，与 AWS Access Key 不同</span></li>
+<li><input type="checkbox"><span><b>TLS：</b>SMTP 发送启用 TLS；STARTTLS 不等于 TLS Wrapper</span></li>
+<li><input type="checkbox"><span><b>EC2 TCP 25：</b>可能被节流；和 Sandbox 配额是两类限制</span></li>
+<li><input type="checkbox"><span><b>Sandbox：</b>每个 Region 独立，收件人范围和发送量受限</span></li>
+<li><input type="checkbox"><span><b>Production access：</b>解除 Sandbox 后仍需验证发件身份</span></li>
+<li><input type="checkbox"><span><b>区域性：</b>身份、凭证、Sandbox 和发送配额按区域配置</span></li>
+<li><input type="checkbox"><span><b>Domain identity：</b>域名验证可覆盖域内发件地址，区域间需分别配置</span></li>
+<li><input type="checkbox"><span><b>DKIM：</b>将 SES 提供的 DNS 记录发布并完成验证</span></li>
+<li><input type="checkbox"><span><b>SPF / DMARC：</b>配置发件域认证与对齐，不替代 SES identity 验证</span></li>
+<li><input type="checkbox"><span><b>Configuration Set：</b>应用事件目标、发送指标和 IP pool 规则</span></li>
+<li><input type="checkbox"><span><b>CloudWatch：</b>聚合指标和告警</span></li>
+<li><input type="checkbox"><span><b>SNS：</b>通过事件发布发送退信/投诉通知</span></li>
+<li><input type="checkbox"><span><b>事件检索：</b>Firehose → S3 → Glue/Athena 分析明细</span></li>
+<li><input type="checkbox"><span><b>退信投诉：</b>监控事件并使用 suppression list 防止重复投递</span></li>
+<li><input type="checkbox"><span><b>模板：</b>SES 存模板，API/SDK 填入参数发送</span></li>
+<li><input type="checkbox"><span><b>Dedicated IP：</b>信誉隔离需评估流量、预热与运维成本</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十四、快速自测</h2>
+<p class="small">先独立选择，再点击“查看解析”。</p>
+<div class="quiz">
+ <b>1. 旧应用只能使用 SMTP，不能调用 SES API；应用运行在 EC2，需接入 SES。哪项配置最合适？</b><br>
+ <button class="secondary" onclick="showAnswer('q1',false)">A. 直接把 IAM Access Key 当作 SMTP 密码</button>
+ <button class="secondary" onclick="showAnswer('q1',true)">B. SES SMTP endpoint、区域 SMTP 凭证，并启用 STARTTLS</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">C. 使用 TLS Wrapper 但保持原有明文 SMTP 连接</button>
+ <button class="secondary" onclick="showAnswer('q1',false)">D. 只验证收件人邮箱，无需更改 SMTP 设置</button>
+ <div class="answer" id="q1"><b>正确答案：B。</b>SES SMTP 需要对应区域的 SMTP 凭证和 TLS。IAM Access Key 不能直接作为 SMTP 密码；STARTTLS 与 TLS Wrapper 是不同连接模式。</div>
+</div>
+<div class="quiz">
+ <b>2. 运维要按收件人、主题和时间查询 SES 发送事件明细。哪种设计最合适？</b><br>
+ <button class="secondary" onclick="showAnswer('q2',false)">A. 只启用 CloudWatch 聚合指标</button>
+ <button class="secondary" onclick="showAnswer('q2',true)">B. 配置集发布事件到 Firehose，再存入 S3 并用 Athena 查询</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">C. 把 SES SMTP 用户名作为 S3 查询分区</button>
+ <button class="secondary" onclick="showAnswer('q2',false)">D. 只打开 SES 控制台首页的发送总量统计</button>
+ <div class="answer" id="q2"><b>正确答案：B。</b>配置集事件发布提供逐条事件数据；Firehose/S3/Athena 适合保留和查询明细。CloudWatch 更适合聚合指标和告警。</div>
+</div>
+<div class="quiz">
+ <b>3. 在主 Region 可发送，灾备 Region 切换后 SES 拒绝给新客户发信。首先应检查什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q3',false)">A. 主区域的 SES SMTP 凭证是否复制到了其他账户</button>
+ <button class="secondary" onclick="showAnswer('q3',true)">B. 灾备区域是否验证身份、退出 Sandbox 并满足发送配额</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">C. 是否把 SQS 队列改成 FIFO</button>
+ <button class="secondary" onclick="showAnswer('q3',false)">D. 是否在主区域增加 CloudWatch 指标</button>
+ <div class="answer" id="q3"><b>正确答案：B。</b>SES 的身份、Sandbox 状态和配额按区域管理；需预先准备备用区域，不能假设主区域配置自动复制。</div>
+</div>
+</section>
+
+<section id="references">
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/ses/latest/dg/Welcome.html" target="_blank" rel="noopener">Amazon SES 开发人员指南</a></li>
+<li><a href="https://docs.aws.amazon.com/ses/latest/dg/request-production-access.html" target="_blank" rel="noopener">申请生产访问 / 退出 Sandbox</a></li>
+<li><a href="https://docs.aws.amazon.com/ses/latest/dg/send-email-smtp.html" target="_blank" rel="noopener">使用 SES SMTP 接口发送邮件</a></li>
+<li><a href="https://docs.aws.amazon.com/ses/latest/dg/smtp-connect.html" target="_blank" rel="noopener">连接 SMTP endpoint 与端口</a></li>
+<li><a href="https://docs.aws.amazon.com/ses/latest/dg/creating-identities.html" target="_blank" rel="noopener">创建和验证 SES identities</a></li>
+<li><a href="https://docs.aws.amazon.com/ses/latest/dg/using-configuration-sets.html" target="_blank" rel="noopener">使用 Configuration Sets</a></li>
+<li><a href="https://docs.aws.amazon.com/ses/latest/dg/event-publishing-add-event-destination.html" target="_blank" rel="noopener">配置 SES 事件目标</a></li>
+<li><a href="https://docs.aws.amazon.com/ses/latest/dg/monitor-sending-activity.html" target="_blank" rel="noopener">监控 SES 发送活动</a></li>
+<li><a href="https://docs.aws.amazon.com/ses/latest/dg/receiving-email.html" target="_blank" rel="noopener">使用 SES 接收邮件</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-resource-limits.html#port-25-throttle" target="_blank" rel="noopener">EC2 对 TCP 端口 25 的限制说明</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>本文是非官方复习提纲，不代表 AWS 认证题库或考试原题。SES 区域能力、端口、Sandbox 限额与配额可能更新，请以 AWS 官方文档及当前 SAP-C02 考试指南为准。</div>
+</section>
+</main>
+</div>
+<footer class="container">Amazon SES SAP-C02 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('.checklist input')];
+ const checked=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressText').textContent=`已掌握 ${checked} / ${boxes.length}`;
+ document.getElementById('progressBar').style.width=`${boxes.length?checked/boxes.length*100:0}%`;
+}
+document.querySelectorAll('.checklist input').forEach(x=>x.addEventListener('change',updateProgress));
+function showAnswer(id,correct){
+ const answer=document.getElementById(id);
+ answer.style.display='block';
+ answer.style.background=correct?'var(--green-soft)':'var(--orange-soft)';
+}
+</script>
+</body>
+</html>

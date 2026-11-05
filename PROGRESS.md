@@ -13,11 +13,11 @@
 |---|---|
 | 根导航页 | 已完成；12 个分类均已挂载并标注进度，`architecture-patterns.html` 已启用并接入根页 |
 | 分类入口页 | 12 个已完成并全部挂到根页 |
-| 服务正文 | **75 篇；另有综合专题 1 篇；去重规划合计 76 篇＝ 100%** |
+| 服务正文 | **76 篇；另有综合专题 1 篇；去重规划合计 77 篇＝ 100%** |
 | 未创建正文 | **0 篇** |
 | 正文内场景题 | 各正文内嵌手写场景题 |
 
-**一句话：75 篇服务正文和 1 篇综合专题均已完成，全站正文缺失为 0。**
+**一句话：76 篇服务正文和 1 篇综合专题均已完成，全站正文缺失为 0。**
 
 ---
 
@@ -79,6 +79,7 @@
 | `management/cloudtrail.html` | 管理 | — | — | 6 | 18 | 有 |
 | `management/config.html` | 管理 | — | — | 6 | 18 | 有 |
 | `application-integration/sqs-sns.html` | 应用集成 | — | — | 6 | 18 | 有 |
+| `application-integration/ses.html` | 应用集成 | — | — | 6 | 18 | 有 |
 | `application-integration/eventbridge.html` | 应用集成 | — | — | 6 | 16 | 有 |
 | `application-integration/step-functions.html` | 应用集成 | — | — | 6 | 16 | 有 |
 | `application-integration/api-gateway.html` | 应用集成 | — | — | 6 | 16 | 有 |
@@ -113,14 +114,14 @@
 | 数据库 | `database/index.html` | 6 | 6 | 0 | 100% | P0 |
 | 安全、身份与合规 | `security/index.html` | 11 | 11 | 0 | 100% | P0 |
 | 管理与治理 | `management/index.html` | 9 | 9 | 0 | 100% | P0 |
-| 应用集成 | `application-integration/index.html` | 6 | 6 | 0 | 100% | P1 |
+| 应用集成 | `application-integration/index.html` | 7 | 7 | 0 | 100% | P1 |
 | 分析 | `analytics/index.html` | 7 | 7 | 0 | 100% | P2 |
 | 迁移与传输 | `migration/index.html` | 4 | 4 | 0 | 100% | P2 |
 | DevOps | `devops/index.html` | 4 | 4 | 0 | 100% | P2 |
 | 机器学习与 AI | `ml/index.html` | 2 | 2 | 0 | 100% | P2 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 1 | 1 | 0 | 100% | P3 |
 | 综合专题 | 根页直达 | 1 | 1 | 0 | 100% | P1 |
-| **合计** |  | **76** | **76** | **0** | **100%** |  |
+| **合计** |  | **77** | **77** | **0** | **100%** |  |
 
 > 混合云与边缘分类的 3 个核心方向均已覆盖：Outposts、Local Zones、Wavelength 共用 `compute/outposts-wavelength.html`；IoT 由 `hybrid-edge/iot.html` 覆盖。分类表及全站合计按唯一正文去重，因此混合云与边缘单列 1 篇新增正文。
 
@@ -205,9 +206,10 @@
 
 > Systems Manager 页面从零编写；不要从历史归档补内容。
 
-### 3.7 应用集成（6 / 6）
+### 3.7 应用集成（7 / 7）
 
 - [x] P0 `application-integration/sqs-sns.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 SQS Standard/FIFO、可见性超时、长轮询、DLQ、SNS Fan-out、消息过滤与策略授权
+- [x] P1 `application-integration/ses.html` — 新增；场景题 6 道；速记卡 18 条；覆盖 SMTP/API、Sandbox、区域隔离、身份/DKIM、STARTTLS、配置集事件、Firehose/S3/Athena、退信投诉与模板邮件
 - [x] P0 `application-integration/eventbridge.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖总线类型、事件模式、目标投递、跨账号策略、重试/DLQ、Archive/Replay、Schema Registry 与 Scheduler
 - [x] P0 `application-integration/step-functions.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖 Standard/Express、状态类型、服务集成、Retry/Catch、回调令牌、Map 并行与执行监控
 - [x] P1 `application-integration/api-gateway.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖 REST/HTTP/WebSocket、IAM/JWT/Lambda 授权、使用计划、节流缓存、Private API 与 VPC Link
@@ -420,7 +422,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 ### 8.6 已处理：首页统计与事实不符
 
-- 进度口径：75 篇服务正文 + 1 篇综合专题，共 76 篇；正文缺失为 0。
+- 进度口径：76 篇服务正文 + 1 篇综合专题，共 77 篇；正文缺失为 0。
 - `hybrid-edge` 已挂载，根页与分类入口共 12 类；`networking` 服务数已统一为 9 项。
 - 早期约 148 道手写场景题的统计仅覆盖部分页面，不能代表全站总数。
 - 根页及 12 个分类入口的断链检查于 2026-11-03 核验为 0 条。
@@ -462,7 +464,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 ## 10. 历史归档说明
 
-`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。已完成的 75 篇服务正文沿用现有页面规范；综合专题另计 1 篇。
+`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。已完成的 76 篇服务正文沿用现有页面规范；综合专题另计 1 篇。
 
 是否保留、删除或从 Pages 构建中排除，见第 8.7 节。
 
@@ -493,5 +495,6 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-03 | 完成机器学习与 AI 2 篇正文：AI 托管服务全览、Amazon SageMaker；各含 6 道场景题、18 张速记卡和快速自测；分类页开放，首页和进度统计同步更新为 74 / 78 | `ml/ml-ai.html`、`ml/sagemaker.html`、`ml/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `architecture-patterns.html`（P1） |
 | 2026-11-03 | 完成混合云与边缘分类：新增 IoT Core/Greengrass/Device Shadow 正文，复用计算模块的 Outposts/Local Zones/Wavelength 正文；3 个方向全部开放并将分类页挂至根页；服务正文完成 75 篇，综合专题待完成 | `hybrid-edge/iot.html`、`hybrid-edge/index.html`、`index.html`、`PROGRESS.md` | 完成 `architecture-patterns.html` |
 | 2026-11-03 | 完成 `architecture-patterns.html`，全站 75 篇服务正文及 1 篇综合专题全部完成（76 / 76）；校准进度口径、断链检查结果与工作区状态说明 | `architecture-patterns.html`、`PROGRESS.md` | 决定 529 题的分类标签与题库页面形态；决策 `old/`、`input/` 是否随 Pages 发布 |
+| 2026-11-05 | 新增 `application-integration/ses.html`：覆盖 SMTP/API、Sandbox、身份/DKIM、STARTTLS、配置集事件、Firehose/S3/Athena 与邮件信誉；应用集成分类更新至 7 / 7，全站更新为 76 篇服务正文 + 1 篇综合专题 | `application-integration/ses.html`、`application-integration/index.html`、`index.html`、`PROGRESS.md` | 继续全站一致性校准 |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。

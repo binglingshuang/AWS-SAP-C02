@@ -298,7 +298,7 @@
   </header>
 
   <main>
-    <p class="section-label">服务导航 · 共 6 项 · 已完成 6 / 6</p>
+    <p class="section-label">服务导航 · 共 7 项 · 已完成 7 / 7</p>
 
     <div class="card-grid">
 
@@ -324,7 +324,29 @@
         <span class="card-arrow">→</span>
       </a>
 
-      <!-- 2. Amazon EventBridge -->
+      <!-- 2. Amazon SES -->
+      <a class="card" href="ses.html">
+        <span class="status-badge status-done">已完成</span>
+        <div class="card-header">
+          <span class="card-icon">✉️</span>
+          <div class="card-title-block">
+            <div class="card-title">Amazon SES</div>
+            <span class="card-freq freq-high">🔥 高频</span>
+          </div>
+        </div>
+        <p class="card-desc">托管邮件发送、入站处理与投递事件跟踪</p>
+        <div class="card-tags">
+          <span class="tag">SMTP / API</span>
+          <span class="tag">Sandbox / 区域配额</span>
+          <span class="tag">身份验证 / DKIM</span>
+          <span class="tag">配置集 / 事件目标</span>
+          <span class="tag">Firehose + S3 + Athena</span>
+          <span class="tag">退信 / 投诉</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <!-- 3. Amazon EventBridge -->
       <a class="card" href="eventbridge.html">
         <span class="status-badge status-done">已完成</span>
         <div class="card-header">
@@ -346,7 +368,7 @@
         <span class="card-arrow">→</span>
       </a>
 
-      <!-- 3. AWS Step Functions -->
+      <!-- 4. AWS Step Functions -->
       <a class="card" href="step-functions.html">
         <span class="status-badge status-done">已完成</span>
         <div class="card-header">
@@ -367,7 +389,7 @@
         <span class="card-arrow">→</span>
       </a>
 
-      <!-- 4. Amazon API Gateway -->
+      <!-- 5. Amazon API Gateway -->
       <a class="card" href="api-gateway.html">
         <span class="status-badge status-done">已完成</span>
         <div class="card-header">
@@ -389,7 +411,7 @@
         <span class="card-arrow">→</span>
       </a>
 
-      <!-- 5. AWS AppSync -->
+      <!-- 6. AWS AppSync -->
       <a class="card" href="appsync.html">
         <span class="status-badge status-done">已完成</span>
         <div class="card-header">
@@ -409,7 +431,7 @@
         <span class="card-arrow">→</span>
       </a>
 
-      <!-- 6. Amazon MQ -->
+      <!-- 7. Amazon MQ -->
       <a class="card" href="mq.html">
         <span class="status-badge status-done">已完成</span>
         <div class="card-header">
@@ -432,7 +454,7 @@
 
     <!-- Callout -->
     <div class="callout">
-      💡 <strong>考试提示：</strong>SQS+SNS Fan-out 模式（一对多消息分发）和 EventBridge 跨账号事件路由是高频考题。Step Functions 用于复杂工作流编排而非单纯任务触发，注意 Standard Workflow 适合长运行任务、Express 适合高频短时任务的区别。
+      💡 <strong>考试提示：</strong>SQS+SNS Fan-out、SES SMTP/TLS 与 Sandbox 限制、配置集事件追踪，以及 EventBridge 跨账号路由都是常见考点。Step Functions 用于复杂工作流编排而非单纯任务触发，注意 Standard Workflow 适合长运行任务、Express 适合高频短时任务的区别。
     </div>
 
   </main>
