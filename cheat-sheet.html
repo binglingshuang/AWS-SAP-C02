@@ -33,7 +33,7 @@
   <div class="header-meta">
    <span class="pill">⚡ 考前速刷</span>
    <span class="pill">SAP-C02</span>
-   <span class="pill">当前收录 8 条 · 持续追加中</span>
+   <span class="pill">当前收录 10 条 · 持续追加中</span>
   </div>
   <div class="toolbar no-print">
    <button onclick="window.print()">打印 / 另存为 PDF</button>
@@ -52,6 +52,7 @@
  <a href="#security">三、安全与合规</a>
  <a href="#backup">四、备份与恢复</a>
  <a href="#networking">五、网络</a>
+ <a href="#edge">六、边缘与迁移</a>
  <a href="#appendix">追加格式</a>
 </nav>
 
@@ -127,6 +128,15 @@
  </div>
  <p class="cue-note">检测异常行为、恶意 IP、凭证泄露等<b>动态威胁</b>，不是静态的权限配置分析（那是 Access Analyzer）。</p>
 </div>
+<div class="cue">
+ <span class="cue-svc">CloudFront + WAF + 源站保护</span>
+ <div class="cue-flow">
+  <span class="cue-when">"保护 Web 应用" + "防 DDoS / Web 攻击" + "隐藏源站"</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">CloudFront + WAF + ALB 仅放行 CloudFront</span>
+ </div>
+ <p class="cue-note">Edge Security Pattern 黄金三件套：CloudFront 挡在前（隐藏源站），WAF 过滤攻击，ALB 安全组 / Header 校验只放行来自 CloudFront 的流量。</p>
+</div>
 </section>
 
 <section id="backup">
@@ -161,6 +171,19 @@
   <span class="cue-pick">AWS Transit Gateway</span>
  </div>
  <p class="cue-note">星型拓扑简化多 VPC 与本地互联；<b>但遇 Overlapping CIDR</b>，TGW 要叠加 NAT / 防火墙做地址转换，开销大 → 改选 PrivateLink。</p>
+</div>
+</section>
+
+<section id="edge">
+<h2>六、边缘与迁移</h2>
+<div class="cue">
+ <span class="cue-svc">AWS Snowball Edge Compute Optimized</span>
+ <div class="cue-flow">
+  <span class="cue-when">"工厂 Factory" + "网络受限 Limited network" + "边缘计算 / AI 处理"</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">Snowball Edge Compute Optimized</span>
+ </div>
+ <p class="cue-note">在边缘做本地计算/AI，并兼顾本地轻量存储时的标准答案（可跑 EC2 / Lambda 函数）。只搬数据不算力选 Storage Optimized；需强算力且机房可用选 Outposts。</p>
 </div>
 </section>
 

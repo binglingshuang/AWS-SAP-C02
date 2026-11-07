@@ -86,6 +86,9 @@
 <tr><td>用户关注</td><td>AD 集成、权限、权限继承</td><td>吞吐、并发、输入输出性能</td><td>适配和迁移成本、企业级管理</td></tr>
 </tbody></table></div>
 <div class="callout orange"><b>答题要点：</b>不要把“文件系统”泛化成 EFS/FSx 的统一答案。题目会明确说明“Windows AD”“HPC”“NetApp 迁移”等关键信息，选型不是靠记忆单一概念，而是靠“协议 + 业务习惯 + 性能需求”三位一体判断。</div>
+<h3>原地更新（In-place Update）</h3>
+<p>Amazon FSx for Windows File Server 原生支持原地更新（In-place update），允许直接在控制台或通过 CLI 将存储类型从 HDD 升级到 SSD，并动态调整吞吐量大小。</p>
+<div class="callout green"><b>考点提示：</b>题目出现“HDD 升级 SSD”“调整吞吐量但不想重建文件系统 / 迁移数据”时，选 FSx for Windows 的原地更新，而不是新建文件系统再迁移。</div>
 </section>
 
 <section id="network">
@@ -145,6 +148,7 @@
 <li><b>FSx for OpenZFS</b> = ZFS 语义和快照/克隆能力</li>
 <li><b>File protocols</b> = 看 SMB / NFS / POSIX / iSCSI，而不是只看“块”或“对象”</li>
 <li><b>托管</b> = 保留协议，但由 AWS 处理底层运维</li>
+<li><b>In-place update</b> = FSx for Windows 支持 HDD→SSD 与吞吐量动态调整，无需重建文件系统</li>
 </ul>
 </section>
 
@@ -158,6 +162,7 @@
 <li><input type="checkbox"><span><b>协议优先</b>：题目一旦说 SMB/AD/NetApp / HPC，优先对应哪个 FSx</span></li>
 <li><input type="checkbox"><span><b>通用共享</b>：EFS 更通用，FSx 更专用且通常更高性能</span></li>
 <li><input type="checkbox"><span><b>网络</b>：挂载依赖 VPC、子网、安全组和权限配置</span></li>
+<li><input type="checkbox"><span><b>原地更新</b>：FSx for Windows 支持 HDD→SSD 与吞吐量动态调整</span></li>
 <li><input type="checkbox"><span><b>恢复与备份</b>：快照和可用性策略都要结合 RTO/RPO</span></li>
 </ul>
 <div class="progress"><span id="progress-fill"></span></div>
