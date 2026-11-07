@@ -223,6 +223,17 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <tr><td>AWS Lambda</td><td>推送事件并触发函数处理</td><td>Lambda 资源策略需允许 SNS 调用；函数处理失败的重试/失败目标需按 Lambda 与 SNS 的投递模式分别配置。</td></tr>
 <tr><td>HTTP/S、电子邮件等</td><td>向外部 Web 端点或用户通知</td><td>端点确认订阅；投递重试与端点可用性相关，适用于通知而非需要应用端精确控制拉取的工作队列。</td></tr>
 </tbody></table></div>
+<h3>哪些 AWS 服务可以直接向 SNS 发布事件 / 通知？</h3>
+<p>“直接”表示在源服务中将 SNS Topic 配置为通知目标；并非所有服务都支持这种原生目标。还要区分服务通知与完整事件路由：有些集成只通知特定状态或日志投递，不会把源服务的每条 API 活动都直接发送到 SNS。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>源服务</th><th>能否直接配置 SNS</th><th>实际行为与注意事项</th></tr></thead>
+<tbody>
+<tr><td>Amazon S3</td><td>可以</td><td>在 Bucket Event Notifications 中将匹配的对象事件发送到 SNS Topic；Bucket 与 Topic 需位于同一区域，Topic Policy 需允许 S3 发布。S3 事件通知目标使用 Standard Topic，不支持 FIFO Topic。</td></tr>
+<tr><td>AWS CloudTrail</td><td>可以，但范围有限</td><td>Trail 可配置 SNS Topic，在日志文件投递到 S3 时发送通知；这不是将每条 CloudTrail API 活动直接发布到 SNS。若要按 API 活动或事件内容触发通知，使用 CloudTrail → EventBridge 规则 → SNS。</td></tr>
+<tr><td>Amazon CloudWatch Alarms</td><td>可以</td><td>为告警状态转换（如 ALARM、OK、INSUFFICIENT_DATA）配置 SNS 动作；这是告警通知，不等于把 CloudWatch 中所有指标数据流推送到 SNS。</td></tr>
+<tr><td>Amazon DynamoDB</td><td>不可以直接配置</td><td>表的原生变更捕获通过 DynamoDB Streams 提供，不支持将 SNS Topic 直接设为表事件通知目标。可使用 DynamoDB Streams → Lambda → SNS，或通过 EventBridge Pipes 将 Stream 事件路由到 SNS。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>考试辨析：</b>若题目要求 DynamoDB 表内项目变更通知，不能只在表上填写 SNS Topic；必须增加 Streams 与处理/路由组件。若要求对 CloudTrail 的具体 API 事件做内容匹配，优先使用 EventBridge 规则，而不是把 Trail 的 SNS 日志投递通知当作等价功能。</div>
 <p>推送订阅的端点可用性会影响投递成功。对于需要持久缓冲和独立消费速率的内部微服务，SNS 通常先推到 SQS，再由服务自行拉取。对于 Lambda 处理 SQS 的方案，消费的批次、并发与错误处理还需在 Lambda Event Source Mapping 配置。</p>
 <div class="callout orange"><b>确认订阅：</b>HTTP/S、邮件等协议可能需要端点确认；未确认的订阅不会按预期开始投递。跨账号订阅还需分别核对 Topic 侧和订阅资源侧的授权。</div>
 </section>
@@ -451,6 +462,11 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <li><a href="https://docs.aws.amazon.com/sns/latest/dg/welcome.html" target="_blank" rel="noopener">Amazon SNS 开发人员指南</a></li>
 <li><a href="https://docs.aws.amazon.com/sns/latest/dg/sns-message-filtering.html" target="_blank" rel="noopener">SNS 消息过滤</a></li>
 <li><a href="https://docs.aws.amazon.com/sns/latest/dg/sns-sqs-as-subscriber.html" target="_blank" rel="noopener">SNS Fan-out 到 SQS 队列</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html" target="_blank" rel="noopener">Amazon S3 事件通知目标与配置</a></li>
+<li><a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-send-sns-notifications.html" target="_blank" rel="noopener">CloudTrail 向 SNS 发送日志文件投递通知</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html" target="_blank" rel="noopener">CloudWatch 告警的 SNS 通知动作</a></li>
+<li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html" target="_blank" rel="noopener">DynamoDB Streams</a></li>
+<li><a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-pipes.html" target="_blank" rel="noopener">Amazon EventBridge Pipes</a></li>
 </ul>
 <div class="callout orange"><b>备考提醒：</b>本文是非官方复习提纲，不代表 AWS 认证题库或考试原题。服务配额、协议支持、FIFO 吞吐和加密能力可能更新，请以 AWS 官方文档及当前 SAP-C02 考试指南为准。</div>
 </section>
