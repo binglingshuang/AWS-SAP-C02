@@ -248,7 +248,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <li>Global Tables 不等于跨区域强一致性。明确主数据归属、冲突策略、区域故障时写入行为与恢复流程。</li>
 <li>部署前验证表配置、容量模式、加密密钥、Streams / 备份要求与目标 Region 的服务支持。</li>
 </ul>
-<h3>DAX：内存缓存</h3>
+<h3>DynamoDB Accelerator(DAX)：内存缓存</h3>
 <ul>
 <li>DynamoDB Accelerator 是全托管、与 DynamoDB API 兼容的内存缓存，适合高读、重复访问且可接受最终一致性缓存语义的场景。</li>
 <li>DAX 可缓存项目与查询结果，降低应用读取延迟和底层读取请求；写入可经 DAX 传递到 DynamoDB 并更新缓存。</li>
