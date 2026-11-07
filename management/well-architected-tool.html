@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 AWS Well-Architected Tool 考点速查：六大支柱与权衡、Workload 属性、Lens 与 Pillar 的区别、HRI/MRI 风险、Milestone 快照、改进计划、报告与跨账号共享，以及与 Trusted Advisor 等服务的边界。">
+<title>AWS SAP-C02｜AWS Well-Architected Tool 考试速查手册</title>
+<style>
+:root{--bg:#f4f7fb;--paper:#fff;--ink:#172033;--muted:#64748b;--line:#e2e8f0;--blue:#2563eb;--soft:#eff6ff;--green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;--red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:44px 0 36px}
+header h1{font-size:clamp(28px,5vw,42px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:840px}
+.eyebrow{font-size:13px;letter-spacing:.12em;color:#bfdbfe}
+.meta,.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.pill{border:1px solid #ffffff50;background:#ffffff18;padding:4px 11px;border-radius:999px;font-size:13px}
+button{border:0;border-radius:8px;padding:8px 12px;background:var(--blue);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:24px;padding:26px 0 56px}
+nav,section{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+nav{position:sticky;top:16px;align-self:start;padding:16px;max-height:calc(100vh - 32px);overflow:auto}
+nav strong{display:block;margin-bottom:8px}
+nav a{display:block;padding:5px 7px;color:#475569;font-size:14px;border-radius:6px}
+nav a:hover{background:var(--soft);text-decoration:none}
+main{min-width:0}
+section{padding:24px;margin-bottom:18px;scroll-margin-top:16px}
+h2{font-size:23px;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+h3{font-size:18px;margin:20px 0 8px}
+p{margin:8px 0}
+ul,ol{padding-left:23px}
+li{margin:4px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:13px 15px;border-left:4px solid var(--blue);background:var(--soft);border-radius:8px;margin:13px 0}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.callout.orange{border-color:var(--orange);background:var(--orange-soft)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc}
+.flow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:14px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;margin:14px 0}
+.flow .node{padding:9px 12px;background:#fff;border:1px solid #bfdbfe;border-radius:8px;text-align:center;font-size:13px}
+.flow .arrow{color:#64748b;font-weight:700}
+.scenario{border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:11px 0;background:#fff}
+.scenario summary{cursor:pointer;font-weight:700}
+.scenario p{margin:8px 0 0}
+.opt{color:#475569}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0}
+.progress span{display:block;width:0;height:100%;background:#16a34a;transition:width .2s}
+.checklist{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}
+.checklist li{display:flex;gap:9px;border-bottom:1px solid #eef2f7;padding:7px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);flex:none;width:17px;height:17px}
+.small,footer{font-size:13px;color:var(--muted)}
+code{background:#f1f5f9;padding:2px 5px;border-radius:4px;font-size:.92em}
+.tag{display:inline-block;border-radius:6px;padding:1px 7px;font-size:12px;font-weight:700;background:var(--soft);color:var(--blue);margin-right:4px}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.orange{background:var(--orange-soft);color:var(--orange)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}.checklist{grid-template-columns:1fr}}
+@media print{body{background:#fff;font-size:12px}header{background:#fff;color:#111;padding:15px 0}header p,.eyebrow{color:#444}.pill{border:1px solid #aaa;color:#333}.layout{display:block}nav,.toolbar{display:none}section{box-shadow:none;break-inside:avoid;padding:14px;margin-bottom:12px}a{color:#111}}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>AWS Well-Architected Tool<br>架构评审与改进跟踪</h1>
+  <p>把 Well-Architected Framework 从“白皮书”变成可执行的评审流程：定义 Workload、应用 Lens、逐题回答、登记 HRI/MRI、创建 Milestone、跟踪改进计划并生成报告。考试重点是对象关系、使用场景与相邻服务的边界。</p>
+  <div class="meta">
+   <span class="pill">SAP-C02 · 管理与治理</span>
+   <span class="pill">六支柱 · Lens · HRI/MRI</span>
+   <span class="pill">Milestone · Improvement Plan</span>
+   <span class="pill">可打印 / 可勾选</span>
+  </div>
+  <div class="toolbar">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('#memoryList input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回管理分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#map">一、Framework / Tool / Review</a>
+ <a href="#pillars">二、六大支柱与权衡</a>
+ <a href="#model">三、核心对象模型</a>
+ <a href="#workload">四、Workload 定义与属性</a>
+ <a href="#lens">五、Lens 全解与 Pillar 区别</a>
+ <a href="#risk">六、问题、最佳实践与风险</a>
+ <a href="#milestone">七、Milestone 里程碑</a>
+ <a href="#improvement">八、改进计划与排序</a>
+ <a href="#report">九、报告、共享与跨账号评审</a>
+ <a href="#boundaries">十、与相邻服务的边界</a>
+ <a href="#scenarios">十一、场景题解析</a>
+ <a href="#quick">十二、关键词速查</a>
+ <a href="#memory">十三、考前速记卡</a>
+ <a href="#quiz">十四、快速自测</a>
+</nav>
+
+<main>
+
+<section id="map">
+<h2>一、先分清 Framework、Tool 与 Review</h2>
+<p class="lead">三个词在题目里经常混用，但含义完全不同。把三者分清，很多选项可以直接排除。</p>
+<div class="flow">
+ <span class="node"><b>Well-Architected Framework</b><br><small>知识与最佳实践：六支柱 + 设计原则</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>Well-Architected Tool</b><br><small>托管服务：问卷、风险台账、改进计划、里程碑</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>Well-Architected Review</b><br><small>评审活动：自评 / AWS 主导 / 合作伙伴主导</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>Improvement Plan</b><br><small>把结论落成有负责人和截止日期的行动</small></span>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>概念</th><th>是什么</th><th>不是什么</th><th>考试提示</th></tr></thead>
+<tbody>
+<tr><td><b>AWS Well-Architected Framework</b></td><td>一套架构设计原则、六大支柱、最佳实践与问题集，以白皮书和文档形式发布。</td><td>不是一个可以“打开就扫描资源”的控制台服务。</td><td>问“架构应遵循什么原则”时选 Framework。</td></tr>
+<tr><td><b>AWS Well-Architected Tool</b></td><td>把 Framework 变成工作负载级的评审工作流：创建 Workload、应用 Lens、回答 Question、登记 Risk、创建 Milestone、维护 Improvement Plan、生成报告。</td><td>不是自动检测器，不会读取你的资源或配置；答案由评审人填写。</td><td>问“在哪里记录评审结论、跟踪整改”时选 Tool。</td></tr>
+<tr><td><b>Well-Architected Review</b></td><td>一次评审活动，可由客户团队自评，也可由 AWS 团队或 APN 合作伙伴主持；Tool 是承载评审记录的平台。</td><td>不是一次性的“认证”或“合规审计”。</td><td>问“如何组织评审、谁来主持”时选 Review；问“用什么工具记录”时选 Tool。</td></tr>
+</tbody></table></div>
+<div class="callout red"><b>最高频陷阱：</b>Well-Architected Tool <b>不做自动检测</b>。它不会扫描 VPC、S3、IAM 或 CloudWatch 指标，也不会自动推断风险等级。所有回答、风险和优先级都来自人工评审。需要自动发现时，应该想到 Trusted Advisor、Compute Optimizer、Cost Optimization Hub、AWS Config、Security Hub 等。</div>
+<div class="callout"><b>工作负载是区域级资源：</b>创建 Workload 时要选择 Region；跨区域或跨账号评审前，先确认 Region、账号范围和共享权限，避免在错误的区域里找不到工作负载。</div>
+</section>
+
+<section id="pillars">
+<h2>二、六大支柱与权衡</h2>
+<p class="lead">Well-Architected Framework 用六个维度审视架构。SAP-C02 更关注“在约束下如何取舍”，而不是背定义。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>支柱</th><th>核心问题</th><th>关键实践</th><th>常见支撑服务</th><th>典型权衡</th></tr></thead>
+<tbody>
+<tr><td><b>卓越运营</b><br>Operational Excellence</td><td>如何稳定地交付、监控和持续改进？</td><td>小步变更、基础设施即代码、可观测性、Runbook、事后复盘、游戏日演练</td><td>CloudFormation、CodePipeline、CloudWatch、Systems Manager、Config</td><td>自动化与标准化需要前期投入，换来更低的变更风险和更快的恢复</td></tr>
+<tr><td><b>安全</b><br>Security</td><td>如何保护身份、数据和系统？</td><td>最小权限、纵深防御、加密、审计、集中身份、事件响应</td><td>IAM、KMS、Organizations/SCP、GuardDuty、Security Hub、CloudTrail</td><td>更强的控制可能增加登录步骤、运维复杂度或成本</td></tr>
+<tr><td><b>可靠性</b><br>Reliability</td><td>故障发生时能否恢复，如何减少单点？</td><td>多 AZ/多区域、健康检查、自动扩缩、备份与恢复演练、容量缓冲</td><td>Auto Scaling、ELB、Route 53、RDS/Aurora、AWS Backup</td><td>冗余与跨区域复制提高可靠性，也提高成本与一致性复杂度</td></tr>
+<tr><td><b>性能效率</b><br>Performance Efficiency</td><td>如何在资源约束下获得合适性能？</td><td>按需选型、缓存、异步解耦、边缘加速、基于数据优化</td><td>CloudFront、ElastiCache、Lambda、ECS/EKS、Global Accelerator</td><td>更高性能通常意味着更高成本或更复杂的架构</td></tr>
+<tr><td><b>成本优化</b><br>Cost Optimization</td><td>如何用合理成本达成业务目标？</td><td>成本归因、rightsizing、Savings Plans/RI、Spot、生命周期策略、持续审计</td><td>Cost Explorer、Budgets、Compute Optimizer、Cost Optimization Hub、S3 Lifecycle</td><td>过度削减成本可能牺牲性能、可靠性或运维余量</td></tr>
+<tr><td><b>可持续性</b><br>Sustainability</td><td>如何降低能源与资源消耗？</td><td>提高利用率、减少无效运行、选择托管/高效服务、优化数据生命周期</td><td>Graviton、托管服务、Auto Scaling、S3 生命周期、按需容量</td><td>短期改造投入与长期资源效率之间的平衡</td></tr>
+</tbody></table></div>
+<h3>六条通用设计原则</h3>
+<ul>
+<li><b>停止猜测容量</b>（Stop guessing your capacity needs）：用弹性与按需容量替代静态预测。</li>
+<li><b>频繁测试系统</b>（Test systems frequently）：在生产规模下验证故障恢复与性能。</li>
+<li><b>自动化</b>（Automate）：把重复、易错的动作交给代码与流水线。</li>
+<li><b>允许架构演进</b>（Allow for evolutionary architectures）：为变化预留接口与解耦边界。</li>
+<li><b>用数据驱动架构</b>（Drive architectures using data）：用监控、成本和性能数据做决策。</li>
+<li><b>通过游戏日改进</b>（Improve through game days）：主动演练故障，暴露薄弱环节。</li>
+</ul>
+<div class="callout orange"><b>权衡思维：</b>六个支柱不存在“全部满分”的架构。成本与可靠性、安全与用户体验、性能与复杂度经常互相拉扯。题目会给业务约束（预算、RTO/RPO、合规、上线时间），正确选项是<b>满足约束的平衡方案</b>，而不是每个支柱都堆到最强。</div>
+<div class="callout green"><b>延伸阅读：</b>如果题目偏重 DR、HA 与多账号架构模式，可对照本站综合专题 <a href="../architecture-patterns.html">架构设计模式</a>；本文聚焦 Tool 的评审流程与对象关系，不重复展开 DR 策略细节。</div>
+</section>
+
+<section id="model">
+<h2>三、核心对象模型</h2>
+<p class="lead">Tool 的题目经常考“某个对象的作用”。先记住下面这条主线，再记每个对象的边界。</p>
+<div class="flow">
+ <span class="node"><b>Workload</b><br><small>顶层容器</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>Lens</b><br><small>问卷与最佳实践包</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>Question</b><br><small>按支柱分组的问题</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>Best Practice</b><br><small>逐条标记是否采纳</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>Risk</b><br><small>未采纳项登记 HRI / MRI</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>Improvement Plan</b><br><small>负责人 / 优先级 / 截止日期</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>Milestone</b><br><small>时点快照，用于对比</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>Report</b><br><small>PDF 汇报与归档</small></span>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>对象</th><th>作用</th><th>关键点 / 陷阱</th></tr></thead>
+<tbody>
+<tr><td><b>Workload（工作负载）</b></td><td>被评审的系统、应用或业务能力的容器；所有 Lens、风险、里程碑都挂在它下面。</td><td>按业务边界划分，不是“一个 AWS 账号一个 Workload”，也不是“一个资源一个 Workload”。</td></tr>
+<tr><td><b>Lens（视角/问卷包）</b></td><td>一组问题与最佳实践，可叠加到 Workload 上；Framework Lens 是基础，其他 Lens 针对场景或行业补充问题。</td><td>Lens 不是 Pillar；新增 Lens 不等于新增支柱。</td></tr>
+<tr><td><b>Question（问题）</b></td><td>评审的最小主题单元，带编号并归入某个支柱。</td><td>问题本身不等于风险；只有未采纳的最佳实践才需要登记风险。</td></tr>
+<tr><td><b>Best Practice（最佳实践）</b></td><td>问题下的具体实践条目，逐条标记是否已采纳。</td><td>“不适用”要有业务理由，不能为了让报告好看而全部标记为已采纳。</td></tr>
+<tr><td><b>Risk（风险）</b></td><td>记录未采纳实践带来的架构风险，分为 HRI（高风险）与 MRI（中风险）。</td><td>风险由评审人判断，Tool 不自动推断；风险不等于漏洞扫描结果。</td></tr>
+<tr><td><b>Improvement Plan（改进计划）</b></td><td>把风险转成可跟踪的整改项，记录优先级、负责人、截止日期和状态。</td><td>不是工单系统的替代品；重点是架构整改的责任与节奏。</td></tr>
+<tr><td><b>Milestone（里程碑）</b></td><td>记录某一时刻的回答与风险状态，形成只读快照。</td><td>不做审批、不做自动修复、不回滚配置；价值在“对比”。</td></tr>
+<tr><td><b>Report（报告）</b></td><td>把 Workload、Lens、风险和改进计划汇总为可汇报的输出。</td><td>报告是评审结果，不是合规认证或审计结论。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>一句话记忆：</b>Workload 装 Lens，Lens 出 Question，Question 有 Best Practice；没做到的记 Risk，要整改的进 Improvement Plan，阶段性成果用 Milestone 定格，最后用 Report 汇报。</div>
+</section>
+
+<section id="workload">
+<h2>四、Workload 定义与属性</h2>
+<p class="lead">Workload 是评审的起点。属性填得越准确，后续 Lens 推荐、跨账号共享和报告可读性越好。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>属性</th><th>说明</th><th>题目提示</th></tr></thead>
+<tbody>
+<tr><td><b>Name / Description</b></td><td>工作负载名称与业务描述，用于在组织内识别评审对象。</td><td>按业务能力命名，避免“测试1”“临时环境”这类无法追溯的名字。</td></tr>
+<tr><td><b>Environment</b></td><td>生产（Production）或预生产（Pre-production）。</td><td>生产环境的评审结论通常要求更严格的可靠性与安全基线。</td></tr>
+<tr><td><b>Review Owner</b></td><td>评审负责人，通常是架构师或技术负责人。</td><td>负责人不是“背锅人”，而是推进评审与整改的协调人。</td></tr>
+<tr><td><b>AWS Regions</b></td><td>工作负载实际运行的一个或多个 AWS 区域。</td><td>多区域架构要在属性中体现，否则评审会漏掉跨区域一致性、DR 和延迟问题。</td></tr>
+<tr><td><b>Non-AWS Regions</b></td><td>本地机房、混合云或其他云所在的区域。</td><td>混合架构题要记得填写，配合 Hybrid Networking Lens 使用。</td></tr>
+<tr><td><b>Account IDs</b></td><td>工作负载涉及的 AWS 账号。</td><td>多账号架构的关键信息；也便于跨账号评审时确认范围。</td></tr>
+<tr><td><b>Architectural Design</b></td><td>架构设计文档或图的链接。</td><td>放受控访问的链接；不要在描述或备注里写密钥、口令等敏感信息。</td></tr>
+<tr><td><b>Industry / Industry Type</b></td><td>行业与业务类型，帮助选择行业 Lens、理解监管背景。</td><td>金融、医疗、游戏等行业题，先看行业 Lens，而不是只做 Framework Lens。</td></tr>
+<tr><td><b>Notes</b></td><td>补充说明、评审范围、假设与例外。</td><td>把“为什么某些问题不适用”写清楚，比事后口头解释更可靠。</td></tr>
+</tbody></table></div>
+<h3>如何划分 Workload</h3>
+<ul>
+<li>按<b>业务能力或架构边界</b>划分：一个订单系统、一个数据平台、一个面向客户的 API 网关集群。</li>
+<li>不要把整个企业所有系统塞进一个 Workload：问题数量巨大、风险无法归责、报告失去可读性。</li>
+<li>也不要把一个微服务拆成几十个 Workload：重复回答、跨服务依赖被割裂、评审成本失控。</li>
+<li>共享组件（如统一网络、集中身份）可以单独建 Workload，或作为各业务 Workload 的“依赖”在 Notes 中说明。</li>
+</ul>
+<div class="callout orange"><b>考试判断：</b>题目说“需要评审一个跨 3 个账号、2 个区域的订单平台”，正确做法是创建一个覆盖该平台范围的 Workload，并在属性中填写 Regions 与 Account IDs；而不是按账号或按区域拆成 6 个互不相关的评审。</div>
+</section>
+
+<section id="lens">
+<h2>五、Lens 全解与 Pillar 的区别</h2>
+<p class="lead">Lens 是 Tool 里最容易被概念混淆的对象。记住：Pillar 是“维度”，Lens 是“视角/问卷包”。</p>
+<h3>常见 Lens</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Lens</th><th>适用场景</th><th>关注重点</th></tr></thead>
+<tbody>
+<tr><td><b>AWS Well-Architected Framework Lens</b></td><td>所有 Workload 的基础 Lens，覆盖六大支柱。</td><td>通用架构最佳实践；通常作为评审的起点和必做项。</td></tr>
+<tr><td><b>Serverless Lens</b></td><td>Lambda、API Gateway、Step Functions、DynamoDB、EventBridge 等无服务器架构。</td><td>冷启动、并发与限流、事件源与重试、幂等、可观测性、成本模型。</td></tr>
+<tr><td><b>SaaS Lens</b></td><td>多租户 SaaS 产品。</td><td>租户隔离、噪音邻居、租户 onboarding、计费与配额、数据分区。</td></tr>
+<tr><td><b>Container Build Lens</b></td><td>容器镜像构建与运行体系。</td><td>镜像分层与供应链、构建流水线、运行时安全、可复现性。</td></tr>
+<tr><td><b>IoT Lens</b></td><td>设备接入、边缘计算与大规模设备运营。</td><td>设备身份、连接安全、离线与断网、固件更新、边缘数据处理。</td></tr>
+<tr><td><b>Machine Learning Lens</b></td><td>ML 训练与推理工作负载。</td><td>数据质量与治理、训练/推理基础设施、模型监控、MLOps 与成本。</td></tr>
+<tr><td><b>Data Analytics Lens</b></td><td>数据湖、批流处理与分析平台。</td><td>数据分区与格式、摄取与转换、查询性能、权限与数据治理。</td></tr>
+<tr><td><b>Hybrid Networking Lens</b></td><td>本地与 AWS 混合网络。</td><td>DX/VPN、路由与故障切换、DNS、网络分段、跨环境可观测性。</td></tr>
+<tr><td><b>行业 Lens</b><br>Financial Services / Healthcare / Games 等</td><td>受监管或行业特性强的 Workload。</td><td>行业监管、数据 residency、业务连续性与行业特定风险。以官方 Lens 目录为准。</td></tr>
+<tr><td><b>Custom Lens（自定义 Lens）</b></td><td>企业自有架构标准、内部合规问卷。</td><td>以 JSON 模板定义问题与最佳实践，导入账号后在多个 Workload 复用；可导入/导出。</td></tr>
+</tbody></table></div>
+<h3>Lens 与 Pillar 的区别（必考）</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>对比项</th><th>Pillar（支柱）</th><th>Lens（视角）</th></tr></thead>
+<tbody>
+<tr><td>本质</td><td>Framework 的六个评审维度：卓越运营、安全、可靠性、性能效率、成本优化、可持续性。</td><td>可应用到 Workload 的问卷与最佳实践集合，按场景或行业组织。</td></tr>
+<tr><td>数量关系</td><td>固定六个，是分类轴。</td><td>可多个叠加；Framework Lens 覆盖全部六支柱，其他 Lens 补充特定问题。</td></tr>
+<tr><td>题目问法</td><td>“从哪些维度评审架构？”</td><td>“评估无服务器/多租户/金融行业架构，应增加什么？”</td></tr>
+<tr><td>常见错误</td><td>把 Lens 当成第七个支柱。</td><td>以为应用了 Serverless Lens 就可以不做 Framework Lens。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>选 Lens 的口诀：</b>Framework Lens 打底；技术形态决定场景 Lens（Serverless / SaaS / Container / IoT / ML / Data Analytics / Hybrid Networking）；行业监管决定行业 Lens；企业内部标准用 Custom Lens。</div>
+<div class="callout red"><b>陷阱：</b>“需要新增一个无服务器支柱来评估”——不存在这种操作，Pillar 固定为六个；正确动作是给 Workload 应用 Serverless Lens。Lens 越多不代表越全面，选择与 Workload 真正相关的 Lens，避免大量“不适用”拉低评审质量。</div>
+</section>
+
+<section id="risk">
+<h2>六、问题、最佳实践与风险等级</h2>
+<p class="lead">评审的核心动作是逐题回答。回答状态决定了是否需要登记风险，风险等级决定了整改优先级。</p>
+<h3>回答状态</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>状态</th><th>含义</th><th>后续动作</th><th>注意</th></tr></thead>
+<tbody>
+<tr><td><b>已采纳（Applied）</b></td><td>该最佳实践已在 Workload 中落地。</td><td>通常无需登记风险；可在备注中写实现方式与证据。</td><td>不要为了“零风险”把未落地的实践标成已采纳。</td></tr>
+<tr><td><b>未采纳（Not applied）</b></td><td>该最佳实践尚未落地，需要评估影响。</td><td>登记 Risk，选择 HRI 或 MRI，并进入 Improvement Plan。</td><td>这是最常见的评审路径，也是改进计划的来源。</td></tr>
+<tr><td><b>不适用（Not applicable）</b></td><td>该问题或实践不适用于当前 Workload。</td><td>在备注中说明理由。</td><td>“不适用”不是“没做”，滥用会掩盖真实风险。</td></tr>
+<tr><td><b>未回答（Unanswered）</b></td><td>尚未评审。</td><td>继续评审或明确列入下一轮范围。</td><td>报告中未回答数量过多，说明评审尚未完成。</td></tr>
+</tbody></table></div>
+<h3>HRI 与 MRI</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>等级</th><th>全称</th><th>含义</th><th>处理建议</th></tr></thead>
+<tbody>
+<tr><td><span class="tag red">HRI</span></td><td>High Risk Issue</td><td>高风险问题：可能显著影响安全、可靠性、合规或业务连续性。</td><td>优先整改；设定负责人和明确截止日期；若暂不整改，需要书面的风险接受记录。</td></tr>
+<tr><td><span class="tag orange">MRI</span></td><td>Medium Risk Issue</td><td>中风险问题：有影响但可控，或需要较长周期优化。</td><td>纳入改进计划批量处理；结合成本与工作量排序。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>概览会汇总：</b>Workload 页面通常显示已回答/未回答数量以及 HRI/MRI 计数。这些数字是评审进度和风险态势的快速指标，也是 Milestone 对比的核心数据。</div>
+<div class="callout red"><b>三个常见错误：</b>
+<ul>
+<li>把 Risk 当成“漏洞”：HRI/MRI 是架构取舍的风险等级，不是漏洞扫描的严重级别。</li>
+<li>认为 Tool 会自动定级：风险等级由评审人根据业务上下文判断；同一个最佳实践在不同 Workload 中可能是 HRI，也可能不适用。</li>
+<li>只登记风险、不建改进项：风险台账不产生行动，改进计划才有负责人和截止日期。</li>
+</ul>
+</div>
+<div class="callout orange"><b>风险接受也要留痕：</b>如果业务上决定暂不整改，应把理由、批准人和复审时间写入备注，并把改进项状态标记为“风险已确认（Risk acknowledged，具体选项以控制台为准）”，而不是删除风险或伪装成已采纳。</div>
+</section>
+
+<section id="milestone">
+<h2>七、Milestone 里程碑</h2>
+<p class="lead">Milestone 是某一时刻 Workload 评审状态的只读快照。它的核心价值不是“存档”，而是“对比”和“证明改进”。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>维度</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><b>记录内容</b></td><td>该时点的 Lens 回答、风险等级与相关评审信息。</td></tr>
+<tr><td><b>创建方式</b></td><td>在 Workload 中创建 Milestone，填写名称与备注；一个 Workload 可以有多个 Milestone。</td></tr>
+<tr><td><b>是否可变</b></td><td>只读快照。之后修改 Workload 的回答，不会改变已创建的 Milestone。</td></tr>
+<tr><td><b>典型用途</b></td><td>建立评审基线、上线前存档、季度复审对比、故障复盘、迁移前后对比、向管理层展示风险下降。</td></tr>
+<tr><td><b>删除影响</b></td><td>删除 Workload 会连同其 Milestone 等关联数据一起删除，操作前要确认。</td></tr>
+<tr><td><b>不是什么</b></td><td>不是审批流、不是自动修复、不是配置回滚、不是合规认证。</td></tr>
+</tbody></table></div>
+<h3>推荐的 Milestone 命名与节奏</h3>
+<ul>
+<li><b>基线：</b><code>2026-Q4 Baseline</code>，第一次完整评审结束时创建。</li>
+<li><b>上线前：</b><code>Pre-launch 2026-12</code>，确认 HRI 已关闭或有明确接受记录。</li>
+<li><b>季度复审：</b><code>2027-Q1 Review</code>，对比 HRI/MRI 数量、未回答数和改进项完成情况。</li>
+<li><b>重大变更后：</b>架构迁移、区域扩展、收购整合后创建新快照，便于解释风险变化。</li>
+</ul>
+<div class="callout green"><b>对比看什么：</b>HRI 数量是否下降、MRI 是否被消化、未回答问题是否减少、风险是否从“安全/可靠性”转移到可控的“成本/性能”类别、改进项完成率是否提升。</div>
+<div class="callout red"><b>陷阱：</b>题目问“如何证明六个月前评审后风险确实下降”，答案是创建并对比 Milestone（基线 vs 当前），而不是查 CloudTrail、Config 或 Trusted Advisor。后者能提供证据，但不能替代评审快照的对比。</div>
+</section>
+
+<section id="improvement">
+<h2>八、改进计划与优先级排序</h2>
+<p class="lead">Improvement Plan 把“已知风险”变成“有人负责、有期限、有状态”的整改清单。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>字段</th><th>用途</th><th>排序建议</th></tr></thead>
+<tbody>
+<tr><td><b>Title / Description</b></td><td>整改动作的简述与验收标准。</td><td>写成可执行动作，避免“加强安全”这类空泛描述。</td></tr>
+<tr><td><b>Priority</b></td><td>优先级（高/中/低）。</td><td>HRI 通常为高；影响安全、可靠性、合规的优先。</td></tr>
+<tr><td><b>Owner</b></td><td>责任人。</td><td>必须是能推动变更的人，而不是“整个团队”。</td></tr>
+<tr><td><b>Due date</b></td><td>截止日期。</td><td>与发布节奏、审计窗口、季度复审对齐。</td></tr>
+<tr><td><b>Status</b></td><td>未开始 / 进行中 / 完成 / 风险已确认（以控制台为准）。</td><td>“风险已确认”用于业务决定暂不整改的场景，需保留理由与批准人。</td></tr>
+<tr><td><b>Notes</b></td><td>依赖、例外、验证方式、工作量估算。</td><td>工作量可按低/中/高估算，作为排序输入；Tool 不会自动计算工期。</td></tr>
+</tbody></table></div>
+<h3>推荐的排序方法</h3>
+<ol>
+<li><b>先 HRI，后 MRI：</b>高风险问题优先，尤其是安全、可靠性与合规相关项。</li>
+<li><b>同等级看影响与工作量：</b>影响大、工作量小的先做；影响大、工作量大的拆成阶段性里程碑。</li>
+<li><b>成组处理：</b>同一根因导致的多个 MRI 合并为一个整改项，避免重复工单。</li>
+<li><b>明确接受风险：</b>业务上不打算整改的项，要有批准人、理由和复审日期，不能静默跳过。</li>
+<li><b>闭环验证：</b>整改完成后重新回答对应问题（标记为已采纳），更新改进项状态，并创建新的 Milestone 记录结果。</li>
+</ol>
+<div class="callout orange"><b>工作量（Effort）怎么考：</b>题目常给“5 个 HRI、40 个 MRI、预算和人力有限”。正确思路是<b>先按风险等级和业务影响排序，再用工作量判断先后与拆分</b>；不是按问题编号顺序全部处理，也不是只做工作量最小的项。Tool 的字段重点是优先级、负责人、截止日期和状态，工作量通常写在描述或备注中。</div>
+<div class="callout"><b>与工单系统的关系：</b>Improvement Plan 是架构评审的整改台账；复杂项目可以把条目同步到 Jira、ServiceNow 等工单系统（手工或通过 API/自动化），但评审结论仍以 Tool 中的记录为准。</div>
+</section>
+
+<section id="report">
+<h2>九、报告、共享与跨账号评审</h2>
+<h3>报告与导出</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>输出</th><th>内容 / 用途</th><th>注意</th></tr></thead>
+<tbody>
+<tr><td><b>PDF 报告</b></td><td>汇总 Workload 元数据、Lens 评审结果、HRI/MRI、问题回答与改进计划，用于归档和管理层汇报。</td><td>报告是评审快照，不等于合规认证；敏感信息不要写进 Notes。</td></tr>
+<tr><td><b>自定义 Lens 的 JSON</b></td><td>Custom Lens 可导入/导出为 JSON，便于跨账号、跨团队复用同一套企业问卷。</td><td>导入前确认版本与问题编号，避免覆盖或重复。</td></tr>
+<tr><td><b>API 读取</b></td><td>可通过 Well-Architected Tool API 读取 Workload、Lens 评审与改进项，用于自动化汇总或与内部平台集成。</td><td>用 IAM 最小权限；API 调用同样受 Region 与账号范围约束。</td></tr>
+</tbody></table></div>
+<h3>共享与跨账号评审</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>场景</th><th>常见做法</th><th>注意</th></tr></thead>
+<tbody>
+<tr><td><b>同账号内协作</b></td><td>用 IAM 控制谁可以查看或编辑 Workload；按角色分配架构师、评审人、只读干系人。</td><td>不要让所有用户都有删除 Workload 的权限。</td></tr>
+<tr><td><b>跨账号共享</b></td><td>Workload 所有者把 Workload 共享给其他 AWS 账号，可按需授予只读或可编辑权限；对方在自己的 Tool 中访问。</td><td>共享是访问权限，不是自动汇总或自动扫描对方账号资源。</td></tr>
+<tr><td><b>组织内集中评审</b></td><td>由中央架构团队或管理账号建立 Workload，共享给成员账号参与回答；结合 Organizations 统一治理。</td><td>确认 Region 一致、成员账号范围、共享权限与审计记录。</td></tr>
+<tr><td><b>合作伙伴/AWS 主导评审</b></td><td>通过跨账号角色、Workload 共享或由合作伙伴在其环境中记录评审；结束后输出报告与改进计划。</td><td>遵循最小权限和保密要求；评审结束后回收访问。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>跨账号评审的推荐流程：</b>确定评审范围与 Region → 中心团队创建 Workload 并填写账号/区域属性 → 共享给相关账号（只读或可编辑）→ 各账号完成对应问题 → 中心团队汇总风险与改进计划 → 创建 Milestone → 生成 PDF 报告归档。</div>
+<div class="callout red"><b>陷阱：</b>“共享 Workload 后，Tool 会自动收集所有成员账号的资源并生成风险”——错误。共享只解决访问与协作，评审答案仍由人填写；资源层面的自动发现要靠 Trusted Advisor、Config、Security Hub 等工具。</div>
+</section>
+
+<section id="boundaries">
+<h2>十、与相邻服务的边界</h2>
+<p class="lead">SAP-C02 很喜欢用“应该用哪个服务”制造干扰项。下面这张表决定大多数边界题。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>服务</th><th>擅长解决</th><th>与 Well-Architected Tool 的边界 / 配合</th></tr></thead>
+<tbody>
+<tr><td><b>AWS Trusted Advisor</b></td><td>基于 AWS 预建规则的自动检查与建议，覆盖成本、性能、安全、容错、服务配额等类别；能力与支持计划相关。</td><td>自动发现，不做架构问卷、风险台账和里程碑。评审时把检查结果作为证据，重大问题转为 Risk/Improvement。</td></tr>
+<tr><td><b>AWS Compute Optimizer</b></td><td>基于利用率数据给出计算资源规格与配置建议（如 EC2、Auto Scaling、EBS、Lambda）。</td><td>资源级 rightsizing，不是架构评审。可作为性能效率/成本优化支柱的输入。</td></tr>
+<tr><td><b>Cost Optimization Hub</b></td><td>跨账号汇总成本优化机会与建议（闲置资源、承诺折扣、迁移等）。</td><td>成本专项建议，不替代六支柱评审。可作为成本优化支柱的证据与改进项来源。</td></tr>
+<tr><td><b>AWS Config</b></td><td>记录资源配置历史、按托管/自定义规则评估合规、支持自动修复与聚合。</td><td>回答“资源配置是否符合规则”，不回答“架构是否优秀”。是卓越运营/安全支柱的持续证据。</td></tr>
+<tr><td><b>AWS Audit Manager</b></td><td>对照 SOC 2、PCI DSS、ISO 等合规框架自动收集与整理审计证据。</td><td>合规审计工具，不是架构最佳实践评审；两者可以互相引用证据，但结论不同。</td></tr>
+<tr><td><b>Security Hub / GuardDuty</b></td><td>汇总安全发现、标准控制与威胁检测。</td><td>安全发现是安全支柱的输入；不等于 Well-Architected 的风险等级。</td></tr>
+<tr><td><b>AWS Architecture Center</b></td><td>参考架构、最佳实践指南与白皮书。</td><td>知识库，不提供 Workload 级评审记录与整改跟踪。</td></tr>
+<tr><td><b>Service Catalog / Control Tower</b></td><td>标准化产品目录、Landing Zone 与护栏治理。</td><td>把评审结论落到“可部署的标准”和“组织级控制”，不是评审工具本身。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>一句话区分：</b>Trusted Advisor、Compute Optimizer、Cost Optimization Hub、Config 是<b>自动发现与合规检查</b>；Well-Architected Tool 是<b>人工评审 + 风险登记 + 改进跟踪</b>。前者产出证据，后者产出评审结论与行动计划。</div>
+<div class="callout orange"><b>题干关键词映射：</b>“自动检查/支持计划/五类检查” → Trusted Advisor；“rightsizing/利用率” → Compute Optimizer；“跨账号节省机会” → Cost Optimization Hub；“配置合规历史/自动修复” → AWS Config；“架构问卷/风险分级/里程碑” → Well-Architected Tool。</div>
+</section>
+
+<section id="scenarios">
+<h2>十一、场景题解析（7 题）</h2>
+
+<details class="scenario">
+<summary>1. 一家公司要在上线前评审一个基于 Lambda、API Gateway、Step Functions 和 DynamoDB 的订单系统。架构师希望使用 Well-Architected Tool 完成评估。最合适的做法是？</summary>
+<p class="opt">A. 只启用 Trusted Advisor，等待自动检查生成评审报告<br>B. 创建一个 Workload，应用 Framework Lens 与 Serverless Lens，逐题人工回答并登记风险<br>C. 为每个 Lambda 函数创建一个 Workload，分别评审<br>D. 新建一个“Serverless 支柱”，再导入 CloudWatch 指标自动评分</p>
+<p><b>答案：B。</b>Tool 的评审单位是 Workload，先应用覆盖六支柱的 Framework Lens，再叠加针对无服务器架构的 Serverless Lens。<br><b>排除：</b>A 把自动检查当成架构评审；C 粒度错误，Workload 应按业务/架构边界划分；D 不存在“新增支柱”的操作，Tool 也不会根据指标自动评分。</p>
+</details>
+
+<details class="scenario">
+<summary>2. 六个月前完成了一次 Well-Architected 评审，现在管理层要求证明高风险问题确实减少。应该怎么做？</summary>
+<p class="opt">A. 查看 CloudTrail 事件数量<br>B. 用 AWS Config 查看资源配置变更<br>C. 将当前评审与六个月前的 Milestone 对比，展示 HRI/MRI 与未回答问题的变化<br>D. 重新运行 Trusted Advisor 并导出检查结果</p>
+<p><b>答案：C。</b>Milestone 记录某一时点的回答与风险状态，可与当前状态或其他 Milestone 对比，这是“证明改进”的标准做法。<br><b>排除：</b>CloudTrail 记录 API 调用，Config 记录资源配置，Trusted Advisor 提供自动检查；它们能作为证据，但不能替代评审快照的前后对比。</p>
+</details>
+
+<details class="scenario">
+<summary>3. 一个组织有 20 个成员账号，中央架构团队要统一评审各账号的核心工作负载，同时让成员账号参与回答。最合适的方案是？</summary>
+<p class="opt">A. 给所有成员账号发放管理账号的 root 凭证，共用一个 Workload<br>B. 由中央团队创建 Workload，通过 Workload 共享授予相关账号只读或可编辑权限，结合 Organizations 治理<br>C. 每个账号各自创建 Workload，禁止中央团队访问<br>D. 用 AWS Config Aggregator 自动生成评审答案</p>
+<p><b>答案：B。</b>跨账号评审的常见做法是 Workload 所有者共享给目标账号，按需授予只读或可编辑权限，并由组织级治理统一范围与审计。<br><b>排除：</b>A 严重违反最小权限；C 会形成 20 份互不关联的记录，无法统一对比；D 配置聚合器不产生架构评审答案。</p>
+</details>
+
+<details class="scenario">
+<summary>4. 团队认为 Well-Architected Tool 会自动扫描资源，于是把 Trusted Advisor 的检查结果直接当作评审答案提交。这个做法的问题是什么？</summary>
+<p class="opt">A. 没有给 Workload 绑定 KMS 密钥<br>B. Tool 不自动检测资源，必须人工回答；Trusted Advisor 结果只能作为评审证据<br>C. 必须先购买 Enterprise Support 才能使用 Tool<br>D. 必须先创建 Custom Lens，否则无法提交</p>
+<p><b>答案：B。</b>Tool 是问卷式评审平台，不会读取资源或自动推断风险。Trusted Advisor 是自动检查工具，可作为输入证据，但不能代替逐题回答、风险分级和改进计划。<br><b>排除：</b>A、C、D 都是与题意无关的条件；Tool 的使用不要求先购买特定支持计划或先建 Custom Lens。</p>
+</details>
+
+<details class="scenario">
+<summary>5. 评审发现某条最佳实践尚未落地，但业务负责人认为当前取舍可以接受，短期内不打算整改。应如何记录？</summary>
+<p class="opt">A. 直接标记为“已采纳”，避免报告中出现风险<br>B. 标记为“不适用”，不写任何理由<br>C. 登记风险并选择 HRI/MRI，在改进计划中记录“风险已确认”及理由、批准人和复审时间<br>D. 删除该问题，等下次评审再处理</p>
+<p><b>答案：C。</b>未落地就是风险，应如实登记等级；业务接受并不等于风险消失，需要留痕和复审。改进计划中的“风险已确认”状态（具体名称以控制台为准）用于这种场景。<br><b>排除：</b>A 伪造评审结果；B 滥用“不适用”；D 删除问题会掩盖风险，也破坏评审的可追溯性。</p>
+</details>
+
+<details class="scenario">
+<summary>6. 一次评审产生 5 个 HRI 和 40 个 MRI，团队人力有限。架构师应如何安排改进计划？</summary>
+<p class="opt">A. 按问题编号顺序处理，保证每个问题都被触碰一次<br>B. 先处理 5 个 HRI（优先安全/可靠性/合规），再按影响与工作量对 MRI 分组排序；接受风险的项要留痕<br>C. 只处理工作量最小的 45 项<br>D. 等所有 HRI 自动修复后再处理 MRI</p>
+<p><b>答案：B。</b>先按风险等级和业务影响排序，再结合工作量决定先后与拆分；MRI 可合并同根因项批量处理。<br><b>排除：</b>A 平均用力会拖延关键风险；C 工作量最小不等于影响最小；D Tool 不会自动修复，HRI 必须有人负责推进。</p>
+</details>
+
+<details class="scenario">
+<summary>7. 某团队想评估一个金融行业的多租户 SaaS 平台，计划在 Tool 中“新增一个 SaaS 支柱”。正确做法是？</summary>
+<p class="opt">A. 新增 SaaS 支柱，并替换掉安全支柱<br>B. 只使用 Framework Lens，因为行业属性不影响评审<br>C. 在 Workload 上应用 SaaS Lens，并按行业监管需要再应用 Financial Services Industry Lens；Framework Lens 仍然保留<br>D. 创建 6 个 Workload，分别对应 6 个支柱</p>
+<p><b>答案：C。</b>Pillar 固定为六个，不能新增；Lens 才是按场景/行业补充问题的问卷包。多租户 SaaS 用 SaaS Lens，金融行业叠加行业 Lens，Framework Lens 继续作为基础。<br><b>排除：</b>A 混淆 Lens 与 Pillar 且破坏基础评审；B 漏掉多租户与行业特定风险；D 把评审维度误当成 Workload 划分依据。</p>
+</details>
+</section>
+
+<section id="quick">
+<h2>十二、关键词速查与高频考点</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题目关键词</th><th>优先考虑</th></tr></thead>
+<tbody>
+<tr><td>架构评审、问卷、风险台账、改进跟踪</td><td>AWS Well-Architected Tool</td></tr>
+<tr><td>架构设计原则、六大支柱、最佳实践白皮书</td><td>Well-Architected Framework</td></tr>
+<tr><td>自评、AWS 主导、合作伙伴主导的评审活动</td><td>Well-Architected Review</td></tr>
+<tr><td>自动扫描资源、按支持计划提供检查</td><td>Trusted Advisor（不是 WA Tool）</td></tr>
+<tr><td>基于利用率做资源规格建议</td><td>Compute Optimizer</td></tr>
+<tr><td>跨账号汇总成本优化机会</td><td>Cost Optimization Hub</td></tr>
+<tr><td>配置合规历史、自定义规则、自动修复</td><td>AWS Config</td></tr>
+<tr><td>合规框架审计证据</td><td>AWS Audit Manager</td></tr>
+<tr><td>评审对象、业务/架构边界</td><td>Workload</td></tr>
+<tr><td>无服务器架构</td><td>Serverless Lens</td></tr>
+<tr><td>多租户 SaaS</td><td>SaaS Lens</td></tr>
+<tr><td>金融/医疗/游戏行业监管</td><td>行业 Lens（如 Financial Services Industry Lens）</td></tr>
+<tr><td>企业自定义问卷、跨账号复用</td><td>Custom Lens（JSON 导入/导出）</td></tr>
+<tr><td>“新增第七个支柱”</td><td>错误概念；Pillar 固定六个，应改用 Lens</td></tr>
+<tr><td>高风险 / 中风险问题</td><td>HRI / MRI</td></tr>
+<tr><td>记录架构快照、对比前后风险</td><td>Milestone</td></tr>
+<tr><td>整改负责人、优先级、截止日期、状态</td><td>Improvement Plan</td></tr>
+<tr><td>向管理层汇报、归档评审</td><td>生成 PDF 报告</td></tr>
+<tr><td>跨账号评审、成员账号参与</td><td>Workload 共享 + Organizations + 最小权限</td></tr>
+<tr><td>Tool 会自动修复/自动评分吗</td><td>不会；必须人工回答，整改靠改进计划</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>高频考点总结：</b>
+<ul>
+<li><b>三者定位：</b>Framework 是知识，Tool 是评审与记录平台，Review 是评审活动。</li>
+<li><b>六支柱：</b>卓越运营、安全、可靠性、性能效率、成本优化、可持续性；考权衡，不考满分。</li>
+<li><b>Lens ≠ Pillar：</b>Pillar 是固定维度，Lens 是可叠加的问卷包；Framework Lens 打底。</li>
+<li><b>风险闭环：</b>未采纳 → HRI/MRI → Improvement Plan → 重新回答 → 新 Milestone。</li>
+<li><b>Milestone：</b>只读快照，用于对比和证明改进，不是审批、修复或回滚。</li>
+<li><b>边界：</b>Tool 不自动扫描；自动发现靠 Trusted Advisor / Compute Optimizer / Cost Optimization Hub / Config。</li>
+<li><b>共享：</b>跨账号评审用 Workload 共享与最小权限，共享不等于自动汇总。</li>
+</ul>
+</div>
+</section>
+
+<section id="memory">
+<h2>十三、考前速记卡（可勾选）</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 18</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>Framework：</b>六支柱 + 设计原则的知识体系，不是控制台服务</span></li>
+<li><input type="checkbox"><span><b>Tool：</b>Workload 级评审与记录平台，答案靠人工填写</span></li>
+<li><input type="checkbox"><span><b>Review：</b>一次评审活动，可自评、AWS 主导或合作伙伴主导</span></li>
+<li><input type="checkbox"><span><b>Tool 不扫描：</b>不会自动读取资源、配置或指标</span></li>
+<li><input type="checkbox"><span><b>六支柱：</b>运营、安全、可靠、性能、成本、可持续</span></li>
+<li><input type="checkbox"><span><b>权衡：</b>成本 vs 可靠性、安全 vs 体验、性能 vs 复杂度</span></li>
+<li><input type="checkbox"><span><b>Workload：</b>按业务/架构边界划分，按 Region 创建，含账号与区域属性</span></li>
+<li><input type="checkbox"><span><b>Lens：</b>可叠加的问卷包；Framework Lens 打底</span></li>
+<li><input type="checkbox"><span><b>Pillar vs Lens：</b>Pillar 固定六个；Lens 按场景/行业补充</span></li>
+<li><input type="checkbox"><span><b>Serverless Lens：</b>Lambda / API Gateway / Step Functions / DynamoDB 架构</span></li>
+<li><input type="checkbox"><span><b>SaaS Lens：</b>多租户隔离、噪音邻居、计费与 onboarding</span></li>
+<li><input type="checkbox"><span><b>Custom Lens：</b>JSON 导入/导出，企业标准跨账号复用</span></li>
+<li><input type="checkbox"><span><b>HRI / MRI：</b>高风险 / 中风险问题，由评审人判断</span></li>
+<li><input type="checkbox"><span><b>回答状态：</b>已采纳 / 未采纳 / 不适用 / 未回答</span></li>
+<li><input type="checkbox"><span><b>Milestone：</b>只读快照，用于前后对比；删除 Workload 会带走它</span></li>
+<li><input type="checkbox"><span><b>Improvement Plan：</b>优先级、负责人、截止日期、状态；不是工单系统</span></li>
+<li><input type="checkbox"><span><b>共享：</b>跨账号共享 Workload，只读/可编辑；共享不等于自动汇总</span></li>
+<li><input type="checkbox"><span><b>边界：</b>TA/Compute Optimizer/Cost Optimization Hub/Config 自动发现，WA Tool 人工评审</span></li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>十四、快速自测</h2>
+<p class="small">先独立作答，再展开查看解析。</p>
+<details class="scenario">
+<summary>1. Well-Architected Tool 能否替代 Trusted Advisor 自动发现资源配置问题？</summary>
+<p>不能。Tool 是人工问卷式评审，不会扫描资源。Trusted Advisor 提供自动检查，可作为评审证据；两者互补，不是替代关系。</p>
+</details>
+<details class="scenario">
+<summary>2. 一个 Workload 已回答 60 个问题、还有 20 个未回答，形成了 3 个 HRI 和 12 个 MRI。Milestone 应该记录什么？又该如何解读这些数字？</summary>
+<p>Milestone 记录该时点的回答与风险快照。解读时应关注：未回答 20 个说明评审未完成；3 个 HRI 应优先整改或有明确的风险接受记录；12 个 MRI 可批量排序处理。不要只看 HRI/MRI 总数而忽略未回答比例。</p>
+</details>
+<details class="scenario">
+<summary>3. 团队想用企业自己的 30 条架构标准来评审多个账号的系统，并希望在其他账号复用同一套问题。最合适的做法是？</summary>
+<p>创建 Custom Lens（以 JSON 定义问题与最佳实践），导入到需要使用的账号并应用到各 Workload；Custom Lens 可导入/导出复用。不要为每个账号手工复制 30 条问题，也不要把企业标准伪装成新的 Pillar。</p>
+</details>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://aws.amazon.com/architecture/well-architected/" target="_blank" rel="noopener">AWS Well-Architected（总览与 Lens 目录）</a></li>
+<li><a href="https://docs.aws.amazon.com/wellarchitected/latest/framework/wellarchitected-framework.html" target="_blank" rel="noopener">AWS Well-Architected Framework</a></li>
+<li><a href="https://docs.aws.amazon.com/wellarchitected/latest/userguide/intro.html" target="_blank" rel="noopener">AWS Well-Architected Tool 用户指南</a></li>
+<li><a href="https://docs.aws.amazon.com/wellarchitected/latest/userguide/lenses.html" target="_blank" rel="noopener">Well-Architected Tool 中的 Lens</a></li>
+<li><a href="https://docs.aws.amazon.com/wellarchitected/latest/APIReference/Welcome.html" target="_blank" rel="noopener">Well-Architected Tool API Reference</a></li>
+<li><a href="https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html" target="_blank" rel="noopener">AWS Trusted Advisor</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>本文为复习提纲。Lens 目录、控制台字段名称、共享权限选项与改进计划状态可能随版本调整，请以 AWS 官方文档和最新考试指南为准。本文不是官方题库，题目为考点导向的自编场景。</div>
+</section>
+
+</main>
+</div>
+<footer class="container">AWS SAP-C02 Well-Architected Tool 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+</script>
+</body>
+</html>
