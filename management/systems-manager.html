@@ -106,5 +106,11 @@ header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff
 function updateProgress(){const boxes=[...document.querySelectorAll('#memoryList input')];const done=boxes.filter(x=>x.checked).length;document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;}
 document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
 </script>
+
+<script>
+/* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
+window.__PF_ROOT_REL="../";
+(function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
+</script>
 </body>
 </html>

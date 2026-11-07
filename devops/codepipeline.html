@@ -29,4 +29,10 @@
 <section id="quiz"><h2>八、快速自测</h2><details><summary>1. 谁负责把 CodeBuild 与 CodeDeploy 按顺序串起来？</summary><p>CodePipeline。</p></details><details><summary>2. 为什么跨账号部署需要同时配置两侧策略？</summary><p>调用方要有 AssumeRole 权限，目标角色也必须信任调用方主体。</p></details><details><summary>3. 如何要求生产部署前人工确认？</summary><p>在生产部署前加入 Manual approval action，并配置通知/审批流程。</p></details></section>
 <section id="refs"><h2>官方资料</h2><ul><li><a href="https://docs.aws.amazon.com/codepipeline/latest/userguide/welcome.html" target="_blank" rel="noopener">AWS CodePipeline 用户指南</a></li><li><a href="https://docs.aws.amazon.com/codepipeline/latest/userguide/actions.html" target="_blank" rel="noopener">CodePipeline actions</a></li><li><a href="https://docs.aws.amazon.com/codepipeline/latest/userguide/pipelines-create-cross-account.html" target="_blank" rel="noopener">跨账号流水线</a></li></ul></section>
 </main></div><footer class="container">AWS CodePipeline SAP-C02 复习笔记 · 可打印或另存为 PDF</footer><script>function updateProgress(){const boxes=[...document.querySelectorAll('#memoryList input')],done=boxes.filter(x=>x.checked).length;document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;}document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));</script>
+
+<script>
+/* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
+window.__PF_ROOT_REL="../";
+(function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
+</script>
 </body></html>

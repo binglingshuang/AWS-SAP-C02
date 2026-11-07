@@ -29,4 +29,10 @@
 <section id="quiz"><h2>八、快速自测</h2><details><summary>1. 原地部署和蓝绿部署最主要的资源/风险差别是什么？</summary><p>原地复用实例但更新时需管理可用容量；蓝绿保留新旧环境并行，切换更快但需要额外容量。</p></details><details><summary>2. Lambda 如何逐步将生产流量转到新版本？</summary><p>使用版本与别名，并通过 CodeDeploy Canary/Linear 等部署配置转移流量。</p></details><details><summary>3. 如何在错误率升高时自动回退应用版本？</summary><p>关联 CloudWatch alarm 并启用部署组自动回滚；同时确保旧版本和数据兼容策略可用。</p></details></section>
 <section id="refs"><h2>官方资料</h2><ul><li><a href="https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html" target="_blank" rel="noopener">AWS CodeDeploy 用户指南</a></li><li><a href="https://docs.aws.amazon.com/codedeploy/latest/userguide/reference-appspec-file.html" target="_blank" rel="noopener">AppSpec 文件参考</a></li><li><a href="https://docs.aws.amazon.com/codedeploy/latest/userguide/deployment-configurations.html" target="_blank" rel="noopener">部署配置</a></li></ul></section>
 </main></div><footer class="container">AWS CodeDeploy SAP-C02 复习笔记 · 可打印或另存为 PDF</footer><script>function updateProgress(){const boxes=[...document.querySelectorAll('#memoryList input')],done=boxes.filter(x=>x.checked).length;document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;}document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));</script>
+
+<script>
+/* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
+window.__PF_ROOT_REL="../";
+(function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
+</script>
 </body></html>

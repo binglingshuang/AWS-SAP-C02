@@ -29,4 +29,10 @@
 <section id="quiz"><h2>八、快速自测</h2><details><summary>1. 需要托管直接把流写入 S3，最少自管组件选什么？</summary><p>Amazon Data Firehose。</p></details><details><summary>2. 为什么增加总 shard 数未必解决单个 partition key 延迟？</summary><p>同一 key 仍映射到同一 shard，需均衡 key 分布。</p></details><details><summary>3. 多消费者需低延迟独立读吞吐可评估什么？</summary><p>Enhanced Fan-Out。</p></details></section>
 <section id="refs"><h2>官方资料</h2><ul><li><a href="https://docs.aws.amazon.com/streams/latest/dev/introduction.html" target="_blank" rel="noopener">Kinesis Data Streams</a></li><li><a href="https://docs.aws.amazon.com/firehose/latest/dev/what-is-this-service.html" target="_blank" rel="noopener">Amazon Data Firehose</a></li><li><a href="https://docs.aws.amazon.com/managed-flink/latest/java/what-is.html" target="_blank" rel="noopener">Managed Service for Apache Flink</a></li></ul></section>
 </main></div><footer class="container">Amazon Kinesis SAP-C02 复习笔记 · 可打印或另存为 PDF</footer><script>function updateProgress(){const boxes=[...document.querySelectorAll('#memoryList input')],done=boxes.filter(x=>x.checked).length;document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;}document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));</script>
+
+<script>
+/* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
+window.__PF_ROOT_REL="../";
+(function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
+</script>
 </body></html>

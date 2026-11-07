@@ -16,3 +16,11 @@ Thumbs.db
 *.log
 *.tmp
 *.bak
+
+# ── Node 依赖（本地验证用，不入库）──
+node_modules/
+
+# ── Pagefind 全文搜索索引（构建产物，CI 中重新生成）──
+pagefind/
+.pf_old_tmp/
+.pf_input_tmp/

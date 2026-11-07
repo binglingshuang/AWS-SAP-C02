@@ -1,9 +1,17 @@
 pages:
   stage: deploy
+  image: node:20-alpine
   script:
     - mkdir .public
     - cp -r * .public
     - mv .public public
+    # ── 生成 Pagefind 全文搜索索引 ──
+    # 临时移出 old/ 与 input/，使其不进入搜索索引（仍保留在站点中可访问）
+    - if [ -d public/old ]; then mv public/old .pf_old_tmp; fi
+    - if [ -d public/input ]; then mv public/input .pf_input_tmp; fi
+    - npx -y pagefind --site public --exclude-selectors "nav,.toolbar"
+    - if [ -d .pf_old_tmp ]; then mv .pf_old_tmp public/old; fi
+    - if [ -d .pf_input_tmp ]; then mv .pf_input_tmp public/input; fi
   artifacts:
     paths:
       - public
