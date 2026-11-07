@@ -61,6 +61,25 @@
 <tr><td>跨账号管理</td><td>通过组织级策略或管理账户集中控制备份。</td><td>多账号中台架构或企业审计场景。</td></tr>
 <tr><td>Vault Lock</td><td>受控地锁定保留期和删除动作。</td><td>合规、审计、不可篡改需求。</td></tr>
 </tbody></table></div>
+<h3>常见支持资源</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>类别</th><th>常见资源</th><th>备考提示</th></tr></thead>
+<tbody>
+<tr><td>计算与存储</td><td>Amazon EC2 / EBS、EFS、FSx（Windows File Server、Lustre、OpenZFS、ONTAP）、S3</td><td>覆盖实例、块存储、文件系统及对象存储备份。</td></tr>
+<tr><td>数据库</td><td>Amazon RDS / Aurora、DynamoDB、DocumentDB、Neptune</td><td>具体备份能力与高级功能依资源类型而异。</td></tr>
+<tr><td>容器与混合环境</td><td>Amazon EKS、AWS Storage Gateway Volume Gateway</td><td>EKS 备份可涉及集群资源和持久卷；留意对应组件与配置。</td></tr>
+<tr><td>应用与基础设施</td><td>AWS CloudFormation 堆栈备份</td><td>堆栈备份范围取决于其中受支持的资源类型。</td></tr>
+</tbody></table></div>
+<p class="small">服务支持范围、区域可用性及功能限制会变化；实施前应核对 AWS Backup 当前支持资源矩阵及具体资源的备份要求。</p>
+<h3>与 AWS Elastic Disaster Recovery (DRS) 的边界</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>维度</th><th>AWS Backup</th><th>AWS DRS</th></tr></thead>
+<tbody>
+<tr><td>目标</td><td>按策略备份、保留、归档与恢复，强调治理和合规。</td><td>持续复制服务器并支持灾难时恢复，强调业务连续性。</td></tr>
+<tr><td>机制</td><td>按计划创建恢复点，并可配置生命周期和跨区域复制。</td><td>在源服务器部署复制代理，进行块级持续异步复制。</td></tr>
+<tr><td>适用线索</td><td>定期快照、长期留存、Vault Lock、统一多账号备份。</td><td>本地/云服务器灾备、故障切换与回切、恢复演练。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>易混点：</b>备份副本可用于灾难恢复，但 AWS Backup 不等于持续服务器复制。恢复时间和数据丢失窗口取决于备份频率、恢复步骤与演练结果；需要服务器级持续 DR 时，另评估 <a href="../migration/disaster-recovery.html">AWS DRS</a>。</div>
 </section>
 
 <section id="plans">

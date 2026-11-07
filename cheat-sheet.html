@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 一句话速记手册：题干关键词 → 反射答案，看到什么就选什么。">
+<title>AWS SAP-C02｜一句话速记 Cheat Sheet</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0;
+  --primary:#2563eb;--primary-soft:#eff6ff;--green:#15803d;--green-soft:#f0fdf4;
+  --orange:#c2410c;--orange-soft:#fff7ed;--red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06)
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif} a{color:var(--primary);text-decoration:none} a:hover{text-decoration:underline} .container{width:min(1120px,calc(100% - 32px));margin:auto} header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:52px 0 42px} header .eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#bfdbfe} header h1{font-size:clamp(28px,5vw,44px);line-height:1.2;margin:12px 0} header p{color:#dbeafe;max-width:760px;margin:0} .header-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px} .pill{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);padding:5px 12px;border-radius:999px;font-size:13px} .layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:26px;padding:28px 0 60px} nav{position:sticky;top:18px;align-self:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 36px);overflow:auto} nav strong{display:block;margin-bottom:10px} nav a{display:block;padding:6px 8px;border-radius:7px;color:#475569;font-size:14px} nav a:hover{background:var(--primary-soft);color:var(--primary);text-decoration:none} main{min-width:0} section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow);scroll-margin-top:20px} h2{font-size:25px;line-height:1.3;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line)} h3{font-size:19px;margin:26px 0 10px} p{margin:9px 0} .lead{font-size:17px;color:#334155} .callout{padding:14px 16px;border-radius:10px;background:var(--primary-soft);border-left:4px solid var(--primary);margin:15px 0} .callout.green{background:var(--green-soft);border-color:var(--green)} .callout.orange{background:var(--orange-soft);border-color:var(--orange)} code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f1f5f9;padding:2px 5px;border-radius:5px;font-size:.92em} pre{background:#0f172a;color:#e2e8f0;padding:14px 16px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.7} pre code{background:transparent;color:inherit;padding:0} .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px} button{border:0;border-radius:8px;padding:9px 13px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer} button.secondary{background:#e2e8f0;color:#334155} footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px} .small{font-size:13px;color:var(--muted)}
+/* ── 速记卡 cue：看到 X → 选 Y ── */
+.cue{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;background:#fbfdff}
+.cue-svc{display:inline-block;background:var(--primary-soft);color:var(--primary);font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;margin-bottom:8px}
+.cue-flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:15.5px}
+.cue-when{background:var(--orange-soft);border:1px solid #fed7aa;color:#9a3412;padding:4px 12px;border-radius:8px;font-weight:600}
+.cue-arrow{color:#94a3b8;font-weight:800;font-size:20px}
+.cue-pick{background:var(--green-soft);border:1px solid #bbf7d0;color:var(--green);padding:4px 12px;border-radius:8px;font-weight:700}
+.cue-note{margin:8px 0 0;font-size:14px;color:#475569}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
+@media print{body{background:#fff;font-size:12px} header{background:#fff;color:#111;padding:20px 0} header p,.eyebrow{color:#444!important} .pill{border:1px solid #aaa;color:#333} .layout{display:block;padding:10px 0} nav,.toolbar,.no-print{display:none!important} section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px} .cue{break-inside:avoid} a{color:#111;text-decoration:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>一句话速记手册<br>看到关键词 → 反射答案</h1>
+  <p>这不是完整笔记，而是考前最后一遍的"条件反射清单"：题干出现什么限定词，就直接锁定哪个服务。每条只记一句话，看到 → 选出。</p>
+  <div class="header-meta">
+   <span class="pill">⚡ 考前速刷</span>
+   <span class="pill">SAP-C02</span>
+   <span class="pill">当前收录 8 条 · 持续追加中</span>
+  </div>
+  <div class="toolbar no-print">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="location.href='architecture-patterns.html'">架构设计模式</button>
+   <button class="secondary" onclick="location.href='index.html'">返回根导航</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#how">使用说明</a>
+ <a href="#integration">一、应用集成</a>
+ <a href="#storage">二、存储</a>
+ <a href="#security">三、安全与合规</a>
+ <a href="#backup">四、备份与恢复</a>
+ <a href="#networking">五、网络</a>
+ <a href="#appendix">追加格式</a>
+</nav>
+
+<main>
+<section id="how">
+<h2>使用说明</h2>
+<p class="lead">用法只有一个：<b>读题时抓橙色限定词，答案就是绿色那一格</b>。不要展开分析，先形成反射，再回头验证。</p>
+<div class="cue" style="background:#fff">
+ <span class="cue-svc">格式示例</span>
+ <div class="cue-flow">
+  <span class="cue-when">题干限定词 / 场景关键词</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">直接选它</span>
+ </div>
+ <p class="cue-note">灰色一行：一句话记忆钩子 + 最容易混淆的排除项。</p>
+</div>
+<div class="callout orange"><b>注意：</b>速记只管"第一反应"。如果题干出现多条冲突限定词（如同时出现 Overlapping CIDR 和 Hub-and-Spoke），以更特殊的那个为准（Overlapping CIDR → PrivateLink）。</div>
+</section>
+
+<section id="integration">
+<h2>一、应用集成</h2>
+<div class="cue">
+ <span class="cue-svc">SNS + SQS + Lambda</span>
+ <div class="cue-flow">
+  <span class="cue-when">"Serverless First" / 事件接收处理架构</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">SNS + SQS + Lambda 组合</span>
+ </div>
+ <p class="cue-note">SNS 接事件 → SQS 缓冲解耦 → Lambda 消费，无服务器三件套。</p>
+</div>
+</section>
+
+<section id="storage">
+<h2>二、存储</h2>
+<div class="cue">
+ <span class="cue-svc">EFS</span>
+ <div class="cue-flow">
+  <span class="cue-when">"多 Pod 共享" + "跨可用区 Multi-AZ" + "NFS / 文件级共享"</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">EFS</span>
+ </div>
+ <p class="cue-note">抓限定词：<b>multiple pods + multiple AZs + accessible across all instances = EFS</b>。单实例块存储才是 EBS，Windows 共享才是 FSx。</p>
+</div>
+</section>
+
+<section id="security">
+<h2>三、安全与合规</h2>
+<p>这三个服务是经典易混三兄弟：<b>对外暴露 → Access Analyzer；合规规则 → Config；威胁行为 → GuardDuty</b>。</p>
+<div class="cue">
+ <span class="cue-svc">IAM Access Analyzer</span>
+ <div class="cue-flow">
+  <span class="cue-when">"外部访问 / 公有暴露"（Public Exposure / External Access）</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">IAM Access Analyzer</span>
+ </div>
+ <p class="cue-note">只要题目是检查 S3、KMS、IAM 角色等资源<b>是否被外部或公众访问</b>，首选 Access Analyzer。</p>
+</div>
+<div class="cue">
+ <span class="cue-svc">AWS Config</span>
+ <div class="cue-flow">
+  <span class="cue-when">"合规性评估"（Compliance / Configuration Rules）</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">AWS Config</span>
+ </div>
+ <p class="cue-note">用于<b>周期性或配置变更时</b>的合规检查，不是实时"状态突变事件"的精准流转（那是 EventBridge）。</p>
+</div>
+<div class="cue">
+ <span class="cue-svc">Amazon GuardDuty</span>
+ <div class="cue-flow">
+  <span class="cue-when">"威胁检测"（Threat Detection / Malicious Activity）</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">Amazon GuardDuty</span>
+ </div>
+ <p class="cue-note">检测异常行为、恶意 IP、凭证泄露等<b>动态威胁</b>，不是静态的权限配置分析（那是 Access Analyzer）。</p>
+</div>
+</section>
+
+<section id="backup">
+<h2>四、备份与恢复</h2>
+<div class="cue">
+ <span class="cue-svc">AWS Backup</span>
+ <div class="cue-flow">
+  <span class="cue-when">"集中管理备份" + "长期保留（1 年 / 数年）" + "合规审计"</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">AWS Backup</span>
+ </div>
+ <p class="cue-note">跨服务统一备份策略 + 保留周期 + 合规报告，三个词凑齐就是它；单个服务的快照生命周期不算。</p>
+</div>
+</section>
+
+<section id="networking">
+<h2>五、网络</h2>
+<div class="cue">
+ <span class="cue-svc">AWS PrivateLink</span>
+ <div class="cue-flow">
+  <span class="cue-when">"Overlapping CIDR 重叠网段" + 跨 VPC / 跨账号通信</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">AWS PrivateLink</span>
+ </div>
+ <p class="cue-note">网段重叠时 Peering 和 TGW 路由都走不通，用 PrivateLink 把服务暴露成接口端点，天然免疫 CIDR 冲突。</p>
+</div>
+<div class="cue">
+ <span class="cue-svc">AWS Transit Gateway</span>
+ <div class="cue-flow">
+  <span class="cue-when">"集中式 Hub-and-Spoke" + 多 VPC + 本地连接</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">AWS Transit Gateway</span>
+ </div>
+ <p class="cue-note">星型拓扑简化多 VPC 与本地互联；<b>但遇 Overlapping CIDR</b>，TGW 要叠加 NAT / 防火墙做地址转换，开销大 → 改选 PrivateLink。</p>
+</div>
+</section>
+
+<section id="appendix">
+<h2>追加格式</h2>
+<p class="small">以后新增考点时，在对应分类的 <code>&lt;section&gt;</code> 里复制下面这段模板，改三处即可（服务名 / 限定词 / 记忆钩子）。没有合适分类就新开一个 section。</p>
+<pre><code>&lt;div class="cue"&gt;
+ &lt;span class="cue-svc"&gt;服务名&lt;/span&gt;
+ &lt;div class="cue-flow"&gt;
+  &lt;span class="cue-when"&gt;"题干限定词 / 场景关键词"&lt;/span&gt;
+  &lt;span class="cue-arrow"&gt;→&lt;/span&gt;
+  &lt;span class="cue-pick"&gt;直接选它&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;p class="cue-note"&gt;一句话记忆钩子 + 易混排除项。&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+<div class="callout green"><b>收录标准：</b>只收"看到 X 就能选 Y"的一句话考点；需要展开讲原理的内容放对应分类正文页，这里只留反射。</div>
+</section>
+</main>
+</div>
+<footer class="container">AWS SAP-C02 一句话速记手册 · 持续追加中 · 可打印或另存为 PDF</footer>
+
+<script>
+/* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
+window.__PF_ROOT_REL="./";
+(function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
+</script>
+</body>
+</html>
