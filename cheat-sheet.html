@@ -33,7 +33,7 @@
   <div class="header-meta">
    <span class="pill">⚡ 考前速刷</span>
    <span class="pill">SAP-C02</span>
-   <span class="pill">当前收录 10 条 · 持续追加中</span>
+   <span class="pill">当前收录 12 条 · 持续追加中</span>
   </div>
   <div class="toolbar no-print">
    <button onclick="window.print()">打印 / 另存为 PDF</button>
@@ -96,6 +96,15 @@
  </div>
  <p class="cue-note">抓限定词：<b>multiple pods + multiple AZs + accessible across all instances = EFS</b>。单实例块存储才是 EBS，Windows 共享才是 FSx。</p>
 </div>
+<div class="cue">
+ <span class="cue-svc">S3 → EventBridge → SNS</span>
+ <div class="cue-flow">
+  <span class="cue-when">"S3 对象被删除时发通知"（Object Deleted → 邮件/告警）</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">S3 → EventBridge → SNS（SNS 发邮件）</span>
+ </div>
+ <p class="cue-note"><b>S3 无法原生直接向 SES 发事件通知</b>，标准链路是 EventBridge 捕获 Object Deleted 事件 → 路由到 SNS → SNS 触发邮件。选项里出现 S3 直连 SES 的直接排除。</p>
+</div>
 </section>
 
 <section id="security">
@@ -136,6 +145,15 @@
   <span class="cue-pick">CloudFront + WAF + ALB 仅放行 CloudFront</span>
  </div>
  <p class="cue-note">Edge Security Pattern 黄金三件套：CloudFront 挡在前（隐藏源站），WAF 过滤攻击，ALB 安全组 / Header 校验只放行来自 CloudFront 的流量。</p>
+</div>
+<div class="cue">
+ <span class="cue-svc">AWS Firewall Manager</span>
+ <div class="cue-flow">
+  <span class="cue-when">"hundreds of AWS accounts" + "centrally manage" + "automatically protect new resources"</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">AWS Firewall Manager（跨账户集中部署防火墙 / WAF 规则）</span>
+ </div>
+ <p class="cue-note">黄金搭档前置条件必背：<b>AWS Organizations（All Features）+ 所有受管账户启用 AWS Config</b>（用于发现资源）。题干出现 Firewall Manager，正确选项或依赖里一定带上这两个。</p>
 </div>
 </section>
 

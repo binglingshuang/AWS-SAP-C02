@@ -1,6 +1,6 @@
 # AWS SAP-C02 考试备考中心
 
-一个面向 **AWS Certified Solutions Architect – Professional（SAP-C02）** 的中文静态备考站点。全部内容以纯静态 HTML 手工编写，按 12 个技术域组织，共 **78 篇服务正文 + 1 篇综合专题**。每篇包含考点讲解、对比表、场景题解析与关键词速查，多数页面另配可勾选速记卡与快速自测。
+一个面向 **AWS Certified Solutions Architect – Professional（SAP-C02）** 的中文静态备考站点。全部内容以纯静态 HTML 手工编写，按 12 个技术域组织，共 **79 篇服务正文 + 1 篇综合专题**。每篇包含考点讲解、对比表、场景题解析与关键词速查，多数页面另配可勾选速记卡与快速自测。
 
 站点无需后端、无需构建框架，克隆后用任意静态服务器即可打开；发布时由 CI 调用 [Pagefind](https://pagefind.app/) 生成全站中文全文搜索索引。
 
@@ -133,7 +133,7 @@ aws-sap-exam/
 
 ## 内容清单
 
-> 统计口径：去重后的唯一正文。跨分类复用的页面只计入主分类。当前完成度 **79 / 79（100%）**，无缺失正文。
+> 统计口径：去重后的唯一正文。跨分类复用的页面只计入主分类。当前完成度 **80 / 80（100%）**，无缺失正文。
 
 | 分类 | 入口 | 篇数 | 正文 |
 |---|---|---:|---|
@@ -141,7 +141,7 @@ aws-sap-exam/
 | 计算 | [compute/index.html](compute/index.html) | 10 | `ec2`、`auto-scaling`、`lambda`、`fargate-ecs`、`eks`、`app-runner`、`elastic-beanstalk`、`batch`、`outposts-wavelength`、`workspaces` |
 | 存储 | [storage/index.html](storage/index.html) | 7 | `s3`、`ebs`、`efs`、`storage-gateway`、`backup`、`fsx`、`snow-family` |
 | 数据库 | [database/index.html](database/index.html) | 6 | `rds-aurora`、`dynamodb`、`elasticache`、`redshift`、`documentdb-neptune`、`dms-sct` |
-| 安全、身份与合规 | [security/index.html](security/index.html) | 11 | `iam`、`kms-cloudhsm`、`organizations-scp`、`iam-identity-center`、`secrets-manager`、`waf-shield-firewall`、`ram`、`cognito`、`guardduty-detective`、`inspector-macie`、`certificate-manager` |
+| 安全、身份与合规 | [security/index.html](security/index.html) | 12 | `iam`、`kms-cloudhsm`、`organizations-scp`、`iam-identity-center`、`secrets-manager`、`waf-shield-firewall`、`firewall-manager`、`ram`、`cognito`、`guardduty-detective`、`inspector-macie`、`certificate-manager` |
 | 管理与治理 | [management/index.html](management/index.html) | 10 | `cloudformation`、`cloudwatch`、`cloudtrail`、`config`、`systems-manager`、`cost-management`、`control-tower`、`service-catalog`、`trusted-advisor`、`well-architected-tool` |
 | 应用集成 | [application-integration/index.html](application-integration/index.html) | 7 | `sqs-sns`、`ses`、`eventbridge`、`step-functions`、`api-gateway`、`appsync`、`mq` |
 | 分析 | [analytics/index.html](analytics/index.html) | 7 | `glue`、`athena`、`kinesis`、`opensearch`、`emr`、`msk`、`quicksight-lake-formation` |
@@ -150,7 +150,7 @@ aws-sap-exam/
 | 机器学习与 AI | [ml/index.html](ml/index.html) | 2 | `ml-ai`、`sagemaker` |
 | 混合云与边缘 | [hybrid-edge/index.html](hybrid-edge/index.html) | 1 | `iot`；Outposts / Local Zones / Wavelength 共用 `compute/outposts-wavelength.html` |
 | 综合专题 | [architecture-patterns.html](architecture-patterns.html) | 1 | Well-Architected、DR、HA、多账号、成本优化 |
-| **合计** |  | **79** | 78 篇服务正文 + 1 篇综合专题 |
+| **合计** |  | **80** | 79 篇服务正文 + 1 篇综合专题 |
 
 跨模块入口：`analytics/index.html` 与 `migration/index.html` 的 Redshift、DMS/SCT 卡片指回 `database/` 下的正文，避免重复编写。
 
@@ -344,13 +344,13 @@ foreach ($page in $pages) {
 | [PROGRESS.md](PROGRESS.md) | 资产盘点、完成度总览、逐分类缺口、续写规范、断链检查、更新记录 |
 | [Agent.md](Agent.md) | 协作约定：每完成一个页面，同步修改卡片进度标记 |
 
-当前状态摘要（快照 2026-11-07）：
+当前状态摘要（快照 2026-11-08）：
 
 - 根导航页：12 个分类全部挂载，综合专题已启用
 - 分类入口页：12 / 12 完成
-- 服务正文：78 篇
+- 服务正文：79 篇
 - 综合专题：1 篇
-- 合计：79 / 79，完成率 100%，缺失 0
+- 合计：80 / 80，完成率 100%，缺失 0
 - 断链：13 个导航页，缺失 0
 
 ---

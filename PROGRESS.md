@@ -1,6 +1,6 @@
 # AWS SAP-C02 备考站 · 项目进度与续写指南
 
-> 快照时间：2026-11-07
+> 快照时间：2026-11-08
 > 当前 HEAD：`8c7ccaa workspace`
 > 扫描范围：根目录与 12 个分类目录下的 HTML、`input/exam.csv`；`old/` 仅登记为历史归档，不读取其内容
 > 用途：中断后直接从第 3、4、9 节继续，不需要重新盘点仓库。
@@ -13,11 +13,11 @@
 |---|---|
 | 根导航页 | 已完成；12 个分类均已挂载并标注进度，`architecture-patterns.html` 已启用并接入根页 |
 | 分类入口页 | 12 个已完成并全部挂到根页 |
-| 服务正文 | **78 篇；另有综合专题 1 篇；去重规划合计 79 篇＝ 100%** |
+| 服务正文 | **79 篇；另有综合专题 1 篇；去重规划合计 80 篇＝ 100%** |
 | 未创建正文 | **0 篇** |
 | 正文内场景题 | 各正文内嵌手写场景题 |
 
-**一句话：78 篇服务正文和 1 篇综合专题均已完成，全站正文缺失为 0。**
+**一句话：79 篇服务正文和 1 篇综合专题均已完成，全站正文缺失为 0。**
 
 ---
 
@@ -27,7 +27,7 @@
 |---|---|---:|---|
 | 根导航页 | `index.html` | 1 | 手工维护的 12 分类卡片入口，设计完成 |
 | 分类入口页 | `<category>/index.html` | 12 | 12 个均已挂到根页 |
-| 服务正文 | `<category>/*.html` | **78** | 当前完成正文见下表；混合云与边缘共用计算正文并新增 IoT 正文 |
+| 服务正文 | `<category>/*.html` | **79** | 当前完成正文见下表；混合云与边缘共用计算正文并新增 IoT 正文 |
 | 历史归档正文 | `old/**/*.html` | 10 篇（1 篇 0 字节） | **历史归档，禁止读取或作为续写素材** |
 | 历史归档架构图 | `old/Draw.io/*.drawio` | 4 张 | **历史归档，不读取、不复用** |
 | 部署配置 | `.gitlab-ci.yml` | 1 | 将整个仓库复制到 `public/`，包括 `old/` 与 `input/` |
@@ -69,6 +69,7 @@
 | `security/iam-identity-center.html` | 安全 | — | — | 6 | 18 | 有 |
 | `security/secrets-manager.html` | 安全 | — | — | 6 | 18 | 有 |
 | `security/waf-shield-firewall.html` | 安全 | — | — | 6 | 18 | 有 |
+| `security/firewall-manager.html` | 安全 | — | — | 6 | 18 | 有 |
 | `security/ram.html` | 安全 | — | — | 6 | 18 | 有 |
 | `security/cognito.html` | 安全 | — | — | 6 | 18 | 有 |
 | `security/guardduty-detective.html` | 安全 | — | — | 6 | 18 | 有 |
@@ -114,7 +115,7 @@
 | 计算 | `compute/index.html` | 10 | 10 | 0 | 100% | P0 |
 | 存储 | `storage/index.html` | 7 | 7 | 0 | 100% | P0 |
 | 数据库 | `database/index.html` | 6 | 6 | 0 | 100% | P0 |
-| 安全、身份与合规 | `security/index.html` | 11 | 11 | 0 | 100% | P0 |
+| 安全、身份与合规 | `security/index.html` | 12 | 12 | 0 | 100% | P0 |
 | 管理与治理 | `management/index.html` | 10 | 10 | 0 | 100% | P0 |
 | 应用集成 | `application-integration/index.html` | 7 | 7 | 0 | 100% | P1 |
 | 分析 | `analytics/index.html` | 7 | 7 | 0 | 100% | P2 |
@@ -123,7 +124,7 @@
 | 机器学习与 AI | `ml/index.html` | 2 | 2 | 0 | 100% | P2 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 1 | 1 | 0 | 100% | P3 |
 | 综合专题 | 根页直达 | 1 | 1 | 0 | 100% | P1 |
-| **合计** |  | **79** | **79** | **0** | **100%** |  |
+| **合计** |  | **80** | **80** | **0** | **100%** |  |
 
 > 混合云与边缘分类的 3 个核心方向均已覆盖：Outposts、Local Zones、Wavelength 共用 `compute/outposts-wavelength.html`；IoT 由 `hybrid-edge/iot.html` 覆盖。分类表及全站合计按唯一正文去重，因此混合云与边缘单列 1 篇新增正文。
 
@@ -181,7 +182,7 @@
 
 > 跨分类链接：`analytics/index.html` 的 Redshift 卡片链接到 `database/redshift.html`；`migration/index.html` 的 DMS/SCT 卡片链接到 `database/dms-sct.html`。两篇已作为数据库模块正式页面创建，并保留跨模块入口。
 
-### 3.5 安全、身份与合规（11 / 11）
+### 3.5 安全、身份与合规（12 / 12）
 
 - [x] `security/iam.html`
 - [x] `security/kms-cloudhsm.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 KMS Key 类型、Key Policy、Grant、信封加密、轮换、多区域密钥与 CloudHSM
@@ -189,6 +190,7 @@
 - [x] `security/iam-identity-center.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖身份来源、SAML/SCIM、Permission Set、账号分配与 provision、应用 SSO、生命周期与审计
 - [x] P1 `security/secrets-manager.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖自动轮换、RDS 集成、跨账号/KMS 授权与 Parameter Store 选型
 - [x] P1 `security/waf-shield-firewall.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖 Web ACL、Shield Standard/Advanced、Network Firewall 路由与部署
+- [x] P1 `security/firewall-manager.html` — 完成日期：2026-11-08；6 道场景题；18 张速记卡；3 道快速自测；覆盖跨账户策略、管理员账户、WAF/Shield/安全组/Network Firewall/DNS Firewall 策略、自动修复与 Organizations 前提
 - [x] P1 `security/ram.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖组织集成、共享 VPC 子网、Transit Gateway 与权限边界
 - [x] P2 `security/cognito.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖 User Pools/Identity Pools、JWT、联合身份与临时凭证
 - [x] P2 `security/guardduty-detective.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖 GuardDuty 检测/保护计划、组织管理、Detective 调查与 EventBridge 响应
