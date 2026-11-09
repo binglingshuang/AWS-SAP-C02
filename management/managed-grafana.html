@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AWS SAP-C02 Amazon Managed Grafana 考点速查：托管 Grafana 的定位、数据源、与 CloudWatch/AMP/X-Ray 的集成、从自建 Grafana 迁移、SAML/IAM Identity Center 认证、高可用与运维优势，以及与 CloudWatch Dashboards、QuickSight 的边界。">
+<title>AWS SAP-C02｜Amazon Managed Grafana 考试速查手册</title>
+<style>
+:root{--bg:#f4f7fb;--paper:#fff;--ink:#172033;--muted:#64748b;--line:#e2e8f0;--blue:#2563eb;--soft:#eff6ff;--green:#15803d;--green-soft:#f0fdf4;--orange:#c2410c;--orange-soft:#fff7ed;--red:#b91c1c;--red-soft:#fef2f2;--shadow:0 8px 28px rgba(15,23,42,.06)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff;padding:44px 0 36px}
+header h1{font-size:clamp(28px,5vw,42px);line-height:1.2;margin:12px 0}
+header p{color:#dbeafe;max-width:840px}
+.eyebrow{font-size:13px;letter-spacing:.12em;color:#bfdbfe}
+.meta,.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.pill{border:1px solid #ffffff50;background:#ffffff18;padding:4px 11px;border-radius:999px;font-size:13px}
+button{border:0;border-radius:8px;padding:8px 12px;background:var(--blue);color:#fff;font-weight:600;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#334155}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:24px;padding:26px 0 56px}
+nav,section{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+nav{position:sticky;top:16px;align-self:start;padding:16px;max-height:calc(100vh - 32px);overflow:auto}
+nav strong{display:block;margin-bottom:8px}
+nav a{display:block;padding:5px 7px;color:#475569;font-size:14px;border-radius:6px}
+nav a:hover{background:var(--soft);text-decoration:none}
+main{min-width:0}
+section{padding:24px;margin-bottom:18px;scroll-margin-top:16px}
+h2{font-size:23px;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+h3{font-size:18px;margin:20px 0 8px}
+p{margin:8px 0}
+ul,ol{padding-left:23px}
+li{margin:4px 0}
+.lead{font-size:17px;color:#334155}
+.callout{padding:13px 15px;border-left:4px solid var(--blue);background:var(--soft);border-radius:8px;margin:13px 0}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.callout.orange{border-color:var(--orange);background:var(--orange-soft)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}
+th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f8fafc}
+.flow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:14px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;margin:14px 0}
+.flow .node{padding:9px 12px;background:#fff;border:1px solid #bfdbfe;border-radius:8px;text-align:center;font-size:13px}
+.flow .arrow{color:#64748b;font-weight:700}
+.scenario{border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:11px 0;background:#fff}
+.scenario summary{cursor:pointer;font-weight:700}
+.scenario p{margin:8px 0 0}
+.opt{color:#475569}
+.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:8px 0}
+.progress span{display:block;width:0;height:100%;background:#16a34a;transition:width .2s}
+.checklist{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}
+.checklist li{display:flex;gap:9px;border-bottom:1px solid #eef2f7;padding:7px 0}
+.checklist input{margin-top:7px;accent-color:var(--green);flex:none;width:17px;height:17px}
+.small,footer{font-size:13px;color:var(--muted)}
+code{background:#f1f5f9;padding:2px 5px;border-radius:4px;font-size:.92em}
+.tag{display:inline-block;border-radius:6px;padding:1px 7px;font-size:12px;font-weight:700;background:var(--soft);color:var(--blue);margin-right:4px}
+.tag.red{background:var(--red-soft);color:var(--red)}
+.tag.orange{background:var(--orange-soft);color:var(--orange)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}.checklist{grid-template-columns:1fr}}
+@media print{body{background:#fff;font-size:12px}header{background:#fff;color:#111;padding:15px 0}header p,.eyebrow{color:#444}.pill{border:1px solid #aaa;color:#333}.layout{display:block}nav,.toolbar{display:none}section{box-shadow:none;break-inside:avoid;padding:14px;margin-bottom:12px}a{color:#111}}
+</style>
+</head>
+<body>
+<header>
+ <div class="container">
+  <div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div>
+  <h1>Amazon Managed Grafana<br>全托管的可观测性可视化</h1>
+  <p>Amazon Managed Grafana（AMG）是基于开源 Grafana 的全托管服务，由 AWS 负责扩缩、打补丁、升级与高可用。考试重点是“托管带来的运维优势”、“从自建 Grafana 迁移”、“数据源与认证集成”，以及与 CloudWatch Dashboards、QuickSight、Amazon Managed Service for Prometheus（AMP）的边界。</p>
+  <div class="meta">
+   <span class="pill">SAP-C02 · 管理与治理</span>
+   <span class="pill">托管 Grafana · 数据源</span>
+   <span class="pill">CloudWatch · AMP · X-Ray</span>
+   <span class="pill">可打印 / 可勾选</span>
+  </div>
+  <div class="toolbar">
+   <button onclick="window.print()">打印 / 另存为 PDF</button>
+   <button class="secondary" onclick="document.querySelectorAll('#memoryList input').forEach(x=>x.checked=false);updateProgress()">重置复习清单</button>
+   <button class="secondary" onclick="location.href='index.html'">返回管理分类</button>
+  </div>
+ </div>
+</header>
+
+<div class="container layout">
+<nav>
+ <strong>页面目录</strong>
+ <a href="#what">一、是什么与核心定位</a>
+ <a href="#why">二、托管带来的运维优势</a>
+ <a href="#datasource">三、数据源与集成</a>
+ <a href="#auth">四、认证与权限</a>
+ <a href="#migrate">五、从自建 Grafana 迁移</a>
+ <a href="#boundaries">六、与相邻服务的边界</a>
+ <a href="#scenarios">七、场景题解析（5 题）</a>
+ <a href="#quick">八、关键词速查与高频考点</a>
+ <a href="#memory">九、考前速记卡（可勾选）</a>
+</nav>
+
+<main>
+
+<section id="what">
+<h2>一、是什么与核心定位</h2>
+<p class="lead">Amazon Managed Grafana 是 AWS 提供的全托管 Grafana，核心价值是“保留 Grafana 的使用体验，去掉自建 Grafana 的运维负担”。</p>
+<div class="flow">
+ <span class="node"><b>多种数据源</b><br><small>CloudWatch / AMP / X-Ray / 第三方</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>Amazon Managed Grafana Workspace</b><br><small>托管的 Grafana 服务器，AWS 负责扩缩与高可用</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>Dashboards</b><br><small>统一的可视化与告警</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>用户</b><br><small>SAML / IAM Identity Center 登录</small></span>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>要点</th><th>说明</th><th>考试提示</th></tr></thead>
+<tbody>
+<tr><td><b>全托管</b></td><td>AWS 负责服务器的预置、扩缩、打补丁、版本升级和跨 AZ 高可用。</td><td>题目强调“最小运维开销 / 不想管理 EC2” 时优先考虑 AMG。</td></tr>
+<tr><td><b>Workspace（工作区）</b></td><td>一个逻辑隔离的 Grafana 服务器环境，包含仪表盘、数据源与用户授权。</td><td>不是“一个 EC2 实例”，而是托管环境；按工作区管理与隔离。</td></tr>
+<tr><td><b>兼容开源 Grafana</b></td><td>保留 Grafana 的仪表盘、面板、查询与大量插件生态。</td><td>现有 Grafana 仪表盘可以导出 JSON 再导入 AMG，无需重建。</td></tr>
+<tr><td><b>高可用</b></td><td>服务默认跨多可用区运行，无需自行搭建 ALB + Auto Scaling。</td><td>自建 Grafana 的 HA 方案（AMI/ASG/ALB/EFS）在有 AMG 时通常是“运维更重”的错误选项。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>一句话定位：</b>需要 Grafana 风格的多数据源可视化 + 高可用 + 几乎零运维时，选 Amazon Managed Grafana；它不替你收集指标，只负责展示与告警。</div>
+</section>
+
+<section id="why">
+<h2>二、托管带来的运维优势</h2>
+<p class="lead">SAP-C02 很喜欢用“现有自建 Grafana 跑在单台 EC2 上”的题干，考你如何在最小运维下实现高可用并保留仪表盘。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>维度</th><th>自建 Grafana（EC2）</th><th>Amazon Managed Grafana</th></tr></thead>
+<tbody>
+<tr><td>服务器运维</td><td>自行安装、打补丁、升级版本</td><td>AWS 全托管，无需管理底层服务器</td></tr>
+<tr><td>高可用</td><td>需自建 ASG + ALB + 共享存储（如 EFS）</td><td>默认跨 AZ 高可用，开箱即用</td></tr>
+<tr><td>扩缩容</td><td>手动或自建 Auto Scaling</td><td>由服务自动处理</td></tr>
+<tr><td>认证集成</td><td>需自行对接 SAML/LDAP</td><td>原生集成 IAM Identity Center 与 SAML 2.0</td></tr>
+<tr><td>数据源权限</td><td>手动配置凭证</td><td>通过服务角色托管访问 CloudWatch、AMP、X-Ray 等</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>高频得分点：</b>题干“把跑在单台 EC2 上的 Grafana 变成高可用且运维最小、同时保留现有仪表盘”，标准答案是<b>创建 Amazon Managed Grafana 工作区 → 配置 CloudWatch 等数据源 → 从旧实例导出仪表盘 JSON 并导入新工作区</b>。</div>
+<div class="callout red"><b>常见干扰项：</b>
+<ul>
+<li>做一个预装 Grafana 的 AMI + Auto Scaling + ALB + EFS —— 可用但运维更重，不是“最小开销”。</li>
+<li>用 AWS Backup 每小时备份 EC2，故障时恢复 —— 恢复时间长，难以满足“停机不超过 10 分钟”。</li>
+<li>把仪表盘全部迁移到 CloudWatch Dashboards 重建 —— 丢弃了现有 Grafana 仪表盘，工作量大。</li>
+</ul>
+</div>
+</section>
+
+<section id="datasource">
+<h2>三、数据源与集成</h2>
+<p class="lead">AMG 的价值在于“一个面板看多来源”。考试重点是它能原生接哪些 AWS 数据源，以及它本身不采集数据。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>数据源</th><th>用途</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><b>Amazon CloudWatch</b></td><td>AWS 资源与应用的指标、日志。</td><td>最常见的数据源；通过服务角色授予只读访问即可查询指标。</td></tr>
+<tr><td><b>Amazon Managed Service for Prometheus（AMP）</b></td><td>容器与微服务的 Prometheus 指标。</td><td>AMP 负责存储 Prometheus 指标，AMG 负责可视化；两者常搭配出现（EKS/容器监控场景）。</td></tr>
+<tr><td><b>AWS X-Ray</b></td><td>分布式追踪数据。</td><td>用于在 Grafana 中查看调用链与服务地图。</td></tr>
+<tr><td><b>Amazon OpenSearch Service</b></td><td>日志检索与分析。</td><td>作为日志类仪表盘的数据源。</td></tr>
+<tr><td><b>Amazon Timestream / Athena / Redshift</b></td><td>时序、数据湖与数仓查询。</td><td>支持多种 AWS 分析类数据源。</td></tr>
+<tr><td><b>第三方数据源</b></td><td>自建 Prometheus、InfluxDB、Elasticsearch、Loki 等。</td><td>兼容开源 Grafana 的大量数据源插件。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>关键边界：</b>AMG 只做“可视化与告警”，<b>不采集也不长期存储指标</b>。采集与存储由 CloudWatch、AMP、X-Ray 等上游服务负责。题目若问“存储 Prometheus 指标”应选 AMP，而不是 AMG。</div>
+</section>
+
+<section id="auth">
+<h2>四、认证与权限</h2>
+<p class="lead">AMG 不维护自己的用户名密码体系，而是对接企业身份源，这也是常见考点。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>机制</th><th>说明</th><th>考试提示</th></tr></thead>
+<tbody>
+<tr><td><b>IAM Identity Center（原 AWS SSO）</b></td><td>用 AWS 的集中身份登录 Grafana 工作区。</td><td>多账号/组织内统一登录时优先考虑。</td></tr>
+<tr><td><b>SAML 2.0</b></td><td>对接企业 IdP（如 Okta、Azure AD/Entra ID、ADFS）。</td><td>企业已有 IdP、要求 SSO 时选 SAML。</td></tr>
+<tr><td><b>Grafana 角色</b></td><td>Admin / Editor / Viewer 三类角色，映射到用户或用户组。</td><td>按最小权限分配：只读干系人用 Viewer，维护仪表盘用 Editor。</td></tr>
+<tr><td><b>数据源访问</b></td><td>通过服务管理的 IAM 角色访问 CloudWatch、AMP、X-Ray 等。</td><td>遵循最小权限；跨账号查询需配置相应角色与权限。</td></tr>
+</tbody></table></div>
+<div class="callout"><b>记忆点：</b>登录身份用 IAM Identity Center 或 SAML；Grafana 内部权限用 Admin/Editor/Viewer；访问 AWS 数据源用服务角色。三层各司其职。</div>
+</section>
+
+<section id="migrate">
+<h2>五、从自建 Grafana 迁移</h2>
+<p class="lead">迁移题的标准路径很固定，记住步骤即可快速锁定答案。</p>
+<div class="flow">
+ <span class="node"><b>创建 AMG 工作区</b></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>配置数据源</b><br><small>如 CloudWatch</small></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>从旧 Grafana 导出仪表盘 JSON</b></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>导入新工作区</b></span>
+ <span class="arrow">→</span>
+ <span class="node"><b>配置登录与权限</b></span>
+</div>
+<ul>
+<li><b>保留仪表盘：</b>Grafana 仪表盘可导出为 JSON，再导入到 AMG 工作区，避免重建。</li>
+<li><b>切换数据源：</b>在新工作区中重新配置数据源（如 CloudWatch），让面板指向托管数据源。</li>
+<li><b>高可用达成：</b>迁移到 AMG 后天然跨 AZ，满足低停机时间要求，无需自建 ASG/ALB。</li>
+<li><b>运维下降：</b>服务器、补丁、升级交给 AWS，团队专注于仪表盘与告警。</li>
+</ul>
+<div class="callout green"><b>对应真题思路：</b>“Grafana 跑在单 EC2，仪表盘要保留，要求高可用且停机 &lt; 10 分钟，运维最小” → 创建 Amazon Managed Grafana 工作区 + 配置 CloudWatch 数据源 + 导出/导入现有仪表盘。</div>
+</section>
+
+<section id="boundaries">
+<h2>六、与相邻服务的边界</h2>
+<p class="lead">可视化相关服务容易混淆，这张表能解决大多数边界题。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>服务</th><th>擅长</th><th>与 Managed Grafana 的边界</th></tr></thead>
+<tbody>
+<tr><td><b>Amazon Managed Grafana</b></td><td>多数据源的运维/可观测性可视化与告警，兼容开源 Grafana 生态。</td><td>不采集、不长期存储指标；聚合展示多来源数据。</td></tr>
+<tr><td><b>Amazon CloudWatch Dashboards</b></td><td>CloudWatch 原生仪表盘，适合纯 AWS 指标的轻量可视化。</td><td>多来源聚合、复杂面板和 Grafana 生态不如 AMG；无法直接导入 Grafana 仪表盘。</td></tr>
+<tr><td><b>Amazon Managed Service for Prometheus（AMP）</b></td><td>托管存储与查询 Prometheus 指标（PromQL）。</td><td>负责“存指标”，AMG 负责“看指标”；二者常组合用于容器监控。</td></tr>
+<tr><td><b>Amazon QuickSight</b></td><td>面向业务的 BI 报表与商业智能分析。</td><td>偏业务数据分析与报表，不是运维监控/可观测性仪表盘。</td></tr>
+<tr><td><b>AWS X-Ray</b></td><td>分布式追踪与调用链分析。</td><td>作为追踪数据源接入 AMG；本身不提供统一多源仪表盘。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>题干关键词映射：</b>“运维/可观测性仪表盘、多数据源、兼容 Grafana” → Managed Grafana；“纯 CloudWatch 指标的简单看板” → CloudWatch Dashboards；“存储 Prometheus 指标” → AMP；“业务 BI 报表” → QuickSight。</div>
+</section>
+
+<section id="scenarios">
+<h2>七、场景题解析（5 题）</h2>
+
+<details class="scenario">
+<summary>1. 公司的 Grafana 跑在单台 EC2 上，团队投入大量精力做了仪表盘希望保留，要求高可用、停机不超过 10 分钟，且运维最小。最合适的方案是？</summary>
+<p class="opt">A. 迁移到 CloudWatch Dashboards，按现有 Grafana 仪表盘重建<br>B. 创建 Amazon Managed Grafana 工作区，配置 CloudWatch 数据源，从旧 Grafana 导出仪表盘并导入新工作区<br>C. 做一个预装 Grafana 的 AMI，用 EFS 存仪表盘，建 min/desired/max=1 的 ASG 加 ALB 覆盖至少两个 AZ<br>D. 用 AWS Backup 每小时备份 EC2，需要时在另一个 AZ 从最新快照恢复</p>
+<p><b>答案：B。</b>Managed Grafana 全托管、默认跨 AZ 高可用，且可导入现有 Grafana 仪表盘 JSON，运维开销最小。<br><b>排除：</b>A 丢弃现有仪表盘需重建；C 可用但要自管 AMI/ASG/ALB/EFS，运维更重；D 快照恢复耗时，难满足 10 分钟停机要求。</p>
+</details>
+
+<details class="scenario">
+<summary>2. 团队在 EKS 上用 Prometheus 采集容器指标，希望用托管方案存储指标并用 Grafana 风格仪表盘展示，运维最小。应如何组合？</summary>
+<p class="opt">A. 只用 CloudWatch Dashboards<br>B. 用 Amazon Managed Service for Prometheus 存储指标，用 Amazon Managed Grafana 可视化<br>C. 自建 Prometheus + 自建 Grafana on EC2<br>D. 用 QuickSight 直接查询 Prometheus</p>
+<p><b>答案：B。</b>AMP 托管存储 Prometheus 指标，AMG 托管可视化，二者组合是容器监控的标准托管方案。<br><b>排除：</b>A 不适合 Prometheus/PromQL 场景；C 运维重；D QuickSight 是 BI 工具，不用于 Prometheus 运维监控。</p>
+</details>
+
+<details class="scenario">
+<summary>3. 企业已有 Okta 作为 IdP，要求用户用企业账号单点登录 Grafana 工作区。应如何配置认证？</summary>
+<p class="opt">A. 在 Grafana 内各自创建本地用户名密码<br>B. 配置 SAML 2.0，对接企业 IdP（Okta）实现 SSO<br>C. 把 Okta 凭证硬编码到数据源<br>D. 必须先迁移到 IAM 用户</p>
+<p><b>答案：B。</b>AMG 原生支持 SAML 2.0，可对接 Okta、Entra ID 等 IdP 实现 SSO；组织内也可用 IAM Identity Center。<br><b>排除：</b>A 不是 SSO 且难管理；C 违反安全实践；D 没必要。</p>
+</details>
+
+<details class="scenario">
+<summary>4. 运维团队希望在一个面板里同时看 CloudWatch 指标、X-Ray 追踪和自建 Prometheus 的数据，且不想管理 Grafana 服务器。选哪个服务？</summary>
+<p class="opt">A. CloudWatch Dashboards<br>B. QuickSight<br>C. Amazon Managed Grafana<br>D. 自建 Grafana on EC2</p>
+<p><b>答案：C。</b>Managed Grafana 支持多数据源聚合（CloudWatch、X-Ray、Prometheus 等）且全托管，正好满足多源统一可视化且零服务器运维。<br><b>排除：</b>A 多为 CloudWatch 单源；B 是 BI 工具；D 需自管服务器。</p>
+</details>
+
+<details class="scenario">
+<summary>5. 关于 Amazon Managed Grafana，下列说法正确的是？</summary>
+<p class="opt">A. 它会采集并长期存储应用指标<br>B. 它是全托管可视化服务，数据由 CloudWatch/AMP/X-Ray 等上游提供<br>C. 它只能连接 CloudWatch<br>D. 它要求自行搭建 ALB 才能高可用</p>
+<p><b>答案：B。</b>AMG 负责可视化与告警，指标采集与存储由上游服务负责；支持多种数据源且默认跨 AZ 高可用。<br><b>排除：</b>A 职责弄反；C 低估数据源能力；D 高可用由服务提供，无需自建 ALB。</p>
+</details>
+</section>
+
+<section id="quick">
+<h2>八、关键词速查与高频考点</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>题目关键词</th><th>优先考虑</th></tr></thead>
+<tbody>
+<tr><td>保留现有 Grafana 仪表盘、高可用、运维最小</td><td>Amazon Managed Grafana（导出/导入 JSON）</td></tr>
+<tr><td>多数据源统一可视化、兼容 Grafana 生态</td><td>Amazon Managed Grafana</td></tr>
+<tr><td>存储 Prometheus 指标（PromQL）</td><td>Amazon Managed Service for Prometheus（AMP）</td></tr>
+<tr><td>容器/EKS 指标监控的托管组合</td><td>AMP 存储 + Managed Grafana 展示</td></tr>
+<tr><td>纯 CloudWatch 指标的轻量看板</td><td>CloudWatch Dashboards</td></tr>
+<tr><td>业务 BI 报表与分析</td><td>QuickSight（不是 AMG）</td></tr>
+<tr><td>企业 IdP 单点登录（Okta/Entra ID）</td><td>SAML 2.0</td></tr>
+<tr><td>组织内集中身份登录</td><td>IAM Identity Center</td></tr>
+<tr><td>仪表盘用户权限分级</td><td>Admin / Editor / Viewer</td></tr>
+<tr><td>AMG 会不会采集/存储指标</td><td>不会；仅可视化与告警，数据来自上游</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>高频考点总结：</b>
+<ul>
+<li><b>定位：</b>全托管 Grafana，负责可视化与告警，不采集也不存储指标。</li>
+<li><b>运维优势：</b>免管服务器、自动打补丁与升级、默认跨 AZ 高可用。</li>
+<li><b>迁移路径：</b>建工作区 → 配数据源 → 导出/导入仪表盘 JSON。</li>
+<li><b>数据源：</b>CloudWatch、AMP、X-Ray、OpenSearch、Athena/Redshift 及第三方。</li>
+<li><b>认证：</b>IAM Identity Center 或 SAML 2.0；内部角色 Admin/Editor/Viewer。</li>
+<li><b>边界：</b>AMP 存指标、AMG 看指标；CloudWatch Dashboards 轻量单源；QuickSight 做 BI。</li>
+</ul>
+</div>
+</section>
+
+<section id="memory">
+<h2>九、考前速记卡（可勾选）</h2>
+<p class="small">勾选已掌握项目，页面内进度自动更新。</p>
+<div class="progress"><span id="progressBar"></span></div>
+<p class="small" id="progressText">已掌握 0 / 10</p>
+<ul class="checklist" id="memoryList">
+<li><input type="checkbox"><span><b>定位：</b>全托管 Grafana，负责展示与告警，不采集/不存储指标</span></li>
+<li><input type="checkbox"><span><b>运维优势：</b>免管服务器、自动补丁升级、默认跨 AZ 高可用</span></li>
+<li><input type="checkbox"><span><b>迁移路径：</b>建工作区 → 配数据源 → 导出/导入仪表盘 JSON</span></li>
+<li><input type="checkbox"><span><b>CloudWatch：</b>最常见数据源，服务角色只读访问</span></li>
+<li><input type="checkbox"><span><b>AMP 组合：</b>AMP 存 Prometheus 指标，AMG 做可视化（容器监控）</span></li>
+<li><input type="checkbox"><span><b>多数据源：</b>CloudWatch/X-Ray/OpenSearch/Athena 及第三方聚合</span></li>
+<li><input type="checkbox"><span><b>认证：</b>IAM Identity Center 或 SAML 2.0 对接企业 IdP</span></li>
+<li><input type="checkbox"><span><b>角色：</b>Admin / Editor / Viewer，按最小权限分配</span></li>
+<li><input type="checkbox"><span><b>vs CloudWatch Dashboards：</b>后者轻量单源，无法导入 Grafana 仪表盘</span></li>
+<li><input type="checkbox"><span><b>vs QuickSight：</b>QuickSight 做业务 BI，不是运维可观测性</span></li>
+</ul>
+</section>
+
+<section>
+<h2>官方资料</h2>
+<ul>
+<li><a href="https://aws.amazon.com/grafana/" target="_blank" rel="noopener">Amazon Managed Grafana（产品页）</a></li>
+<li><a href="https://docs.aws.amazon.com/grafana/latest/userguide/what-is-Amazon-Managed-Service-Grafana.html" target="_blank" rel="noopener">Amazon Managed Grafana 用户指南</a></li>
+<li><a href="https://docs.aws.amazon.com/grafana/latest/userguide/AMG-and-single-sign-on.html" target="_blank" rel="noopener">Managed Grafana 认证与单点登录</a></li>
+<li><a href="https://aws.amazon.com/prometheus/" target="_blank" rel="noopener">Amazon Managed Service for Prometheus</a></li>
+</ul>
+<div class="callout orange"><b>备考提醒：</b>本文为复习提纲。数据源列表、控制台字段名称与认证选项可能随版本调整，请以 AWS 官方文档和最新考试指南为准。本文不是官方题库，题目为考点导向的自编场景。</div>
+</section>
+
+</main>
+</div>
+<footer class="container">AWS SAP-C02 Amazon Managed Grafana 复习笔记 · 可在浏览器中打开、打印或另存为 PDF</footer>
+
+<script>
+function updateProgress(){
+ const boxes=[...document.querySelectorAll('#memoryList input')];
+ const done=boxes.filter(x=>x.checked).length;
+ document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';
+ document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;
+}
+document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
+</script>
+
+<script>
+/* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
+window.__PF_ROOT_REL="../";
+(function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
+</script>
+</body>
+</html>
