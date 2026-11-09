@@ -105,12 +105,13 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
  <a href="#read-scaling">三、Read Replica 与读扩展</a>
  <a href="#aurora">四、Aurora 架构与端点</a>
  <a href="#serverless">五、Aurora Serverless 与 RDS Proxy</a>
- <a href="#global">六、跨区域灾备</a>
- <a href="#operations">七、备份、安全与运维</a>
- <a href="#scenarios">八、场景题解析</a>
- <a href="#quick">九、关键词速查</a>
- <a href="#memory">十、考前速记卡</a>
- <a href="#quiz">十一、快速自测</a>
+ <a href="#babelfish">六、Babelfish：SQL Server 迁移</a>
+ <a href="#global">七、跨区域灾备</a>
+ <a href="#operations">八、备份、安全与运维</a>
+ <a href="#scenarios">九、场景题解析</a>
+ <a href="#quick">十、关键词速查</a>
+ <a href="#memory">十一、考前速记卡</a>
+ <a href="#quiz">十二、快速自测</a>
 </nav>
 
 <main>
@@ -218,8 +219,36 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <div class="callout orange"><b>区分题眼：</b>负载变化导致容量规划困难 → Aurora Serverless；短连接/连接数暴增 → RDS Proxy；两者可在适配场景中配合，但解决的问题不同。</div>
 </section>
 
+<section id="babelfish">
+<h2>六、Babelfish：SQL Server 低成本迁移</h2>
+<p class="lead">Babelfish for Aurora PostgreSQL 让 Aurora PostgreSQL 能够理解为 Microsoft SQL Server 编写的 T-SQL 命令和 TDS 通信协议。企业无需大规模重写数据库代码，即可把 SQL Server 工作负载迁移到开源 Aurora PostgreSQL，从而消除 SQL Server / Windows 的许可成本。</p>
+<div class="diagram">
+ <div class="node"><b>原应用</b><br><small>T-SQL · TDS 协议</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Babelfish 端点</b><br><small>TDS :1433 监听</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>Aurora PostgreSQL</b><br><small>托管 · 开源引擎</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>消除 SQL Server 许可</b><br><small>最小化重写</small></div>
+</div>
+<h3>为什么是 Babelfish</h3>
+<ul>
+<li>Babelfish 是 Aurora PostgreSQL 的一项能力，提供兼容 SQL Server 的 TDS 监听端口（默认 1433）和 T-SQL 方言支持，原应用可用现有 SQL Server 驱动/连接字符串连接，改动最小。</li>
+<li>目标是 <b>“托管服务 + 不重写 + 最小化许可成本”</b>：避免自管 EC2 上的 SQL Server，又不必像常规异构迁移那样重写全部 SQL。</li>
+<li>属于开源 PostgreSQL 引擎，彻底移除 SQL Server 与 Windows 的商业许可费用，同时保留 Aurora 的托管高可用、存储与扩展能力。</li>
+</ul>
+<h3>迁移配套：SCT 与 DMS</h3>
+<ul>
+<li><b>AWS SCT（Schema Conversion Tool）</b>可评估迁移兼容性、报告需要人工处理的对象，并帮助转换 schema；对 Babelfish 场景可生成兼容性评估报告。</li>
+<li><b>AWS DMS（Database Migration Service）</b>负责将数据从源 SQL Server 持续复制到 Aurora PostgreSQL，支持全量 + CDC 以降低停机时间。</li>
+<li>Babelfish 解决“应用层 T-SQL 兼容”，SCT/DMS 解决“schema 与数据迁移”；三者分工不同，考试中常组合出现。</li>
+</ul>
+<div class="callout green"><b>定位速记：</b>SQL Server 迁移 + 托管 + 不想重写代码 + 消除许可费用 → <b>Babelfish for Aurora PostgreSQL</b>，配合 SCT 评估 + DMS 迁移数据。</div>
+<div class="callout orange"><b>注意边界：</b>Babelfish 支持的是 T-SQL 的一个子集，并非 100% 覆盖所有 SQL Server 特性与专有功能；迁移前必须用 SCT/Babelfish Compass 做兼容性评估，不能默认“零改动”。确认版本与功能支持矩阵后再定方案。</div>
+</section>
+
 <section id="global">
-<h2>六、跨区域灾备</h2>
+<h2>七、跨区域灾备</h2>
 <div class="table-wrap"><table>
 <thead><tr><th>方案</th><th>复制 / 切换特点</th><th>适合线索</th></tr></thead>
 <tbody>
@@ -236,7 +265,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 </section>
 
 <section id="operations">
-<h2>七、备份、安全与运维</h2>
+<h2>八、备份、安全与运维</h2>
 <div class="table-wrap"><table>
 <thead><tr><th>能力</th><th>作用</th><th>考试注意</th></tr></thead>
 <tbody>
@@ -257,7 +286,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 </section>
 
 <section id="scenarios">
-<h2>八、场景题解析</h2>
+<h2>九、场景题解析</h2>
 <div class="quiz">
  <h3>场景一：数据库故障时自动切换，不能承担读扩展</h3>
  <p>应用需要数据库在单个 AZ 故障时快速恢复服务；当前读流量很低，不需要副本分担读请求。</p>
@@ -300,10 +329,17 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
  <p><b>分析思路：</b>瓶颈是连接管理，不是查询吞吐；Proxy 可复用后端连接。</p>
  <p><b>排除：</b>只增加 Read Replica 或提高存储大小并不会减少写端连接建立数量。</p>
 </div>
+<div class="quiz">
+ <h3>场景七：迁移 SQL Server 且要消除许可成本、尽量不重写代码</h3>
+ <p>企业运行大量基于 SQL Server 的应用，扩展时 Windows/SQL Server 许可费高昂；希望迁移到托管服务、尽量不重写现有 T-SQL 代码，并最小化许可成本。</p>
+ <p><b>正确方向：</b>迁移到启用 Babelfish 的 Aurora PostgreSQL，应用通过兼容的 TDS 端点连接；用 SCT 做兼容性评估，用 DMS 迁移数据。</p>
+ <p><b>分析思路：</b>Babelfish 让 Aurora PostgreSQL 理解 T-SQL，满足“托管 + 不重写 + 消除 SQL Server 许可”三项要求。</p>
+ <p><b>排除：</b>在 EC2 上自管 SQL Server 仍需许可；仅用 RDS for SQL Server 不消除许可成本；重写为原生 PostgreSQL 违背“不重写”要求。</p>
+</div>
 </section>
 
 <section id="quick">
-<h2>九、关键词速查</h2>
+<h2>十、关键词速查</h2>
 <div class="table-wrap"><table>
 <thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
 <tbody>
@@ -313,6 +349,8 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <tr><td>Aurora 读扩展</td><td>Reader Endpoint + Replicas</td><td>应用仍应区分读写与一致性要求</td></tr>
 <tr><td>负载波动大、难以规划实例</td><td>Aurora Serverless v2</td><td>自动调整计算容量，不是 DR</td></tr>
 <tr><td>Lambda 短连接风暴</td><td>RDS Proxy + 限制并发</td><td>Proxy 不提升慢查询性能</td></tr>
+<tr><td>SQL Server 迁移 + 不重写 + 省许可费</td><td>Babelfish for Aurora PostgreSQL</td><td>仅子集兼容，需用 SCT/Compass 评估</td></tr>
+<tr><td>异构迁移 schema 评估 / 数据复制</td><td>SCT 评估 + DMS（全量+CDC）</td><td>与 Babelfish 分工不同，常组合使用</td></tr>
 <tr><td>跨区域 Aurora 灾备</td><td>Aurora Global Database</td><td>异步复制，切换需设计与演练</td></tr>
 <tr><td>时间点恢复</td><td>Automated Backups</td><td>恢复通常创建新实例/集群</td></tr>
 <tr><td>长期保留某次状态</td><td>Manual Snapshot</td><td>需自行删除并管理跨区复制</td></tr>
@@ -323,10 +361,10 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 </section>
 
 <section id="memory">
-<h2>十、考前速记卡</h2>
+<h2>十一、考前速记卡</h2>
 <p class="small">勾选已掌握项目，页面内进度自动更新。</p>
 <div class="progress"><span id="progressBar"></span></div>
-<p class="small" id="progressText">已掌握 0 / 18</p>
+<p class="small" id="progressText">已掌握 0 / 19</p>
 <ul class="checklist" id="memoryList">
 <li><input type="checkbox"><span><b>RDS：</b>托管数据库基础设施，客户仍负责应用与查询设计</span></li>
 <li><input type="checkbox"><span><b>Multi-AZ：</b>主要解决可用性与自动故障切换</span></li>
@@ -338,6 +376,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <li><input type="checkbox"><span><b>Reader Endpoint：</b>将读取连接分散到 Replicas</span></li>
 <li><input type="checkbox"><span><b>Serverless v2：</b>在配置范围内自动调整 ACU</span></li>
 <li><input type="checkbox"><span><b>RDS Proxy：</b>连接池与复用，不是查询加速引擎</span></li>
+<li><input type="checkbox"><span><b>Babelfish：</b>Aurora PostgreSQL 兼容 T-SQL，迁移 SQL Server 不重写、省许可</span></li>
 <li><input type="checkbox"><span><b>Global Database：</b>跨 Region 异步副本与区域级切换流程</span></li>
 <li><input type="checkbox"><span><b>Automated Backup：</b>时间点恢复能力</span></li>
 <li><input type="checkbox"><span><b>Manual Snapshot：</b>用户管理并长期保留</span></li>
@@ -350,7 +389,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 </section>
 
 <section id="quiz">
-<h2>十一、快速自测</h2>
+<h2>十二、快速自测</h2>
 <p class="small">先独立选择，再点击“查看解析”。</p>
 <div class="quiz">
  <b>1. 主要目标是 AZ 故障后自动切换，不需要横向读扩展。应优先采用什么？</b><br>
@@ -387,6 +426,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html" target="_blank" rel="noopener">RDS Read Replica</a></li>
 <li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html" target="_blank" rel="noopener">Aurora Global Database</a></li>
 <li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy.html" target="_blank" rel="noopener">Amazon RDS Proxy</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/babelfish.html" target="_blank" rel="noopener">Babelfish for Aurora PostgreSQL</a></li>
 </ul>
 <div class="callout orange"><b>备考提醒：</b>Multi-AZ 部署类型、Aurora 功能、引擎版本和可用区域会随服务演进；设计前核对所选引擎与区域的最新支持矩阵。</div>
 </section>
