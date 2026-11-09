@@ -29,4 +29,10 @@
 <section id="quiz"><h2>八、快速自测</h2><details><summary>1. 一个请求跨越多个服务时，哪类数据模型可关联各段处理？</summary><p>Trace 通过 trace ID 和父子 segment/subsegment 关系关联。</p></details><details><summary>2. Annotation 和 Metadata 的筛选能力有何区别？</summary><p>Annotation 可索引筛选；Metadata 通常用于附加不索引的上下文。</p></details><details><summary>3. 采样后能否把 X-Ray trace 数当成精确请求总量？</summary><p>不能。采样会排除请求；准确计数应依赖指标或业务事件。</p></details></section>
 <section id="refs"><h2>官方资料</h2><ul><li><a href="https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html" target="_blank" rel="noopener">AWS X-Ray 开发者指南</a></li><li><a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-concepts.html" target="_blank" rel="noopener">X-Ray 概念</a></li><li><a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-sampling.html" target="_blank" rel="noopener">X-Ray 采样规则</a></li><li><a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html" target="_blank" rel="noopener">X-Ray 采集与 daemon</a></li></ul></section>
 </main></div><footer class="container">AWS X-Ray SAP-C02 复习笔记 · 可打印或另存为 PDF</footer><script>function updateProgress(){const boxes=[...document.querySelectorAll('#memoryList input')],done=boxes.filter(x=>x.checked).length;document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;}document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));</script>
+
+<script>
+/* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
+window.__PF_ROOT_REL="../";
+(function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
+</script>
 </body></html>

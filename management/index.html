@@ -162,6 +162,21 @@
       line-height: 1.25;
     }
 
+    .card-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      flex-shrink: 0;
+      border-radius: 7px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: .75rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
     /* ── Frequency badges ── */
     .freq {
       flex-shrink: 0;
@@ -307,7 +322,7 @@
 </header>
 
 <main>
-  <p class="section-label">服务导航 · 9 个核心服务 · 已完成 9 / 9</p>
+  <p class="section-label">服务导航 · 10 个核心服务 · 已完成 10 / 10</p>
 
   <div class="grid">
 
@@ -316,6 +331,7 @@
       <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
+          <span class="card-number">01</span>
           <span class="icon">📋</span>
           <span class="card-title">AWS CloudFormation</span>
         </div>
@@ -337,6 +353,7 @@
       <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
+          <span class="card-number">02</span>
           <span class="icon">📡</span>
           <span class="card-title">Amazon CloudWatch</span>
         </div>
@@ -358,6 +375,7 @@
       <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
+          <span class="card-number">03</span>
           <span class="icon">📝</span>
           <span class="card-title">AWS CloudTrail</span>
         </div>
@@ -378,6 +396,7 @@
       <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
+          <span class="card-number">04</span>
           <span class="icon">⚙️</span>
           <span class="card-title">AWS Config</span>
         </div>
@@ -398,6 +417,7 @@
       <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
+          <span class="card-number">05</span>
           <span class="icon">🖥️</span>
           <span class="card-title">AWS Systems Manager</span>
         </div>
@@ -419,6 +439,7 @@
       <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
+          <span class="card-number">06</span>
           <span class="icon">🗼</span>
           <span class="card-title">AWS Control Tower</span>
         </div>
@@ -439,6 +460,7 @@
       <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
+          <span class="card-number">07</span>
           <span class="icon">🏪</span>
           <span class="card-title">AWS Service Catalog</span>
         </div>
@@ -458,6 +480,7 @@
       <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
+          <span class="card-number">08</span>
           <span class="icon">💡</span>
           <span class="card-title">AWS Trusted Advisor</span>
         </div>
@@ -472,11 +495,34 @@
       </div>
     </a>
 
-    <!-- 9. 成本管理工具 -->
+    <!-- 9. Well-Architected Tool -->
+    <a class="card" href="well-architected-tool.html">
+      <span class="status-badge status-done">已完成</span>
+      <div class="card-header">
+        <div class="card-icon-title">
+          <span class="card-number">09</span>
+          <span class="icon">🏛️</span>
+          <span class="card-title">AWS Well-Architected Tool</span>
+        </div>
+        <span class="freq freq-mid">🟡 中频</span>
+      </div>
+      <p class="card-desc">架构评审、风险登记与改进跟踪</p>
+      <div class="tags">
+        <span class="tag">六大支柱</span>
+        <span class="tag">Workload</span>
+        <span class="tag">Lens vs Pillar</span>
+        <span class="tag">HRI / MRI</span>
+        <span class="tag">Milestone</span>
+        <span class="tag">改进计划</span>
+      </div>
+    </a>
+
+    <!-- 10. 成本管理工具 -->
     <a class="card" href="cost-management.html">
       <span class="status-badge status-done">已完成</span>
       <div class="card-header">
         <div class="card-icon-title">
+          <span class="card-number">10</span>
           <span class="icon">💰</span>
           <span class="card-title">成本管理工具</span>
         </div>
@@ -496,10 +542,16 @@
   <!-- Callout -->
   <div class="callout">
     <strong>💡 考试提示</strong>
-    CloudFormation StackSets 用于跨账号 / 跨 Region 部署是必考点。AWS Config + 自动修复（SSM Automation）的合规流程、CloudTrail 组织级 Trail 的配置，以及 Control Tower Landing Zone 的概念在多账号架构题中高频出现。建议重点掌握这几个服务之间的协作链路，并能区分各工具的职责边界。
+    CloudFormation StackSets 用于跨账号 / 跨 Region 部署是必考点。AWS Config + 自动修复（SSM Automation）的合规流程、CloudTrail 组织级 Trail 的配置，以及 Control Tower Landing Zone 的概念在多账号架构题中高频出现。建议重点掌握这几个服务之间的协作链路，并能区分各工具的职责边界。Well-Architected Tool 是人工评审与风险跟踪平台，注意与 Trusted Advisor、Compute Optimizer、Config 的自动化边界。
   </div>
 
 </main>
 
+
+<script>
+/* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
+window.__PF_ROOT_REL="../";
+(function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
+</script>
 </body>
 </html>

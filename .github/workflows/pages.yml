@@ -1,0 +1,65 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build site & Pagefind index
+        run: |
+          # 将站点内容拷贝到 public/
+          mkdir -p public
+          cp -r ./* public/ 2>/dev/null || true
+          # 清理非站点文件
+          rm -f public/.gitlab-ci.yml public/.gitignore public/Agent.md public/PROGRESS.md public/README.md
+          rm -rf public/.github
+          # 临时移出 old/ 与 input/，使其不进入搜索索引（仍保留在站点中可访问）
+          if [ -d public/old ]; then mv public/old .pf_old_tmp; fi
+          if [ -d public/input ]; then mv public/input .pf_input_tmp; fi
+          # 生成 Pagefind 全文搜索索引
+          npx -y pagefind --site public --exclude-selectors "nav,.toolbar"
+          # 还原被排除的目录
+          if [ -d .pf_old_tmp ]; then mv .pf_old_tmp public/old; fi
+          if [ -d .pf_input_tmp ]; then mv .pf_input_tmp public/input; fi
+          # 禁用 Jekyll 处理，避免以下划线开头的资源被忽略
+          touch public/.nojekyll
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

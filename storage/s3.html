@@ -314,6 +314,43 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <h3>S3 Replication Time Control（S3 RTC）</h3>
 <p>标准复制是尽力而为的异步复制。S3 RTC 提供 99.99% 的对象在 15 分钟内完成复制的 SLA，并附带监控指标，适用于对复制时效有严格要求的场景。</p>
 <div class="callout green"><b>场景判断：</b>题目提到"灾难恢复、多区域可用性" → CRR；题目提到"日志聚合、多账户数据同步、同一区域" → SRR；题目提到"确保 15 分钟内复制" → S3 RTC。</div>
+<h3>S3 Multi-Region Access Points（MRAP，多区域访问点）</h3>
+<p>MRAP 为分布在<b>多个区域</b>的多个 S3 桶提供一个<b>单一全局端点</b>。客户端只需访问一个固定域名，请求会被自动路由到延迟最低（或指定）的区域，应用代码无需关心后端有几个区域。</p>
+<div class="diagram">
+ <div class="node"><b>全球客户端</b></div>
+ <span class="arrow">→ 单一域名</span>
+ <div class="node"><b>MRAP 全局端点</b><br><small>&lt;alias&gt;.accesspoint.s3-global.amazonaws.com</small></div>
+ <span class="arrow">→ 就近路由</span>
+ <div class="node"><b>区域 A 桶</b><br><small>（CRR 双向同步）</small></div>
+ <span class="arrow">↔</span>
+ <div class="node"><b>区域 B 桶</b></div>
+</div>
+<ul>
+ <li><b>端点格式：</b><code>&lt;alias&gt;.accesspoint.s3-global.amazonaws.com</code>，全局唯一，不随区域变化，支持跨账号关联桶</li>
+ <li><b>底层基于 AWS Global Accelerator：</b>流量经 AWS 骨干网路由到延迟最低的健康区域，而非公网绕行</li>
+ <li><b>签名要求：</b>请求必须使用 <b>SigV4A</b> 签名（非普通 SigV4）</li>
+ <li><b>数据一致性前提：</b>MRAP <b>本身不复制数据</b>，各区域桶之间必须配置 CRR（双向复制），才能保证写入任意区域的数据在其他区域可见</li>
+</ul>
+<h4>路由模式：Active-Active vs Active-Passive</h4>
+<table>
+<thead><tr><th>模式</th><th>行为</th><th>典型场景</th></tr></thead>
+<tbody>
+<tr>
+ <td><b>Active-Active（默认）</b></td>
+ <td>请求自动路由到延迟最低的区域，所有区域同时对外服务</td>
+ <td>全球用户低延迟读写、就近访问</td>
+</tr>
+<tr>
+ <td><b>Active-Passive（Failover Controls）</b></td>
+ <td>通过故障转移控制将流量锁定到主区域；主区域故障时切换全部流量到备用区域</td>
+ <td>灾难恢复（DR）、主备架构、合规要求固定从某区域读写</td>
+</tr>
+</tbody>
+</table>
+<h4>MRAP 解决了什么问题</h4>
+<p>没有 MRAP 时，跨区域 DR 需要应用层维护多个桶域名，故障时修改代码或切换 DNS。MRAP 把故障切换收敛到一个全局端点：<b>应用代码零改动</b>，只需调整 MRAP Failover Controls 即可完成区域切换。</p>
+<div class="callout orange"><b>考试陷阱：</b>MRAP 只负责<b>路由</b>，不负责<b>复制</b>。题目说"两个区域各有桶，但写入后另一区域看不到数据"，答案是配置 CRR，而不是只创建 MRAP。MRAP + CRR 必须同时使用。</div>
+<div class="callout green"><b>场景判断：</b>题目提到"单一全局端点访问多区域桶"、"跨区域故障切换不改应用代码"、"全球用户低延迟写入" → <b>MRAP</b>；同时提到"两地数据一致" → <b>MRAP + CRR</b> 缺一不可。</div>
 </section>
 
 <!-- ===== 5. 访问控制 ===== -->
@@ -636,6 +673,16 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
   <b>关键词映射：</b>CRR 启用前已有对象 / 存量数据同步 → <b>S3 Batch Operations + CopyObject</b>
  </div>
 </div>
+
+<div class="quiz">
+ <b>场景 6：一家全球游戏公司在美东和欧洲各有一个 S3 桶，通过 CRR 双向同步数据。公司希望全球玩家使用同一个域名读写数据，并且在某个区域故障时，运维人员能将全部流量切换到健康区域，而无需修改游戏客户端代码。</b>
+ <button class="secondary" onclick="showAnswer('s6',true)">查看解析</button>
+ <div class="answer" id="s6">
+  <b>答案：S3 Multi-Region Access Points（MRAP）+ Failover Controls</b><br><br>
+  <b>分析：</b>"同一个域名访问多区域桶"是 MRAP 的核心价值：客户端只需访问 <code>&lt;alias&gt;.accesspoint.s3-global.amazonaws.com</code>，请求自动路由到延迟最低的区域（Active-Active）。区域故障时，通过 MRAP Failover Controls 将流量整体切换到健康区域（Active-Passive），客户端域名和代码均不变。注意：MRAP 本身不复制数据，两地数据一致性完全依赖已配置的 CRR 双向复制，本题中已满足该前提。<br><br>
+  <b>关键词映射：</b>单一全局端点 + 多区域桶 + 故障切换不改代码 → <b>MRAP + CRR</b>
+ </div>
+</div>
 </section>
 
 <!-- ===== 12. 关键词速查 ===== -->
@@ -665,6 +712,9 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <tr><td>加速上传，用户分散在全球</td><td>S3 Transfer Acceleration</td></tr>
 <tr><td>CRR 启用前的存量对象同步</td><td>S3 Batch Operations</td></tr>
 <tr><td>删除标记跨区域复制</td><td>CRR + 启用 Replicate delete markers</td></tr>
+<tr><td>单一全局端点访问多区域桶 / 全球低延迟写入</td><td>S3 Multi-Region Access Points（MRAP）</td></tr>
+<tr><td>跨区域故障切换，不改应用代码</td><td>MRAP Failover Controls（Active-Passive）</td></tr>
+<tr><td>多区域桶数据不同步（已有 MRAP）</td><td>MRAP 不复制数据，必须配置 CRR 双向复制</td></tr>
 <tr><td>S3 触发事件 + 复杂过滤 + 多目标</td><td>S3 → EventBridge</td></tr>
 <tr><td>查询 S3 对象内部数据，减少传输</td><td>S3 Select</td></tr>
 <tr><td>请求方付流量费 / 公开数据集</td><td>Requester Pays</td></tr>
@@ -678,7 +728,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <h2>十三、考前速记卡（可勾选）</h2>
 <p>复习时勾选已经掌握的项目。进度仅保存在当前页面打开期间；刷新后会重置。</p>
 <div class="progress"><span id="progressBar"></span></div>
-<p class="small" id="progressText">已掌握 0 / 20</p>
+<p class="small" id="progressText">已掌握 0 / 22</p>
 <ul class="checklist" id="memoryList">
 <li><input type="checkbox"><span><b>Standard-IA / One Zone-IA 最短存储期：</b>30 天</span></li>
 <li><input type="checkbox"><span><b>Glacier Instant / Flexible Retrieval 最短存储期：</b>90 天</span></li>
@@ -700,6 +750,8 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <li><input type="checkbox"><span><b>未完成 Multipart Upload 清理：</b>生命周期策略 → 中止未完成上传</span></li>
 <li><input type="checkbox"><span><b>S3 请求率：</b>每个前缀 3500 PUT / 5500 GET per second</span></li>
 <li><input type="checkbox"><span><b>S3 事件 + 复杂路由：</b>S3 → EventBridge（比直接通知更灵活）</span></li>
+<li><input type="checkbox"><span><b>MRAP：</b>单一全局端点路由到多区域桶，本身不复制数据，必须配 CRR</span></li>
+<li><input type="checkbox"><span><b>MRAP 路由模式：</b>Active-Active（默认就近路由）/ Active-Passive（Failover Controls 锁主备），签名需 SigV4A</span></li>
 </ul>
 </section>
 
@@ -777,6 +829,15 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
  <button class="secondary" onclick="showAnswer('q5',false)">D. 启用版本控制，设置生命周期策略保留 3 年</button>
  <div class="answer" id="q5"><b>正确答案：B。</b>Compliance Mode 保证保留期内任何人（包括 root 账户）都无法删除或修改对象，也不能缩短保留期，是唯一能满足"任何人都不能删除"强合规要求的选项。Governance Mode 允许有特殊权限的管理员绕过限制；MFA Delete 只增加额外验证步骤，并非完全阻止删除；生命周期策略不能防止主动删除。</div>
 </div>
+
+<div class="quiz">
+ <b>6. 公司创建了 S3 Multi-Region Access Point（MRAP），关联了位于两个区域的桶，但发现通过 MRAP 写入的对象在另一个区域的桶中不可见。最可能的原因是什么？</b><br>
+ <button class="secondary" onclick="showAnswer('q6',false)">A. MRAP 端点尚未完成 DNS 传播，等待 24 小时</button>
+ <button class="secondary" onclick="showAnswer('q6',false)">B. MRAP 关联的两个桶名称不一致，导致路由失败</button>
+ <button class="secondary" onclick="showAnswer('q6',true)">C. 两个桶之间没有配置跨区域复制（CRR）</button>
+ <button class="secondary" onclick="showAnswer('q6',false)">D. 客户端没有使用 SigV4A 签名</button>
+ <div class="answer" id="q6"><b>正确答案：C。</b>MRAP 只提供全局路由端点，<b>本身不负责数据复制</b>。要让写入一个区域的对象在另一区域可见，必须在两个桶之间配置 CRR（双向复制）。选项 D 的 SigV4A 确实是调用 MRAP 的签名要求，但它决定的是请求能否成功，而不是数据是否会出现在另一区域。</div>
+</div>
 </section>
 
 <section>
@@ -810,6 +871,12 @@ function showAnswer(id,correct){
  el.style.display='block';
  el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';
 }
+</script>
+
+<script>
+/* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
+window.__PF_ROOT_REL="../";
+(function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
 </script>
 </body>
 </html>

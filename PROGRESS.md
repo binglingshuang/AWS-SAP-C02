@@ -1,7 +1,7 @@
 # AWS SAP-C02 备考站 · 项目进度与续写指南
 
-> 快照时间：2026-11-03
-> 当前 HEAD：`29642d4 改为使用Trae版本`
+> 快照时间：2026-11-08
+> 当前 HEAD：`8c7ccaa workspace`
 > 扫描范围：根目录与 12 个分类目录下的 HTML、`input/exam.csv`；`old/` 仅登记为历史归档，不读取其内容
 > 用途：中断后直接从第 3、4、9 节继续，不需要重新盘点仓库。
 
@@ -13,11 +13,11 @@
 |---|---|
 | 根导航页 | 已完成；12 个分类均已挂载并标注进度，`architecture-patterns.html` 已启用并接入根页 |
 | 分类入口页 | 12 个已完成并全部挂到根页 |
-| 服务正文 | **75 篇；另有综合专题 1 篇；去重规划合计 76 篇＝ 100%** |
+| 服务正文 | **79 篇；另有综合专题 1 篇；去重规划合计 80 篇＝ 100%** |
 | 未创建正文 | **0 篇** |
 | 正文内场景题 | 各正文内嵌手写场景题 |
 
-**一句话：75 篇服务正文和 1 篇综合专题均已完成，全站正文缺失为 0。**
+**一句话：79 篇服务正文和 1 篇综合专题均已完成，全站正文缺失为 0。**
 
 ---
 
@@ -27,7 +27,7 @@
 |---|---|---:|---|
 | 根导航页 | `index.html` | 1 | 手工维护的 12 分类卡片入口，设计完成 |
 | 分类入口页 | `<category>/index.html` | 12 | 12 个均已挂到根页 |
-| 服务正文 | `<category>/*.html` | **75** | 当前完成正文见下表；混合云与边缘共用计算正文并新增 IoT 正文 |
+| 服务正文 | `<category>/*.html` | **79** | 当前完成正文见下表；混合云与边缘共用计算正文并新增 IoT 正文 |
 | 历史归档正文 | `old/**/*.html` | 10 篇（1 篇 0 字节） | **历史归档，禁止读取或作为续写素材** |
 | 历史归档架构图 | `old/Draw.io/*.drawio` | 4 张 | **历史归档，不读取、不复用** |
 | 部署配置 | `.gitlab-ci.yml` | 1 | 将整个仓库复制到 `public/`，包括 `old/` 与 `input/` |
@@ -69,6 +69,7 @@
 | `security/iam-identity-center.html` | 安全 | — | — | 6 | 18 | 有 |
 | `security/secrets-manager.html` | 安全 | — | — | 6 | 18 | 有 |
 | `security/waf-shield-firewall.html` | 安全 | — | — | 6 | 18 | 有 |
+| `security/firewall-manager.html` | 安全 | — | — | 6 | 18 | 有 |
 | `security/ram.html` | 安全 | — | — | 6 | 18 | 有 |
 | `security/cognito.html` | 安全 | — | — | 6 | 18 | 有 |
 | `security/guardduty-detective.html` | 安全 | — | — | 6 | 18 | 有 |
@@ -78,7 +79,9 @@
 | `management/cloudwatch.html` | 管理 | — | — | 6 | 18 | 有 |
 | `management/cloudtrail.html` | 管理 | — | — | 6 | 18 | 有 |
 | `management/config.html` | 管理 | — | — | 6 | 18 | 有 |
+| `management/well-architected-tool.html` | 管理 | 51.5 KB | 约 13,000 | 7 | 18 | 有 |
 | `application-integration/sqs-sns.html` | 应用集成 | — | — | 6 | 18 | 有 |
+| `application-integration/ses.html` | 应用集成 | — | — | 6 | 18 | 有 |
 | `application-integration/eventbridge.html` | 应用集成 | — | — | 6 | 16 | 有 |
 | `application-integration/step-functions.html` | 应用集成 | — | — | 6 | 16 | 有 |
 | `application-integration/api-gateway.html` | 应用集成 | — | — | 6 | 16 | 有 |
@@ -89,6 +92,7 @@
 | `compute/elastic-beanstalk.html` | 计算 | — | — | 6 | 18 | 有 |
 | `compute/batch.html` | 计算 | — | — | 6 | 18 | 有 |
 | `compute/outposts-wavelength.html` | 计算 | — | — | 6 | 18 | 有 |
+| `compute/workspaces.html` | 计算 | — | — | 6 | 16 | 有 |
 | `devops/codepipeline.html` | DevOps | — | — | 6 | 18 | 有 |
 | `devops/codedeploy.html` | DevOps | — | — | 6 | 18 | 有 |
 | `devops/codecommit-build.html` | DevOps | — | — | 6 | 18 | 有 |
@@ -108,19 +112,19 @@
 | 分类 | 入口页 | 已完成 | 规划 | 缺失 | 完成率 | 优先级 |
 |---|---|---:|---:|---:|---:|---|
 | 网络与内容分发 | `networking/index.html` | 9 | 9 | 0 | 100% | P0 |
-| 计算 | `compute/index.html` | 9 | 9 | 0 | 100% | P0 |
+| 计算 | `compute/index.html` | 10 | 10 | 0 | 100% | P0 |
 | 存储 | `storage/index.html` | 7 | 7 | 0 | 100% | P0 |
 | 数据库 | `database/index.html` | 6 | 6 | 0 | 100% | P0 |
-| 安全、身份与合规 | `security/index.html` | 11 | 11 | 0 | 100% | P0 |
-| 管理与治理 | `management/index.html` | 9 | 9 | 0 | 100% | P0 |
-| 应用集成 | `application-integration/index.html` | 6 | 6 | 0 | 100% | P1 |
+| 安全、身份与合规 | `security/index.html` | 12 | 12 | 0 | 100% | P0 |
+| 管理与治理 | `management/index.html` | 10 | 10 | 0 | 100% | P0 |
+| 应用集成 | `application-integration/index.html` | 7 | 7 | 0 | 100% | P1 |
 | 分析 | `analytics/index.html` | 7 | 7 | 0 | 100% | P2 |
 | 迁移与传输 | `migration/index.html` | 4 | 4 | 0 | 100% | P2 |
 | DevOps | `devops/index.html` | 4 | 4 | 0 | 100% | P2 |
 | 机器学习与 AI | `ml/index.html` | 2 | 2 | 0 | 100% | P2 |
 | 混合云与边缘 | `hybrid-edge/index.html` | 1 | 1 | 0 | 100% | P3 |
 | 综合专题 | 根页直达 | 1 | 1 | 0 | 100% | P1 |
-| **合计** |  | **76** | **76** | **0** | **100%** |  |
+| **合计** |  | **80** | **80** | **0** | **100%** |  |
 
 > 混合云与边缘分类的 3 个核心方向均已覆盖：Outposts、Local Zones、Wavelength 共用 `compute/outposts-wavelength.html`；IoT 由 `hybrid-edge/iot.html` 覆盖。分类表及全站合计按唯一正文去重，因此混合云与边缘单列 1 篇新增正文。
 
@@ -144,7 +148,7 @@
 
 备注：根页服务数已校准为 9 项，与分类页一致。
 
-### 3.2 计算（9 / 9）
+### 3.2 计算（10 / 10）
 
 - [x] `compute/ec2.html`
 - [x] `compute/auto-scaling.html` — 完成日期：2026-11-02；字数约 13,000；场景题 6 道；覆盖四种扩展策略、冷却期、生命周期钩子、混合实例策略、终止保护、暖池、健康检查
@@ -155,6 +159,7 @@
 - [x] P1 `compute/elastic-beanstalk.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Web/Worker 环境、All at once / Rolling / Immutable / Traffic Splitting、蓝绿部署、`.ebextensions` 与数据生命周期
 - [x] P2 `compute/batch.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Job Definition / Queue / Compute Environment、EC2/Fargate/Spot、数组作业、依赖、重试与幂等
 - [x] P2 `compute/outposts-wavelength.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；作为唯一正文覆盖 Outposts、Local Zones、Wavelength 的部署位置、网络边界、服务支持与场景选型；避免与 `hybrid-edge` 重复编写
+- [x] `compute/workspaces.html` — 完成日期：2026-11-06；场景题 6 道；速记卡 16 条；覆盖 Personal / Pools、目录与网络、数据保护、成本及相邻 WorkSpaces 产品选型
 
 ### 3.3 存储（7 / 7）
 
@@ -177,7 +182,7 @@
 
 > 跨分类链接：`analytics/index.html` 的 Redshift 卡片链接到 `database/redshift.html`；`migration/index.html` 的 DMS/SCT 卡片链接到 `database/dms-sct.html`。两篇已作为数据库模块正式页面创建，并保留跨模块入口。
 
-### 3.5 安全、身份与合规（11 / 11）
+### 3.5 安全、身份与合规（12 / 12）
 
 - [x] `security/iam.html`
 - [x] `security/kms-cloudhsm.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 KMS Key 类型、Key Policy、Grant、信封加密、轮换、多区域密钥与 CloudHSM
@@ -185,13 +190,14 @@
 - [x] `security/iam-identity-center.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖身份来源、SAML/SCIM、Permission Set、账号分配与 provision、应用 SSO、生命周期与审计
 - [x] P1 `security/secrets-manager.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖自动轮换、RDS 集成、跨账号/KMS 授权与 Parameter Store 选型
 - [x] P1 `security/waf-shield-firewall.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖 Web ACL、Shield Standard/Advanced、Network Firewall 路由与部署
+- [x] P1 `security/firewall-manager.html` — 完成日期：2026-11-08；6 道场景题；18 张速记卡；3 道快速自测；覆盖跨账户策略、管理员账户、WAF/Shield/安全组/Network Firewall/DNS Firewall 策略、自动修复与 Organizations 前提
 - [x] P1 `security/ram.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖组织集成、共享 VPC 子网、Transit Gateway 与权限边界
 - [x] P2 `security/cognito.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖 User Pools/Identity Pools、JWT、联合身份与临时凭证
 - [x] P2 `security/guardduty-detective.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖 GuardDuty 检测/保护计划、组织管理、Detective 调查与 EventBridge 响应
 - [x] P2 `security/inspector-macie.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖 EC2/ECR/Lambda 漏洞发现、Macie S3 敏感数据发现与多账号治理
 - [x] P2 `security/certificate-manager.html` — 完成日期：2026-11-02；6 道场景题；18 张速记卡；覆盖公有/私有证书、CloudFront us-east-1、续订与 ACM Private CA
 
-### 3.6 管理与治理（9 / 9）
+### 3.6 管理与治理（10 / 10）
 
 - [x] `management/cloudformation.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖模板与 Stack 生命周期、Change Set、Stack Policy、Drift、Nested Stack、StackSets、资源保留与执行角色
 - [x] `management/cloudwatch.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 Metrics、Agent、Alarms、Logs Insights、Metric Filters、OAM 跨账号观测、容器监控与服务边界
@@ -202,12 +208,14 @@
 - [x] P2 `management/control-tower.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Landing Zone、预防/检测/主动控制、Account Factory、既有账号注册与治理漂移
 - [x] P2 `management/service-catalog.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖 Portfolio/Product、Launch/Template/StackSet 约束、共享与产品生命周期
 - [x] P2 `management/trusted-advisor.html` — 完成日期：2026-11-03；6 道场景题；18 张速记卡；覆盖五类检查、支持计划差异、组织视图、Service Quotas 与 Config 边界
+- [x] P2 `management/well-architected-tool.html` — 完成日期：2026-11-07；7 道场景题；18 张速记卡；3 道快速自测；覆盖六支柱与权衡、Workload 属性、Lens 与 Pillar 的区别、HRI/MRI、Milestone、改进计划、报告与跨账号共享，以及与 Trusted Advisor / Compute Optimizer / Cost Optimization Hub 的边界
 
 > Systems Manager 页面从零编写；不要从历史归档补内容。
 
-### 3.7 应用集成（6 / 6）
+### 3.7 应用集成（7 / 7）
 
 - [x] P0 `application-integration/sqs-sns.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 18 条；覆盖 SQS Standard/FIFO、可见性超时、长轮询、DLQ、SNS Fan-out、消息过滤与策略授权
+- [x] P1 `application-integration/ses.html` — 新增；场景题 6 道；速记卡 18 条；覆盖 SMTP/API、Sandbox、区域隔离、身份/DKIM、STARTTLS、配置集事件、Firehose/S3/Athena、退信投诉与模板邮件
 - [x] P0 `application-integration/eventbridge.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖总线类型、事件模式、目标投递、跨账号策略、重试/DLQ、Archive/Replay、Schema Registry 与 Scheduler
 - [x] P0 `application-integration/step-functions.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖 Standard/Express、状态类型、服务集成、Retry/Catch、回调令牌、Map 并行与执行监控
 - [x] P1 `application-integration/api-gateway.html` — 完成日期：2026-11-02；场景题 6 道；速记卡 16 条；覆盖 REST/HTTP/WebSocket、IAM/JWT/Lambda 授权、使用计划、节流缓存、Private API 与 VPC Link
@@ -296,9 +304,10 @@
 | `management/cloudwatch.html` | 6 |
 | `management/cloudtrail.html` | 6 |
 | `management/config.html` | 6 |
-| **合计** | **约 148** |
+| `management/well-architected-tool.html` | 7 |
+| **合计** | **约 155** |
 
-> 上表是早期盘点样本，仅覆盖表列出的 26 篇正文，约 148 道；不是当前全站场景题总数。后续新增正文尚未纳入此表，全站场景题总数待统一统计。
+> 上表是早期盘点样本，仅覆盖表列出的 27 篇正文，约 155 道；不是当前全站场景题总数。后续新增正文尚未纳入此表，全站场景题总数待统一统计。
 
 ---
 
@@ -420,7 +429,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 ### 8.6 已处理：首页统计与事实不符
 
-- 进度口径：75 篇服务正文 + 1 篇综合专题，共 76 篇；正文缺失为 0。
+- 进度口径：78 篇服务正文 + 1 篇综合专题，共 79 篇；正文缺失为 0。
 - `hybrid-edge` 已挂载，根页与分类入口共 12 类；`networking` 服务数已统一为 9 项。
 - 早期约 148 道手写场景题的统计仅覆盖部分页面，不能代表全站总数。
 - 根页及 12 个分类入口的断链检查于 2026-11-03 核验为 0 条。
@@ -462,7 +471,7 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 
 ## 10. 历史归档说明
 
-`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。已完成的 75 篇服务正文沿用现有页面规范；综合专题另计 1 篇。
+`old/` 目录仅作为历史版本留档，**不读取、不作为续写素材、不复用其中样式或结构**。已完成的 77 篇服务正文沿用现有页面规范；综合专题另计 1 篇。
 
 是否保留、删除或从 Pages 构建中排除，见第 8.7 节。
 
@@ -493,5 +502,8 @@ README 中的 `aws-sap-c02-<主题>-<内容>.html` 旧规范已删除。当前�
 | 2026-11-03 | 完成机器学习与 AI 2 篇正文：AI 托管服务全览、Amazon SageMaker；各含 6 道场景题、18 张速记卡和快速自测；分类页开放，首页和进度统计同步更新为 74 / 78 | `ml/ml-ai.html`、`ml/sagemaker.html`、`ml/index.html`、`index.html`、`PROGRESS.md` | 下一篇 `architecture-patterns.html`（P1） |
 | 2026-11-03 | 完成混合云与边缘分类：新增 IoT Core/Greengrass/Device Shadow 正文，复用计算模块的 Outposts/Local Zones/Wavelength 正文；3 个方向全部开放并将分类页挂至根页；服务正文完成 75 篇，综合专题待完成 | `hybrid-edge/iot.html`、`hybrid-edge/index.html`、`index.html`、`PROGRESS.md` | 完成 `architecture-patterns.html` |
 | 2026-11-03 | 完成 `architecture-patterns.html`，全站 75 篇服务正文及 1 篇综合专题全部完成（76 / 76）；校准进度口径、断链检查结果与工作区状态说明 | `architecture-patterns.html`、`PROGRESS.md` | 决定 529 题的分类标签与题库页面形态；决策 `old/`、`input/` 是否随 Pages 发布 |
+| 2026-11-05 | 新增 `application-integration/ses.html`：覆盖 SMTP/API、Sandbox、身份/DKIM、STARTTLS、配置集事件、Firehose/S3/Athena 与邮件信誉；应用集成分类更新至 7 / 7，全站更新为 76 篇服务正文 + 1 篇综合专题 | `application-integration/ses.html`、`application-integration/index.html`、`index.html`、`PROGRESS.md` | 继续全站一致性校准 |
+| 2026-11-06 | 新增 `compute/workspaces.html`：覆盖 Personal / Pools、目录与网络、数据保护、成本及相邻产品选型；计算分类更新至 10 / 10，全站正文统计更新为 77 篇服务正文 + 1 篇综合专题 | `compute/workspaces.html`、`compute/index.html`、`index.html`、`PROGRESS.md` | 继续全站一致性校准 |
+| 2026-11-07 | 新增 `management/well-architected-tool.html`：14 个主题章节、7 道场景题、18 张速记卡、3 道快速自测；覆盖六支柱与权衡、Workload 属性、Lens 与 Pillar、HRI/MRI、Milestone、改进计划、报告与跨账号共享，以及 Tool 与 Trusted Advisor / Compute Optimizer / Cost Optimization Hub / Config 的边界；管理分类更新至 10 / 10，根页与全站统计更新为 79 / 79 | `management/well-architected-tool.html`、`management/index.html`、`index.html`、`PROGRESS.md` | 继续全站一致性校准 |
 
 > 后续每完成一批，在上表追加一行；不要删除旧记录，方便回溯。

@@ -25,7 +25,7 @@ header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff
 </div></header>
 <div class="container layout">
 <nav><strong>页面目录</strong>
- <a href="#overview">一、Config 能力地图</a><a href="#recording">二、记录器与记录范围</a><a href="#history">三、配置项、时间线与交付</a><a href="#rules">四、规则与合规评估</a><a href="#remediation">五、自动修复与合规包</a><a href="#aggregator">六、聚合器与组织治理</a><a href="#operations">七、查询、告警与运维</a><a href="#comparison">八、服务边界与选型</a><a href="#scenarios">九、场景题解析</a><a href="#quick">十、关键词速查</a><a href="#memory">十一、考前速记卡</a><a href="#quiz">十二、快速自测</a>
+ <a href="#overview">一、Config 能力地图</a><a href="#recording">二、记录器与记录范围</a><a href="#history">三、配置项、时间线与交付</a><a href="#rules">四、规则与合规评估</a><a href="#remediation">五、自动修复与合规包</a><a href="#aggregator">六、聚合器与组织治理</a> <a href="#operations">七、查询、告警与日常运维</a><a href="#comparison">八、服务边界与选型</a><a href="#scenarios">九、场景题解析</a><a href="#quick">十、关键词速查</a><a href="#memory">十一、考前速记卡</a><a href="#quiz">十二、快速自测</a>
 </nav>
 <main>
 <section id="overview">
@@ -237,6 +237,12 @@ header{background:linear-gradient(125deg,#0f2b54,#174ea6 62%,#2877c7);color:#fff
 function updateProgress(){const boxes=[...document.querySelectorAll('#memoryList input')];const done=boxes.filter(x=>x.checked).length;document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;}
 document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));
 function showAnswer(id,correct){const el=document.getElementById(id);el.style.display='block';el.style.borderLeft=correct?'4px solid #16a34a':'4px solid #d97706';}
+</script>
+
+<script>
+/* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
+window.__PF_ROOT_REL="../";
+(function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
 </script>
 </body>
 </html>

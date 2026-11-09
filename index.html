@@ -342,7 +342,7 @@
     </p>
     <div class="stats-bar">
       <div class="stat-pill"><span class="icon">📁</span> 12 大类</div>
-      <div class="stat-pill"><span class="icon">📄</span> 75 / 76 篇正文已完成</div>
+      <div class="stat-pill"><span class="icon">📄</span> 80 / 80 篇正文已完成</div>
       <div class="stat-pill"><span class="icon">🎯</span> SAP-C02</div>
     </div>
   </header>
@@ -372,17 +372,17 @@
 
       <!-- 2. 计算 -->
       <a class="card" href="compute/index.html">
-        <span class="status-badge status-partial">已完成 9 / 9</span>
+        <span class="status-badge status-partial">已完成 10 / 10</span>
         <div class="card-icon">⚡</div>
         <div class="card-header">
           <div>
             <div class="card-title">计算</div>
             <div class="card-subtitle">Compute</div>
           </div>
-          <span class="service-count">9 个服务</span>
+          <span class="service-count">10 个服务</span>
         </div>
         <div class="card-services">
-          EC2 · Auto Scaling · Lambda · ECS/Fargate · EKS · Elastic Beanstalk · Batch · Outposts
+          EC2 · Auto Scaling · Lambda · ECS/Fargate · EKS · Elastic Beanstalk · Batch · Outposts · WorkSpaces
         </div>
       </a>
 
@@ -420,49 +420,49 @@
 
       <!-- 5. 安全、身份与合规 -->
       <a class="card" href="security/index.html">
-        <span class="status-badge status-done">已完成 11 / 11</span>
+        <span class="status-badge status-done">已完成 12 / 12</span>
         <div class="card-icon">🔒</div>
         <div class="card-header">
           <div>
             <div class="card-title">安全、身份与合规</div>
             <div class="card-subtitle">Security, Identity &amp; Compliance</div>
           </div>
-          <span class="service-count">11 个服务</span>
+          <span class="service-count">12 个服务</span>
         </div>
         <div class="card-services">
-          IAM · IAM Identity Center · Organizations/SCP · KMS/CloudHSM · Secrets Manager · Cognito · GuardDuty · Inspector · WAF/Shield · ACM · RAM
+          IAM · IAM Identity Center · Organizations/SCP · KMS/CloudHSM · Secrets Manager · Cognito · GuardDuty · Inspector · WAF/Shield · Firewall Manager · ACM · RAM
         </div>
       </a>
 
       <!-- 6. 管理与治理 -->
       <a class="card" href="management/index.html">
-        <span class="status-badge status-done">已完成 9 / 9</span>
+        <span class="status-badge status-done">已完成 10 / 10</span>
         <div class="card-icon">⚙️</div>
         <div class="card-header">
           <div>
             <div class="card-title">管理与治理</div>
             <div class="card-subtitle">Management &amp; Governance</div>
           </div>
-          <span class="service-count">9 个服务</span>
+          <span class="service-count">10 个服务</span>
         </div>
         <div class="card-services">
-          CloudFormation · CloudWatch · CloudTrail · Config · Systems Manager · Control Tower · Service Catalog · Trusted Advisor · 成本管理
+          CloudFormation · CloudWatch · CloudTrail · Config · Systems Manager · Control Tower · Service Catalog · Trusted Advisor · Well-Architected Tool · 成本管理
         </div>
       </a>
 
       <!-- 7. 应用集成 -->
       <a class="card" href="application-integration/index.html">
-        <span class="status-badge status-done">已完成 6 / 6</span>
+        <span class="status-badge status-done">已完成 7 / 7</span>
         <div class="card-icon">🔗</div>
         <div class="card-header">
           <div>
             <div class="card-title">应用集成</div>
             <div class="card-subtitle">Application Integration</div>
           </div>
-          <span class="service-count">6 个服务</span>
+          <span class="service-count">7 个服务</span>
         </div>
         <div class="card-services">
-          SQS/SNS · EventBridge · Step Functions · API Gateway · AppSync · MQ
+          SQS/SNS · SES · EventBridge · Step Functions · API Gateway · AppSync · MQ
         </div>
       </a>
 
@@ -567,6 +567,23 @@
         </div>
         <div class="card-featured-arrow">→</div>
       </a>
+
+      <a class="card-featured" href="cheat-sheet.html" title="打开一句话速记手册" style="margin-top:16px;background:linear-gradient(120deg,#134e4a,#0d9488)">
+        <div class="card-icon">⚡</div>
+        <div class="card-featured-body">
+          <div class="card-header" style="margin-bottom:0">
+            <div>
+              <div class="card-title">一句话速记手册</div>
+              <div class="card-subtitle">Keyword → Answer Cheat Sheet</div>
+            </div>
+            <span class="status-badge status-partial">持续追加中 · 10 条</span>
+          </div>
+          <div class="card-services">
+            Serverless First → SNS+SQS+Lambda · 多 Pod 共享 + 跨 AZ → EFS · 外部暴露 → Access Analyzer · 合规评估 → Config · 威胁检测 → GuardDuty · 集中备份 → AWS Backup · Overlapping CIDR → PrivateLink
+          </div>
+        </div>
+        <div class="card-featured-arrow">→</div>
+      </a>
     </div>
 
   </main>
@@ -576,5 +593,11 @@
     AWS SAP-C02 备考资料整理 &nbsp;·&nbsp; 仅供学习参考
   </footer>
 
+
+<script>
+/* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
+window.__PF_ROOT_REL="./";
+(function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
+</script>
 </body>
 </html>

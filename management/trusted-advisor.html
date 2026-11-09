@@ -14,7 +14,7 @@
 <header><div class="container"><div class="eyebrow">AWS CERTIFICATION STUDY NOTES</div><h1>AWS Trusted Advisor<br>最佳实践检查与建议</h1>
 <p>Trusted Advisor 将部分 AWS 最佳实践检查汇总为可执行建议，帮助识别成本、性能、安全、容错和服务配额/限制方面的机会。它给出检查结果和建议，不是资源配置审计数据库，也不会自动替你修复所有问题。</p>
 <div class="meta"><span class="pill">SAP-C02 · 管理 / 最佳实践</span><span class="pill">5 类检查</span><span class="pill">Support Plans</span><span class="pill">Organizations</span></div><div class="toolbar"><button onclick="window.print()">打印 / 另存为 PDF</button><button class="secondary" onclick="location.href='index.html'">返回管理分类</button></div></div></header>
-<div class="container layout"><nav><strong>页面目录</strong><a href="#map">能力地图</a><a href="#categories">五类检查</a><a href="#support">支持计划与访问</a><a href="#org">组织视图与刷新</a><a href="#boundaries">服务边界</a><a href="#scenarios">场景题解析</a><a href="#memory">考前速记卡</a><a href="#quiz">快速自测</a></nav><main>
+<div class="container layout"><nav><strong>页面目录</strong><a href="#map">一、Trusted Advisor 能力地图</a><a href="#categories">二、五类 Trusted Advisor 检查</a><a href="#support">三、支持计划与检查访问</a><a href="#org">四、组织视图、刷新与运营闭环</a><a href="#boundaries">五、Trusted Advisor 与邻近服务的边界</a><a href="#scenarios">六、场景题解析（6 题）</a><a href="#memory">七、考前速记卡</a><a href="#quiz">八、快速自测</a></nav><main>
 <section id="map"><h2>一、Trusted Advisor 能力地图</h2><p class="lead">服务检查账号中的资源/配置并提供建议。适合快速发现与 AWS 最佳实践相关的问题；检查是否可见、能否刷新、是否支持 API/组织视图，取决于当前支持计划、功能版本、权限和区域。</p>
 <div class="table-wrap"><table><thead><tr><th>组件/能力</th><th>用途</th><th>题目陷阱</th></tr></thead><tbody><tr><td>Checks</td><td>针对 AWS 资源和使用状态执行最佳实践检查。</td><td>检查覆盖面与刷新方式并非所有计划都完全相同。</td></tr><tr><td>Recommendations</td><td>呈现建议、风险/收益线索和资源列表。</td><td>通常需客户评估和执行；不是自动修复引擎。</td></tr><tr><td>Organization view</td><td>在符合条件的 Organizations 环境中集中查看多个账号结果。</td><td>需满足支持计划、组织配置、权限及服务启用条件。</td></tr><tr><td>Trusted Advisor Priority</td><td>对符合条件客户提供优先级建议管理体验。</td><td>并非所有账号或支持计划默认具备。</td></tr></tbody></table></div></section>
 <section id="categories"><h2>二、五类 Trusted Advisor 检查</h2>
@@ -48,5 +48,11 @@
 <section><h2>官方资料</h2><ul><li><a href="https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html" target="_blank" rel="noopener">AWS Trusted Advisor</a></li><li><a href="https://docs.aws.amazon.com/awssupport/latest/user/organizational-view.html" target="_blank" rel="noopener">Trusted Advisor Organization View</a></li><li><a href="https://aws.amazon.com/premiumsupport/plans/" target="_blank" rel="noopener">AWS Support plans</a></li><li><a href="https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html" target="_blank" rel="noopener">AWS Service Quotas</a></li><li><a href="https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html" target="_blank" rel="noopener">AWS Config</a></li></ul><p class="small">支持计划名称和权益可能调整；以当前 AWS Support plans 页面和 Trusted Advisor 文档为准。</p></section>
 </main></div><footer class="container">AWS SAP-C02 Trusted Advisor 复习笔记</footer>
 <script>function updateProgress(){const boxes=[...document.querySelectorAll('#memoryList input')];const done=boxes.filter(x=>x.checked).length;document.getElementById('progressBar').style.width=(done/boxes.length*100)+'%';document.getElementById('progressText').textContent=`已掌握 ${done} / ${boxes.length}`;}document.querySelectorAll('#memoryList input').forEach(x=>x.addEventListener('change',updateProgress));</script>
+
+<script>
+/* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
+window.__PF_ROOT_REL="../";
+(function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
+</script>
 </body>
 </html>
