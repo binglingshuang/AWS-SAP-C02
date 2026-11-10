@@ -27,7 +27,24 @@
 <div class="callout green">有持续、可预测用量时从保守的基线承诺开始；新工作负载、周期性峰值和可大幅迁移的用量留出余量，再定期检查利用率、覆盖率和购买建议。</div></section>
 <section id="ri"><h2>四、Savings Plans、Reserved Instances 与 Spot</h2>
 <div class="table-wrap"><table><thead><tr><th>方案</th><th>优先考虑场景</th><th>关键区别</th></tr></thead><tbody><tr><td>Savings Plans</td><td>跨兼容计算服务/实例类型有稳定消费，重视承诺灵活性。</td><td>承诺的是每小时金额；折扣覆盖满足条件的用量。</td></tr><tr><td>EC2 RI</td><td>EC2 用量稳定且 RI 属性匹配；需要比较区域/可用区、实例家族、平台和租赁等属性。</td><td>RI 是账单折扣/容量预留模型；区域 RI 通常提供账单折扣，指定可用区的 Zonal RI 可提供容量预留。</td></tr><tr><td>特定服务 RI</td><td>如 RDS 等服务的稳定数据库用量。</td><td>服务专属，不等同 EC2 容量预留；逐服务核对适用维度。</td></tr><tr><td>Spot</td><td>可中断、容错的批处理/弹性任务。</td><td>利用空闲容量获得折扣但可能中断；不是长期承诺折扣替代品。</td></tr></tbody></table></div>
-<p>比较时同时考虑可预测性、服务覆盖、可用区容量要求、平台/家族迁移计划、期限、预付现金流、覆盖率和利用率。RI 可售/交换规则因服务和 RI 类型不同，不能一概而论。</p></section>
+<p>比较时同时考虑可预测性、服务覆盖、可用区容量要求、平台/家族迁移计划、期限、预付现金流、覆盖率和利用率。RI 可售/交换规则因服务和 RI 类型不同，不能一概而论。</p>
+<h3>Reserved Instances 与 Compute Savings Plans 详细对比</h3>
+<p>一句话：RI 是“用灵活性换折扣”（承诺具体资源配置），Compute Savings Plans 是“承诺每小时消费额，换取最大灵活性”。</p>
+<div class="table-wrap"><table><thead><tr><th>维度</th><th>Reserved Instances (RI)</th><th>Compute Savings Plans (CSP)</th></tr></thead><tbody>
+<tr><td>承诺对象</td><td>特定资源配置（如 3 台 m5.large）。</td><td>每小时最低消费金额（如 $10/小时）。</td></tr>
+<tr><td>适用服务</td><td>EC2；RDS、ElastiCache、Redshift 等各有独立的 Reserved Nodes / RI。</td><td>EC2、Fargate、Lambda。</td></tr>
+<tr><td>地域灵活性</td><td>Regional RI 限定 Region；Zonal RI 限定具体 AZ。</td><td>跨 Region，全球范围内的合格用量自动抵扣。</td></tr>
+<tr><td>实例属性灵活性</td><td>Standard RI 不能更改实例系列；Convertible RI 可手动交换系列/OS 等，操作较繁琐。</td><td>实例系列、大小、OS、租户属性变化后自动继续抵扣。</td></tr>
+<tr><td>管理复杂度</td><td>高：需持续监控、修改或交换（Convertible）。</td><td>低：AWS 自动把折扣应用到最划算的用量。</td></tr>
+<tr><td>最高折扣</td><td>Standard RI 约可达 72%；Convertible RI 约 66%。</td><td>约可达 66%（与 Convertible RI 相当，略低于 Standard RI）。</td></tr>
+<tr><td>容量保证</td><td>仅 Zonal RI 提供特定 AZ 的容量预留。</td><td>不提供；需要时另配 On-Demand Capacity Reservations。</td></tr>
+</tbody></table></div>
+<p class="small">折扣百分比为典型上限，随实例类型、区域、期限和预付方式变化，以官方定价为准。</p>
+<h3>工作机制差异</h3>
+<ul><li><b>Compute Savings Plans：</b>承诺“未来 1 年或 3 年每小时至少消费 $X”。每小时内合格的 EC2、Fargate、Lambda 用量在承诺额度内按折扣费率计费，超出部分按 On-Demand 计费；未用完的小时额度不会结转。今天用 EC2、明年重构为 Fargate 或 Lambda，折扣仍会自动平移，这也是考试偏爱它的原因。</li><li><b>Reserved Instances：</b>承诺“租用某种特定配置”。只要运行的实例与 RI 属性匹配就享受折扣；实例关闭或换成其他系列后，折扣可能闲置浪费，除非修改、交换（Convertible）或出售（如 RI Marketplace，适用范围因 RI 类型而异）。业务和架构变化频繁时容易出现资源错配，所以现在较少作为首选。</li></ul>
+<h3>考试判别技巧</h3>
+<div class="callout green"><b>优先选 Compute Savings Plans：</b><ul><li>题干涉及 Fargate 或 Lambda（单独或与 EC2 组合）。</li><li>强调 “minimal operational overhead”“ease of management”：RI 需人工维护，Savings Plans 自动应用。</li><li>架构快速迭代，未来可能更换实例系列、区域或计算服务。</li></ul></div>
+<div class="callout orange"><b>优先选 Reserved Instances（或配合其他方案）：</b><ul><li>明确要求 “capacity reservation”（保证特定 AZ 能开出机器）：只有 Zonal RI 提供；Savings Plans 不保证容量，若只要容量保证也可用 On-Demand Capacity Reservations。</li><li>针对 RDS、ElastiCache、Redshift 等非计算服务：传统考点是使用各自的 Reserved Nodes / RI，Compute Savings Plans 不覆盖这些服务。注意 AWS 近期推出了面向部分数据库服务的 Database Savings Plans，实际使用以最新官方文档为准。</li></ul></div></section>
 <section id="budgets"><h2>五、Budgets：预警而非硬性支出上限</h2>
 <ul><li><b>预算类型：</b>成本/用量预算，以及 Savings Plans 或 Reserved Instances 利用率、覆盖率预算；可使用实际值、预测值阈值。</li><li><b>通知：</b>可通过邮件/SNS 等通知目标告警；阈值与周期适合按业务负责人和账期设计。</li><li><b>Budgets Actions：</b>可在达到条件时执行受支持的治理动作，例如应用 IAM policy / SCP 或针对特定资源执行动作；需配置授权与目标范围。它不是无条件关停一切资源的费用防火墙。</li><li><b>预测告警：</b>基于预测支出的预算需要历史数据和预测能力；对短期异常费用还应结合 Cost Anomaly Detection 等检测机制。</li></ul>
 <div class="callout">预算告警与成本硬上限是两回事：服务可能继续运行并产生费用，除非另行设计有明确范围、权限和安全回滚的自动治理动作。</div></section>
@@ -51,12 +68,12 @@
 <details class="scenario"><summary>5. 批处理可被中断且可在稍后重试，需要比按需更低成本。</summary><p>将任务设计为可恢复/可重试后使用 Spot 容量；Savings Plans 是稳定承诺用量折扣，不能提供可中断弹性容量本身。</p></details>
 <details class="scenario"><summary>6. FinOps 团队需要将账单明细交由 S3/Athena 做自定义分摊和月度审计。</summary><p>启用 CUR 或 Cost and Usage Data Exports 并导出到受控 S3，结合 Glue/Athena 等分析；Cost Explorer 可用于交互式趋势查看但不替代明细导出需求。</p></details>
 </section>
-<section id="memory"><h2>九、考前速记卡</h2><p class="small">勾选已掌握项目，页面内进度自动更新。</p><div class="progress"><span id="progressBar"></span></div><p class="small" id="progressText">已掌握 0 / 19</p><ul class="checklist" id="memoryList">
+<section id="memory"><h2>九、考前速记卡</h2><p class="small">勾选已掌握项目，页面内进度自动更新。</p><div class="progress"><span id="progressBar"></span></div><p class="small" id="progressText">已掌握 0 / 21</p><ul class="checklist" id="memoryList">
 <li><input type="checkbox"><span><b>Cost Explorer：</b>交互式历史成本趋势</span></li><li><input type="checkbox"><span><b>Budgets：</b>阈值与预测告警</span></li><li><input type="checkbox"><span><b>Budget ≠ cap：</b>预算不会自动阻止支出</span></li><li><input type="checkbox"><span><b>Budgets Actions：</b>需显式授权与配置</span></li>
 <li><input type="checkbox"><span><b>Cost allocation tag：</b>先打标再激活</span></li><li><input type="checkbox"><span><b>Cost Categories：</b>按规则归并成本</span></li><li><input type="checkbox"><span><b>CUR/Data Exports：</b>细粒度账单数据</span></li><li><input type="checkbox"><span><b>组织账单：</b>付款账号集中查看成本</span></li>
 <li><input type="checkbox"><span><b>Savings Plans：</b>承诺每小时美元用量</span></li><li><input type="checkbox"><span><b>Compute SP：</b>跨多种计算服务更灵活</span></li><li><input type="checkbox"><span><b>EC2 Instance SP：</b>指定区域/实例家族</span></li><li><input type="checkbox"><span><b>SageMaker SP：</b>针对合格 ML 实例用量</span></li>
 <li><input type="checkbox"><span><b>未使用承诺：</b>不会滚存至后续小时</span></li><li><input type="checkbox"><span><b>EC2 RI：</b>折扣模型；Zonal 可有容量预留</span></li><li><input type="checkbox"><span><b>RI 维度：</b>服务类型决定适用规则</span></li><li><input type="checkbox"><span><b>Spot：</b>可中断、容错工作负载</span></li>
-<li><input type="checkbox"><span><b>Cost Anomaly Detection：</b>识别异常支出变化</span></li><li><input type="checkbox"><span><b>Compute Optimizer：</b>基于利用率给出规格/配置建议，不自动执行</span></li><li><input type="checkbox"><span><b>优化闭环：</b>归因、观测、优化、复核</span></li>
+<li><input type="checkbox"><span><b>Cost Anomaly Detection：</b>识别异常支出变化</span></li><li><input type="checkbox"><span><b>Compute Optimizer：</b>基于利用率给出规格/配置建议，不自动执行</span></li><li><input type="checkbox"><span><b>优化闭环：</b>归因、观测、优化、复核</span></li><li><input type="checkbox"><span><b>RI vs CSP：</b>含 Fargate/Lambda 或要求低运维，选 Compute SP</span></li><li><input type="checkbox"><span><b>容量保证：</b>仅 Zonal RI 或 ODCR；Savings Plans 不保证容量</span></li>
 </ul></section>
 <section id="quiz"><h2>十、快速自测</h2>
 <details class="scenario"><summary>1. Budgets 达到阈值后，成本一定会停止增长吗？</summary><p>不会。预算用于监控和告警；如需动作必须单独配置 Budgets Actions 或其他治理流程，仍需考虑范围和误操作风险。</p></details>
