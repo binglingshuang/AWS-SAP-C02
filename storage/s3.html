@@ -401,6 +401,23 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
  <div class="node"><b>账号 A</b><br><small>Bucket Policy：允许账号 B 的主体</small></div>
 </div>
 <div class="callout red"><b>安全提示：</b>跨账号 S3 访问需要<b>两边同时授权</b>。只有 Bucket Policy 允许，但账号 B 的 IAM Policy 不允许，访问仍然被拒绝；反之亦然。两者缺一不可。</div>
+
+<h3>VPC Endpoint：Gateway vs Interface（私有访问 S3）</h3>
+<p>让 VPC 内资源不经公网访问 S3，有两种终端节点可选，考试中常考两者的差异与选型。</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>对比维度</th><th>Gateway Endpoint（网关终端节点）</th><th>Interface Endpoint（接口终端节点 / PrivateLink）</th></tr></thead>
+<tbody>
+<tr><td>费用</td><td><b>免费</b></td><td>收费（按小时 + 按流量）</td></tr>
+<tr><td>实现方式</td><td>在<b>路由表</b>中添加指向终端节点的路由（前缀列表）</td><td>在子网中创建 <b>ENI</b>，获得 VPC 内私有 IP</td></tr>
+<tr><td>访问范围</td><td>仅限<b>同区域、同 VPC</b> 内的资源</td><td>支持<b>跨区域、跨 VPC</b></td></tr>
+<tr><td>本地 / 跨网络</td><td>无法通过 VPC Peering、Direct Connect、VPN 传递</td><td>可通过 <b>VPN / Direct Connect</b> 从线下 IDC 访问</td></tr>
+<tr><td>典型场景</td><td>VPC 内 EC2 / 私有子网低成本访问 S3</td><td>本地数据中心私网访问 S3；跨 VPC / 跨区域私有访问</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout orange"><b>考试陷阱：</b>题目要求"本地 IDC 通过 Direct Connect / VPN 私网访问 S3"或"跨区域 / 跨 VPC 访问"时，Gateway Endpoint <b>无法满足</b>，必须选 <b>Interface Endpoint</b>。</div>
+<div class="callout green"><b>选择口诀：</b>同区域同 VPC 且要省钱 → Gateway Endpoint（免费）；需要线下 / 跨区域 / 跨 VPC 访问 → Interface Endpoint（收费，PrivateLink）。</div>
 </section>
 
 <!-- ===== 6. 加密 ===== -->
