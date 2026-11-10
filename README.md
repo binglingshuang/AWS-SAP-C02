@@ -29,9 +29,8 @@
   - [质量检查](#质量检查)
     - [断链检查](#断链检查)
     - [内容抽查建议](#内容抽查建议)
-  - [数据与历史归档](#数据与历史归档)
+  - [数据说明](#数据说明)
     - [`input/exam.csv`](#inputexamcsv)
-    - [`old/`](#old)
   - [项目文档与状态](#项目文档与状态)
   - [免责声明](#免责声明)
 
@@ -87,7 +86,7 @@ npx -y pagefind --site . --exclude-selectors "nav,.toolbar"
 
 生成后刷新页面，右下角出现“搜索 / Ctrl K”悬浮按钮即可使用。
 
-> 本地直接以仓库根目录为 site 时会连带索引 `old/`、`input/`；如需与线上行为完全一致，请参考 [部署方式](#部署方式) 中“先拷贝到 `public/` 再索引”的做法。
+> 本地直接以仓库根目录为 site 时会连带索引 `input/`；如需与线上行为完全一致，请参考 [部署方式](#部署方式) 中“先拷贝到 `public/` 再索引”的做法。
 
 ---
 
@@ -116,7 +115,6 @@ aws-sap-exam/
 │
 ├── input/exam.csv                 # 原始题库 CSV（529 道，含题干/选项/答案/解析）
 ├── pagefind/                      # 搜索索引与 UI 运行时（构建产物，git 忽略）
-├── old/                           # 历史归档：不参与导航、不进搜索索引
 ├── .github/workflows/pages.yml    # GitHub Pages 部署流水线
 └── .gitlab-ci.yml                 # GitLab Pages 部署流水线
 ```
@@ -191,7 +189,7 @@ aws-sap-exam/
 
 ### 推荐复用骨架
 
-新页面优先复制 [networking/vpc.html](networking/vpc.html) 或 [compute/ec2.html](compute/ec2.html) 的样式、目录脚本与速记卡脚本，再替换正文。`old/` 中的历史页面**不读取、不复用**。
+新页面优先复制 [networking/vpc.html](networking/vpc.html) 或 [compute/ec2.html](compute/ec2.html) 的样式、目录脚本与速记卡脚本，再替换正文。
 
 ### 搜索脚本注入
 
@@ -240,7 +238,7 @@ window.__PF_ROOT_REL="./";
   1. `actions/checkout` + Node 20
   2. 复制全站到 `public/`
   3. 移除 `README.md`、`PROGRESS.md`、`Agent.md`、`.gitlab-ci.yml`、`.gitignore`、`.github/`
-  4. 临时移出 `public/old` 与 `public/input`，执行 `npx -y pagefind --site public --exclude-selectors "nav,.toolbar"`，再移回（目录仍可访问，但不进入索引）
+  4. 临时移出 `public/input`，执行 `npx -y pagefind --site public --exclude-selectors "nav,.toolbar"`，再移回（目录仍可访问，但不进入索引）
   5. 写入 `.nojekyll`，避免下划线资源被 Jekyll 忽略
   6. 上传 artifact 并部署到 Pages
 
@@ -251,13 +249,13 @@ window.__PF_ROOT_REL="./";
 流水线：[.gitlab-ci.yml](.gitlab-ci.yml)
 
 - 仅在 `main` 分支触发，`node:20-alpine` 镜像
-- 同样先拷贝到 `public/`，再生成 Pagefind 索引（此时 `old/`、`input/` 会被临时移出索引范围）
+- 同样先拷贝到 `public/`，再生成 Pagefind 索引（此时 `input/` 会被临时移出索引范围）
 - 产物目录：`public`
 
 ### 部署注意事项
 
 - `pagefind/` 是构建产物，不要手工提交；CI 每次都会重新生成
-- `old/` 与 `input/` 会被发布为可访问路径，但不进入搜索索引
+- `input/` 会被发布为可访问路径，但不进入搜索索引
 - 新增页面后无需修改构建脚本，Pagefind 会自动扫描 `public/` 下所有 HTML
 - README 中指向仓库文件的相对链接不会出现在线上站点（GitHub 工作流会移除 README）
 
@@ -273,7 +271,7 @@ window.__PF_ROOT_REL="./";
 $root = (Get-Location).Path
 $pages = @((Join-Path $root 'index.html'))
 $pages += Get-ChildItem -Path $root -Directory |
-  Where-Object { $_.Name -notin @('old','input','node_modules','pagefind','.git','.github','.screenshots','.trae-html-share-packages') } |
+  Where-Object { $_.Name -notin @('input','node_modules','pagefind','.git','.github','.screenshots','.trae-html-share-packages') } |
   ForEach-Object { Join-Path $_.FullName 'index.html' } |
   Where-Object { Test-Path $_ }
 
@@ -304,7 +302,7 @@ foreach ($page in $pages) {
 
 ---
 
-## 数据与历史归档
+## 数据说明
 
 ### `input/exam.csv`
 
@@ -322,18 +320,6 @@ foreach ($page in $pages) {
 | `warnings` | 数据质量提示 |
 
 该文件目前作为原始素材保留，尚未生成独立题库页面；站点正文中的场景题为手工编写，与 CSV 题目并非一一对应。
-
-### `old/`
-
-历史版本归档，共 10 篇正文与 4 张 Draw.io 架构图，其中 1 篇为 0 字节。
-
-约定：
-
-- **不读取、不作为续写素材、不复用其样式或结构**
-- 不挂到新导航，不进入 Pagefind 索引
-- 部署时仍会随站点发布，因此访问者可能通过直接路径看到旧设计
-
-是否删除或从构建中彻底排除，见 `PROGRESS.md` 第 8.7 节待决策项。
 
 ---
 
