@@ -155,6 +155,20 @@
  </div>
  <p class="cue-note">黄金搭档前置条件必背：<b>AWS Organizations（All Features）+ 所有受管账户启用 AWS Config</b>（用于发现资源）。题干出现 Firewall Manager，正确选项或依赖里一定带上这两个。</p>
 </div>
+<div class="cue">
+ <span class="cue-svc">Database Activity Streams</span>
+ <div class="cue-flow">
+  <span class="cue-when">Aurora / RDS + "监控所有数据库活动 / 审计"（monitor all data activity / audit）</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">Database Activity Streams（数据库活动流）</span>
+ </div>
+ <div class="cue-flow">
+  <span class="cue-when">Database Activity Streams（紧跟其后的下游服务）</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">Amazon Kinesis Data Streams</span>
+ </div>
+ <p class="cue-note">Kinesis Data Streams 底层由 AWS 自动创建和管理，数据使用 <b>KMS 加密</b>；下游可再接 Firehose / 第三方审计与 SIEM 工具。</p>
+</div>
 </section>
 
 <section id="backup">
