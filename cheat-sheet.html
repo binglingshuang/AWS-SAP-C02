@@ -204,6 +204,15 @@
  </div>
  <p class="cue-note">星型拓扑简化多 VPC 与本地互联；<b>但遇 Overlapping CIDR</b>，TGW 要叠加 NAT / 防火墙做地址转换，开销大 → 改选 PrivateLink。</p>
 </div>
+<div class="cue">
+ <span class="cue-svc">Security Group vs NACL</span>
+ <div class="cue-flow">
+  <span class="cue-when">Security Group + "Deny 拒绝规则"</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">必错（SG 只有 Allow）</span>
+ </div>
+ <p class="cue-note">安全组只支持 Allow 规则，无法写 Deny；需要显式拒绝（如封禁某 IP）要用 NACL（支持 Allow / Deny，无状态）。</p>
+</div>
 </section>
 
 <section id="edge">
