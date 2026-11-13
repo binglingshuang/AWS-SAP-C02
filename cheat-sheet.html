@@ -53,6 +53,7 @@
  <a href="#backup">四、备份与恢复</a>
  <a href="#networking">五、网络</a>
  <a href="#edge">六、边缘与迁移</a>
+ <a href="#compute">七、计算与部署</a>
  <a href="#appendix">追加格式</a>
 </nav>
 
@@ -225,6 +226,19 @@
   <span class="cue-pick">Snowball Edge Compute Optimized</span>
  </div>
  <p class="cue-note">在边缘做本地计算/AI，并兼顾本地轻量存储时的标准答案（可跑 EC2 / Lambda 函数）。只搬数据不算力选 Storage Optimized；需强算力且机房可用选 Outposts。</p>
+</div>
+</section>
+
+<section id="compute">
+<h2>七、计算与部署</h2>
+<div class="cue">
+ <span class="cue-svc">Elastic Beanstalk</span>
+ <div class="cue-flow">
+  <span class="cue-when">Elastic Beanstalk + "Blue/Green 蓝绿部署"</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">Swap Environment URLs（交换环境 URL）</span>
+ </div>
+ <p class="cue-note">Beanstalk 没有原生蓝绿，做法是克隆出新环境部署新版本，验证后用 Swap Environment URLs 交换 CNAME 切流量；出问题再换回去即可回滚。</p>
 </div>
 </section>
 
