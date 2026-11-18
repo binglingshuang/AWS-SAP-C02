@@ -28,7 +28,10 @@
 <section id="controls"><h2>三、Controls：预防、检测与主动治理</h2>
 <div class="table-wrap"><table><thead><tr><th>控制类型</th><th>典型实现</th><th>何时生效 / 局限</th></tr></thead><tbody><tr><td>预防性（Preventive）</td><td>常以 SCP 等组织策略限制 API 行为。</td><td>在操作发生前拒绝受限动作；不会自动修复已有违规配置，且不授予权限。</td></tr><tr><td>检测性（Detective）</td><td>常以 AWS Config 规则评估资源状态。</td><td>资源变化/评估后发现不合规；通常不阻止创建，不等同自动修复。</td></tr><tr><td>主动性（Proactive）</td><td>可通过 CloudFormation Hooks 等机制在受支持的部署路径中评估。</td><td>针对受支持的 CloudFormation 操作进行部署前检查；不保证拦截绕过该路径的所有 API 操作。</td></tr></tbody></table></div>
 <ul><li>控制项可针对 OU/账号启用或停用；继承范围、冲突策略和可选参数要结合组织结构评估。</li><li>SCP 设置权限上限，不授予 IAM 用户/角色权限；显式拒绝与更高层级策略继承需仔细核对。</li><li>检测控制通常需要 Config 记录器、服务关联角色和目标区域配置正常。看到控制项启用不代表所有现存资源立即符合。</li></ul>
-<div class="callout orange">考试陷阱：预防性控制 ≠ IAM 授权；检测性控制 ≠ 预防创建；主动控制只对所支持的 CloudFormation 部署路径有效。</div></section>
+<div class="callout orange">考试陷阱：预防性控制 ≠ IAM 授权；检测性控制 ≠ 预防创建；主动控制只对所支持的 CloudFormation 部署路径有效。</div>
+<h3>三种 Guardrails 区别总结</h3>
+<div class="table-wrap"><table><thead><tr><th>类型</th><th>作用</th><th>典型实现</th><th>一句话记忆</th></tr></thead><tbody><tr><td><b>Preventive</b>（预防性）</td><td>阻止违规操作</td><td>SCP</td><td>不允许你做</td></tr><tr><td><b>Detective</b>（检测性）</td><td>检测违规资源</td><td>AWS Config</td><td>做完以后检查你</td></tr><tr><td><b>Proactive</b>（主动性）</td><td>在资源部署前检查模板是否合规</td><td>CloudFormation Hooks 等机制</td><td>部署之前检查模板</td></tr></tbody></table></div>
+<div class="callout green"><b>核心记忆口诀</b><ul><li><b>Preventive：</b>不允许你做。</li><li><b>Detective：</b>做完以后检查你。</li><li><b>Proactive：</b>部署之前检查模板。</li></ul></div></section>
 <section id="accounts"><h2>四、Account Factory 与账号生命周期</h2>
 <ol><li><b>预备组织：</b>建立 Landing Zone 和 OU 治理结构，配置 Identity Center、共享日志/审计与必需服务权限。</li><li><b>供应账号：</b>Account Factory 按指定账号信息、邮箱/所有者属性和目标 OU 建立新账号，并纳入预设治理基线。</li><li><b>配置定制：</b>根据标准流程应用网络、身份、日志和安全基线；可结合 Control Tower 支持的定制机制或组织自己的部署流水线。</li><li><b>既有账号注册：</b>核对账号所属组织、先决条件、现存资源/角色与目标 OU，再执行 enrollment；检查治理状态及未合规控制项。</li><li><b>持续治理：</b>账号移动 OU、控制项变更、区域扩展或底层资源手工修改后，重新检查合规与 drift，避免仅凭供应成功判断完成。</li></ol>
 <p>Account Factory 负责按治理流程供应账号，不等于应用团队产品目录或任意资源模板。账号自定义与生命周期自动化的实现方式可随 Control Tower 版本演进。</p></section>
