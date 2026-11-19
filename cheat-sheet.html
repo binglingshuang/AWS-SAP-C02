@@ -20,6 +20,9 @@
 .cue-arrow{color:#94a3b8;font-weight:800;font-size:20px}
 .cue-pick{background:var(--green-soft);border:1px solid #bbf7d0;color:var(--green);padding:4px 12px;border-radius:8px;font-weight:700}
 .cue-note{margin:8px 0 0;font-size:14px;color:#475569}
+.study-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+.study-table th,.study-table td{padding:9px 10px;border:1px solid var(--line);text-align:left;vertical-align:top}
+.study-table th{background:#f8fafc;font-weight:700}
 @media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none}}
 @media print{body{background:#fff;font-size:12px} header{background:#fff;color:#111;padding:20px 0} header p,.eyebrow{color:#444!important} .pill{border:1px solid #aaa;color:#333} .layout{display:block;padding:10px 0} nav,.toolbar,.no-print{display:none!important} section{box-shadow:none;break-inside:avoid;padding:16px;margin-bottom:12px} .cue{break-inside:avoid} a{color:#111;text-decoration:none}}
 </style>
@@ -33,7 +36,7 @@
   <div class="header-meta">
    <span class="pill">⚡ 考前速刷</span>
    <span class="pill">SAP-C02</span>
-   <span class="pill">当前收录 12 条 · 持续追加中</span>
+   <span class="pill">当前收录 20 条 · 持续追加中</span>
   </div>
   <div class="toolbar no-print">
    <button onclick="window.print()">打印 / 另存为 PDF</button>
@@ -226,6 +229,49 @@
   <span class="cue-pick">Snowball Edge Compute Optimized</span>
  </div>
  <p class="cue-note">在边缘做本地计算/AI，并兼顾本地轻量存储时的标准答案（可跑 EC2 / Lambda 函数）。只搬数据不算力选 Storage Optimized；需强算力且机房可用选 Outposts。</p>
+</div>
+<div class="cue">
+ <span class="cue-svc">AWS DataSync</span>
+ <div class="cue-flow">
+  <span class="cue-when">文件或对象数据迁移、复制、定期同步、增量传输</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">AWS DataSync</span>
+ </div>
+ <table class="study-table">
+  <thead><tr><th>数据源</th><th>数据目标</th><th>常见方案</th></tr></thead>
+  <tbody>
+   <tr><td>本地 NFS</td><td>Amazon EFS</td><td>DataSync</td></tr>
+   <tr><td>本地 NFS</td><td>Amazon S3</td><td>DataSync</td></tr>
+   <tr><td>本地 SMB</td><td>Amazon FSx / S3</td><td>DataSync</td></tr>
+   <tr><td>Amazon EFS</td><td>Amazon EFS</td><td>DataSync</td></tr>
+   <tr><td>Amazon S3</td><td>Amazon S3</td><td>DataSync / S3 Replication（按场景选择）</td></tr>
+   <tr><td>本地文件存储</td><td>Amazon S3</td><td>DataSync</td></tr>
+  </tbody>
+ </table>
+ <p class="cue-note">DataSync 可自动化大规模在线数据传输，支持增量复制和计划任务；本地到 AWS 的私有网络连接可配合 Direct Connect 或 VPN。</p>
+</div>
+<div class="cue">
+ <span class="cue-svc">DataSync 关键词</span>
+ <div class="cue-flow">
+  <span class="cue-when">大量文件迁移 / 定期同步 / 增量同步 / 减少迁移运维工作</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">DataSync（Scheduled Task）</span>
+ </div>
+ <p class="cue-note">NFS → EFS 通常联想 DataSync；SMB → FSx 通常联想 DataSync；NFS 文件共享本身对应 EFS。</p>
+</div>
+<div class="cue">
+ <span class="cue-svc">DataSync vs Storage Gateway</span>
+ <div class="cue-flow">
+  <span class="cue-when">迁移、复制、同步数据</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">DataSync：搬运数据</span>
+ </div>
+ <div class="cue-flow">
+  <span class="cue-when">本地应用持续通过文件、块或磁带接口访问云存储</span>
+  <span class="cue-arrow">→</span>
+  <span class="cue-pick">Storage Gateway：提供存储访问接口</span>
+ </div>
+ <p class="cue-note">本地文件访问云端 S3 并需要本地缓存 → S3 File Gateway。口诀：迁移和同步找 DataSync；本地应用持续访问云存储找 Storage Gateway。</p>
 </div>
 </section>
 
