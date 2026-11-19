@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="AWS SAP-C02 CloudFormation 考点速查：Stacks、StackSets、Change Sets、Nested Stacks、Drift、回滚与资源保留。">
+<meta name="description" content="AWS SAP-C02 CloudFormation 考点速查：Stacks、StackSets、Change Sets、Nested Stacks、Custom Resources、Drift、回滚与资源保留。">
 <title>AWS SAP-C02｜AWS CloudFormation 考试速查手册</title>
 <style>
 :root{
@@ -107,10 +107,11 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
  <a href="#composition">五、Nested Stacks 与跨栈引用</a>
  <a href="#stacksets">六、StackSets 跨账号 / 区域</a>
  <a href="#security">七、执行角色与安全治理</a>
- <a href="#scenarios">八、场景题解析</a>
- <a href="#quick">九、关键词速查</a>
- <a href="#memory">十、考前速记卡</a>
- <a href="#quiz">十一、快速自测</a>
+ <a href="#custom-resource">八、Custom Resource</a>
+ <a href="#scenarios">九、场景题解析</a>
+ <a href="#quick">十、关键词速查</a>
+ <a href="#memory">十一、考前速记卡</a>
+ <a href="#quiz">十二、快速自测</a>
 </nav>
 
 <main>
@@ -238,8 +239,38 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <div class="callout orange"><b>最小权限：</b>CloudFormation 不是权限隔离边界。执行角色的权限可能被模板部署调用；委派创建 Stack 的能力时，需要同时评估执行角色、PassRole 和模板可修改范围。</div>
 </section>
 
+<section id="custom-resource">
+<h2>八、CloudFormation Custom Resource</h2>
+<p class="lead">Custom Resource 让 CloudFormation 在资源生命周期中调用自定义逻辑，弥补原生资源类型无法直接完成的操作。常见实现是 Lambda-backed Custom Resource。</p>
+<div class="diagram">
+ <div class="node"><b>CloudFormation</b><br><small>Create / Update / Delete 请求</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>ServiceToken</b><br><small>Lambda 或 SNS 提供方</small></div>
+ <span class="arrow">→</span>
+ <div class="node"><b>自定义操作</b><br><small>完成后回传结果</small></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>考点</th><th>说明</th><th>考试易错点</th></tr></thead>
+<tbody>
+<tr><td>资源声明</td><td>使用 <code>AWS::CloudFormation::CustomResource</code> 或 <code>Custom::Something</code>，并提供 <code>ServiceToken</code> 指定提供方。</td><td>ServiceToken 通常是 Lambda 函数 ARN 或 SNS Topic ARN；Lambda 是常见选择。</td></tr>
+<tr><td>生命周期请求</td><td>创建、属性更新和删除 Stack 时，CloudFormation 分别向提供方发送 Create、Update、Delete 请求。</td><td>处理程序要覆盖生命周期；删除请求不能假设业务资源还在或外部系统仍可用。</td></tr>
+<tr><td>响应契约</td><td>提供方必须向请求中的预签名响应 URL 回传成功或失败状态及 <code>PhysicalResourceId</code>；可通过 <code>Data</code> 返回属性。</td><td>未按约定回传或超时会使 Stack 操作等待后失败；使用 <code>Fn::GetAtt</code> 可读取返回的 Data。</td></tr>
+<tr><td>ServiceTimeout</td><td>控制 CloudFormation 等待自定义资源响应的时间，范围为 1–3600 秒；默认值为 3600 秒。</td><td>超时或提供方未回传响应会导致资源操作失败，继而可能触发 Stack 回滚。</td></tr>
+<tr><td>PhysicalResourceId</td><td>标识自定义资源的物理实例。更新时保持 ID 通常表示更新原实例；返回不同 ID 会被视为替换，并触发旧实例的 Delete 请求。</td><td>稳定 ID 便于更新；意外改变 ID 可能导致删除旧实例或产生重复副作用。</td></tr>
+<tr><td>可靠性与权限</td><td>自定义逻辑可能被重试或在回滚路径中调用，应设计为幂等并处理重复请求；Lambda 执行角色只授予所需权限。</td><td>CloudFormation 回滚不等于撤销任意外部副作用，需在逻辑中实现安全清理/补偿。</td></tr>
+</tbody></table></div>
+<h3>常见用途与设计边界</h3>
+<ul>
+<li>删除 S3 Bucket 前清空对象、创建 Stack 时初始化数据、资源创建后执行特殊配置，或删除 Stack 时清理外部系统中的记录。</li>
+<li>自定义逻辑的授权在提供方（例如 Lambda 执行角色）中配置；CloudFormation 执行角色还需有权限调用相应提供方。</li>
+<li>优先使用 CloudFormation 原生资源及其属性；只有原生资源生命周期确实无法满足需求时再用 Custom Resource，减少自定义代码的运维负担。</li>
+<li>Custom Resource 不等同于宏（Transform）：宏在模板处理阶段转换模板；Custom Resource 在 Stack 资源生命周期中执行操作。</li>
+</ul>
+<div class="callout orange"><b>S3 清空陷阱：</b>若删除 Bucket 前必须清空对象，让清理 Custom Resource 在 Delete 阶段仍能访问 Bucket。可通过 Custom Resource 对 Bucket 的引用建立依赖，使其先创建、后删除；清理角色需具备列举与删除所需对象的权限。启用版本控制时还要考虑删除对象版本和删除标记。只保留 Bucket 或加删除保护并不会自动清空内容。</div>
+</section>
+
 <section id="scenarios">
-<h2>八、场景题解析</h2>
+<h2>九、场景题解析</h2>
 <div class="quiz">
  <h3>场景一：更新前查看是否会替换数据库实例</h3>
  <p>团队修改生产数据库参数，希望在执行前审查 CloudFormation 将新增、修改、替换或删除的资源。</p>
@@ -282,10 +313,17 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
  <p><b>分析思路：</b>Rollback Triggers 根据部署期指标告警触发回滚，减少错误版本持续运行时间。</p>
  <p><b>排除：</b>仅开启 drift detection 不会监控部署指标或执行回滚；回滚也不替代应用验证。</p>
 </div>
+<div class="quiz">
+ <h3>场景七：删除 Bucket 前必须清理对象</h3>
+ <p>CloudFormation 删除应用 Stack 时，Bucket 中仍可能有对象，导致 Bucket 删除失败；要求在删除 Bucket 前自动清理对象。</p>
+ <p><b>正确方向：</b>使用 Lambda-backed Custom Resource 执行清理，并确保 Custom Resource 在删除阶段先于 Bucket 清理。若启用版本控制，还需清除对象版本及删除标记。</p>
+ <p><b>分析思路：</b>Custom Resource 接收 Delete 生命周期请求；依赖关系的删除顺序与创建顺序相反，因此清理资源要依赖 Bucket（例如引用 Bucket），从而在 Bucket 删除前运行。</p>
+ <p><b>排除：</b>DeletionPolicy: Retain 只保留 Bucket，不会清空对象；仅删除对象的当前版本也不足以清理版本控制 Bucket。</p>
+</div>
 </section>
 
 <section id="quick">
-<h2>九、关键词速查</h2>
+<h2>十、关键词速查</h2>
 <div class="table-wrap"><table>
 <thead><tr><th>题干关键词</th><th>优先联想</th><th>易混点</th></tr></thead>
 <tbody>
@@ -301,14 +339,18 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <tr><td>部署期间 Alarm 触发回滚</td><td>Rollback Triggers</td><td>监控范围由配置的告警决定</td></tr>
 <tr><td>跨栈共享同区域输出</td><td>Export / ImportValue</td><td>依赖会阻止 Export 删除/更改</td></tr>
 <tr><td>模板创建资源时权限过大</td><td>限制执行角色与 iam:PassRole</td><td>CloudFormation 执行身份是安全边界</td></tr>
+<tr><td>原生资源不能完成初始化/清理</td><td>Lambda-backed Custom Resource</td><td>覆盖 Create/Update/Delete 并回传响应</td></tr>
+<tr><td>Custom Resource 更新后旧实例被删除</td><td>检查 PhysicalResourceId</td><td>返回不同 ID 会触发替换和旧实例 Delete</td></tr>
+<tr><td>删除 Bucket 前清空对象</td><td>Custom Resource + 依赖顺序</td><td>清理必须先于 Bucket 删除；版本控制需清理版本</td></tr>
+<tr><td>模板处理阶段改写模板</td><td>Transform / Macro</td><td>不是资源生命周期中的 Custom Resource</td></tr>
 </tbody></table></div>
 </section>
 
 <section id="memory">
-<h2>十、考前速记卡</h2>
+<h2>十一、考前速记卡</h2>
 <p class="small">勾选已掌握项目，页面内进度自动更新。</p>
 <div class="progress"><span id="progressBar"></span></div>
-<p class="small" id="progressText">已掌握 0 / 18</p>
+<p class="small" id="progressText">已掌握 0 / 21</p>
 <ul class="checklist" id="memoryList">
 <li><input type="checkbox"><span><b>Template：</b>声明期望资源与配置</span></li>
 <li><input type="checkbox"><span><b>Stack：</b>模板的一次部署实例</span></li>
@@ -328,11 +370,14 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <li><input type="checkbox"><span><b>执行角色：</b>最小权限并限制 iam:PassRole</span></li>
 <li><input type="checkbox"><span><b>资源替换：</b>Change Set 检查中断、迁移与数据风险</span></li>
 <li><input type="checkbox"><span><b>资源漂移：</b>判断采纳手工状态还是恢复模板状态</span></li>
+<li><input type="checkbox"><span><b>Custom Resource：</b>处理 Create/Update/Delete 并按契约回传状态</span></li>
+<li><input type="checkbox"><span><b>PhysicalResourceId：</b>更新时变更 ID 会触发替换和旧资源删除</span></li>
+<li><input type="checkbox"><span><b>Bucket 清理：</b>Custom Resource 先清对象，再删除 Bucket</span></li>
 </ul>
 </section>
 
 <section id="quiz">
-<h2>十一、快速自测</h2>
+<h2>十二、快速自测</h2>
 <p class="small">先独立选择，再点击“查看解析”。</p>
 <div class="quiz">
  <b>1. 更新生产 Stack 前，需要查看数据库资源是否会被替换。应使用什么？</b><br>
@@ -358,6 +403,14 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
  <button class="secondary" onclick="showAnswer('q3',false)">D. Export</button>
  <div class="answer" id="q3"><b>正确答案：A。</b>Drift Detection 报告支持资源的配置差异，不会自动修复或修改模板。</div>
 </div>
+<div class="quiz">
+ <b>4. 更新 Custom Resource 时，提供方返回了不同于原来的 PhysicalResourceId。CloudFormation 会如何处理？</b><br>
+ <button class="secondary" onclick="showAnswer('q4',false)">A. 忽略新的 ID 并继续更新</button>
+ <button class="secondary" onclick="showAnswer('q4',true)">B. 将其视为替换，并对旧物理资源发送 Delete 请求</button>
+ <button class="secondary" onclick="showAnswer('q4',false)">C. 自动执行 Drift Detection</button>
+ <button class="secondary" onclick="showAnswer('q4',false)">D. 只更新 Stack 输出</button>
+ <div class="answer" id="q4"><b>正确答案：B。</b>PhysicalResourceId 标识自定义资源实例；更新时 ID 改变会被视为替换，CloudFormation 随后清理旧实例。</div>
+</div>
 </section>
 
 <section>
@@ -368,6 +421,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html" target="_blank" rel="noopener">CloudFormation StackSets</a></li>
 <li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-stack-drift.html" target="_blank" rel="noopener">Drift Detection</a></li>
 <li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html" target="_blank" rel="noopener">DeletionPolicy</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html" target="_blank" rel="noopener">CloudFormation Custom Resources</a></li>
 </ul>
 <div class="callout orange"><b>备考提醒：</b>资源属性更新行为、StackSets 权限模型与支持范围会变化；部署前查看对应资源类型文档、变更集和区域支持情况。</div>
 </section>
