@@ -44,6 +44,8 @@ jobs:
           if [ -d .pf_input_tmp ]; then mv .pf_input_tmp public/input; fi
           # 禁用 Jekyll 处理，避免以下划线开头的资源被忽略
           touch public/.nojekyll
+          # 记录本次构建时间，供首页展示
+          printf '{"builtAt":"%s"}\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > public/last-updated.json
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

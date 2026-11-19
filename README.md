@@ -239,8 +239,10 @@ window.__PF_ROOT_REL="./";
   2. 复制全站到 `public/`
   3. 移除 `README.md`、`PROGRESS.md`、`Agent.md`、`.gitlab-ci.yml`、`.gitignore`、`.github/`
   4. 临时移出 `public/input`，执行 `npx -y pagefind --site public --exclude-selectors "nav,.toolbar"`，再移回（目录仍可访问，但不进入索引）
-  5. 写入 `.nojekyll`，避免下划线资源被 Jekyll 忽略
+  5. 写入 `.nojekyll`，避免下划线资源被 Jekyll 忽略；生成 `last-updated.json`，供首页显示本次构建时间
   6. 上传 artifact 并部署到 Pages
+
+首页显示的时间为构建生成时间（北京时间展示），接近本次 Pages 发布时刻，但不代表 GitHub 精确的部署完成时间。
 
 启用方式：仓库 **Settings → Pages → Build and deployment → Source: GitHub Actions**。
 

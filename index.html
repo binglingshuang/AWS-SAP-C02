@@ -61,7 +61,13 @@
       font-size: 1.05rem;
       opacity: .82;
       max-width: 600px;
-      margin: 0 auto 32px;
+      margin: 0 auto 8px;
+    }
+
+    header .last-updated {
+      font-size: .78rem;
+      opacity: .7;
+      margin: 0 auto 28px;
     }
 
     /* stats pills */
@@ -340,6 +346,7 @@
     <p class="subtitle">
       按技术栈分类的全考点整理，覆盖核心服务原理、架构模式与真题解析
     </p>
+    <p class="last-updated" id="last-updated" aria-live="polite">最近更新时间读取中…</p>
     <div class="stats-bar">
       <div class="stat-pill"><span class="icon">📁</span> 12 大类</div>
       <div class="stat-pill"><span class="icon">📄</span> 80 / 80 篇正文已完成</div>
@@ -598,6 +605,38 @@
 /* 全站搜索入口 — 按本文件静态深度定位根目录的 search.js */
 window.__PF_ROOT_REL="./";
 (function(){var s=document.createElement("script");s.src=window.__PF_ROOT_REL+"search.js";s.defer=!0;document.head.appendChild(s)})();
+</script>
+<script>
+(async function () {
+  const timestampElement = document.getElementById("last-updated");
+
+  try {
+    const response = await fetch("./last-updated.json", { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`更新时间请求失败：HTTP ${response.status}`);
+    }
+
+    const metadata = await response.json();
+    const timestamp = Date.parse(metadata.builtAt);
+    if (!Number.isFinite(timestamp)) {
+      throw new Error("更新时间格式无效");
+    }
+
+    const formatted = new Intl.DateTimeFormat("zh-CN", {
+      timeZone: "Asia/Shanghai",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    }).format(timestamp);
+    timestampElement.textContent = `最近更新：${formatted}（北京时间）`;
+  } catch (error) {
+    console.error("无法加载最近更新时间", error);
+    timestampElement.textContent = "最近更新时间暂不可用";
+  }
+})();
 </script>
 </body>
 </html>
