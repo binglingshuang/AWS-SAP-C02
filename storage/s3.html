@@ -619,6 +619,36 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <div class="callout green"><b>场景：</b>题目出现"访问模式不可预测"、"不确定访问频率"、"自动优化存储成本"等关键词 → Intelligent-Tiering。</div>
 <h3>S3 Inventory</h3>
 <p>定期生成桶内对象的清单报告（CSV / ORC / Parquet 格式），包含加密状态、复制状态、存储类别等元数据，支持配合 S3 Select 或 Athena 进行分析。</p>
+<h3>S3 Storage Lens（存储分析与可视化）</h3>
+<p>S3 Storage Lens 是面向整个存储资产的可视化分析与洞察服务，用于从组织、账号、桶或前缀维度查看存储规模、成本和数据保护状况，帮助识别异常增长、未使用的存储及可优化项目。</p>
+<div class="cards">
+ <div class="card">
+  <b>可跨区域、跨账号分析</b>
+  <p>一个 Storage Lens Dashboard 可以汇聚并分析多个 AWS Region 的数据，并可按组织、账号或桶进行聚合。答题时看到“跨 Region 的 S3 存储使用情况、成本或数据保护分析”时，应优先考虑 Storage Lens。</p>
+ </div>
+ <div class="card">
+  <b>不是对象复制或监控告警服务</b>
+  <p>Storage Lens 生成的是存储分析指标、仪表盘和报告；它不会复制对象，也不能替代 CloudWatch 实时指标告警或 Cost Explorer 的账单分析。需要每日/周期性洞察时选 Storage Lens，需要实时操作告警时选 CloudWatch。</p>
+ </div>
+</div>
+<ul>
+ <li><b>核心用途：</b>查看存储容量、对象数量、存储类别分布、增长趋势，以及加密、复制、生命周期和版本控制等数据保护指标。</li>
+ <li><b>组织级范围：</b>可在 AWS Organizations 中启用组织级 Dashboard，覆盖组织内多个账号中的存储使用情况。</li>
+ <li><b>报告与推荐：</b>可在桶中导出 CSV 或 Parquet 格式报告，并通过高级指标和成本优化建议识别异常数据与节省机会。</li>
+ <li><b>指标粒度：</b>可以按整个组织、账号、桶、存储类别或前缀（Prefix）筛选和聚合；频率通常为每日，适合趋势分析而不是实时监控。</li>
+</ul>
+<div class="table-wrap">
+<table>
+<thead><tr><th>题目关键词</th><th>应选择</th></tr></thead>
+<tbody>
+<tr><td>跨多个桶、账号或 Region 的存储使用情况分析</td><td>S3 Storage Lens</td></tr>
+<tr><td>找出未加密、未启用复制或未使用生命周期的桶</td><td>S3 Storage Lens（数据保护与优化指标）</td></tr>
+<tr><td>需要存储成本趋势、对象数量和存储类别分布报告</td><td>S3 Storage Lens + 可选报告导出</td></tr>
+<tr><td>实时请求数量、错误或延迟告警</td><td>Amazon CloudWatch（不是 Storage Lens）</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout green"><b>记忆：</b>Storage Lens = “可跨 Region 汇总的 S3 存储可视化与洞察”；面向长期使用趋势、成本优化和数据保护分析，不是复制数据，也不是实时告警。</div>
 </section>
 
 <!-- ===== 11. 场景题解析 ===== -->
@@ -736,6 +766,9 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <tr><td>查询 S3 对象内部数据，减少传输</td><td>S3 Select</td></tr>
 <tr><td>请求方付流量费 / 公开数据集</td><td>Requester Pays</td></tr>
 <tr><td>Multipart Upload 遗留碎片 / 成本浪费</td><td>生命周期策略：中止未完成 Multipart Upload</td></tr>
+<tr><td>跨多个 Region、账号或桶统计存储规模和成本趋势</td><td>S3 Storage Lens</td></tr>
+<tr><td>检查多个桶的数据保护、生命周期或复制覆盖情况</td><td>S3 Storage Lens</td></tr>
+<tr><td>实时请求量、错误率或延迟告警</td><td>Amazon CloudWatch（不是 Storage Lens）</td></tr>
 </tbody>
 </table>
 </section>
@@ -745,7 +778,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <h2>十三、考前速记卡（可勾选）</h2>
 <p>复习时勾选已经掌握的项目。进度仅保存在当前页面打开期间；刷新后会重置。</p>
 <div class="progress"><span id="progressBar"></span></div>
-<p class="small" id="progressText">已掌握 0 / 22</p>
+<p class="small" id="progressText">已掌握 0 / 24</p>
 <ul class="checklist" id="memoryList">
 <li><input type="checkbox"><span><b>Standard-IA / One Zone-IA 最短存储期：</b>30 天</span></li>
 <li><input type="checkbox"><span><b>Glacier Instant / Flexible Retrieval 最短存储期：</b>90 天</span></li>
@@ -769,6 +802,8 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <li><input type="checkbox"><span><b>S3 事件 + 复杂路由：</b>S3 → EventBridge（比直接通知更灵活）</span></li>
 <li><input type="checkbox"><span><b>MRAP：</b>单一全局端点路由到多区域桶，本身不复制数据，必须配 CRR</span></li>
 <li><input type="checkbox"><span><b>MRAP 路由模式：</b>Active-Active（默认就近路由）/ Active-Passive（Failover Controls 锁主备），签名需 SigV4A</span></li>
+<li><input type="checkbox"><span><b>S3 Storage Lens：</b>跨 Region、跨账号、跨桶汇总存储规模、成本趋势和数据保护指标</span></li>
+<li><input type="checkbox"><span><b>Storage Lens vs CloudWatch：</b>Lens 做周期性存储洞察和报告；实时请求、错误、延迟告警用 CloudWatch</span></li>
 </ul>
 </section>
 
@@ -790,7 +825,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 </tr>
 <tr>
  <td><span class="tag">P3</span></td>
- <td>S3 Transfer Acceleration、Byte-Range Fetches、S3 Select、Requester Pays、S3 Inventory、EventBridge vs 直接通知、S3 RTC</td>
+ <td>S3 Transfer Acceleration、Byte-Range Fetches、S3 Select、Requester Pays、S3 Inventory、S3 Storage Lens、EventBridge vs 直接通知、S3 RTC</td>
  <td>理解用途和边界，能快速识别关键词</td>
 </tr>
 </tbody>
@@ -866,6 +901,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
  <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication.html" target="_blank" rel="noopener">S3 复制（CRR/SRR）</a></li>
  <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html" target="_blank" rel="noopener">S3 Object Lock</a></li>
  <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/serv-side-encryption.html" target="_blank" rel="noopener">S3 服务端加密</a></li>
+ <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage_lens.html" target="_blank" rel="noopener">S3 Storage Lens</a></li>
  <li><a href="https://aws.amazon.com/certification/certified-solutions-architect-professional/" target="_blank" rel="noopener">AWS Certified Solutions Architect – Professional</a></li>
 </ul>
 <div class="callout orange"><b>备考提醒：</b>考试版本、服务功能和支持范围可能变化。请以 AWS 官方考试指南和最新服务文档为准。本文是复习提纲，不是官方考试题库。</div>

@@ -91,16 +91,18 @@
 <section id="dr">
 <h2>三、灾难恢复与 RTO/RPO</h2>
 <p class="lead">灾难恢复不是“有没有备份”，而是“在故障后如何恢复、恢复到什么程度、需要多长时间”。</p>
+<div class="callout orange"><b>记住 AWS 四种经典灾备策略（按成本和恢复速度从低到高）：</b>Backup and Restore → Pilot Light → Warm Standby → Multi-site / Active-Active。</div>
 <div class="table-wrap"><table>
-<thead><tr><th>策略</th><th>特点</th><th>适用场景</th></tr></thead>
+<thead><tr><th>策略</th><th>特点与恢复方式</th><th>适用场景及典型关键词</th></tr></thead>
 <tbody>
-<tr><td>Pilot Light</td><td>核心服务在备用区域已有最少运行能力；恢复时快速拉起其他组件。</td><td>允许较长恢复时间，但需较快恢复核心业务。</td></tr>
-<tr><td>Warm Standby</td><td>备用环境持续运行一部分服务，恢复时间中等。</td><td>中高重要业务，接受分钟级切换。</td></tr>
-<tr><td>Hot Standby / Active-Active</td><td>多站点同时运行，切换时间最短，成本最高。</td><td>金融、支付、关键 SLA。</td></tr>
-<tr><td>Backup-centric</td><td>以快照、备份和恢复为核心，恢复复杂但成本低。</td><td>非关键业务、离线分析等。</td></tr>
+<tr><td><b>① Backup and Restore</b></td><td>成本最低。数据使用 Snapshot、Backup 等方式保存；故障发生后恢复数据，并重新部署或重建计算资源。</td><td>允许小时级甚至更长恢复时间、RPO 相对较高。关键词：<b>Snapshot、Backup、S3、Restore、CloudFormation、故障后部署</b>。</td></tr>
+<tr><td><b>② Pilot Light</b></td><td>只在备用区域预热少量关键资源（常见为数据库副本或最小计算环境）；故障时再扩展并启动业务资源。</td><td>关键数据已复制、恢复速度要求中等。关键词：<b>Cross-Region Read Replica、少量 EC2、故障时扩容</b>。</td></tr>
+<tr><td><b>③ Warm Standby</b></td><td>备用区域已有完整或基本完整的运行环境，只是容量低于主站点；故障后按需扩容并切换流量。</td><td>中高重要业务，要求分钟级恢复。关键词：<b>Reduced capacity、Ready-to-run、快速扩容</b>。</td></tr>
+<tr><td><b>④ Multi-site / Active-Active</b></td><td>多个区域同时承载业务并持续服务流量，故障时可快速转移或继续处理；恢复速度最快，架构和成本通常最高。</td><td>金融、支付、关键 SLA 等对连续服务要求极高的场景。关键词：<b>Active-Active、Multi-Region、Continuous serving</b>。</td></tr>
 </tbody></table></div>
-<p>通常题目会按“恢复时间可以接受多久 / 数据能丢多少”来判断：如果要“几分钟恢复、几秒钟切换”就看 Active-Active；如果“本地数据可接受一天损失”则更偏简单备份策略。在考试中，最容易搞混的是：<b>备份本身不等于 DR</b>，DR 还要有恢复流程、切换策略和演练。</p>
-<div class="callout orange"><b>考试常见判断：</b>RTO 短 → 更高可用、更多冗余；RPO 低 → 持续复制、增量同步、快照频率高。</div>
+<p>通常题目会按“恢复时间可以接受多久 / 数据能丢多少”来判断：RTO 越短、RPO 越低，越需要预运行资源和更频繁的数据复制；如果只是要求定期备份并在故障后恢复，优先考虑 Backup and Restore；如果只需最少关键资源预热，考虑 Pilot Light；如果备用环境已缩容运行，考虑 Warm Standby；如果要求多区域同时服务并连续处理请求，考虑 Multi-site / Active-Active。</p>
+<p><b>成本与恢复特征：</b>备份恢复成本最低、恢复最慢；Pilot Light 下一步是扩容关键资源；Warm Standby 的备用环境 <b>ready-to-run</b>，可快速扩容；Active-Active 运行成本最高，但通常具备最快切换和最低业务中断。<b>备份本身不等于完整 DR</b>，还需要恢复流程、切换策略、目标区域资源和演练。</p>
+<div class="callout orange"><b>考试常见判断：</b>RTO 短 → 预热更多资源、考虑 Warm Standby 或 Active-Active；RPO 低 → 数据库跨区复制、增量复制或高频快照；只问最低成本和可接受长恢复时间 → Backup and Restore。</div>
 </section>
 
 <section id="ha">
