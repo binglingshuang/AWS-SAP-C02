@@ -190,6 +190,18 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <tr><td>Instance Endpoint</td><td>指定 DB instance。</td><td>对特定实例做管理、诊断或定向请求；应用通常优先用集群端点。</td></tr>
 <tr><td>Custom Endpoint</td><td>按用户定义的实例子集路由。</td><td>将特定报表或工作负载限制到指定副本组。</td></tr>
 </tbody></table></div>
+<h3>存算分离的优势：票务高峰场景</h3>
+<p>Aurora 的数据库实例提供计算能力，集群卷则由跨多个可用区的分布式存储层承载。Writer 与 Aurora Replicas 访问同一集群卷；存储层通常在三个可用区维护六份数据副本。它们共享的是存储，不代表所有请求都没有复制延迟，也不免除应用处理连接切换的责任。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>考量维度</th><th>Amazon Aurora</th><th>标准 RDS / 传统自管数据库</th></tr></thead>
+<tbody>
+<tr><td>副本创建与扩容</td><td>新建 Replica 主要是增加计算实例并接入已有集群卷，无需为每个副本再维护一整份独立数据卷；适合快速增加读取容量。</td><td>实例通常各自维护存储，副本还需初始化并持续复制数据；耗时取决于数据量、引擎和配置，并非固定需要完整复制快照。</td></tr>
+<tr><td>故障切换</td><td>可将已有 Aurora Replica 提升为 Writer，集群端点随后指向新的 Writer；恢复时间受集群状态、实例规格和应用重连等因素影响，常见目标是数十秒量级。</td><td>恢复或切换流程与部署类型、引擎和故障情况有关，可能涉及备用实例接管及数据库恢复；不能用单一固定时长概括。</td></tr>
+<tr><td>读取延迟</td><td>Replicas 读取共享集群存储，通常无需像独立存储副本那样再维护一份完整数据；复制延迟通常较低，但会随负载和状态变化，不保证固定毫秒数。</td><td>Read Replica 通常异步接收并应用变更，可能出现复制延迟；有读后写一致性要求的请求应谨慎路由。</td></tr>
+<tr><td>存储与耐久性</td><td>集群卷随数据增长自动扩展，并在多个可用区冗余；按集群存储用量计费，容量上限取决于引擎与版本。</td><td>通常需为各数据库实例配置并支付相应存储；扩容方式、上限和操作影响取决于服务或自管方案。</td></tr>
+</tbody></table></div>
+<div class="callout green"><b>票务场景：</b>活动开始前增加 Aurora Replicas 承接查票、浏览等只读流量；Writer 继续处理订单写入。Writer 故障时可提升 Replica，并依靠集群端点和应用重连恢复服务。读扩展不能替代写入容量规划、幂等控制或限流。</div>
+<div class="callout orange"><b>耐久性速记：</b>Aurora 存储在三个可用区维护六份副本；通常可容忍两份副本不可用而不影响写入、三份不可用而不影响读取。此存储冗余不等于备份，也不替代跨区域灾备。</div>
 <ul>
 <li>Aurora Replicas 共享集群存储，创建副本不需要像传统数据库那样另行复制整份存储卷。</li>
 <li>Writer Endpoint 用于写入，Reader Endpoint 仅用于读取路由；应用仍需明确区分读写事务与一致性要求。</li>
