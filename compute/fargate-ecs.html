@@ -204,6 +204,21 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <tr><td>内部服务寻址</td><td>Service Connect、Cloud Map 或内部负载均衡器。</td><td>健康状态、命名空间、端口及跨 VPC / 跨账号连通性仍需设计。</td></tr>
 </tbody></table></div>
 <div class="callout"><b>网络排障顺序：</b>先确认 Task ENI 与子网 IP，再核对路由表、NACL、安全组、DNS、目标组类型/端口/健康检查，最后验证应用监听地址与端口。IAM 授权错误和网络超时是不同故障层。</div>
+<h3>network mode 对比：bridge vs awsvpc</h3>
+<p>Fargate 仅支持 <code>awsvpc</code>；<code>bridge</code> 只有 EC2 启动类型可用（EC2 另支持 <code>host</code> / <code>none</code>）。两者决定了 Task 的 IP 归属、安全组粒度、端口映射方式和负载均衡器目标类型。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>对比维度</th><th>bridge（仅 EC2）</th><th>awsvpc（Fargate 唯一 / EC2 可选）</th></tr></thead>
+<tbody>
+<tr><td>网络接口与 IP</td><td>Task 与宿主机共享 ENI；容器在 Docker 网桥上拥有内部 IP，对外经宿主机端口暴露。</td><td>每个 Task 自动获得独立 ENI 和私有 IP，Task 成为 VPC 中的一等网络实体。</td></tr>
+<tr><td>安全组粒度</td><td>安全组作用于 EC2 实例，同实例上的所有 Task 共享，无法按 Task 隔离。</td><td>可为单个 Task 关联安全组，实现任务级隔离；Fargate 必须配置。</td></tr>
+<tr><td>端口映射</td><td>需显式 <code>hostPort:containerPort</code> 映射；设 <code>hostPort=0</code> 启用动态端口，多个 Task 可在同一实例复用相同容器端口。</td><td>无需映射：省略 hostPort 或使其等于 containerPort，不支持动态宿主端口；同一 Task 内多个容器端口不能重复。</td></tr>
+<tr><td>负载均衡器目标类型</td><td>Target Group 使用 <code>instance</code> 目标，注册实例 ID + 端口；动态端口映射场景常用。</td><td>Target Group 使用 <code>ip</code> 目标，注册 Task ENI 的 IP 地址。</td></tr>
+<tr><td>Task 间通信</td><td>同实例 Task 可经 Docker 网桥 / <code>127.0.0.1</code> 互访；跨实例不能直接通信，需负载均衡器或服务发现（如 Cloud Map SRV 记录）。</td><td>直接使用对方 Task IP 访问，跨实例亦可；用安全组限制允许访问的来源。</td></tr>
+<tr><td>IP / ENI 消耗</td><td>节省子网 IP 与 ENI 配额，代价是共享宿主端口和主机网络。</td><td>每个 Task 消耗一个子网 IP 和一个 ENI；EC2 模式还受实例类型 ENI 上限约束，扩容前需检查子网剩余 IP。</td></tr>
+<tr><td>性能与可观测性</td><td>Docker 网桥 / NAT 带来一定开销；VPC Flow Logs 只能看到宿主机层面的流量。</td><td>接近原生 ENI 性能；安全组与 Flow Logs 可精确到每个 Task。</td></tr>
+<tr><td>典型场景</td><td>单实例密集打包、端口冲突需复用、旧应用依赖固定宿主端口。</td><td>所有 Fargate 场景；需要每 Task 独立安全组、直接 IP 寻址或按任务审计流量。</td></tr>
+</tbody></table></div>
+<div class="callout orange"><b>判断题眼：</b>出现 Fargate → 只能 awsvpc；要求“每个 Task 独立 IP / 独立安全组” → awsvpc；要求“同一实例多 Task 复用相同容器端口、动态端口映射” → EC2 + bridge；awsvpc 在 EC2 上同时受实例 ENI 配额与子网 IP 限制。</div>
 </section>
 
 <section id="scaling">
@@ -324,6 +339,8 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <tr><td>容器运行蓝图 / 配置修订</td><td>Task Definition</td><td>新修订需更新 Service 才会部署</td></tr>
 <tr><td>应用代码读取 S3</td><td>Task Role</td><td>Execution Role 用于 Agent 启动任务操作</td></tr>
 <tr><td>Fargate 被 ALB 访问</td><td>awsvpc + IP Target Group</td><td>检查任务 ENI、安全组、端口和健康检查</td></tr>
+<tr><td>每个 Task 独立 IP / 安全组</td><td>awsvpc</td><td>Fargate 唯一支持；EC2 也可选，但受 ENI 与子网 IP 限制</td></tr>
+<tr><td>同一实例多 Task 复用容器端口</td><td>EC2 + bridge + 动态端口映射</td><td>awsvpc 不支持随机宿主端口，目标组为 IP 类型</td></tr>
 <tr><td>按 CPU / 请求量增减副本</td><td>Service Auto Scaling</td><td>扩 Task 数，不是调单 Task 规格</td></tr>
 <tr><td>EC2 集群宿主机数量</td><td>Capacity Provider / ASG</td><td>与 Service 的 Task 数扩缩是两层控制</td></tr>
 <tr><td>固定时刻前预热容量</td><td>Scheduled Scaling</td><td>最大容量设高不等于会主动扩容</td></tr>
@@ -338,7 +355,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <h2>十二、考前速记卡</h2>
 <p class="small">勾选已掌握项目，页面内进度自动更新。</p>
 <div class="progress"><span id="progressBar"></span></div>
-<p class="small" id="progressText">已掌握 0 / 18</p>
+<p class="small" id="progressText">已掌握 0 / 19</p>
 <ul class="checklist" id="memoryList">
 <li><input type="checkbox"><span><b>ECS：</b>AWS 原生容器编排控制面</span></li>
 <li><input type="checkbox"><span><b>Cluster：</b>组织资源并关联运行容量</span></li>
@@ -352,6 +369,7 @@ footer{text-align:center;color:var(--muted);padding:0 0 36px;font-size:13px}
 <li><input type="checkbox"><span><b>Execution Role：</b>Agent 拉镜像、写日志等启动操作</span></li>
 <li><input type="checkbox"><span><b>Task Role：</b>容器应用运行时调用 AWS API</span></li>
 <li><input type="checkbox"><span><b>Fargate 网络：</b>awsvpc，每个 Task 有独立 ENI</span></li>
+<li><input type="checkbox"><span><b>网络模式：</b>Fargate 仅 awsvpc；bridge 仅 EC2，靠宿主端口映射</span></li>
 <li><input type="checkbox"><span><b>ALB 目标组：</b>awsvpc Task 通常注册为 IP 类型目标</span></li>
 <li><input type="checkbox"><span><b>Service Auto Scaling：</b>伸缩任务副本数</span></li>
 <li><input type="checkbox"><span><b>EC2 Capacity Provider：</b>可联动 ASG 扩宿主机容量</span></li>
